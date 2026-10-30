@@ -1,5 +1,6 @@
 import type { MemberCard } from "@workspace/api-client-react";
-import { JaguarMark } from "./jaguar-mark";
+import { BrandIcon } from "./brand-icon";
+import { BrandEmblemPlaceholder } from "./brand-emblem-placeholder";
 
 export const STAMPS = 10;
 
@@ -10,25 +11,25 @@ export function LoyaltyCard({ card }: { card: MemberCard }) {
   return (
     <section className="member-card rise" aria-label="บัตรสมาชิกดิจิทัล" data-testid="card-member">
       <div className="member-card-inner p-5 sm:p-7">
-        <div className="rosette-bg" aria-hidden="true" />
+        <div className="rosette-bg rosette-field" aria-hidden="true" />
         <div className="relative flex items-start justify-between gap-4">
           <div>
-            <p className="eyebrow">Members Club · Soi 6</p>
+            <p className="eyebrow">Private Members · Soi 6</p>
             <p className="font-display text-xl sm:text-2xl font-semibold mt-1">Jaguar Kratom House</p>
           </div>
-          <JaguarMark size={52} animated />
+          <BrandEmblemPlaceholder variant="card" />
         </div>
 
-        <div className="relative mt-7 flex items-end justify-between gap-4">
+        <div className="relative mt-6 pt-5 border-t border-[var(--line)] flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="text-sm text-[var(--muted)]">แต้มคงเหลือ</p>
-            <p className="font-display font-bold leading-none text-[64px] sm:text-[80px] text-[var(--neon)] tabular-nums" data-testid="text-balance">
+            <p className="text-sm text-[var(--silver)]">แต้มคงเหลือ</p>
+            <p className="font-display font-bold leading-none text-[60px] sm:text-[80px] text-[var(--gold-2)] tabular-nums" data-testid="text-balance">
               {card.balance}
             </p>
           </div>
           <div className="text-right">
             <p className="text-xs text-[var(--muted)]">รหัสสมาชิก</p>
-            <p className="font-mono text-lg tracking-[.2em] text-[var(--gold-2)]" data-testid="text-member-code">{card.member_code}</p>
+            <p className="font-mono text-base sm:text-lg tracking-[.18em] text-[var(--text)] break-all" data-testid="text-member-code">{card.member_code}</p>
             <p className="mt-1 inline-flex items-center gap-2 text-xs text-[var(--muted)]">
               <span className="pulse-dot" aria-hidden="true" /> {card.status === "active" ? "ใช้งานอยู่" : card.status}
             </p>
@@ -37,7 +38,7 @@ export function LoyaltyCard({ card }: { card: MemberCard }) {
 
         <div className="relative mt-6">
           <div className="flex justify-between text-xs mb-2">
-            <span className="text-[var(--muted)]">{ready ? "ครบ 10 ดวง พร้อมแลกรางวัล" : `อีก ${STAMPS - filled} ดวง ครบรางวัล`}</span>
+            <span className="inline-flex items-center gap-2 text-[var(--muted)]"><BrandIcon name="progress" tone="gold" />{ready ? "ครบ 10 ดวง พร้อมแลกรางวัล" : `อีก ${STAMPS - filled} ดวง ครบรางวัล`}</span>
             <span className="font-mono text-[var(--gold-2)]">{filled}/{STAMPS}</span>
           </div>
           <div
@@ -56,8 +57,8 @@ export function LoyaltyCard({ card }: { card: MemberCard }) {
           {Array.from({ length: STAMPS }, (_, i) => {
             const on = i < filled;
             return (
-              <li key={i} className="stamp" data-filled={on} style={on ? { animationDelay: `${i * 60}ms` } : undefined} data-testid={`stamp-${i + 1}`}>
-                {on ? <JaguarMark size={30} /> : <span className="font-mono text-[11px]">{i + 1}</span>}
+              <li key={i} className="stamp" data-filled={on} data-testid={`stamp-${i + 1}`}>
+                {on ? <BrandIcon name="progress" tone="gold" /> : <span className="font-mono text-[11px]">{i + 1}</span>}
                 <span className="sr-only">{on ? "ประทับแล้ว" : "ว่าง"}</span>
               </li>
             );

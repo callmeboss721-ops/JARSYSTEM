@@ -4,7 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLoginMember, useRegisterMember, getGetMemberCardQueryKey } from "@workspace/api-client-react";
-import { ArrowRight, ShieldAlert } from "lucide-react";
+import { BrandIcon } from "./brand-icon";
 import { CODE_RE, PHONE_RE, clearMemberCache, errMessage, errStatus, normalizePhone, setSessionHint } from "./api-utils";
 
 export function LoginForm() {
@@ -45,13 +45,13 @@ export function LoginForm() {
         />
         {err && <p id="login-code-err" className="field-error" role="alert">{err}</p>}
       </div>
-      <p id="login-warn" className="flex gap-2 text-[13px] text-[var(--gold-2)] bg-[rgba(217,180,90,.07)] border border-[rgba(217,180,90,.25)] rounded-xl p-3">
-        <ShieldAlert size={16} className="shrink-0 mt-0.5" aria-hidden="true" />
+      <p id="login-warn" className="flex gap-2 text-[13px] text-[var(--silver)] bg-[rgba(196,202,214,.04)] border border-[var(--line-2)] rounded-xl p-3">
+        <BrandIcon name="security" tone="gold" className="shrink-0 mt-0.5" />
         รหัสสมาชิกคือกุญแจบัตรของคุณ อย่าบอกหรือแชร์ให้ผู้อื่น พนักงานจะไม่ขอรหัสนี้
       </p>
       {server && <p className="field-error" role="alert" data-testid="text-login-error">{server}</p>}
       <button type="submit" className="btn btn-neon w-full" disabled={login.isPending} data-testid="button-login">
-        {login.isPending ? "กำลังเปิดบัตร..." : "เปิดบัตรสมาชิก"} <ArrowRight size={18} aria-hidden="true" />
+        {login.isPending ? "กำลังเปิดบัตร..." : "เปิดบัตรสมาชิก"} <BrandIcon name="continue" tone="inherit" />
       </button>
     </form>
   );
@@ -112,7 +112,7 @@ export function RegisterForm() {
       </div>
       {server && <p className="field-error" role="alert" data-testid="text-register-error">{server}</p>}
       <button type="submit" className="btn btn-gold w-full" disabled={reg.isPending} data-testid="button-register">
-        {reg.isPending ? "กำลังออกบัตร..." : "รับบัตรสมาชิก"} <ArrowRight size={18} aria-hidden="true" />
+        {reg.isPending ? "กำลังออกบัตร..." : "รับบัตรสมาชิก"} <BrandIcon name="continue" tone="inherit" />
       </button>
     </form>
   );

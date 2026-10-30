@@ -2,20 +2,21 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 import Link from "next/link";
-import { AlertTriangle, RotateCw, X } from "lucide-react";
+import { BrandIcon } from "./brand-icon";
 import { JaguarMark } from "./jaguar-mark";
 
 export function ErrorState({ message, onRetry, retrying }: { message: string; onRetry?: () => void; retrying?: boolean }) {
   return (
     <div role="alert" className="panel p-6 flex flex-col items-start gap-4" data-testid="state-error">
       <div className="flex items-center gap-3 text-[var(--danger)]">
-        <AlertTriangle size={20} aria-hidden="true" />
+        <span className="sr-only">ข้อผิดพลาด:</span>
+        <BrandIcon name="error" tone="danger" />
         <span className="font-display font-semibold">โหลดข้อมูลไม่สำเร็จ</span>
       </div>
       <p className="text-sm text-[var(--muted)]">{message}</p>
       {onRetry && (
         <button className="btn btn-ghost" onClick={onRetry} disabled={retrying} data-testid="button-retry">
-          <RotateCw size={16} aria-hidden="true" className={retrying ? "animate-spin" : undefined} />
+          <BrandIcon name="retry" tone="neutral" className={retrying ? "animate-spin" : undefined} />
           ลองอีกครั้ง
         </button>
       )}
@@ -25,8 +26,8 @@ export function ErrorState({ message, onRetry, retrying }: { message: string; on
 
 export function EmptyState({ title, body, action }: { title: string; body?: string; action?: ReactNode }) {
   return (
-    <div className="rounded-2xl border border-dashed border-[var(--line-2)] p-8 text-center flex flex-col items-center gap-3">
-      <JaguarMark size={44} className="opacity-40" />
+    <div className="rounded-2xl border border-dashed border-[var(--line-2)] bg-[rgba(196,202,214,.02)] p-7 text-center flex flex-col items-center gap-3">
+      <JaguarMark size={40} className="opacity-50" />
       <p className="font-display font-semibold">{title}</p>
       {body && <p className="text-sm text-[var(--muted)] max-w-xs">{body}</p>}
       {action}
@@ -37,7 +38,7 @@ export function EmptyState({ title, body, action }: { title: string; body?: stri
 export function SignedOutState() {
   return (
     <div className="panel p-8 flex flex-col items-center text-center gap-4 rise" data-testid="state-signed-out">
-      <JaguarMark size={64} animated />
+      <JaguarMark size={56} />
       <h1 className="font-display text-2xl font-semibold">กรุณาเข้าสู่ระบบสมาชิก</h1>
       <p className="text-[var(--muted)] text-sm max-w-xs">ยังไม่มีเซสชันสมาชิกบนอุปกรณ์นี้ ใช้รหัสสมาชิกของคุณเพื่อเปิดบัตร</p>
       <div className="flex gap-3 flex-wrap justify-center">
@@ -84,8 +85,8 @@ export function Modal({
   return (
     <div className="backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <div ref={ref} role="dialog" aria-modal="true" aria-labelledby={labelledBy} className="dialog panel p-6 relative">
-        <button onClick={onClose} className="absolute right-3 top-3 p-2 text-[var(--muted)] hover:text-[var(--text)] bg-transparent border-0 cursor-pointer" aria-label="ปิด">
-          <X size={18} aria-hidden="true" />
+        <button onClick={onClose} className="absolute right-2 top-2 h-11 w-11 grid place-items-center text-[var(--muted)] hover:text-[var(--text)] bg-transparent border-0 cursor-pointer" aria-label="ปิด">
+          <BrandIcon name="close" tone="neutral" />
         </button>
         {children}
       </div>

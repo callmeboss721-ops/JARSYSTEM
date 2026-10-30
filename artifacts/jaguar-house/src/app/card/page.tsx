@@ -7,7 +7,7 @@ import {
   getGetMemberCardQueryKey,
   getListMemberActivityQueryKey,
 } from "@workspace/api-client-react";
-import { ArrowRight, Minus, Plus } from "lucide-react";
+import { BrandIcon } from "@/components/brand/brand-icon";
 import { MemberShell } from "@/components/brand/member-shell";
 import { LoyaltyCard, LoyaltyCardSkeleton, STAMPS } from "@/components/brand/loyalty-card";
 import { EmptyState, ErrorState, SignedOutState } from "@/components/brand/ui";
@@ -34,7 +34,7 @@ export default function CardPage() {
             <LoyaltyCard card={card.data} />
             <div className="flex flex-col sm:flex-row gap-3">
               {card.data.balance >= STAMPS ? (
-                <Link href="/redeem" className="btn btn-neon flex-1" data-testid="link-redeem">แลกรางวัลเลย <ArrowRight size={18} aria-hidden="true" /></Link>
+                <Link href="/redeem" className="btn btn-neon flex-1" data-testid="link-redeem">แลกรางวัลเลย <BrandIcon name="redeem" tone="inherit" /></Link>
               ) : (
                 <button className="btn btn-neon flex-1" disabled aria-disabled="true" data-testid="button-redeem-disabled">
                   สะสมให้ครบ {STAMPS} แต้มเพื่อแลก
@@ -52,12 +52,12 @@ export default function CardPage() {
                 <dd className="font-display text-2xl font-semibold mt-1 tabular-nums text-[var(--gold-2)]" data-testid="text-lifetime-redeemed">{card.data.lifetime_redeemed}</dd>
               </div>
             </dl>
-            <p className="text-xs text-[var(--muted)]">ให้พนักงานสแกนบัตรโดยแจ้งรหัสสมาชิกที่เคาน์เตอร์ ข้อมูลอัปเดตอัตโนมัติทุก 15 วินาที</p>
+            <p className="text-xs text-[var(--muted)]">แจ้งรหัสสมาชิกกับพนักงานที่เคาน์เตอร์เพื่อสะสมแต้ม ข้อมูลอัปเดตอัตโนมัติทุก 15 วินาที</p>
           </div>
 
           <section aria-labelledby="activity-h" className="panel p-5 sm:p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 id="activity-h" className="font-display text-lg font-semibold">ประวัติแต้ม</h2>
+              <h2 id="activity-h" className="inline-flex items-center gap-2 font-display text-lg font-semibold"><BrandIcon name="history" tone="gold" />ประวัติแต้ม</h2>
               <span className="eyebrow">Activity</span>
             </div>
             {activity.isLoading ? (
@@ -72,14 +72,14 @@ export default function CardPage() {
                   const plus = t.delta >= 0;
                   return (
                     <li key={t.id} className="flex items-center gap-3 py-3" data-testid={`row-activity-${t.id}`}>
-                      <span className={`grid place-items-center w-9 h-9 rounded-full ${plus ? "bg-[var(--neon-dim)] text-[var(--neon)]" : "bg-[rgba(217,180,90,.12)] text-[var(--gold-2)]"}`} aria-hidden="true">
-                        {plus ? <Plus size={16} /> : <Minus size={16} />}
+                      <span className={`grid place-items-center w-9 h-9 rounded-full ${plus ? "bg-[rgba(31,138,100,.14)] text-[var(--emerald-2)]" : "bg-[rgba(217,180,90,.12)] text-[var(--gold-2)]"}`} aria-hidden="true">
+                        {plus ? <BrandIcon name="add" tone="inherit" /> : <BrandIcon name="subtract" tone="inherit" />}
                       </span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm truncate">{t.reason}</p>
+                        <p className="text-sm break-words">{t.reason}</p>
                         <p className="text-xs text-[var(--muted)] font-mono">{fmtDate(t.created_at)}</p>
                       </div>
-                      <span className={`font-mono font-semibold ${plus ? "text-[var(--neon)]" : "text-[var(--gold-2)]"}`}>
+                      <span className={`font-mono font-semibold ${plus ? "text-[var(--emerald-2)]" : "text-[var(--gold-2)]"}`}>
                         {plus ? "+" : ""}{t.delta}
                       </span>
                     </li>

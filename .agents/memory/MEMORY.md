@@ -1,1 +1,2 @@
 - [Framework intent](jaguar-product-decisions.md) — Next.js 15 was explicitly selected over the React+Vite artifact option.
+- [YOUNGBOSS brand intent](youngboss-brand-intent.md) — Executive membership, not a game or generic cyberpunk; understated jaguar identity, unified customer/staff styling.

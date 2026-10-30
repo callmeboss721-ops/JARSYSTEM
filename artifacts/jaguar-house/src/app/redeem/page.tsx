@@ -12,7 +12,7 @@ import {
   getListMemberRedemptionsQueryKey,
   type Reward,
 } from "@workspace/api-client-react";
-import { CheckCircle2, Clock } from "lucide-react";
+import { BrandIcon } from "@/components/brand/brand-icon";
 import { MemberShell } from "@/components/brand/member-shell";
 import { STAMPS } from "@/components/brand/loyalty-card";
 import { EmptyState, ErrorState, Modal, SignedOutState } from "@/components/brand/ui";
@@ -64,29 +64,29 @@ export default function RedeemPage() {
           <h1 className="font-display text-3xl sm:text-4xl font-semibold mt-1">แลกรางวัล</h1>
         </div>
         <div className="panel px-5 py-3 text-right">
-          <p className="text-xs text-[var(--muted)]">แต้มคงเหลือ</p>
-          <p className="font-display text-3xl font-bold text-[var(--neon)] tabular-nums" data-testid="text-redeem-balance">{balance}</p>
+          <p className="inline-flex items-center justify-end gap-2 text-xs text-[var(--muted)]"><BrandIcon name="points" tone="gold" />แต้มคงเหลือ</p>
+          <p className="font-display text-3xl font-bold text-[var(--gold-2)] tabular-nums" data-testid="text-redeem-balance">{balance}</p>
         </div>
       </header>
 
       {done && (
-        <div role="status" className="mb-6 flex gap-3 items-start rounded-2xl border border-[rgba(0,255,157,.35)] bg-[var(--neon-dim)] p-4 rise" data-testid="status-request-sent">
-          <CheckCircle2 className="text-[var(--neon)] shrink-0" size={20} aria-hidden="true" />
+        <div role="status" className="mb-6 flex gap-3 items-start rounded-2xl border border-[rgba(79,199,154,.35)] bg-[rgba(31,138,100,.1)] p-4 rise" data-testid="status-request-sent">
+          <BrandIcon name="success" tone="emerald" className="shrink-0" />
           <div className="text-sm">
             <p className="font-semibold">ส่งคำขอแลก “{done}” แล้ว — สถานะรอพนักงานยืนยัน</p>
             <p className="text-[var(--muted)] mt-1">แสดงหน้าจอนี้ที่เคาน์เตอร์ แต้มจะถูกหักเมื่อพนักงานยืนยันเท่านั้น</p>
           </div>
-          <button className="ml-auto text-xs text-[var(--muted)] bg-transparent border-0 cursor-pointer" onClick={() => setDone(null)}>ปิด</button>
+          <button className="ml-auto min-h-11 min-w-11 shrink-0 text-xs text-[var(--muted)] bg-transparent border-0 cursor-pointer" onClick={() => setDone(null)}>ปิด</button>
         </div>
       )}
 
       {balance < STAMPS && (
-        <p className="mb-6 text-sm text-[var(--gold-2)]" role="note">ต้องมีอย่างน้อย {STAMPS} แต้มจึงจะแลกได้ — ตอนนี้ขาดอีก {STAMPS - balance} แต้ม</p>
+        <p className="mb-6 text-sm text-[var(--gold-2)] rounded-xl border border-[rgba(229,192,74,.3)] bg-[rgba(229,192,74,.05)] px-4 py-3" role="note">ต้องมีอย่างน้อย {STAMPS} แต้มจึงจะแลกได้ — ตอนนี้ขาดอีก {STAMPS - balance} แต้ม</p>
       )}
 
       <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr] items-start">
         <section aria-labelledby="rewards-h">
-          <h2 id="rewards-h" className="font-display text-lg font-semibold mb-4">ของรางวัล</h2>
+          <h2 id="rewards-h" className="inline-flex items-center gap-2 font-display text-lg font-semibold mb-4"><BrandIcon name="rewards" tone="gold" />ของรางวัล</h2>
           {rewards.isLoading ? (
             <div className="grid sm:grid-cols-2 gap-3">{[0, 1, 2, 3].map((i) => <div key={i} className="skeleton h-36" />)}</div>
           ) : rewards.isError ? (
@@ -110,7 +110,7 @@ export default function RedeemPage() {
                       onClick={() => { setReqErr(null); setPicked(r); }}
                       data-testid={`button-request-${r.id}`}
                     >
-                      {can ? "ขอแลกรางวัลนี้" : `ต้องมี ${Math.max(r.points_cost, STAMPS)} แต้ม`}
+                      {can ? <><BrandIcon name="redeem" tone="inherit" />ขอแลกรางวัลนี้</> : `ต้องมี ${Math.max(r.points_cost, STAMPS)} แต้ม`}
                     </button>
                   </li>
                 );
@@ -122,7 +122,7 @@ export default function RedeemPage() {
         <section aria-labelledby="history-h" className="space-y-6">
           <div className="panel p-5">
             <h2 id="history-h" className="font-display text-lg font-semibold mb-3 flex items-center gap-2">
-              <Clock size={18} className="text-[var(--gold)]" aria-hidden="true" /> รอยืนยัน
+              <BrandIcon name="pending" tone="gold" /> รอยืนยัน
               <span className="ml-auto font-mono text-sm text-[var(--gold-2)]">{pending.length}</span>
             </h2>
             {history.isLoading ? <div className="skeleton h-16" /> : history.isError ? (
@@ -134,7 +134,7 @@ export default function RedeemPage() {
                 {pending.map((r) => (
                   <li key={r.id} className="rounded-xl border border-[rgba(217,180,90,.3)] p-3 flex items-center gap-3" data-testid={`row-pending-${r.id}`}>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold truncate">{r.reward_name}</p>
+                      <p className="text-sm font-semibold break-words">{r.reward_name}</p>
                       <p className="text-xs text-[var(--muted)] font-mono">{fmtDate(r.created_at)} · {r.points_spent} แต้ม</p>
                     </div>
                     <span className="chip chip-pending">รอยืนยัน</span>
@@ -145,7 +145,7 @@ export default function RedeemPage() {
           </div>
 
           <div className="panel p-5">
-            <h2 className="font-display text-lg font-semibold mb-3">ประวัติการแลก</h2>
+            <h2 className="inline-flex items-center gap-2 font-display text-lg font-semibold mb-3"><BrandIcon name="history" tone="gold" />ประวัติการแลก</h2>
             {history.isLoading ? <div className="skeleton h-24" /> : !history.data?.length ? (
               <EmptyState title="ยังไม่เคยแลกรางวัล" body="สะสมครบ 10 ดวงแล้วกลับมาที่นี่" />
             ) : (
@@ -155,7 +155,7 @@ export default function RedeemPage() {
                   return (
                     <li key={r.id} className="py-3 flex items-center gap-3">
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm truncate">{r.reward_name}</p>
+                        <p className="text-sm break-words">{r.reward_name}</p>
                         <p className="text-xs text-[var(--muted)] font-mono">{fmtDate(r.created_at)} · {r.points_spent} แต้ม</p>
                       </div>
                       <span className={`chip ${s.cls}`}>{s.th}</span>
