@@ -1,0 +1,1 @@
+- [Framework intent](jaguar-product-decisions.md) — Next.js 15 was explicitly selected over the React+Vite artifact option.

@@ -1,5 +1,5 @@
 import express, { type Express } from "express";
-import cors from "cors";
+import cookieParser from "cookie-parser";
 import pinoHttp from "pino-http";
 import router from "./routes";
 import { logger } from "./lib/logger";
@@ -25,10 +25,17 @@ app.use(
     },
   }),
 );
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.disable("x-powered-by");
+app.set("trust proxy", 1);
+app.use(cookieParser());
+app.use(express.json({ limit: "8kb", inflate: false }));
 
 app.use("/api", router);
+app.use((err: unknown, req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  const status = typeof err === "object" && err !== null && "status" in err ? Number(err.status) : 500;
+  const safeStatus = [400, 413, 415].includes(status) ? status : 500;
+  req.log.warn({ status: safeStatus }, "Request rejected");
+  res.status(safeStatus).json({ error: safeStatus === 413 ? "ข้อมูลมีขนาดใหญ่เกินไป" : "ไม่สามารถดำเนินการได้ กรุณาตรวจสอบข้อมูล" });
+});
 
 export default app;

@@ -8,6 +8,7 @@ out-tsc
 .expo
 .expo-shared
 .next
+.next-dev
 .turbo
 .svelte-kit
 .nuxt

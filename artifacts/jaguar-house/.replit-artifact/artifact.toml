@@ -1,0 +1,29 @@
+kind = "web"
+previewPath = "/"
+title = "Jaguar Kratom House"
+description = "Mobile-first Jaguar House loyalty membership, virtual points cards, rewards and staff redemption management. Next.js 15 runtime with Tailwind CSS and existing Supabase backend."
+version = "1.0.0"
+id = "artifacts/jaguar-house"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/", "/_next/webpack-hmr" ]
+localPort = 23107
+
+[services.development]
+run = "pnpm --filter @workspace/jaguar-house run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/jaguar-house", "run", "build" ]
+
+[services.production.run]
+args = [ "pnpm", "--filter", "@workspace/jaguar-house", "run", "serve" ]
+
+[services.production.run.env]
+NODE_ENV = "production"
+
+
+[services.env]
+PORT = "23107"
+BASE_PATH = "/"

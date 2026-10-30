@@ -1,36 +1,280 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
-  version: 0.1.0
-  description: API specification
+  version: 1.0.0
+  description: Jaguar House loyalty API
 servers:
   - url: /api
-    description: Base API path
-tags:
-  - name: health
-    description: Health operations
 paths:
   /healthz:
     get:
       operationId: healthCheck
-      tags: [health]
-      summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
           content:
             application/json:
+              schema: { $ref: "#/components/schemas/HealthStatus" }
+  /loyalty/register:
+    post:
+      operationId: registerMember
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/MemberInput" }
+      responses:
+        "201":
+          description: Member registered and session cookie issued
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MemberCard" }
+  /loyalty/login:
+    post:
+      operationId: loginMember
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/MemberLogin" }
+      responses:
+        "200":
+          description: Member signed in and session cookie issued
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MemberCard" }
+  /loyalty/logout:
+    post:
+      operationId: logoutMember
+      responses:
+        "200":
+          description: Session cleared
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Success" }
+  /loyalty/card:
+    get:
+      operationId: getMemberCard
+      responses:
+        "200":
+          description: Current member card
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MemberCard" }
+  /loyalty/rewards:
+    get:
+      operationId: listRewards
+      responses:
+        "200":
+          description: Active rewards
+          content:
+            application/json:
               schema:
-                $ref: "#/components/schemas/HealthStatus"
+                type: array
+                items: { $ref: "#/components/schemas/Reward" }
+  /loyalty/redemptions:
+    get:
+      operationId: listMemberRedemptions
+      responses:
+        "200":
+          description: Current member redemption history
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Redemption" }
+    post:
+      operationId: requestRedemption
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RedemptionInput" }
+      responses:
+        "201":
+          description: Pending redemption, points deducted only on staff confirmation
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Redemption" }
+  /loyalty/activity:
+    get:
+      operationId: listMemberActivity
+      responses:
+        "200":
+          description: Recent points transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/PointTransaction" }
+  /loyalty/admin/login:
+    post:
+      operationId: loginAdmin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AdminLogin" }
+      responses:
+        "200":
+          description: Staff session cookie issued
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Success" }
+  /loyalty/admin/logout:
+    post:
+      operationId: logoutAdmin
+      responses:
+        "200":
+          description: Staff session cleared
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Success" }
+  /loyalty/admin/summary:
+    get:
+      operationId: getAdminSummary
+      responses:
+        "200":
+          description: Staff session and live summary
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminSummary" }
+  /loyalty/admin/member:
+    get:
+      operationId: findMember
+      parameters:
+        - in: query
+          name: code
+          required: true
+          schema: { type: string, pattern: "^[A-Za-z0-9]{6,10}$" }
+      responses:
+        "200":
+          description: Exact member lookup
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MemberCard" }
+  /loyalty/admin/points:
+    post:
+      operationId: addMemberPoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PointsInput" }
+      responses:
+        "200":
+          description: Atomic points credit and refreshed member card
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MemberCard" }
+  /loyalty/admin/redemptions:
+    get:
+      operationId: listPendingRedemptions
+      responses:
+        "200":
+          description: Pending redemptions
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Redemption" }
+  /loyalty/admin/redemptions/{id}/confirm:
+    post:
+      operationId: confirmRedemption
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Atomic confirmation, balance deduction and ledger entry
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Redemption" }
 components:
   schemas:
     HealthStatus:
       type: object
+      required: [status]
       properties:
-        status:
-          type: string
-      required:
-        - status
-
+        status: { type: string }
+    Success:
+      type: object
+      required: [ok]
+      properties:
+        ok: { type: boolean }
+    MemberInput:
+      type: object
+      required: [phone, member_code]
+      properties:
+        phone: { type: string, minLength: 9, maxLength: 20 }
+        member_code: { type: string, pattern: "^[A-Za-z0-9]{6,10}$" }
+    MemberLogin:
+      type: object
+      required: [member_code]
+      properties:
+        member_code: { type: string, pattern: "^[A-Za-z0-9]{6,10}$" }
+    AdminLogin:
+      type: object
+      required: [pin]
+      properties:
+        pin: { type: string, pattern: "^[0-9]{4,12}$" }
+    MemberCard:
+      type: object
+      required: [id, member_code, status, balance, lifetime_earned, lifetime_redeemed]
+      properties:
+        id: { type: string }
+        member_code: { type: string }
+        status: { type: string }
+        balance: { type: integer }
+        lifetime_earned: { type: integer }
+        lifetime_redeemed: { type: integer }
+    Reward:
+      type: object
+      required: [id, name, description, points_cost, is_active]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        description: { type: ["string", "null"] }
+        points_cost: { type: integer }
+        is_active: { type: boolean }
+    RedemptionInput:
+      type: object
+      required: [reward_id]
+      properties:
+        reward_id: { type: string, format: uuid }
+    Redemption:
+      type: object
+      required: [id, member_id, member_code, reward_id, reward_name, points_spent, status, created_at]
+      properties:
+        id: { type: string }
+        member_id: { type: string }
+        member_code: { type: string }
+        reward_id: { type: string }
+        reward_name: { type: string }
+        points_spent: { type: integer }
+        status: { type: string }
+        created_at: { type: string }
+    PointsInput:
+      type: object
+      required: [member_id, points, request_id]
+      properties:
+        member_id: { type: string, format: uuid }
+        points: { type: integer, minimum: 1, maximum: 20 }
+        request_id: { type: string, format: uuid }
+    PointTransaction:
+      type: object
+      required: [id, delta, reason, created_at]
+      properties:
+        id: { type: string }
+        delta: { type: integer }
+        reason: { type: string }
+        created_at: { type: string }
+    AdminSummary:
+      type: object
+      required: [members, pending_redemptions, points_issued]
+      properties:
+        members: { type: integer }
+        pending_redemptions: { type: integer }
+        points_issued: { type: integer }
