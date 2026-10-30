@@ -4,9 +4,6 @@ import {
   getListMemberActivityQueryKey,
   getListMemberRedemptionsQueryKey,
   getListRewardsQueryKey,
-  getGetAdminSummaryQueryKey,
-  getListPendingRedemptionsQueryKey,
-  getFindMemberQueryKey,
 } from "@workspace/api-client-react";
 
 export function errStatus(e: unknown): number | undefined {
@@ -61,6 +58,8 @@ export function clearMemberCache(qc: QueryClient) {
     getListMemberActivityQueryKey(),
     getListMemberRedemptionsQueryKey(),
     getListRewardsQueryKey(),
+    ["/api/loyalty/sales"],
+    ["/api/loyalty/qr"],
   ]) {
     qc.removeQueries({ queryKey: key });
   }
@@ -73,15 +72,6 @@ export function invalidateMember(qc: QueryClient) {
     qc.invalidateQueries({ queryKey: getListMemberRedemptionsQueryKey() }),
     qc.invalidateQueries({ queryKey: getListRewardsQueryKey() }),
   ]);
-}
-
-export function clearAdminCache(qc: QueryClient) {
-  qc.removeQueries({ queryKey: getGetAdminSummaryQueryKey() });
-  qc.removeQueries({ queryKey: getListPendingRedemptionsQueryKey() });
-  const findPrefix = getFindMemberQueryKey()[0];
-  qc.removeQueries({
-    predicate: (q) => typeof q.queryKey[0] === "string" && q.queryKey[0].startsWith(findPrefix),
-  });
 }
 
 export const CODE_RE = /^[A-Za-z0-9]{6,10}$/;

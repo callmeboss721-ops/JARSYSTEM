@@ -1,16 +1,20 @@
-import type { MemberCard } from "@workspace/api-client-react";
 import { BrandIcon } from "./brand-icon";
 import { BrandEmblemPlaceholder } from "./brand-emblem-placeholder";
+import { QRCodeSVG } from "qrcode.react";
+import { ErrorState } from "./ui";
+import type { MemberCardData } from "./loyalty-api";
 
 export const STAMPS = 10;
 
-export function LoyaltyCard({ card }: { card: MemberCard }) {
+type CardQr = { value?: string; loading: boolean; error?: string; retry?: () => void; retrying?: boolean };
+
+export function LoyaltyCard({ card, qr }: { card: MemberCardData; qr: CardQr }) {
   const filled = Math.min(card.balance, STAMPS);
   const extra = Math.max(card.balance - STAMPS, 0);
   const ready = card.balance >= STAMPS;
   return (
     <section className="member-card rise" aria-label="บัตรสมาชิกดิจิทัล" data-testid="card-member">
-      <div className="member-card-inner p-5 sm:p-7">
+      <div className="member-card-inner p-4 sm:p-6">
         <div className="rosette-bg rosette-field" aria-hidden="true" />
         <div className="relative flex items-start justify-between gap-4">
           <div>
@@ -20,23 +24,30 @@ export function LoyaltyCard({ card }: { card: MemberCard }) {
           <BrandEmblemPlaceholder variant="card" />
         </div>
 
-        <div className="relative mt-6 pt-5 border-t border-[var(--line)] flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="text-sm text-[var(--silver)]">แต้มคงเหลือ</p>
-            <p className="font-display font-bold leading-none text-[60px] sm:text-[80px] text-[var(--gold-2)] tabular-nums" data-testid="text-balance">
+        <div className="relative mt-4 pt-4 border-t border-[var(--line)] flex items-center justify-between gap-2 sm:gap-4">
+          <div className="min-w-0">
+            <p className="text-xs sm:text-sm text-[var(--silver)]">แต้มคงเหลือ</p>
+            <p className="font-display font-bold leading-none text-[48px] sm:text-[70px] text-[var(--gold-2)] tabular-nums" data-testid="text-balance">
               {card.balance}
             </p>
-          </div>
-          <div className="text-right">
-            <p className="text-xs text-[var(--muted)]">รหัสสมาชิก</p>
-            <p className="font-mono text-base sm:text-lg tracking-[.18em] text-[var(--text)] break-all" data-testid="text-member-code">{card.member_code}</p>
-            <p className="mt-1 inline-flex items-center gap-2 text-xs text-[var(--muted)]">
+            <p className="mt-2 text-[10px] text-[var(--muted)]">รหัสสมาชิก</p>
+            <p className="font-mono text-xs sm:text-sm tracking-[.14em] text-[var(--text)] break-all" data-testid="text-member-code">{card.member_code}</p>
+            <p className="mt-1 inline-flex items-center gap-1.5 text-[10px] text-[var(--muted)]">
               <span className="pulse-dot" aria-hidden="true" /> {card.status === "active" ? "ใช้งานอยู่" : card.status}
             </p>
           </div>
+          <div className="shrink-0 rounded-xl border border-[var(--line-2)] bg-black/40 p-1.5 sm:p-2 text-center" aria-label="QR ส่วนตัวสำหรับให้พนักงานสแกน">
+            {qr.loading ? <div className="skeleton h-32 w-32 sm:h-36 sm:w-36 rounded-lg" aria-label="กำลังโหลด QR" />
+              : qr.error || !qr.value ? <div className="flex h-32 w-32 sm:h-36 sm:w-36 flex-col items-center justify-center gap-1">
+                  <p role="alert" className="text-[10px] leading-tight text-[var(--muted)]">โหลด QR ไม่สำเร็จ</p>
+                  <button type="button" className="btn btn-ghost !min-h-10 !px-2 text-xs" onClick={qr.retry} disabled={qr.retrying}>{qr.retrying ? "กำลังโหลด…" : "ลองอีกครั้ง"}</button>
+                </div>
+                : <QRCodeSVG value={qr.value} size={128} level="M" className="h-32 w-32 sm:h-36 sm:w-36" aria-label="QR สมาชิกส่วนบุคคล" />}
+            <p className="mt-1 text-[9px] sm:text-[10px] text-[var(--muted)]">สแกนที่เคาน์เตอร์</p>
+          </div>
         </div>
 
-        <div className="relative mt-6">
+        <div className="relative mt-4">
           <div className="flex justify-between text-xs mb-2">
             <span className="inline-flex items-center gap-2 text-[var(--muted)]"><BrandIcon name="progress" tone="gold" />{ready ? "ครบ 10 ดวง พร้อมแลกรางวัล" : `อีก ${STAMPS - filled} ดวง ครบรางวัล`}</span>
             <span className="font-mono text-[var(--gold-2)]">{filled}/{STAMPS}</span>
@@ -53,12 +64,12 @@ export function LoyaltyCard({ card }: { card: MemberCard }) {
           </div>
         </div>
 
-        <ol className="relative mt-6 grid grid-cols-5 gap-2.5 sm:gap-4 list-none p-0 m-0" aria-label={`ตราประทับ ${filled} จาก ${STAMPS} ดวง`}>
+        <ol className="relative mt-4 grid grid-cols-5 gap-2 sm:gap-3 list-none p-0 m-0" aria-label={`ตราประทับ ${filled} จาก ${STAMPS} ดวง`}>
           {Array.from({ length: STAMPS }, (_, i) => {
             const on = i < filled;
             return (
               <li key={i} className="stamp" data-filled={on} data-testid={`stamp-${i + 1}`}>
-                {on ? <BrandIcon name="progress" tone="gold" /> : <span className="font-mono text-[11px]">{i + 1}</span>}
+                {on ? <BrandIcon name="progress" tone="emerald" /> : <span className="font-mono text-[11px]">{i + 1}</span>}
                 <span className="sr-only">{on ? "ประทับแล้ว" : "ว่าง"}</span>
               </li>
             );

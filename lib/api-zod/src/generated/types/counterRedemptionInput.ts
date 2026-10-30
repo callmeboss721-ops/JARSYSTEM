@@ -6,12 +6,8 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface PointsInput {
-  member_id: string;
-  /**
-     * @minimum 1
-     * @maximum 20
-     */
-  points: number;
+export interface CounterRedemptionInput {
+  /** @pattern ^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$ */
+  member_code: string;
   request_id: string;
 }

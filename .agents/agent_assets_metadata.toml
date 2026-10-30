@@ -1,0 +1,30 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "QcVCBd5PcqdEvvCYNcYnm"
+uri = "file://generated-artifacts/jaguar-loyalty-design-guidelines.pdf"
+type = "pdf"
+title = "คู่มือแนวทางการออกแบบ JAGUAR KRATOM HOUSE"
+description = "PDF ภาษาไทย 7 หน้า รวม Design Guidelines, prompt หลักและ prompt แยกส่วน, negative prompt, ภาพอ้างอิง และข้อควรระวังเรื่องข้อมูล/ฟังก์ชันจริง"
+logical_id = "c4f293a8-322a-4df9-a860-2db831e3a795"
+content_hash = "sha256:c20bd9fdd0e862d114ffcd3493e17a334ba26b31b8ae153ae93bf04508f04f11"
+size = 3143745
+mtime_ms = 1793355884228
+storage_uri = "gcs://replit-rams-assets-pike/rams/assets/repl:88281769-8bb3-4209-b865-ee699aa50e18/c4f293a8-322a-4df9-a860-2db831e3a795/5eb788a1-17de-4c1c-97fd-656f419c10ca"
+storage_version_token = "1793355929641153"
+content_type = "application/pdf"
+
+[[outputs]]
+id = "CTS59GCl2X0m65EP84scx"
+uri = "file://jaguar-kratom-house.html"
+type = "html"
+title = "JAGUAR KRATOM HOUSE — HTML เดี่ยว"
+description = "หน้าเว็บ HTML ไฟล์เดียว พร้อม CSS และ SVG inline; ช่องภาพและ QR ที่ยังไม่มีข้อมูลจริงระบุเป็น placeholder ชัดเจน"
+logical_id = "ed0c014e-a08d-44ba-b551-f9ddbbc5483c"
+content_hash = "sha256:bcc326b809a05a91c1ff027a2b02f48568ed05cce672a74729b85000559276fd"
+size = 27314
+mtime_ms = 1793367949037
+storage_uri = "gcs://replit-rams-assets-pike/rams/assets/repl:88281769-8bb3-4209-b865-ee699aa50e18/ed0c014e-a08d-44ba-b551-f9ddbbc5483c/58e7e4e8-2d59-41a6-86a1-b5038a268550"
+storage_version_token = "1793367979894754"
+content_type = "text/html"

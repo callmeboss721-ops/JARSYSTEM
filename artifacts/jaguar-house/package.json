@@ -73,8 +73,11 @@
     "@tailwindcss/postcss": "4.3.3",
     "@tanstack/react-query": "catalog:",
     "@workspace/api-client-react": "workspace:*",
+    "@zxing/browser": "0.1.5",
+    "@zxing/library": "0.21.3",
     "lucide-react": "catalog:",
     "next": "15.5.28",
+    "qrcode.react": "4.2.0",
     "react": "catalog:",
     "react-dom": "catalog:"
   }

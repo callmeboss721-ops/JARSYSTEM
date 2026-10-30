@@ -6,7 +6,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface AdminLogin {
-  /** @pattern ^[0-9]{4,12}$ */
-  pin: string;
+export interface MemberQr {
+  /** @pattern ^JAGUAR1:[0-9a-f]{64}$ */
+  qr: string;
 }

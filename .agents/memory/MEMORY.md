@@ -1,2 +1,5 @@
 - [Framework intent](jaguar-product-decisions.md) — Next.js 15 was explicitly selected over the React+Vite artifact option.
-- [YOUNGBOSS brand intent](youngboss-brand-intent.md) — Executive membership, not a game or generic cyberpunk; understated jaguar identity, unified customer/staff styling.
+- [YOUNGBOSS brand intent](youngboss-brand-intent.md) — Premium customer/staff UI; original supplied logo imagery takes precedence over an invented minimalist seal.
+- [Supabase connection boundaries](supabase-connection-boundaries.md) — Connector host configuration is independent of Supabase environment variables; verify each separately.
+- [Drizzle check diffs](drizzle-check-constraint-diffs.md) — A successful schema push may retain an old CHECK expression under an unchanged constraint name; verify the live definition.
+- [JAGUAR points policy](jaguar-points-policy.md) — Each complete set of three bottles on one bill earns a point; remaining bottles do not carry over.

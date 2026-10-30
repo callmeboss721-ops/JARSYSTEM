@@ -1,11 +1,13 @@
-import { createHmac, randomUUID, timingSafeEqual, createHash } from "node:crypto";
+import { createHmac, randomUUID, timingSafeEqual, createHash, scrypt, randomBytes } from "node:crypto";
+import { promisify } from "node:util";
+import { pool } from "@workspace/db";
 import type { Request, Response, NextFunction } from "express";
 import { LoyaltyError } from "./loyalty-errors";
 
-type Session = { role: "member" | "admin"; sub: string; exp: number; nonce: string };
+type Session = { role: "member" | "staff" | "owner"; sub: string; exp: number; nonce: string };
 const windows = new Map<string, { count: number; expires: number }>();
-const isProduction = process.env.NODE_ENV === "production";
-const COOKIE = { member: "jaguar_member", admin: "jaguar_staff" };
+const deriveKey = promisify(scrypt);
+const COOKIE = { member: "jaguar_member", staff: "jaguar_staff", owner: "jaguar_owner" };
 
 function secret(): string {
   const value = process.env.SESSION_SECRET;
@@ -18,7 +20,7 @@ function signature(value: string): string {
 }
 
 export function issueSession(res: Response, role: Session["role"], sub: string): void {
-  const maxAge = role === "admin" ? 2 * 60 * 60 : 30 * 24 * 60 * 60;
+  const maxAge = role === "member" ? 30 * 24 * 60 * 60 : 2 * 60 * 60;
   const payload = Buffer.from(JSON.stringify({ role, sub, exp: Math.floor(Date.now() / 1000) + maxAge, nonce: randomUUID() })).toString("base64url");
   res.cookie(COOKIE[role], `${payload}.${signature(payload)}`, {
     httpOnly: true, secure: true, sameSite: "lax", path: "/api/loyalty", maxAge: maxAge * 1000,
@@ -46,17 +48,87 @@ export function readSession(req: Request, role: Session["role"]): Session {
   return value;
 }
 
-export function verifyPin(pin: string): boolean {
-  const configured = process.env.ADMIN_PIN;
-  // The requested default is strictly a development convenience.
-  if (isProduction && (!configured || configured === "2468")) {
-    throw new LoyaltyError(503, "ผู้ดูแลต้องตั้ง ADMIN_PIN ใหม่ก่อนเปิดใช้งานจริง");
+type StaffRole = "staff" | "owner";
+const pinSetting = (role: StaffRole) => `${role}_pin_hash`;
+const defaultPin = (role: StaffRole) => process.env[role === "staff" ? "STAFF_PIN" : "OWNER_PIN"] ?? (role === "staff" ? "2024" : "8899");
+function bootstrapPin(role: StaffRole): string {
+  const pin = defaultPin(role);
+  if (process.env.NODE_ENV !== "development") {
+    const configured = process.env[role === "staff" ? "STAFF_PIN" : "OWNER_PIN"];
+    const pattern = role === "owner" ? /^\d{6,12}$/ : /^\d{4,12}$/;
+    if (!configured || !pattern.test(pin) || ["2024", "8899", "2468"].includes(pin) || /^(.)\1+$/.test(pin)) {
+      throw new LoyaltyError(503, "ยังไม่ได้ตั้งค่า PIN ที่ปลอดภัยสำหรับระบบจริง กรุณาตั้งค่าก่อนเปิดใช้งาน");
+    }
   }
-  const expected = createHash("sha256").update(configured ?? "2468").digest();
+  return pin;
+}
+export async function usesDefaultPin(role: StaffRole): Promise<boolean> {
+  const result = await pool.query("select 1 from jaguar_settings where key=$1", [pinSetting(role)]);
+  return !result.rowCount && (!process.env[role === "staff" ? "STAFF_PIN" : "OWNER_PIN"]);
+}
+
+export async function adminSessionSubject(role: StaffRole): Promise<string> {
+  const stored = (await pool.query("select value from jaguar_settings where key=$1", [pinSetting(role)])).rows[0]?.value;
+  return `${role}:${createHmac("sha256", secret()).update(stored ?? bootstrapPin(role)).digest("hex")}`;
+}
+
+export async function verifyPin(role: StaffRole, pin: string): Promise<boolean> {
+  const stored = (await pool.query("select value from jaguar_settings where key=$1", [pinSetting(role)])).rows[0]?.value as string | undefined;
+  if (stored) {
+    const [salt, hash] = stored.split(":");
+    const expected = Buffer.from(hash, "hex");
+    const actual = await deriveKey(pin, salt, 64) as Buffer;
+    return expected.length === actual.length && timingSafeEqual(expected, actual);
+  }
+  // Initial setup code retained for the requested simple staff flow.
+  // Staff can replace it from the protected dashboard; only its salted hash is saved.
+  const expected = createHash("sha256").update(bootstrapPin(role)).digest();
   const actual = createHash("sha256").update(pin).digest();
   return timingSafeEqual(expected, actual);
 }
 
+async function storePin(role: StaffRole, next: string): Promise<void> {
+  const salt = randomBytes(16).toString("hex");
+  const hash = (await deriveKey(next, salt, 64) as Buffer).toString("hex");
+  await pool.query(`insert into jaguar_settings(key,value) values($1,$2)
+    on conflict(key) do update set value=excluded.value`, [pinSetting(role), `${salt}:${hash}`]);
+}
+
+export async function changePin(role: StaffRole, current: string, next: string): Promise<void> {
+  if (!await verifyPin(role, current)) throw new LoyaltyError(401, "PIN ปัจจุบันไม่ถูกต้อง");
+  if (next === current || /^(.)\1+$/.test(next) || next === defaultPin(role)) {
+    throw new LoyaltyError(400, "กรุณาใช้ PIN ใหม่ที่คาดเดายาก และไม่ใช่ค่าเริ่มต้น");
+  }
+  await storePin(role, next);
+}
+
+/** Owner-only reset: both changes commit together and revoke the affected sessions. */
+export async function ownerSetPins(pins: Partial<Record<StaffRole, string>>): Promise<void> {
+  const updates: { role: StaffRole; value: string }[] = [];
+  for (const role of ["staff", "owner"] as const) {
+    const next = pins[role];
+    if (next === undefined) continue;
+    if (!/^\d{4,12}$/.test(next) || /^(.)\1+$/.test(next) || next === defaultPin(role)) {
+      throw new LoyaltyError(400, "กรุณาใช้ PIN ใหม่ที่คาดเดายาก และไม่ใช่ค่าเริ่มต้น");
+    }
+    const salt = randomBytes(16).toString("hex");
+    const hash = (await deriveKey(next, salt, 64) as Buffer).toString("hex");
+    updates.push({ role, value: `${salt}:${hash}` });
+  }
+  if (!updates.length) throw new LoyaltyError(400, "ยังไม่ได้ระบุ PIN ใหม่");
+  const client = await pool.connect();
+  try {
+    await client.query("begin");
+    for (const update of updates) {
+      await client.query(`insert into jaguar_settings(key,value) values($1,$2)
+        on conflict(key) do update set value=excluded.value`, [pinSetting(update.role), update.value]);
+    }
+    await client.query("commit");
+  } catch {
+    await client.query("rollback").catch(() => undefined);
+    throw new LoyaltyError(503, "บันทึก PIN ไม่สำเร็จ กรุณาลองใหม่");
+  } finally { client.release(); }
+}
 export function rateLimit(key: string, max: number, periodMs: number): void {
   const now = Date.now();
   if (windows.size > 10_000) {

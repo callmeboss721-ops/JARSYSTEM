@@ -19,16 +19,16 @@ export interface MemberInput {
      * @maxLength 20
      */
   phone: string;
-  /** @pattern ^[A-Za-z0-9]{6,10}$ */
+  /** @pattern ^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$ */
   member_code: string;
 }
 
 export interface MemberLogin {
-  /** @pattern ^[A-Za-z0-9]{6,10}$ */
+  /** @pattern ^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$ */
   member_code: string;
 }
 
-export interface AdminLogin {
+export interface PinLogin {
   /** @pattern ^[0-9]{4,12}$ */
   pin: string;
 }
@@ -36,6 +36,8 @@ export interface AdminLogin {
 export interface MemberCard {
   id: string;
   member_code: string;
+  display_name: string;
+  is_demo: boolean;
   status: string;
   balance: number;
   lifetime_earned: number;
@@ -66,14 +68,115 @@ export interface Redemption {
   created_at: string;
 }
 
-export interface PointsInput {
-  member_id: string;
+export interface MemberAccountInput {
+  /**
+     * @minLength 1
+     * @maxLength 100
+     */
+  name: string;
+  /** @pattern ^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$ */
+  member_code: string;
+  /**
+     * @minLength 9
+     * @maxLength 20
+     */
+  phone: string;
+}
+
+export type Formula = typeof Formula[keyof typeof Formula];
+
+
+export const Formula = {
+  red: 'red',
+  silver: 'silver',
+  gold: 'gold',
+} as const;
+
+export interface SaleInput {
+  /** @pattern ^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$ */
+  member_code?: string;
+  /** @pattern ^(JAGUAR1:)?[0-9a-f]{64}$ */
+  qr_token?: string;
   /**
      * @minimum 1
-     * @maximum 20
+     * @maximum 999
      */
-  points: number;
+  bottle_count: number;
+  formula: Formula;
   request_id: string;
+}
+
+export interface CounterRedemptionInput {
+  /** @pattern ^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$ */
+  member_code: string;
+  request_id: string;
+}
+
+export type CounterRedemption = MemberCard & {
+  redemption_id: string;
+};
+
+export interface Sale {
+  id: string;
+  formula: Formula;
+  bottle_count: number;
+  amount_baht: number;
+  points_awarded: number;
+  created_at: string;
+}
+
+export interface MemberQr {
+  /** @pattern ^JAGUAR1:[0-9a-f]{64}$ */
+  qr: string;
+}
+
+export interface LoyaltyHealth {
+  status: string;
+  storage: string;
+  demo_mode: boolean;
+  demo_member_code?: string;
+}
+
+export interface StaffSecurityState {
+  default_pin: boolean;
+}
+
+export interface OwnerSecurityState {
+  staff_default_pin: boolean;
+  owner_default_pin: boolean;
+}
+
+export interface StaffPinInput {
+  /** @pattern ^[0-9]{4,12}$ */
+  current_pin: string;
+  /** @pattern ^[0-9]{4,12}$ */
+  new_pin: string;
+}
+
+export interface OwnerPinInput {
+  /** @pattern ^[0-9]{4,12}$ */
+  staff_pin?: string;
+  /** @pattern ^[0-9]{6,12}$ */
+  owner_pin?: string;
+}
+
+export interface RewardInput {
+  /**
+     * @minLength 1
+     * @maxLength 120
+     */
+  name: string;
+  /** @maxLength 500 */
+  description?: string;
+  /**
+     * @minimum 10
+     * @maximum 100000
+     */
+  points_cost: number;
+}
+
+export interface RewardStatusInput {
+  is_active: boolean;
 }
 
 export interface PointTransaction {
@@ -83,16 +186,46 @@ export interface PointTransaction {
   created_at: string;
 }
 
-export interface AdminSummary {
+export interface FormulaSales {
+  formula: Formula;
+  sales_count: number;
+  bottles_sold: number;
+  points_awarded: number;
+  amount_baht: number;
+}
+
+export interface OwnerSummary {
   members: number;
-  pending_redemptions: number;
-  points_issued: number;
+  today_sales: number;
+  total_sales: number;
+  today_visits: number;
+  total_visits: number;
+  redemptions: number;
+  by_formula: FormulaSales[];
 }
 
 export type FindMemberParams = {
 /**
- * @pattern ^[A-Za-z0-9]{6,10}$
+ * @pattern ^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$
  */
-code: string;
+code?: string;
+/**
+ * @pattern ^(JAGUAR1:)?[0-9a-f]{64}$
+ */
+qr_token?: string;
+};
+
+export type ListStaffMembersParams = {
+/**
+ * @maxLength 64
+ */
+q?: string;
+};
+
+export type ListOwnerMembersParams = {
+/**
+ * @maxLength 64
+ */
+q?: string;
 };
 

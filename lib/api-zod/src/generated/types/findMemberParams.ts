@@ -8,7 +8,11 @@
 
 export type FindMemberParams = {
 /**
- * @pattern ^[A-Za-z0-9]{6,10}$
+ * @pattern ^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$
  */
-code: string;
+code?: string;
+/**
+ * @pattern ^(JAGUAR1:)?[0-9a-f]{64}$
+ */
+qr_token?: string;
 };

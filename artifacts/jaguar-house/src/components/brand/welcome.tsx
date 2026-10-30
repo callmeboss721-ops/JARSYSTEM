@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useGetMemberCard, getGetMemberCardQueryKey } from "@workspace/api-client-react";
+import { api, errorText, json, type MemberCardData } from "./loyalty-api";
 import { BrandIcon } from "./brand-icon";
 import { BrandEmblemPlaceholder } from "./brand-emblem-placeholder";
 import { JaguarMark } from "./jaguar-mark";
@@ -10,7 +12,17 @@ import { LoginForm, RegisterForm } from "./auth-forms";
 
 export function Welcome({ initialTab = "login" }: { initialTab?: "login" | "register" }) {
   const [tab, setTab] = useState<"login" | "register">(initialTab);
-  const session = useGetMemberCard({ query: { queryKey: getGetMemberCardQueryKey(), retry: false, refetchOnWindowFocus: false } });
+  const router = useRouter();
+  const [demoBusy, setDemoBusy] = useState(false), [demoErr, setDemoErr] = useState("");
+  const health = useQuery<{ demo_member_code?: string }>({ queryKey: ["/api/loyalty/health"], queryFn: () => api("/api/loyalty/health"), retry: false, refetchOnWindowFocus: false, staleTime: Infinity });
+  const demoCode = health.data?.demo_member_code;
+  const openDemo = async () => {
+    if (!demoCode) return;
+    setDemoBusy(true); setDemoErr("");
+    try { await api("/api/loyalty/login", json("POST", { member_code: demoCode })); router.push("/card"); }
+    catch (e) { setDemoErr(errorText(e)); } finally { setDemoBusy(false); }
+  };
+  const session = useQuery<MemberCardData>({ queryKey: ["/api/loyalty/card"], queryFn: () => api("/api/loyalty/card"), retry: false, refetchOnWindowFocus: false });
 
   return (
     <div className="min-h-[100dvh] grid lg:grid-cols-[1.1fr_1fr]">
@@ -19,9 +31,9 @@ export function Welcome({ initialTab = "login" }: { initialTab?: "login" | "regi
         <div className="relative hidden lg:flex items-center justify-between rise">
           <span className="leading-tight">
             <span className="block font-display text-xs font-semibold tracking-[.2em] text-[var(--gold-2)]">JAGUAR KRATOM HOUSE</span>
-            <span className="mt-1 block text-xs text-[var(--muted)]">ซอยบุญคีรี 6 · สมุทรปราการ</span>
+            <span className="mt-1 block text-xs text-[var(--muted)]">บุญศิริ ซอย 6 · สมุทรปราการ</span>
           </span>
-          <Link href="/admin" className="inline-flex items-center min-h-11 px-2 text-xs text-[var(--muted)] hover:text-[var(--gold-2)] no-underline font-mono tracking-widest" data-testid="link-staff">STAFF</Link>
+          <span className="flex gap-1"><Link href="/staff" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--emerald-2)] no-underline font-mono tracking-widest" data-testid="link-staff">STAFF</Link><Link href="/owner" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--gold-2)] no-underline font-mono tracking-widest" data-testid="link-owner">OWNER</Link></span>
         </div>
 
         <div className="relative lg:my-0 flex flex-col items-start">
@@ -33,12 +45,13 @@ export function Welcome({ initialTab = "login" }: { initialTab?: "login" | "regi
             <span className="text-[var(--gold-2)]">ของคนในซอย</span>
           </h1>
           <div className="hairline w-24 mt-6" aria-hidden="true" />
-          <p className="mt-6 max-w-md text-[var(--muted)] text-base sm:text-lg rise" style={{ animationDelay: "200ms" }}>
-            สะสมแต้มทุกครั้งที่แวะ ครบ 10 แต้ม แลกของรางวัลที่เคาน์เตอร์ได้เลย บัตรอยู่ในมือถือ ไม่ต้องพกกระดาษ
+          <p className="mt-6 max-w-md text-[var(--gold-2)] font-display font-semibold text-lg sm:text-xl rise" style={{ animationDelay: "200ms" }}>
+            สะสม 10 แต้ม รับฟรี 2 ขวด
           </p>
-          <ol className="mt-8 grid grid-cols-3 gap-3 max-w-md w-full rise list-none p-0" style={{ animationDelay: "260ms" }}>
+          <p className="mt-2 max-w-md text-sm text-[var(--muted)]">บัตรอยู่ในมือถือ แสดง QR ที่เคาน์เตอร์ทุกครั้งที่ซื้อ</p>
+            <ol className="loyalty-steps mt-8 hidden sm:grid grid-cols-3 gap-3 max-w-md w-full rise list-none p-0" style={{ animationDelay: "260ms" }}>
             {[["01", "สมัครด้วยเบอร์"], ["02", "สะสมแต้ม"], ["03", "แลกรางวัล"]].map(([n, t]) => (
-              <li key={n} className="border-t border-[var(--line-2)] pt-3">
+              <li key={n} className="panel min-w-0 p-4">
                 <span className="font-mono text-xs text-[var(--gold)]">{n}</span>
                 <p className="text-sm mt-1">{t}</p>
               </li>
@@ -47,7 +60,7 @@ export function Welcome({ initialTab = "login" }: { initialTab?: "login" | "regi
         </div>
 
         <p className="relative mt-10 lg:mt-0 lg:hidden flex items-center gap-2 text-xs text-[var(--muted)]">
-          <BrandIcon name="location" tone="neutral" /> ซอยบุญคีรี 6 · สมุทรปราการ
+          <BrandIcon name="location" tone="neutral" /> บุญศิริ ซอย 6 · สมุทรปราการ
         </p>
       </section>
 
@@ -59,11 +72,16 @@ export function Welcome({ initialTab = "login" }: { initialTab?: "login" | "regi
               <span className="leading-tight">
                 <span className="brand-wordmark block font-display font-semibold text-[14px] text-[var(--gold-2)]">JAGUAR</span>
                 <span className="block eyebrow !text-[9px] !tracking-[.3em]">Kratom House</span>
+                <span className="hidden min-[380px]:block text-[9px] text-[var(--muted)]">บุญศิริ ซอย 6</span>
               </span>
             </span>
-            <Link href="/admin" className="inline-flex items-center min-h-11 text-xs text-[var(--muted)] hover:text-[var(--gold-2)] no-underline font-mono tracking-widest px-2 py-2" data-testid="link-staff-mobile">STAFF</Link>
+            <span className="flex"><Link href="/staff" className="inline-flex items-center min-h-11 min-w-11 justify-center text-xs text-[var(--emerald-2)] no-underline font-mono tracking-widest px-2" data-testid="link-staff-mobile">STAFF</Link><Link href="/owner" className="inline-flex items-center min-h-11 min-w-11 justify-center text-xs text-[var(--gold-2)] no-underline font-mono tracking-widest px-2" data-testid="link-owner-mobile">OWNER</Link></span>
           </div>
-          <p className="eyebrow mb-2">Private Members</p>
+          <div className="flex items-baseline justify-between gap-2 mb-2 lg:hidden">
+            <p className="eyebrow !mb-0">Private Members</p>
+            <p className="shrink-0 text-xs font-semibold text-[var(--gold-2)]">ครบ 10 · ฟรี 2 ขวด</p>
+          </div>
+          <p className="eyebrow mb-2 hidden lg:block">Private Members</p>
           {session.isSuccess && session.data ? (
               <div className="panel auth-panel p-7 space-y-5" data-testid="panel-session">
               <h2 className="font-display text-2xl font-semibold">ยินดีต้อนรับกลับ</h2>
@@ -73,13 +91,18 @@ export function Welcome({ initialTab = "login" }: { initialTab?: "login" | "regi
           ) : (
             <>
               <h2 className="font-display text-2xl sm:text-3xl font-semibold mb-5">{tab === "login" ? "เปิดบัตรของคุณ" : "รับบัตรใบใหม่"}</h2>
-              <div role="tablist" aria-label="เลือกการเข้าใช้" className="flex gap-1 p-1 rounded-xl border border-[var(--line)] bg-[rgba(196,202,214,.03)] mb-5">
-                <button role="tab" id="tab-login" aria-selected={tab === "login"} aria-controls="panel-auth" className="tab" onClick={() => setTab("login")} data-testid="tab-login">เข้าสู่ระบบ</button>
-                <button role="tab" id="tab-register" aria-selected={tab === "register"} aria-controls="panel-auth" className="tab" onClick={() => setTab("register")} data-testid="tab-register">สมัครสมาชิก</button>
+              <div role="tablist" onKeyDown={(e) => { if (e.key === "ArrowRight" || e.key === "ArrowLeft") { const next = tab === "login" ? "register" : "login"; setTab(next); document.getElementById(`tab-${next}`)?.focus(); } }} aria-label="เลือกการเข้าใช้" className="pill-switch flex gap-1 p-1 mb-5">
+                <button role="tab" id="tab-login" aria-selected={tab === "login"} tabIndex={tab === "login" ? 0 : -1} aria-controls="panel-auth" className="tab" onClick={() => setTab("login")} data-testid="tab-login">เข้าสู่ระบบ</button>
+                <button role="tab" id="tab-register" aria-selected={tab === "register"} tabIndex={tab === "register" ? 0 : -1} aria-controls="panel-auth" className="tab" onClick={() => setTab("register")} data-testid="tab-register">สมัครสมาชิก</button>
               </div>
               <div id="panel-auth" role="tabpanel" aria-labelledby={`tab-${tab}`} className="panel auth-panel p-5 sm:p-7">
                 {tab === "login" ? <LoginForm /> : <RegisterForm />}
               </div>
+              {demoCode && <div className="mt-4 rounded-2xl border border-dashed border-[rgba(246,196,138,.5)] p-4 space-y-2">
+                <span className="demo-badge">DEMO · โหมดพัฒนาเท่านั้น</span>
+                <button type="button" className="btn btn-ghost w-full" disabled={demoBusy} onClick={() => void openDemo()} data-testid="button-demo">{demoBusy ? "กำลังเปิด…" : `ทดลองเปิดบัตรตัวอย่าง ${demoCode}`}</button>
+                {demoErr && <p role="alert" className="field-error">{demoErr}</p>}
+              </div>}
               {session.isError && (session.error as { status?: number })?.status !== 401 && (
                 <p className="mt-4 text-xs text-[var(--muted)]" role="status">เซิร์ฟเวอร์ไม่ตอบสนองชั่วคราว คุณยังลองเข้าสู่ระบบได้</p>
               )}

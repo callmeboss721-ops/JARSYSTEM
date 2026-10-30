@@ -107,67 +107,167 @@ paths:
               schema:
                 type: array
                 items: { $ref: "#/components/schemas/PointTransaction" }
-  /loyalty/admin/login:
+  /loyalty/health:
+    get:
+      operationId: getLoyaltyHealth
+      responses:
+        "200":
+          description: Store availability and development-demo capability
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/LoyaltyHealth" }
+  /loyalty/qr:
+    get:
+      operationId: getMemberQr
+      responses:
+        "200":
+          description: Opaque private staff-scan credential; never a member login code
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MemberQr" }
+  /loyalty/sales:
+    get:
+      operationId: listMemberSales
+      responses:
+        "200":
+          description: Five most recent purchases for the signed-in member
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Sale" }
+  /loyalty/staff/login:
     post:
-      operationId: loginAdmin
+      operationId: loginStaff
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: "#/components/schemas/AdminLogin" }
+            schema: { $ref: "#/components/schemas/PinLogin" }
       responses:
         "200":
           description: Staff session cookie issued
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Success" }
-  /loyalty/admin/logout:
+  /loyalty/staff/logout:
     post:
-      operationId: logoutAdmin
+      operationId: logoutStaff
       responses:
         "200":
           description: Staff session cleared
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Success" }
-  /loyalty/admin/summary:
+  /loyalty/staff/security:
     get:
-      operationId: getAdminSummary
+      operationId: getStaffSecurity
       responses:
         "200":
-          description: Staff session and live summary
+          description: Staff session and PIN setup status
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/AdminSummary" }
-  /loyalty/admin/member:
+              schema: { $ref: "#/components/schemas/StaffSecurityState" }
+  /loyalty/staff/pin:
+    post:
+      operationId: changeStaffPin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/StaffPinInput" }
+      responses:
+        "200":
+          description: PIN replaced and staff sessions revoked
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Success" }
+  /loyalty/staff/member:
     get:
       operationId: findMember
       parameters:
         - in: query
           name: code
-          required: true
-          schema: { type: string, pattern: "^[A-Za-z0-9]{6,10}$" }
+          required: false
+          schema: { type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$" }
+        - in: query
+          name: qr_token
+          required: false
+          schema: { type: string, pattern: "^(JAGUAR1:)?[0-9a-f]{64}$" }
       responses:
         "200":
           description: Exact member lookup
           content:
             application/json:
               schema: { $ref: "#/components/schemas/MemberCard" }
-  /loyalty/admin/points:
+  /loyalty/staff/members:
+    get:
+      operationId: listStaffMembers
+      parameters:
+        - in: query
+          name: q
+          schema: { type: string, maxLength: 64 }
+      responses:
+        "200":
+          description: Active member directory, capped at 200
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/MemberCard" }
     post:
-      operationId: addMemberPoints
+      operationId: createStaffMember
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: "#/components/schemas/PointsInput" }
+            schema: { $ref: "#/components/schemas/MemberAccountInput" }
       responses:
-        "200":
-          description: Atomic points credit and refreshed member card
+        "201":
+          description: Member and zero balance created atomically
           content:
             application/json:
               schema: { $ref: "#/components/schemas/MemberCard" }
-  /loyalty/admin/redemptions:
+  /loyalty/staff/stamp:
+    post:
+      operationId: recordStaffSale
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SaleInput" }
+      responses:
+        "200":
+          description: Exactly one point and a recorded sale, idempotent by request_id
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MemberCard" }
+  /loyalty/staff/redeem:
+    post:
+      operationId: redeemAtCounter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CounterRedemptionInput" }
+      responses:
+        "200":
+          description: Idempotent ten-point redemption and updated member card
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CounterRedemption" }
+  /loyalty/staff/rewards:
+    get:
+      operationId: listStaffRewards
+      responses:
+        "200":
+          description: Staff reward availability
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Reward" }
+  /loyalty/staff/redemptions:
     get:
       operationId: listPendingRedemptions
       responses:
@@ -178,9 +278,174 @@ paths:
               schema:
                 type: array
                 items: { $ref: "#/components/schemas/Redemption" }
-  /loyalty/admin/redemptions/{id}/confirm:
+  /loyalty/staff/redemptions/{id}/confirm:
     post:
       operationId: confirmRedemption
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Atomic confirmation, balance deduction and ledger entry
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Redemption" }
+  /loyalty/owner/login:
+    post:
+      operationId: loginOwner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PinLogin" }
+      responses:
+        "200":
+          description: Owner-only session cookie issued
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Success" }
+  /loyalty/owner/logout:
+    post:
+      operationId: logoutOwner
+      responses:
+        "200":
+          description: Owner session cleared
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Success" }
+  /loyalty/owner/security:
+    get:
+      operationId: getOwnerSecurity
+      responses:
+        "200":
+          description: Both PIN setup states, never the PIN values
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OwnerSecurityState" }
+  /loyalty/owner/pins:
+    post:
+      operationId: changeOwnerPins
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/OwnerPinInput" }
+      responses:
+        "200":
+          description: Selected PINs replaced and owner session cleared
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Success" }
+  /loyalty/owner/summary:
+    get:
+      operationId: getOwnerSummary
+      responses:
+        "200":
+          description: Persisted sales, Bangkok-day totals and formula mix excluding demo data
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OwnerSummary" }
+  /loyalty/owner/members:
+    get:
+      operationId: listOwnerMembers
+      parameters:
+        - in: query
+          name: q
+          schema: { type: string, maxLength: 64 }
+      responses:
+        "200":
+          description: Member directory excluding deleted accounts, capped at 200
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/MemberCard" }
+    post:
+      operationId: createOwnerMember
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/MemberAccountInput" }
+      responses:
+        "201":
+          description: Member and zero balance created atomically
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MemberCard" }
+  /loyalty/owner/members/{id}:
+    delete:
+      operationId: deactivateOwnerMember
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Member deactivated while preserving sales and redemption history
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Success" }
+  /loyalty/owner/rewards:
+    get:
+      operationId: listOwnerRewards
+      responses:
+        "200":
+          description: Active and inactive rewards
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Reward" }
+    post:
+      operationId: createOwnerReward
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RewardInput" }
+      responses:
+        "201":
+          description: Reward created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Reward" }
+  /loyalty/owner/rewards/{id}:
+    patch:
+      operationId: updateOwnerReward
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RewardStatusInput" }
+      responses:
+        "200":
+          description: Reward availability updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Reward" }
+  /loyalty/owner/pending:
+    get:
+      operationId: listOwnerPending
+      responses:
+        "200":
+          description: Pending customer reward requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Redemption" }
+  /loyalty/owner/redemptions/{id}/confirm:
+    post:
+      operationId: confirmOwnerRedemption
       parameters:
         - in: path
           name: id
@@ -209,23 +474,25 @@ components:
       required: [phone, member_code]
       properties:
         phone: { type: string, minLength: 9, maxLength: 20 }
-        member_code: { type: string, pattern: "^[A-Za-z0-9]{6,10}$" }
+        member_code: { type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$" }
     MemberLogin:
       type: object
       required: [member_code]
       properties:
-        member_code: { type: string, pattern: "^[A-Za-z0-9]{6,10}$" }
-    AdminLogin:
+        member_code: { type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$" }
+    PinLogin:
       type: object
       required: [pin]
       properties:
         pin: { type: string, pattern: "^[0-9]{4,12}$" }
     MemberCard:
       type: object
-      required: [id, member_code, status, balance, lifetime_earned, lifetime_redeemed]
+      required: [id, member_code, display_name, is_demo, status, balance, lifetime_earned, lifetime_redeemed]
       properties:
         id: { type: string }
         member_code: { type: string }
+        display_name: { type: string }
+        is_demo: { type: boolean }
         status: { type: string }
         balance: { type: integer }
         lifetime_earned: { type: integer }
@@ -256,13 +523,95 @@ components:
         points_spent: { type: integer }
         status: { type: string }
         created_at: { type: string }
-    PointsInput:
+    MemberAccountInput:
       type: object
-      required: [member_id, points, request_id]
+      required: [name, member_code, phone]
       properties:
-        member_id: { type: string, format: uuid }
-        points: { type: integer, minimum: 1, maximum: 20 }
+        name: { type: string, minLength: 1, maxLength: 100 }
+        member_code: { type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$" }
+        phone: { type: string, minLength: 9, maxLength: 20 }
+    SaleInput:
+      type: object
+      required: [bottle_count, formula, request_id]
+      properties:
+        member_code: { type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$" }
+        qr_token: { type: string, pattern: "^(JAGUAR1:)?[0-9a-f]{64}$" }
+        bottle_count: { type: integer, minimum: 1, maximum: 999 }
+        formula: { $ref: "#/components/schemas/Formula" }
         request_id: { type: string, format: uuid }
+    CounterRedemptionInput:
+      type: object
+      required: [member_code, request_id]
+      properties:
+        member_code: { type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$" }
+        request_id: { type: string, format: uuid }
+    CounterRedemption:
+      allOf:
+        - $ref: "#/components/schemas/MemberCard"
+        - type: object
+          required: [redemption_id]
+          properties:
+            redemption_id: { type: string, format: uuid }
+    Formula:
+      type: string
+      enum: [red, silver, gold]
+    Sale:
+      type: object
+      required: [id, formula, bottle_count, amount_baht, points_awarded, created_at]
+      properties:
+        id: { type: string, format: uuid }
+        formula: { $ref: "#/components/schemas/Formula" }
+        bottle_count: { type: integer }
+        amount_baht: { type: integer }
+        points_awarded: { type: integer }
+        created_at: { type: string }
+    MemberQr:
+      type: object
+      required: [qr]
+      properties:
+        qr: { type: string, pattern: "^JAGUAR1:[0-9a-f]{64}$" }
+    LoyaltyHealth:
+      type: object
+      required: [status, storage, demo_mode]
+      properties:
+        status: { type: string }
+        storage: { type: string }
+        demo_mode: { type: boolean }
+        demo_member_code: { type: string }
+    StaffSecurityState:
+      type: object
+      required: [default_pin]
+      properties:
+        default_pin: { type: boolean }
+    OwnerSecurityState:
+      type: object
+      required: [staff_default_pin, owner_default_pin]
+      properties:
+        staff_default_pin: { type: boolean }
+        owner_default_pin: { type: boolean }
+    StaffPinInput:
+      type: object
+      required: [current_pin, new_pin]
+      properties:
+        current_pin: { type: string, pattern: "^[0-9]{4,12}$" }
+        new_pin: { type: string, pattern: "^[0-9]{4,12}$" }
+    OwnerPinInput:
+      type: object
+      properties:
+        staff_pin: { type: string, pattern: "^[0-9]{4,12}$" }
+        owner_pin: { type: string, pattern: "^[0-9]{6,12}$" }
+    RewardInput:
+      type: object
+      required: [name, points_cost]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 120 }
+        description: { type: string, maxLength: 500 }
+        points_cost: { type: integer, minimum: 10, maximum: 100000 }
+    RewardStatusInput:
+      type: object
+      required: [is_active]
+      properties:
+        is_active: { type: boolean }
     PointTransaction:
       type: object
       required: [id, delta, reason, created_at]
@@ -271,10 +620,25 @@ components:
         delta: { type: integer }
         reason: { type: string }
         created_at: { type: string }
-    AdminSummary:
+    FormulaSales:
       type: object
-      required: [members, pending_redemptions, points_issued]
+      required: [formula, sales_count, bottles_sold, points_awarded, amount_baht]
+      properties:
+        formula: { $ref: "#/components/schemas/Formula" }
+        sales_count: { type: integer }
+        bottles_sold: { type: integer }
+        points_awarded: { type: integer }
+        amount_baht: { type: number }
+    OwnerSummary:
+      type: object
+      required: [members, today_sales, total_sales, today_visits, total_visits, redemptions, by_formula]
       properties:
         members: { type: integer }
-        pending_redemptions: { type: integer }
-        points_issued: { type: integer }
+        today_sales: { type: number }
+        total_sales: { type: number }
+        today_visits: { type: integer }
+        total_visits: { type: integer }
+        redemptions: { type: integer }
+        by_formula:
+          type: array
+          items: { $ref: "#/components/schemas/FormulaSales" }

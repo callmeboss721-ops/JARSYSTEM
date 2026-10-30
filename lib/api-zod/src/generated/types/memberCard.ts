@@ -9,6 +9,8 @@
 export interface MemberCard {
   id: string;
   member_code: string;
+  display_name: string;
+  is_demo: boolean;
   status: string;
   balance: number;
   lifetime_earned: number;

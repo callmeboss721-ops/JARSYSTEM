@@ -12,6 +12,6 @@ export interface MemberInput {
      * @maxLength 20
      */
   phone: string;
-  /** @pattern ^[A-Za-z0-9]{6,10}$ */
+  /** @pattern ^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$ */
   member_code: string;
 }

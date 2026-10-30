@@ -6,8 +6,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface AdminSummary {
-  members: number;
-  pending_redemptions: number;
-  points_issued: number;
-}
+export type ListOwnerMembersParams = {
+/**
+ * @maxLength 64
+ */
+q?: string;
+};

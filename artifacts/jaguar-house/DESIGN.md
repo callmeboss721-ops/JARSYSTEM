@@ -5,7 +5,10 @@
 A discreet, premium Thai membership experience, not a game or a cyberpunk
 dashboard. Customer membership and the staff desk share the same visual system,
 but the staff desk has restrained emerald accents and clearly identified tools.
-The jaguar identity is an understated broken-ring rosette, never a cartoon head.
+The jaguar identity is the ORIGINAL supplied logo image
+(`public/brand/jaguar-logo.webp`, `jaguar-logo-256.jpg`; app icon `src/app/icon.png`,
+`apple-icon.png`). Always show it whole (object-contain, never cropped or redrawn).
+The broken-ring rosette survives only as the small `PawGlyph` stamp mark.
 
 ## Source of truth
 
@@ -15,7 +18,7 @@ No separate theme package or additional runtime dependency is required.
 
 | Role | Token / value |
 | --- | --- |
-| Obsidian canvas | `--bg` / `#05050A` |
+| Obsidian canvas | `--bg` / `#040605`, restrained green/gold corner mesh |
 | Primary gold | `--gold` / `#E5C04A` |
 | Champagne text | `--gold-2` |
 | Gunmetal surfaces | `--panel`, `--panel-2` |
@@ -23,14 +26,14 @@ No separate theme package or additional runtime dependency is required.
 | Decorative dividers | `--line`, `--line-2` |
 | Interactive boundaries | `--control-line` |
 | Secondary / success | `--emerald`, `--emerald-2` |
-| Necessary focus / status | `--cyan` / `#00F0FF` |
+| Keyboard/input focus | `--green` / `#2FD98A` |
 | Error | `--danger`, always accompanied by text or an icon |
 
 Legacy `--neon`, `.btn-neon`, and `.btn-gold` names remain presentation aliases
 for the primary gold treatment, not different action semantics. `.btn-ghost`
 is the secondary gunmetal/outlined treatment. Keep primary submit/confirm
-actions consistently gold; emerald distinguishes positive feedback and staff
-accents rather than introducing a competing primary action colour.
+actions consistently gold; `.btn-redeem` uses green for customer reward
+actions. Glass panels share 16px backdrop blur and thin gold boundaries.
 
 ## Typography and layout
 
@@ -58,12 +61,10 @@ accents rather than introducing a competing primary action colour.
   for the staff desk, `Plus` for adding points, and `History` for activity.
   `Settings` is available in the shared map, but there is no settings route;
   do not add a navigation item for it without a product requirement.
-- `BrandEmblemPlaceholder` is a CSS-only labelled layout slot on the hero and
-  member card. Its monogram and embossed-gold treatment are placeholders, not
-  approved logo artwork or a loaded GLB. Replace the contents only when an
-  approved brand asset exists; preserve the slot dimensions.
-- The existing shared house-emblem source remains unchanged. Brand artwork is
-  separate from the outline UI-icon system.
+- `BrandEmblemPlaceholder` (name kept for compatibility) and `JaguarMark` both
+  render the original supplied logo image in full. Do not create vector
+  recreations or new logo motifs. Brand artwork is separate from the outline
+  UI-icon system.
 
 ## States and motion
 

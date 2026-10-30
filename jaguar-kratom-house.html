@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0A0A0A">
+  <meta name="description" content="JAGUAR KRATOM HOUSE · บุญศิริ ซอย 6 สมุทรปราการ">
+  <title>JAGUAR KRATOM HOUSE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #0a0a0a;
+      --paper: #e8e2d5;
+      --muted: #a49e91;
+      --gold: #d4af37;
+      --gold-soft: #f2db8c;
+      --green: #00e676;
+      --line: rgba(212, 175, 55, .35);
+      --site: 480px;
+      font-family: "Prompt", sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; background: var(--ink); }
+    body {
+      min-width: 320px;
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--paper);
+      background:
+        radial-gradient(ellipse at 5% 10%, rgba(0, 230, 118, .09), transparent 32rem),
+        radial-gradient(ellipse at 94% 28%, rgba(212, 175, 55, .09), transparent 30rem),
+        #0a0a0a;
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--green);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+    .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+    .grain {
+      position: fixed; inset: 0; z-index: 10; width: 100%; height: 100%;
+      pointer-events: none; opacity: .055; mix-blend-mode: screen;
+    }
+    .page { width: min(100%, var(--site)); margin-inline: auto; padding: 0 20px; }
+
+    .masthead {
+      min-height: 64px; display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; border-bottom: 1px solid rgba(212, 175, 55, .22);
+    }
+    .brand { display: flex; align-items: center; min-width: 0; gap: 10px; }
+    .brand__mark { width: 39px; height: 39px; flex: 0 0 auto; color: var(--gold); }
+    .brand__mark.icon { width: 39px; height: 39px; }
+    .brand__text { min-width: 0; }
+    .brand__name {
+      display: block; color: var(--gold-soft); font-size: 12px; font-weight: 600;
+      letter-spacing: .095em; line-height: 1.25; white-space: nowrap;
+    }
+    .brand__place { display: block; color: var(--muted); font-size: 10px; letter-spacing: .035em; }
+    .header-link {
+      min-height: 40px; padding: 8px 13px; display: inline-flex; align-items: center;
+      justify-content: center; border: 1px solid var(--line); color: var(--gold-soft);
+      font-size: 11px; letter-spacing: .04em; white-space: nowrap; transition: .18s ease;
+    }
+
+    .hero { position: relative; padding: 42px 0 31px; }
+    .eyebrow {
+      display: flex; align-items: center; gap: 9px; margin: 0 0 13px;
+      color: var(--gold); font-size: 10px; letter-spacing: .17em; text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 26px; height: 1px; background: var(--gold); }
+    h1 {
+      max-width: 440px; margin: 0; color: var(--paper); font-size: clamp(37px, 10vw, 51px);
+      font-weight: 500; letter-spacing: -.055em; line-height: 1.14;
+    }
+    h1 span { display: block; }
+    h1 span:first-child { color: var(--gold-soft); }
+    h1 span:last-child { color: var(--green); font-size: .58em; font-weight: 400; letter-spacing: -.025em; }
+    .hero__visual {
+      position: relative; isolation: isolate; width: calc(100% + 28px); margin: 24px 0 20px -8px;
+      aspect-ratio: 1.14; background: #11130f; border: 1px solid rgba(212, 175, 55, .62);
+      clip-path: polygon(0 4%, 98% 0, 100% 94%, 3% 100%);
+      box-shadow: 0 20px 65px rgba(0, 0, 0, .72), 0 0 38px rgba(0, 230, 118, .08);
+    }
+    .hero__visual::before {
+      content: ""; position: absolute; inset: 0; z-index: -1;
+      background:
+        radial-gradient(ellipse at 73% 25%, rgba(214, 170, 67, .38), transparent 35%),
+        radial-gradient(ellipse at 20% 80%, rgba(0, 230, 118, .18), transparent 43%),
+        linear-gradient(145deg, #10120f, #060707 60%, #17120c);
+    }
+    .hero__visual::after {
+      content: ""; position: absolute; inset: 8px;
+      border: 1px solid rgba(242, 219, 140, .24); clip-path: polygon(0 4%, 98% 0, 100% 94%, 3% 100%);
+      pointer-events: none;
+    }
+    .hero__movie {
+      position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%;
+      object-fit: cover; opacity: .76;
+    }
+    .hide { display: none; }
+    .image-slot {
+      position: absolute; left: 17px; right: 17px; bottom: 17px; display: flex;
+      justify-content: space-between; align-items: end; gap: 12px;
+      color: rgba(232, 226, 213, .72); font-size: 10px; letter-spacing: .04em;
+    }
+    .image-slot__label { color: var(--gold-soft); font-size: 9px; letter-spacing: .16em; }
+    .hero__cta {
+      min-height: 50px; padding: 13px 20px; display: inline-flex; align-items: center;
+      justify-content: center; gap: 12px; background: linear-gradient(120deg, #b88b20, #f1d978 48%, #b98d29);
+      color: #15120a; box-shadow: 0 7px 23px rgba(212, 175, 55, .2), inset 0 1px 0 rgba(255, 255, 255, .45);
+      font-size: 13px; font-weight: 600; transition: transform .18s ease;
+    }
+    .hero__cta svg { width: 16px; height: 16px; }
+
+    .section { padding: 38px 0 42px; }
+    .section-head { margin-bottom: 15px; }
+    .section-index {
+      margin: 0 0 6px; color: var(--gold); font-size: 10px; letter-spacing: .16em;
+    }
+    h2 { margin: 0; color: var(--paper); font-size: 22px; font-weight: 400; letter-spacing: -.035em; line-height: 1.35; }
+    .section-note { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
+
+    .products {
+      display: flex; align-items: flex-start; gap: 12px; margin: 0 -20px;
+      padding: 4px 20px 16px; overflow-x: auto; overscroll-behavior-inline: contain;
+      scrollbar-width: thin; scrollbar-color: rgba(212, 175, 55, .6) transparent; scroll-snap-type: x mandatory;
+    }
+    .product { flex: 0 0 44%; scroll-snap-align: start; }
+    .product:nth-child(2) { flex-basis: 42%; margin-top: 34px; }
+    .product:nth-child(3) { flex-basis: 46%; margin-top: 11px; }
+    .product__photo {
+      position: relative; height: 218px; overflow: hidden; background:
+        radial-gradient(ellipse at 50% 47%, rgba(0, 230, 118, .11), transparent 40%),
+        linear-gradient(148deg, #171814, #090a09 65%, #211b11);
+      border: 1px solid rgba(212, 175, 55, .24);
+    }
+    .product__photo::before {
+      content: ""; position: absolute; inset: 8px; border: 1px solid rgba(232, 226, 213, .1);
+      clip-path: polygon(0 0, 100% 4%, 100% 100%, 5% 96%);
+    }
+    .product__placeholder {
+      position: absolute; inset: auto 12px 12px; color: rgba(232, 226, 213, .56);
+      font-size: 9px; line-height: 1.45;
+    }
+    .product__placeholder b { display: block; color: var(--gold-soft); font-weight: 400; }
+    .product__meta { display: flex; align-items: baseline; justify-content: space-between; gap: 4px; padding-top: 9px; }
+    .product__name { font-size: 12px; font-weight: 400; }
+    .product__price { color: var(--gold); font-size: 11px; white-space: nowrap; }
+    .price-slip {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+      padding: 11px 0 0; border-top: 1px dashed rgba(232, 226, 213, .24);
+      color: var(--muted); font-size: 11px;
+    }
+    .price-slip strong { color: var(--gold-soft); font-size: 16px; font-weight: 400; white-space: nowrap; }
+
+    .fullbleed {
+      position: relative; isolation: isolate; display: grid; place-items: center;
+      width: 100vw; height: min(76vw, 365px); min-height: 270px; margin-left: calc(50% - 50vw);
+      overflow: hidden; text-align: center; background:
+        radial-gradient(ellipse at 75% 34%, rgba(212, 175, 55, .2), transparent 32%),
+        radial-gradient(ellipse at 21% 76%, rgba(0, 230, 118, .13), transparent 36%),
+        linear-gradient(125deg, #141611, #090a09 47%, #17140e);
+      border-top: 1px solid rgba(212, 175, 55, .21); border-bottom: 1px solid rgba(212, 175, 55, .21);
+    }
+    .fullbleed::before {
+      content: ""; position: absolute; inset: 0; z-index: -1;
+      background: linear-gradient(180deg, #0a0a0a 0%, transparent 31%, transparent 68%, #0a0a0a 100%);
+    }
+    .fullbleed__slot {
+      position: absolute; top: 14px; left: max(20px, calc((100vw - var(--site)) / 2 + 20px));
+      color: rgba(242, 219, 140, .72); font-size: 9px; letter-spacing: .14em;
+    }
+    .fullbleed__copy { max-width: 315px; padding: 18px; color: var(--paper); font-size: 20px; font-weight: 400; line-height: 1.5; }
+    .fullbleed__copy span { color: var(--gold-soft); }
+
+    .loyalty { position: relative; padding-top: 42px; }
+    .loyalty__photo {
+      position: relative; width: 78%; height: 145px; margin: 0 0 -31px auto;
+      overflow: hidden; border: 1px solid rgba(212, 175, 55, .3);
+      background: radial-gradient(ellipse at 64% 40%, rgba(0, 230, 118, .16), transparent 36%), #11120f;
+      transform: rotate(2deg);
+    }
+    .loyalty__photo-label {
+      position: absolute; right: 10px; bottom: 9px; color: rgba(242, 219, 140, .8);
+      font-size: 9px; letter-spacing: .12em;
+    }
+    .ticket {
+      position: relative; z-index: 1; padding: 19px 18px 17px; color: #17140b;
+      background:
+        radial-gradient(ellipse at 90% 10%, rgba(255, 255, 255, .24), transparent 26%),
+        linear-gradient(133deg, #b28a2a, #ecd47b 48%, #c3a346);
+      clip-path: polygon(0 0, 100% 0, 100% 94%, 94% 100%, 0 100%, 0 6%);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, .4);
+    }
+    .ticket::after {
+      content: ""; position: absolute; inset: 7px; border: 1px dashed rgba(26, 22, 10, .5);
+      pointer-events: none; clip-path: polygon(0 0, 100% 0, 100% 94%, 94% 100%, 0 100%, 0 6%);
+    }
+    .ticket__top { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+    .ticket__brand { font-size: 10px; font-weight: 600; letter-spacing: .1em; }
+    .ticket__type { font-size: 9px; text-align: right; }
+    .ticket__hero { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 0 9px; }
+    .ticket__qualifier { display: block; max-width: 130px; font-size: 11px; line-height: 1.45; }
+    .ticket__number { font-size: clamp(74px, 23vw, 100px); font-weight: 600; letter-spacing: -.085em; line-height: .9; }
+    .ticket__number small { font-size: .2em; letter-spacing: 0; }
+    .stamp-label { margin: 7px 0 8px; font-size: 9px; }
+    .stamp-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+    .stamp {
+      width: 100%; aspect-ratio: 1; display: grid; place-items: center;
+      border: 1px dashed rgba(28, 25, 16, .72); border-radius: 50%; color: rgba(28, 25, 16, .62);
+    }
+    .stamp svg { width: 20px; height: 20px; }
+    .stamp--example { color: #4b390a; border-style: solid; }
+    .ticket__footer {
+      display: flex; justify-content: space-between; align-items: end; gap: 12px;
+      margin-top: 13px; padding-top: 10px; border-top: 1px dashed rgba(28, 25, 16, .48);
+      font-size: 9px;
+    }
+    .ticket__reward { max-width: 210px; line-height: 1.45; }
+    .ticket__reward strong { display: block; font-size: 14px; font-weight: 600; }
+    .ticket__mark { width: 38px; height: 38px; flex: 0 0 auto; color: #4a390c; }
+    .ticket__mark.icon { width: 38px; height: 38px; }
+    .note {
+      margin: 10px 0 0; color: var(--muted); font-size: 10px; text-align: right;
+    }
+
+    .receipt {
+      position: relative; margin: 23px -20px 0; padding: 26px 20px 30px;
+      border-top: 1px dashed rgba(212, 175, 55, .55);
+      background: linear-gradient(180deg, rgba(255, 255, 255, .035), transparent);
+    }
+    .receipt__heading { margin: 0 0 13px; color: var(--gold-soft); font-size: 11px; letter-spacing: .16em; }
+    .receipt__body { display: grid; grid-template-columns: 1fr 84px; align-items: center; gap: 18px; }
+    .receipt dl { display: grid; grid-template-columns: 63px 1fr; gap: 6px 8px; margin: 0; font-size: 10px; }
+    .receipt dt { color: var(--muted); }
+    .receipt dd { margin: 0; color: var(--paper); }
+    .receipt__qr {
+      width: 84px; height: 84px; padding: 5px; color: var(--gold-soft);
+      border: 1px solid var(--line); background: rgba(212, 175, 55, .055);
+    }
+    .receipt__caption { margin: 5px 0 0; color: var(--muted); font-size: 8px; text-align: center; line-height: 1.45; }
+    .receipt__end {
+      margin: 18px 0 0; padding-top: 12px; border-top: 1px dashed rgba(232, 226, 213, .2);
+      color: var(--muted); font-size: 9px; text-align: center; letter-spacing: .07em;
+    }
+    .icon { display: block; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    @media (hover: hover) {
+      .header-link:hover, .hero__cta:hover { transform: translateY(-3px); }
+    }
+    @media (min-width: 700px) {
+      .page { padding-inline: 24px; }
+      .masthead { min-height: 72px; }
+      .hero { padding-top: 58px; }
+      .hero__visual { width: calc(100% + 36px); margin-left: -14px; }
+      .section { padding-top: 48px; padding-bottom: 52px; }
+      .products { margin-inline: -24px; padding-inline: 24px; }
+      .product { flex-basis: 34%; }
+      .product:nth-child(2) { flex-basis: 32%; }
+      .product:nth-child(3) { flex-basis: 35%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <svg class="sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <filter id="film-grain">
+      <feTurbulence type="fractalNoise" baseFrequency=".78" numOctaves="2" seed="17"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+    <symbol id="jaguar-mark" viewBox="0 0 64 64">
+      <path d="M15 22 10 9l15 7a24 24 0 0 1 14 0l15-7-5 13a23 23 0 0 1 4 13c0 14-9 23-21 23S11 49 11 35a23 23 0 0 1 4-13Z"/>
+      <path d="M19 25c3-4 7-6 13-6s10 2 13 6M18 31c2-2 5-3 8-2m12 0c3-1 6 0 8 2M23 38c2 2 4 3 9 3s7-1 9-3M26 50l-2 3m14-3 2 3"/>
+      <path d="M25 32h.1m13 0h.1M32 34l-3 4h6l-3-4Zm-6 10c2 2 4 3 6 3s4-1 6-3"/>
+      <path d="M18 14 22 9m24 5-4-5M8 32h5m38 0h5"/>
+    </symbol>
+    <symbol id="icon-bottle" viewBox="0 0 24 24">
+      <path d="M9 3h6m-5 0v3l-3 3v11h10V9l-3-3V3m-7 8h10m-8 3h6"/>
+    </symbol>
+    <symbol id="icon-qr" viewBox="0 0 24 24">
+      <path d="M3 9V3h6m6 0h6v6m0 6v6h-6m-6 0H3v-6"/>
+      <path d="M6 6h3v3H6zM15 6h3v3h-3zM6 15h3v3H6zM14 14h2v2h-2zm4 0h1m-5 4h1m3 0h1"/>
+    </symbol>
+    <symbol id="icon-leaf" viewBox="0 0 24 24">
+      <path d="M20 4C11 4 5 7 5 14a6 6 0 0 0 6 6c7 0 9-7 9-16Z"/>
+      <path d="M4 21c3-6 7-9 12-12"/>
+    </symbol>
+    <symbol id="icon-stamp" viewBox="0 0 24 24">
+      <path d="M8 10a4 4 0 1 1 8 0c0 2 1 3 2 4H6c1-1 2-2 2-4Zm-3 7h14v3H5z"/>
+      <path d="M12 7v4m-2-2h4"/>
+    </symbol>
+    <symbol id="icon-arrow" viewBox="0 0 24 24">
+      <path d="M4 12h15m-6-6 6 6-6 6"/>
+    </symbol>
+    <symbol id="icon-paw" viewBox="0 0 24 24">
+      <path d="M12 12c-2.3 0-5 3.2-5 5.5A3.2 3.2 0 0 0 10.3 21c.7 0 1.2-.4 1.7-.4s1 .4 1.7.4a3.2 3.2 0 0 0 3.3-3.5c0-2.3-2.7-5.5-5-5.5Z"/>
+      <path d="M5.1 12.5c-1.6 0-2.4-2-1.8-3.3.4-.8 1.4-1 2-.4 1 1.1 1.4 3.7-.2 3.7Zm5-4.8c-1.6.4-2.5-1-2.4-2.4.1-1.1.7-1.7 1.6-1.5 1.3.3 2.4 3.4.8 3.9Zm8.8 4.8c1.6 0 2.4-2 1.8-3.3-.4-.8-1.4-1-2-.4-1 1.1-1.4 3.7.2 3.7Zm-5-4.8c1.6.4 2.5-1 2.4-2.4-.1-1.1-.7-1.7-1.6-1.5-1.3.3-2.4 3.4-.8 3.9Z"/>
+    </symbol>
+  </svg>
+  <svg class="grain" aria-hidden="true"><rect width="100%" height="100%" filter="url(#film-grain)"/></svg>
+
+  <header class="page masthead">
+    <a class="brand" href="#" aria-label="JAGUAR KRATOM HOUSE หน้าแรก">
+      <svg class="brand__mark icon" viewBox="0 0 64 64" aria-hidden="true"><use href="#jaguar-mark"/></svg>
+      <span class="brand__text">
+        <span class="brand__name">JAGUAR KRATOM HOUSE</span>
+        <span class="brand__place">บุญศิริ ซอย 6 · สมุทรปราการ</span>
+      </span>
+    </a>
+    <a class="header-link" href="#card">บัตรสมาชิก</a>
+  </header>
+
+  <main>
+    <section class="page hero" aria-labelledby="hero-title">
+      <p class="eyebrow">JAGUAR · KRATOM HOUSE</p>
+      <h1 id="hero-title">
+        <span>พี่เสือพลังใบ</span>
+        <span>ซุปเปอร์ฮีโร่ของ</span>
+        <span>ตั้งแต่ขวดจนถึงถุงกระดาษ</span>
+      </h1>
+      <!-- เปลี่ยนช่องนี้เป็นภาพจริง 654: โปสเตอร์พี่เสือ -->
+      <div class="hero__visual" role="img" aria-label="ช่องภาพสำหรับโปสเตอร์พี่เสือ ภาพอ้างอิง 654">
+        <!-- วาง hero-loop.webm คู่กับไฟล์นี้ แล้วลบ class="hide" -->
+        <video class="hero__movie hide" autoplay muted loop playsinline width="480" height="640"
+          poster="data:image/png;base64,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">
+          <source src="hero-loop.webm" type="video/webm">
+        </video>
+        <span class="image-slot">
+          <span class="image-slot__label">654 · HERO POSTER</span>
+          <span>ภาพจริงพี่เสือ · วางตรงนี้</span>
+        </span>
+      </div>
+      <a class="hero__cta" href="#card">
+        เข้าบัตรสะสมแต้ม
+        <svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg>
+      </a>
+    </section>
+
+    <section class="page section" aria-labelledby="products-title">
+      <div class="section-head">
+        <p class="section-index">01 / ขวดหน้าร้าน</p>
+        <h2 id="products-title">เลือกสูตรที่ชอบ</h2>
+        <p class="section-note">ปัดดูแต่ละสูตร</p>
+      </div>
+      <!-- แทนแต่ละช่องด้วยภาพถ่ายขวดจริงจากหน้าร้าน -->
+      <div class="products" aria-label="แถบเลื่อนภาพสินค้า">
+        <figure class="product">
+          <div class="product__photo" role="img" aria-label="ช่องภาพถ่ายขวดสูตร Original">
+            <span class="product__placeholder"><b>ภาพขวดจริง</b>สูตร Original · ภาพหน้าร้าน</span>
+          </div>
+          <figcaption class="product__meta"><span class="product__name">Original</span><span class="product__price">฿60</span></figcaption>
+        </figure>
+        <figure class="product">
+          <div class="product__photo" role="img" aria-label="ช่องภาพถ่ายขวดสูตร Refresh">
+            <span class="product__placeholder"><b>ภาพขวดจริง</b>สูตร Refresh · ภาพหน้าร้าน</span>
+          </div>
+          <figcaption class="product__meta"><span class="product__name">Refresh</span><span class="product__price">฿60</span></figcaption>
+        </figure>
+        <figure class="product">
+          <div class="product__photo" role="img" aria-label="ช่องภาพถ่ายขวดสูตร Premium">
+            <span class="product__placeholder"><b>ภาพขวดจริง</b>สูตร Premium · ภาพหน้าร้าน</span>
+          </div>
+          <figcaption class="product__meta"><span class="product__name">Premium</span><span class="product__price">฿60</span></figcaption>
+        </figure>
+      </div>
+      <div class="price-slip"><span>ครบ 3 ขวด ได้ 1 แต้ม</span><strong>3 ขวด ฿150</strong></div>
+    </section>
+
+    <section class="fullbleed" aria-label="ภาพชุดแพ็กเกจจิ้ง">
+      <!-- เปลี่ยนพื้นหลังส่วนนี้เป็นภาพจริง 659: ชุดแพ็กเกจจิ้งร้าน -->
+      <span class="fullbleed__slot">659 · ภาพแพ็กเกจจิ้งจริง</span>
+      <p class="fullbleed__copy">ตั้งแต่ขวดจนถึงถุงกระดาษ <span>ออกแบบเองทั้งหมด</span></p>
+    </section>
+
+    <section class="page section loyalty" id="card" aria-labelledby="card-title">
+      <div class="section-head">
+        <p class="section-index">02 / บัตรสมาชิก</p>
+        <h2 id="card-title">ครบ 10 แต้ม รับฟรี 2 ขวด</h2>
+        <p class="section-note">ซื้อครบทุก 3 ขวดในบิล รับ 1 แต้ม</p>
+      </div>
+      <!-- เปลี่ยนช่องนี้เป็นภาพจริง 655: บัตรสมาชิกชุดจริง -->
+      <div class="loyalty__photo" role="img" aria-label="ช่องภาพบัตรสมาชิกอ้างอิง 655">
+        <span class="loyalty__photo-label">655 · ภาพบัตรจริง</span>
+      </div>
+      <article class="ticket" aria-label="ตัวอย่างกราฟิกบัตรสะสมแต้ม ไม่ใช่ยอดสมาชิกจริง">
+        <div class="ticket__top">
+          <span class="ticket__brand">JAGUAR KRATOM HOUSE</span>
+          <span class="ticket__type">POINT CARD<br>แบบกราฟิก</span>
+        </div>
+        <div class="ticket__hero">
+          <span class="ticket__qualifier">สะสมครบ<br>แลกของแถม</span>
+          <span class="ticket__number">10<small> แต้ม</small></span>
+        </div>
+        <p class="stamp-label">ตัวอย่างช่องสะสม · ไม่ใช่ยอดสมาชิกจริง</p>
+        <div class="stamp-grid" aria-label="ตัวอย่างช่องสะสม 10 ช่อง">
+          <span class="stamp stamp--example" aria-label="ตัวอย่างตราประทับ"><svg class="icon"><use href="#icon-paw"/></svg></span>
+          <span class="stamp" aria-label="ช่องสะสม 2"><svg class="icon"><use href="#icon-paw"/></svg></span>
+          <span class="stamp" aria-label="ช่องสะสม 3"><svg class="icon"><use href="#icon-paw"/></svg></span>
+          <span class="stamp" aria-label="ช่องสะสม 4"><svg class="icon"><use href="#icon-paw"/></svg></span>
+          <span class="stamp" aria-label="ช่องสะสม 5"><svg class="icon"><use href="#icon-paw"/></svg></span>
+          <span class="stamp" aria-label="ช่องสะสม 6"><svg class="icon"><use href="#icon-paw"/></svg></span>
+          <span class="stamp" aria-label="ช่องสะสม 7"><svg class="icon"><use href="#icon-paw"/></svg></span>
+          <span class="stamp" aria-label="ช่องสะสม 8"><svg class="icon"><use href="#icon-paw"/></svg></span>
+          <span class="stamp" aria-label="ช่องสะสม 9"><svg class="icon"><use href="#icon-paw"/></svg></span>
+          <span class="stamp" aria-label="ช่องสะสม 10"><svg class="icon"><use href="#icon-paw"/></svg></span>
+        </div>
+        <div class="ticket__footer">
+          <span class="ticket__reward"><strong>ครบ 10 แต้ม</strong>รับฟรี 2 ขวดที่เคาน์เตอร์</span>
+          <svg class="ticket__mark icon" viewBox="0 0 64 64" aria-hidden="true"><use href="#jaguar-mark"/></svg>
+        </div>
+      </article>
+      <p class="note">บัตรภาพตัวอย่าง · ไม่มีข้อมูลสมาชิกจริง</p>
+    </section>
+  </main>
+
+  <footer class="page receipt">
+    <p class="receipt__heading">JAGUAR KRATOM HOUSE · RECEIPT</p>
+    <div class="receipt__body">
+      <dl>
+        <dt>เปิด–ปิด</dt><dd>ใส่เวลาเปิด–ปิดจริง</dd>
+        <dt>ที่ร้าน</dt><dd>บุญศิริ ซอย 6 · สมุทรปราการ</dd>
+        <dt>สะสมแต้ม</dt><dd>ครบ 3 ขวด รับ 1 แต้ม</dd>
+      </dl>
+      <div>
+        <svg class="receipt__qr icon" viewBox="0 0 24 24" role="img" aria-label="พื้นที่ QR สำหรับใส่ลิงก์จริง ยังสแกนไม่ได้"><use href="#icon-qr"/></svg>
+        <p class="receipt__caption">แทน QR ร้านจริง<br>ยังสแกนไม่ได้</p>
+      </div>
+    </div>
+    <p class="receipt__end">ขอบคุณที่แวะมา · SEE YOU AT THE COUNTER</p>
+  </footer>
+</body>
+</html>

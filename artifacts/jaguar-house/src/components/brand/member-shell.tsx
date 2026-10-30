@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { useLogoutMember } from "@workspace/api-client-react";
 import { useState, type ReactNode } from "react";
 import { BrandIcon } from "./brand-icon";
 import { JaguarMark } from "./jaguar-mark";
-import { clearMemberCache, errMessage, setSessionHint } from "./api-utils";
+import { clearMemberCache, setSessionHint } from "./api-utils";
+import { api, errorText, json } from "./loyalty-api";
 
 const NAV = [
   { href: "/card", th: "บัตรสมาชิก", icon: "members" },
@@ -18,17 +18,19 @@ export function MemberShell({ children, signedIn }: { children: ReactNode; signe
   const path = usePathname();
   const router = useRouter();
   const qc = useQueryClient();
-  const logout = useLogoutMember();
-
   const [logoutErr, setLogoutErr] = useState<string | null>(null);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   const doLogout = async () => {
     setLogoutErr(null);
     try {
-      await logout.mutateAsync();
+      setLoggingOut(true);
+      await api("/api/loyalty/logout", json("POST"));
     } catch (ex) {
-      setLogoutErr(`ออกจากระบบไม่สำเร็จ: ${errMessage(ex)}`);
+      setLogoutErr(`ออกจากระบบไม่สำเร็จ: ${errorText(ex)}`);
       return;
+    } finally {
+      setLoggingOut(false);
     }
     setSessionHint(false);
     clearMemberCache(qc);
@@ -60,7 +62,7 @@ export function MemberShell({ children, signedIn }: { children: ReactNode; signe
             ))}
           </nav>
           {signedIn && (
-            <button onClick={doLogout} disabled={logout.isPending} className="btn btn-ghost !min-h-11 !min-w-11 !px-3 text-sm" aria-label="ออกจากระบบ" data-testid="button-logout">
+            <button onClick={doLogout} disabled={loggingOut} className="btn btn-ghost !min-h-11 !min-w-11 !px-3 text-sm" aria-label="ออกจากระบบ" data-testid="button-logout">
               <BrandIcon name="logout" tone="neutral" />
               <span className="hidden min-[360px]:inline">ออกจากระบบ</span>
             </button>

@@ -16,7 +16,7 @@ export const HealthCheckResponse = zod.object({
 export const registerMemberBodyPhoneMin = 9;
 export const registerMemberBodyPhoneMax = 20;
 
-export const registerMemberBodyMemberCodeRegExp = new RegExp('^[A-Za-z0-9]{6,10}$');
+export const registerMemberBodyMemberCodeRegExp = new RegExp('^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$');
 
 
 export const RegisterMemberBody = zod.object({
@@ -27,6 +27,8 @@ export const RegisterMemberBody = zod.object({
 export const RegisterMemberResponse = zod.object({
   "id": zod.string(),
   "member_code": zod.string(),
+  "display_name": zod.string(),
+  "is_demo": zod.boolean(),
   "status": zod.string(),
   "balance": zod.int(),
   "lifetime_earned": zod.int(),
@@ -34,7 +36,7 @@ export const RegisterMemberResponse = zod.object({
 })
 
 
-export const loginMemberBodyMemberCodeRegExp = new RegExp('^[A-Za-z0-9]{6,10}$');
+export const loginMemberBodyMemberCodeRegExp = new RegExp('^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$');
 
 
 export const LoginMemberBody = zod.object({
@@ -44,6 +46,8 @@ export const LoginMemberBody = zod.object({
 export const LoginMemberResponse = zod.object({
   "id": zod.string(),
   "member_code": zod.string(),
+  "display_name": zod.string(),
+  "is_demo": zod.boolean(),
   "status": zod.string(),
   "balance": zod.int(),
   "lifetime_earned": zod.int(),
@@ -59,6 +63,8 @@ export const LogoutMemberResponse = zod.object({
 export const GetMemberCardResponse = zod.object({
   "id": zod.string(),
   "member_code": zod.string(),
+  "display_name": zod.string(),
+  "is_demo": zod.boolean(),
   "status": zod.string(),
   "balance": zod.int(),
   "lifetime_earned": zod.int(),
@@ -114,40 +120,83 @@ export const ListMemberActivityResponseItem = zod.object({
 export const ListMemberActivityResponse = zod.array(ListMemberActivityResponseItem)
 
 
-export const loginAdminBodyPinRegExp = new RegExp('^[0-9]{4,12}$');
-
-
-export const LoginAdminBody = zod.object({
-  "pin": zod.string().regex(loginAdminBodyPinRegExp)
+export const GetLoyaltyHealthResponse = zod.object({
+  "status": zod.string(),
+  "storage": zod.string(),
+  "demo_mode": zod.boolean(),
+  "demo_member_code": zod.string().optional()
 })
 
-export const LoginAdminResponse = zod.object({
+
+export const getMemberQrResponseQrRegExp = new RegExp('^JAGUAR1:[0-9a-f]{64}$');
+
+
+export const GetMemberQrResponse = zod.object({
+  "qr": zod.string().regex(getMemberQrResponseQrRegExp)
+})
+
+
+export const ListMemberSalesResponseItem = zod.object({
+  "id": zod.uuid(),
+  "formula": zod.enum(['red', 'silver', 'gold']),
+  "bottle_count": zod.int(),
+  "amount_baht": zod.int(),
+  "points_awarded": zod.int(),
+  "created_at": zod.string()
+})
+export const ListMemberSalesResponse = zod.array(ListMemberSalesResponseItem)
+
+
+export const loginStaffBodyPinRegExp = new RegExp('^[0-9]{4,12}$');
+
+
+export const LoginStaffBody = zod.object({
+  "pin": zod.string().regex(loginStaffBodyPinRegExp)
+})
+
+export const LoginStaffResponse = zod.object({
   "ok": zod.boolean()
 })
 
 
-export const LogoutAdminResponse = zod.object({
+export const LogoutStaffResponse = zod.object({
   "ok": zod.boolean()
 })
 
 
-export const GetAdminSummaryResponse = zod.object({
-  "members": zod.int(),
-  "pending_redemptions": zod.int(),
-  "points_issued": zod.int()
+export const GetStaffSecurityResponse = zod.object({
+  "default_pin": zod.boolean()
 })
 
 
-export const findMemberQueryCodeRegExp = new RegExp('^[A-Za-z0-9]{6,10}$');
+export const changeStaffPinBodyCurrentPinRegExp = new RegExp('^[0-9]{4,12}$');
+export const changeStaffPinBodyNewPinRegExp = new RegExp('^[0-9]{4,12}$');
+
+
+export const ChangeStaffPinBody = zod.object({
+  "current_pin": zod.string().regex(changeStaffPinBodyCurrentPinRegExp),
+  "new_pin": zod.string().regex(changeStaffPinBodyNewPinRegExp)
+})
+
+export const ChangeStaffPinResponse = zod.object({
+  "ok": zod.boolean()
+})
+
+
+export const findMemberQueryCodeRegExp = new RegExp('^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$');
+export const findMemberQueryQrTokenRegExp = new RegExp('^(JAGUAR1:)?[0-9a-f]{64}$');
 
 
 export const FindMemberQueryParams = zod.object({
-  "code": zod.coerce.string().regex(findMemberQueryCodeRegExp)
+  "code": zod.coerce.string().regex(findMemberQueryCodeRegExp).optional(),
+  "qr_token": zod.coerce.string().regex(findMemberQueryQrTokenRegExp).optional()
 })
 
 export const FindMemberResponse = zod.object({
   "id": zod.string(),
   "member_code": zod.string(),
+  "display_name": zod.string(),
+  "is_demo": zod.boolean(),
   "status": zod.string(),
   "balance": zod.int(),
   "lifetime_earned": zod.int(),
@@ -155,24 +204,109 @@ export const FindMemberResponse = zod.object({
 })
 
 
-export const addMemberPointsBodyPointsMax = 20;
+export const listStaffMembersQueryQMax = 64;
 
 
 
-export const AddMemberPointsBody = zod.object({
-  "member_id": zod.uuid(),
-  "points": zod.int().min(1).max(addMemberPointsBodyPointsMax),
+export const ListStaffMembersQueryParams = zod.object({
+  "q": zod.coerce.string().max(listStaffMembersQueryQMax).optional()
+})
+
+export const ListStaffMembersResponseItem = zod.object({
+  "id": zod.string(),
+  "member_code": zod.string(),
+  "display_name": zod.string(),
+  "is_demo": zod.boolean(),
+  "status": zod.string(),
+  "balance": zod.int(),
+  "lifetime_earned": zod.int(),
+  "lifetime_redeemed": zod.int()
+})
+export const ListStaffMembersResponse = zod.array(ListStaffMembersResponseItem)
+
+
+export const createStaffMemberBodyNameMax = 100;
+
+export const createStaffMemberBodyMemberCodeRegExp = new RegExp('^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$');
+export const createStaffMemberBodyPhoneMin = 9;
+export const createStaffMemberBodyPhoneMax = 20;
+
+
+
+export const CreateStaffMemberBody = zod.object({
+  "name": zod.string().min(1).max(createStaffMemberBodyNameMax),
+  "member_code": zod.string().regex(createStaffMemberBodyMemberCodeRegExp),
+  "phone": zod.string().min(createStaffMemberBodyPhoneMin).max(createStaffMemberBodyPhoneMax)
+})
+
+export const CreateStaffMemberResponse = zod.object({
+  "id": zod.string(),
+  "member_code": zod.string(),
+  "display_name": zod.string(),
+  "is_demo": zod.boolean(),
+  "status": zod.string(),
+  "balance": zod.int(),
+  "lifetime_earned": zod.int(),
+  "lifetime_redeemed": zod.int()
+})
+
+
+export const recordStaffSaleBodyMemberCodeRegExp = new RegExp('^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$');
+export const recordStaffSaleBodyQrTokenRegExp = new RegExp('^(JAGUAR1:)?[0-9a-f]{64}$');
+export const recordStaffSaleBodyBottleCountMax = 999;
+
+
+
+export const RecordStaffSaleBody = zod.object({
+  "member_code": zod.string().regex(recordStaffSaleBodyMemberCodeRegExp).optional(),
+  "qr_token": zod.string().regex(recordStaffSaleBodyQrTokenRegExp).optional(),
+  "bottle_count": zod.int().min(1).max(recordStaffSaleBodyBottleCountMax),
+  "formula": zod.enum(['red', 'silver', 'gold']),
   "request_id": zod.uuid()
 })
 
-export const AddMemberPointsResponse = zod.object({
+export const RecordStaffSaleResponse = zod.object({
   "id": zod.string(),
   "member_code": zod.string(),
+  "display_name": zod.string(),
+  "is_demo": zod.boolean(),
   "status": zod.string(),
   "balance": zod.int(),
   "lifetime_earned": zod.int(),
   "lifetime_redeemed": zod.int()
 })
+
+
+export const redeemAtCounterBodyMemberCodeRegExp = new RegExp('^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$');
+
+
+export const RedeemAtCounterBody = zod.object({
+  "member_code": zod.string().regex(redeemAtCounterBodyMemberCodeRegExp),
+  "request_id": zod.uuid()
+})
+
+export const RedeemAtCounterResponse = zod.object({
+  "id": zod.string(),
+  "member_code": zod.string(),
+  "display_name": zod.string(),
+  "is_demo": zod.boolean(),
+  "status": zod.string(),
+  "balance": zod.int(),
+  "lifetime_earned": zod.int(),
+  "lifetime_redeemed": zod.int()
+}).and(zod.object({
+  "redemption_id": zod.uuid()
+}))
+
+
+export const ListStaffRewardsResponseItem = zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "description": zod.string().nullable(),
+  "points_cost": zod.int(),
+  "is_active": zod.boolean()
+})
+export const ListStaffRewardsResponse = zod.array(ListStaffRewardsResponseItem)
 
 
 export const ListPendingRedemptionsResponseItem = zod.object({
@@ -193,6 +327,196 @@ export const ConfirmRedemptionParams = zod.object({
 })
 
 export const ConfirmRedemptionResponse = zod.object({
+  "id": zod.string(),
+  "member_id": zod.string(),
+  "member_code": zod.string(),
+  "reward_id": zod.string(),
+  "reward_name": zod.string(),
+  "points_spent": zod.int(),
+  "status": zod.string(),
+  "created_at": zod.string()
+})
+
+
+export const loginOwnerBodyPinRegExp = new RegExp('^[0-9]{4,12}$');
+
+
+export const LoginOwnerBody = zod.object({
+  "pin": zod.string().regex(loginOwnerBodyPinRegExp)
+})
+
+export const LoginOwnerResponse = zod.object({
+  "ok": zod.boolean()
+})
+
+
+export const LogoutOwnerResponse = zod.object({
+  "ok": zod.boolean()
+})
+
+
+export const GetOwnerSecurityResponse = zod.object({
+  "staff_default_pin": zod.boolean(),
+  "owner_default_pin": zod.boolean()
+})
+
+
+export const changeOwnerPinsBodyStaffPinRegExp = new RegExp('^[0-9]{4,12}$');
+export const changeOwnerPinsBodyOwnerPinRegExp = new RegExp('^[0-9]{6,12}$');
+
+
+export const ChangeOwnerPinsBody = zod.object({
+  "staff_pin": zod.string().regex(changeOwnerPinsBodyStaffPinRegExp).optional(),
+  "owner_pin": zod.string().regex(changeOwnerPinsBodyOwnerPinRegExp).optional()
+})
+
+export const ChangeOwnerPinsResponse = zod.object({
+  "ok": zod.boolean()
+})
+
+
+export const GetOwnerSummaryResponse = zod.object({
+  "members": zod.int(),
+  "today_sales": zod.number(),
+  "total_sales": zod.number(),
+  "today_visits": zod.int(),
+  "total_visits": zod.int(),
+  "redemptions": zod.int(),
+  "by_formula": zod.array(zod.object({
+  "formula": zod.enum(['red', 'silver', 'gold']),
+  "sales_count": zod.int(),
+  "bottles_sold": zod.int(),
+  "points_awarded": zod.int(),
+  "amount_baht": zod.number()
+}))
+})
+
+
+export const listOwnerMembersQueryQMax = 64;
+
+
+
+export const ListOwnerMembersQueryParams = zod.object({
+  "q": zod.coerce.string().max(listOwnerMembersQueryQMax).optional()
+})
+
+export const ListOwnerMembersResponseItem = zod.object({
+  "id": zod.string(),
+  "member_code": zod.string(),
+  "display_name": zod.string(),
+  "is_demo": zod.boolean(),
+  "status": zod.string(),
+  "balance": zod.int(),
+  "lifetime_earned": zod.int(),
+  "lifetime_redeemed": zod.int()
+})
+export const ListOwnerMembersResponse = zod.array(ListOwnerMembersResponseItem)
+
+
+export const createOwnerMemberBodyNameMax = 100;
+
+export const createOwnerMemberBodyMemberCodeRegExp = new RegExp('^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$');
+export const createOwnerMemberBodyPhoneMin = 9;
+export const createOwnerMemberBodyPhoneMax = 20;
+
+
+
+export const CreateOwnerMemberBody = zod.object({
+  "name": zod.string().min(1).max(createOwnerMemberBodyNameMax),
+  "member_code": zod.string().regex(createOwnerMemberBodyMemberCodeRegExp),
+  "phone": zod.string().min(createOwnerMemberBodyPhoneMin).max(createOwnerMemberBodyPhoneMax)
+})
+
+export const CreateOwnerMemberResponse = zod.object({
+  "id": zod.string(),
+  "member_code": zod.string(),
+  "display_name": zod.string(),
+  "is_demo": zod.boolean(),
+  "status": zod.string(),
+  "balance": zod.int(),
+  "lifetime_earned": zod.int(),
+  "lifetime_redeemed": zod.int()
+})
+
+
+export const DeactivateOwnerMemberParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const DeactivateOwnerMemberResponse = zod.object({
+  "ok": zod.boolean()
+})
+
+
+export const ListOwnerRewardsResponseItem = zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "description": zod.string().nullable(),
+  "points_cost": zod.int(),
+  "is_active": zod.boolean()
+})
+export const ListOwnerRewardsResponse = zod.array(ListOwnerRewardsResponseItem)
+
+
+export const createOwnerRewardBodyNameMax = 120;
+
+export const createOwnerRewardBodyDescriptionMax = 500;
+
+export const createOwnerRewardBodyPointsCostMin = 10;
+export const createOwnerRewardBodyPointsCostMax = 100000;
+
+
+
+export const CreateOwnerRewardBody = zod.object({
+  "name": zod.string().min(1).max(createOwnerRewardBodyNameMax),
+  "description": zod.string().max(createOwnerRewardBodyDescriptionMax).optional(),
+  "points_cost": zod.int().min(createOwnerRewardBodyPointsCostMin).max(createOwnerRewardBodyPointsCostMax)
+})
+
+export const CreateOwnerRewardResponse = zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "description": zod.string().nullable(),
+  "points_cost": zod.int(),
+  "is_active": zod.boolean()
+})
+
+
+export const UpdateOwnerRewardParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const UpdateOwnerRewardBody = zod.object({
+  "is_active": zod.boolean()
+})
+
+export const UpdateOwnerRewardResponse = zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "description": zod.string().nullable(),
+  "points_cost": zod.int(),
+  "is_active": zod.boolean()
+})
+
+
+export const ListOwnerPendingResponseItem = zod.object({
+  "id": zod.string(),
+  "member_id": zod.string(),
+  "member_code": zod.string(),
+  "reward_id": zod.string(),
+  "reward_name": zod.string(),
+  "points_spent": zod.int(),
+  "status": zod.string(),
+  "created_at": zod.string()
+})
+export const ListOwnerPendingResponse = zod.array(ListOwnerPendingResponseItem)
+
+
+export const ConfirmOwnerRedemptionParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const ConfirmOwnerRedemptionResponse = zod.object({
   "id": zod.string(),
   "member_id": zod.string(),
   "member_code": zod.string(),
