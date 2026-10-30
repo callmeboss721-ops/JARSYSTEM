@@ -133,7 +133,7 @@ h1, h2, h3 { line-height: 1.25; letter-spacing: -0.005em; }
 
 /* Rosette motif: a sparse field of broken rings, very low opacity */
 .rosette-field {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='64' viewBox='0 0 72 64'%3E%3Cg fill='none' stroke='%23E5C04A' stroke-width='1.2' stroke-linecap='round'%3E%3Cpath d='M12 10a6 6 0 0 1 9 2M23 17a6 6 0 0 1-7 5M10 19a6 6 0 0 1-2-5'/%3E%3Cpath d='M48 40a6 6 0 0 1 9 2M59 47a6 6 0 0 1-7 5M46 49a6 6 0 0 1-2-5'/%3E%3C/g%3E%3Ccircle cx='15' cy='16' r='1' fill='%23E5C04A'/%3E%3Ccircle cx='51' cy='46' r='1' fill='%23E5C04A'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='64' viewBox='0 0 72 64'%3E%3Cg fill='none' stroke-width='1.2' stroke-linecap='round'%3E%3Cg stroke='%23E5C04A'%3E%3Cpath d='M12 10a6 6 0 0 1 9 2M23 17a6 6 0 0 1-7 5M10 19a6 6 0 0 1-2-5'/%3E%3Cpath d='M48 40a6 6 0 0 1 9 2M59 47a6 6 0 0 1-7 5M46 49a6 6 0 0 1-2-5'/%3E%3C/g%3E%3Cpath d='M15 10c-2 2-2 4 0 6m36 24c-2 2-2 4 0 6' stroke='%234FC79A'/%3E%3C/g%3E%3Ccircle cx='15' cy='16' r='1' fill='%23E5C04A'/%3E%3Ccircle cx='51' cy='46' r='1' fill='%234FC79A'/%3E%3C/svg%3E");
   background-size: 72px 64px;
 }
 
@@ -341,68 +341,24 @@ body { overflow-x: hidden; }
 .brand-icon--danger { color: var(--danger); }
 .brand-icon--inherit { color: currentColor; }
 
-/* CSS-only emblem slot: no logo artwork or 3D model is implied. */
-.brand-emblem-placeholder {
+/* Original full logo artwork with a restrained emerald-and-gold frame. */
+.brand-emblem {
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
 }
-.brand-emblem-placeholder__face {
-  position: relative;
+.brand-emblem__frame {
   display: grid;
-  flex: 0 0 auto;
   place-items: center;
-  width: 72px;
-  height: 72px;
-  border: 1px solid rgba(229,192,74,.68);
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 30% 24%, rgba(240,215,138,.22), transparent 44%),
-    linear-gradient(145deg, #201b10, #08090a 72%);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.2), inset 0 -7px 14px rgba(0,0,0,.72), 0 8px 24px -16px rgba(229,192,74,.76);
+  padding: 2px;
+  border: 1px solid rgba(79,199,154,.4);
+  border-radius: 16px;
+  background: rgba(4,6,5,.34);
+  box-shadow: 0 0 20px -16px rgba(79,199,154,.7), 0 1px 0 rgba(255,255,255,.08) inset;
 }
-.brand-emblem-placeholder__face::before {
-  content: "";
-  position: absolute;
-  inset: 5px;
-  border: 1px solid rgba(229,192,74,.28);
-  border-radius: inherit;
-}
-.brand-emblem-placeholder__monogram {
-  color: var(--gold-2);
-  font-family: var(--font-display);
-  font-size: 30px;
-  font-weight: 600;
-  line-height: 1;
-  text-shadow: 0 1px 0 rgba(0,0,0,.8), 0 0 12px rgba(229,192,74,.24);
-}
-.brand-emblem-placeholder__label {
-  display: flex;
-  flex-direction: column;
-  color: var(--gold-2);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .12em;
-  line-height: 1.4;
-}
-.brand-emblem-placeholder--card {
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
-.brand-emblem-placeholder--card .brand-emblem-placeholder__face {
-  width: 44px;
-  height: 44px;
-}
-.brand-emblem-placeholder--card .brand-emblem-placeholder__monogram {
-  font-size: 20px;
-}
-.brand-emblem-placeholder--card .brand-emblem-placeholder__label {
-  align-items: center;
-  font-size: 10px;
-  letter-spacing: .08em;
+.brand-emblem--card .brand-emblem__frame {
+  border-radius: 13px;
 }
 
 @media (max-width: 639px) {

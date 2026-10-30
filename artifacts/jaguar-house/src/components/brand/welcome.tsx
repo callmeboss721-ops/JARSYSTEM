@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { api, errorText, json, type MemberCardData } from "./loyalty-api";
 import { BrandIcon } from "./brand-icon";
-import { BrandEmblemPlaceholder } from "./brand-emblem-placeholder";
+import { BrandEmblem } from "./brand-emblem";
 import { JaguarMark } from "./jaguar-mark";
 import { LoginForm, RegisterForm } from "./auth-forms";
 
@@ -38,7 +38,7 @@ export function Welcome({ initialTab = "login" }: { initialTab?: "login" | "regi
 
         <div className="relative lg:my-0 flex flex-col items-start">
           <div className="hidden lg:block mb-10 rise" style={{ animationDelay: "80ms" }}>
-            <BrandEmblemPlaceholder variant="hero" />
+            <BrandEmblem variant="hero" />
           </div>
           <h1 className="font-display font-semibold leading-[1.1] tracking-tight text-[30px] sm:text-[44px] lg:text-[60px] rise" style={{ animationDelay: "120ms" }}>
             ร้านประจำ<br />

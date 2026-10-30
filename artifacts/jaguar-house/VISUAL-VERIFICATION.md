@@ -20,12 +20,28 @@
 - UI icons resolve from installed Lucide exports through the shared 18px/1.8
   stroke wrapper; stamp slots use the same outline family. Eight sampled theme
   contrast pairs range from 7.15:1 to 16.93:1.
-- The member card and desktop hero reserve labelled CSS-only emblem slots.
-  They contain no GLB or claim to be approved logo artwork.
+- The welcome hero, member card, staff header, and app icons use the supplied
+  original logo artwork, shown whole with `object-contain`. The larger customer
+  emblems retain the task's subtle emerald-and-gold frame; no collage is used
+  as a full-page background.
 - Source-level comparison checks generated hook calls, mutation payloads,
   invalidation calls, session-hint calls, point gates and the stamp count against
   the pre-redesign version. Backend, contracts, auth helpers, environment
   variables and package manifests were not edited.
+
+## Emblem refinement verification — 2026-10-30
+
+- `pnpm --filter @workspace/jaguar-house run typecheck` and
+  `pnpm --filter @workspace/jaguar-house run build` both passed.
+- Preview checked `/` at 320, 430, and 1440 CSS pixels, and `/admin` at 390px.
+  The shared seal remained visible and the public layouts showed no obvious
+  horizontal overflow at those widths.
+- The staff header rendered, but its data panel showed the existing load-error
+  state: the API server workflow was not running and the browser reported HTTP
+  502. No authenticated staff tools or real member data were verified.
+- A signed-in `/card` view was not visually captured because the preview browser
+  has no member session. Its shared-emblem change was typechecked and built, but
+  this check does not claim to verify an authenticated member session.
 
 ## Data safety and limitations
 

@@ -1,8 +1,8 @@
 import { BrandIcon } from "./brand-icon";
-import { BrandEmblemPlaceholder } from "./brand-emblem-placeholder";
 import { QRCodeSVG } from "qrcode.react";
 import { ErrorState } from "./ui";
 import type { MemberCardData } from "./loyalty-api";
+import { BrandEmblem } from "./brand-emblem";
 
 export const STAMPS = 10;
 
@@ -21,7 +21,7 @@ export function LoyaltyCard({ card, qr }: { card: MemberCardData; qr: CardQr }) 
             <p className="eyebrow">Private Members · Soi 6</p>
             <p className="font-display text-xl sm:text-2xl font-semibold mt-1">Jaguar Kratom House</p>
           </div>
-          <BrandEmblemPlaceholder variant="card" />
+          <BrandEmblem variant="card" />
         </div>
 
         <div className="relative mt-4 pt-4 border-t border-[var(--line)] flex items-center justify-between gap-2 sm:gap-4">

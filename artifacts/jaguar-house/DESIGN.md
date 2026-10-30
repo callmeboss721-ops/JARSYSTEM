@@ -61,10 +61,13 @@ actions. Glass panels share 16px backdrop blur and thin gold boundaries.
   for the staff desk, `Plus` for adding points, and `History` for activity.
   `Settings` is available in the shared map, but there is no settings route;
   do not add a navigation item for it without a product requirement.
-- `BrandEmblemPlaceholder` (name kept for compatibility) and `JaguarMark` both
-  render the original supplied logo image in full. Do not create vector
-  recreations or new logo motifs. Brand artwork is separate from the outline
-  UI-icon system.
+- `JaguarMark` and the compatibility `BrandEmblemPlaceholder` render the
+  original supplied logo artwork in full. Keep it whole with `object-contain`;
+  never crop or redraw it. The shared welcome/card emblem may use a thin
+  emerald-and-gold frame, while staff and member navigation use the same image
+  at a legible compact size.
+- The broken-ring rosette is limited to the small `PawGlyph` stamp mark. Original
+  artwork is separate from the outline UI-icon system.
 
 ## States and motion
 
