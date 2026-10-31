@@ -12,18 +12,22 @@ export function MemberCardCarousel({ active, children }: { active: CardKind; chi
   const targetPath = active === "kratom" ? "/cannabis-card" : "/card";
 
   const onTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+    if (event.touches.length !== 1) {
+      touchStart.current = null;
+      return;
+    }
     if (event.target instanceof Element && event.target.closest("button, a, input, select, textarea")) {
       touchStart.current = null;
       return;
     }
-    const touch = event.changedTouches[0];
+    const touch = event.touches[0];
     touchStart.current = touch ? { x: touch.clientX, y: touch.clientY } : null;
   };
 
   const onTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
     const start = touchStart.current;
     touchStart.current = null;
-    const touch = event.changedTouches[0];
+    const touch = event.changedTouches.length === 1 ? event.changedTouches[0] : undefined;
     if (!start || !touch) return;
     const dx = touch.clientX - start.x;
     const dy = touch.clientY - start.y;
@@ -75,6 +79,7 @@ export function MemberCardCarousel({ active, children }: { active: CardKind; chi
         data-testid="swipe-card-surface"
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
+        onTouchCancel={() => { touchStart.current = null; }}
       >
         {children}
       </div>
