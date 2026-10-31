@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { QRCodeSVG } from "qrcode.react";
 import { useGetCannabisMemberCard, getGetCannabisMemberCardQueryKey, type CannabisCard } from "@workspace/api-client-react";
+import { BrandIcon } from "@/components/brand/brand-icon";
 import { MemberShell } from "@/components/brand/member-shell";
 import { MemberCardCarousel } from "@/components/brand/member-card-carousel";
 import { BrandEmblem } from "@/components/brand/brand-emblem";
@@ -35,6 +36,7 @@ export default function CannabisCardPage() {
     },
   });
   const card = cardQuery.data as CannabisCard | undefined;
+  const stampCount = Math.min(Math.max(card?.balance ?? 0, 0), 10);
   const unauthenticated = (cardQuery.error as { status?: number } | null)?.status === 401;
   const qr = useQuery<{ qr: string }>({
     queryKey: ["/api/loyalty/qr", card?.member_code],
@@ -82,7 +84,7 @@ export default function CannabisCardPage() {
           <section key={popKey} className={`cannabis-card rise ${popKey ? "card-pop" : ""}`} aria-label="บัตรสมาชิกกัญชา">
             <div className="cannabis-card__art" aria-hidden="true"><span className="cannabis-orbit orbit-one" /><span className="cannabis-orbit orbit-two" /><span className="cannabis-leaf" /></div>
             <div className="cannabis-card__top">
-              <div><span className="cannabis-kicker">JAGUAR / MEMBER NO. 02</span><h2>กัญชา · Cannabis</h2></div>
+              <div><span className="cannabis-kicker">JAGUAR CANNABIS / 2026</span><h2>กัญชา · Cannabis</h2></div>
               <BrandEmblem variant="card" />
             </div>
             <div className="cannabis-card__balance">
@@ -95,8 +97,26 @@ export default function CannabisCardPage() {
               </div>
             </div>
             <div className="cannabis-card__code"><span>รหัสสมาชิก</span><strong data-testid="cannabis-member-code">{card.member_code}</strong></div>
-            <div className="cannabis-progress-copy"><span>{card.balance >= 10 ? "พร้อมแลกฟรี 1 กรัม" : `อีก ${10 - card.balance} แต้ม รับฟรี 1 กรัม`}</span><b>{Math.min(card.balance, 10)}/10</b></div>
-            <div className="cannabis-progress" role="progressbar" aria-label="ความคืบหน้าสู่การแลก 1 กรัม" aria-valuemin={0} aria-valuemax={10} aria-valuenow={Math.min(card.balance, 10)}><i style={{ transform: `scaleX(${Math.min(card.balance, 10) / 10})` }} /></div>
+            <div className="cannabis-progress-copy"><span>{card.balance >= 10 ? "พร้อมแลกฟรี 1 กรัม" : `อีก ${10 - card.balance} แต้ม รับฟรี 1 กรัม`}</span><b>{stampCount}/10</b></div>
+            <div className="cannabis-progress" role="progressbar" aria-label="ความคืบหน้าสู่การแลก 1 กรัม" aria-valuemin={0} aria-valuemax={10} aria-valuenow={stampCount}><i style={{ transform: `scaleX(${stampCount / 10})` }} /></div>
+            <section className="cannabis-stamps" aria-labelledby="cannabis-stamps-title" data-testid="cannabis-stamps">
+              <div className="cannabis-stamps__heading">
+                <div><span className="cannabis-stamps__eyebrow">STAMP COLLECTION · 1 G</span><h3 id="cannabis-stamps-title">แสตมป์สะสม</h3></div>
+                <span className="cannabis-stamps__count" aria-label={`${stampCount} จาก 10 ดวง`}>{String(stampCount).padStart(2, "0")}<i>/10</i></span>
+              </div>
+              <ol className="cannabis-stamp-grid" aria-label={`สะสมแล้ว ${stampCount} จาก 10 ดวง`}>
+                {Array.from({ length: 10 }, (_, index) => {
+                  const stamped = index < stampCount;
+                  return (
+                    <li key={index} className="cannabis-stamp-slot" data-filled={stamped} data-testid={`cannabis-stamp-${index + 1}`}>
+                      {stamped ? <BrandIcon name="cannabis" tone="emerald" size={17} /> : <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>}
+                      <span className="sr-only">{stamped ? `สะสมแล้ว ดวงที่ ${index + 1}` : `ยังไม่สะสม ดวงที่ ${index + 1}`}</span>
+                    </li>
+                  );
+                })}
+              </ol>
+              <p className="cannabis-stamps__note">ครบ 10 ดวง รับฟรี 1 กรัม</p>
+            </section>
             <div className="cannabis-reward"><span>01</span><p>ซื้อครบทุก 1 กรัม รับ 1 แต้ม</p><b>10 แต้ม = ฟรี 1 กรัม</b></div>
           </section>
         </MemberCardCarousel>
