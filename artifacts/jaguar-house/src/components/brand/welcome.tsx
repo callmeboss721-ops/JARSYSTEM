@@ -39,9 +39,9 @@ export function Welcome({ initialTab = "login" }: { initialTab?: "login" | "regi
           <div className="hidden lg:block mb-10 rise" style={{ animationDelay: "80ms" }}>
             <BrandEmblem variant="hero" />
           </div>
-          <h1 className="font-display font-semibold leading-[1.1] tracking-tight text-[30px] sm:text-[44px] lg:text-[60px] rise" style={{ animationDelay: "120ms" }}>
-            ร้านประจำ<br />
-            <span className="text-[var(--gold-2)]">ของคนในซอย</span>
+          <h1 aria-label="พี่เสือพลัง ซุปเปอร์ฮีโร่ของคนไทย" className="font-display font-semibold leading-[1.1] tracking-tight text-[30px] sm:text-[44px] lg:text-[60px] rise" style={{ animationDelay: "120ms" }}>
+            พี่เสือพลัง<br />
+            <span className="text-[var(--gold-2)]">ซุปเปอร์ฮีโร่<br />ของคนไทย</span>
           </h1>
           <div className="hairline w-24 mt-6" aria-hidden="true" />
           <p className="mt-6 max-w-md text-[var(--gold-2)] font-display font-semibold text-lg sm:text-xl rise" style={{ animationDelay: "200ms" }}>
