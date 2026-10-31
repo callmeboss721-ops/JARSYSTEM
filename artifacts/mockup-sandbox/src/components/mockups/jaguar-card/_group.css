@@ -36,7 +36,7 @@
     #05050a;
 }
 .mockup-caption { color:#8d938d; font:9px var(--font-mono); letter-spacing:.2em; text-align:center; }
-.mockup-surface .member-card { width:100%; }
+.mockup-surface .member-card { width:min(100%,420px);margin-inline:auto; }
 
 .member-card {
   position:relative;
@@ -123,15 +123,13 @@
     radial-gradient(ellipse at 0% 100%,rgba(229,192,74,.1),transparent 42%);
 }
 .mockup-card--refined .loyalty-card-art { opacity:.095; }
-.mockup-card--refined .loyalty-card-art .art-jaguar { display:none; }
 .mockup-card--refined .loyalty-card-art .art-bridge { stroke:rgba(239,211,133,.42);stroke-width:.9; }
 .mockup-card--refined .loyalty-card-art .art-water { stroke:rgba(76,181,124,.24);stroke-width:.8; }
 .mockup-card--refined .loyalty-card-art--kratom .art-botany { stroke:rgba(224,190,105,.42);fill:rgba(27,82,47,.16); }
 .mockup-card--refined .member-card-inner > :not(.rosette-bg):not(.loyalty-card-art) { z-index:1; }
 .mockup-card--refined .member-card-inner::after { background:linear-gradient(112deg,transparent 15%,rgba(255,255,255,.035) 42%,transparent 62%); }
-.mockup-card--refined .member-card-inner > div:nth-child(4) { border-color:rgba(229,192,74,.26); }
 .mockup-card--refined .brand-emblem--card .brand-emblem__frame {
-  width:76px;
+  width:84px;
   padding:5px;
   overflow:hidden;
   border:1px solid rgba(229,192,74,.48);
@@ -154,15 +152,19 @@
 }
 .mockup-card--refined .stamp-empty-mark { opacity:.2;color:#b8cc8a; }
 .mockup-card--refined .mock-qr { width:116px;height:116px; }
-.mockup-card--refined .member-card-inner > div:nth-child(4) > div:last-child {
+.mockup-card--refined .member-card__qr {
   padding:6px;
   border:1px solid rgba(238,218,160,.62);
   border-radius:13px;
   background:#efe9d6;
   box-shadow:0 5px 20px rgba(0,0,0,.28);
 }
+.mockup-card--refined .member-card__qr .mock-qr { background:#efe9d6; }
+.mockup-card--refined .member-card__qr p { color:#394136;white-space:normal; }
+.mockup-card--refined .member-card__qr .mock-error { color:#394136; }
+.mockup-card--refined .member-card__qr .btn-ghost { border-color:#776834;background:#14241a;color:#f3d887; }
 @media (max-width:380px) {
   .mockup-surface { padding:12px; }
-  .mockup-card--refined .brand-emblem--card .brand-emblem__frame { width:68px; }
+  .mockup-card--refined .brand-emblem--card .brand-emblem__frame { width:72px; }
   .mockup-card--refined .mock-qr { width:104px;height:104px; }
 }

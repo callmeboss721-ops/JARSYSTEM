@@ -635,13 +635,6 @@ body {
 .loyalty-card-art--cannabis { opacity:.36; }
 .loyalty-card-art .art-bridge { stroke:rgba(226,197,111,.82); stroke-width:1.45; }
 .loyalty-card-art .art-water { stroke:rgba(74,190,139,.68); stroke-width:1.35; }
-.loyalty-card-art .art-jaguar { fill:rgba(7,26,17,.78); stroke:rgba(221,191,104,.82); stroke-width:1.5; }
-.loyalty-card-art .art-jaguar path:nth-child(2),
-.loyalty-card-art .art-jaguar path:nth-child(3) { fill:none; }
-.loyalty-card-art .art-jaguar > path:not(:first-child) { fill:none; }
-.loyalty-card-art .art-jaguar path:nth-child(3) { stroke:rgba(232,216,164,.9); stroke-width:2; }
-.loyalty-card-art .art-jaguar .art-rosettes { fill:none; stroke:rgba(218,190,111,.78); stroke-width:3; }
-.loyalty-card-art .art-jaguar .art-face { stroke:rgba(246,224,154,.96); stroke-width:2.5; }
 .loyalty-card-art .art-lettering { fill:rgba(229,207,143,.8); font:8px var(--font-mono); letter-spacing:2.1px; }
 .loyalty-card-art--kratom .art-botany { stroke:rgba(196,160,70,.9); stroke-width:1.6; fill:rgba(11,52,31,.76); }
 .loyalty-card-art--cannabis .art-botany { stroke:rgba(64,220,133,.92); stroke-width:1.8; fill:rgba(10,81,44,.74); }
@@ -663,4 +656,111 @@ body {
   .loyalty-card-art .art-lettering { font-size:7px; letter-spacing:1.4px; }
   .loyalty-card-art--kratom { opacity:.32; }
   .loyalty-card-art--cannabis { opacity:.30; }
+}
+
+/* Card art: keep the supplied mark crisp and let the member data lead. */
+.member-card {
+  border-radius:25px;
+  background:linear-gradient(128deg,#f0d68a 0%,#806527 16%,#18251d 34%,#0b1610 57%,#397b4e 79%,#ead082 100%);
+  box-shadow:0 26px 62px -32px #000,0 0 34px -22px rgba(47,217,138,.34),0 12px 34px -22px rgba(229,192,74,.3);
+}
+.member-card-inner {
+  border-radius:24px;
+  background:
+    radial-gradient(ellipse at 82% 8%,rgba(71,174,104,.17),transparent 39%),
+    radial-gradient(ellipse at 18% 94%,rgba(229,192,74,.12),transparent 46%),
+    linear-gradient(142deg,#101813 0%,#080c09 52%,#101914 100%);
+}
+.member-card-inner::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background:
+    linear-gradient(125deg,transparent 20%,rgba(231,205,135,.035) 20.2%,transparent 20.8%),
+    linear-gradient(125deg,transparent 77%,rgba(74,190,139,.035) 77.2%,transparent 77.8%),
+    radial-gradient(ellipse at 100% 0%,rgba(47,217,138,.12),transparent 44%),
+    radial-gradient(ellipse at 0% 100%,rgba(229,192,74,.1),transparent 42%);
+}
+.member-card-inner > :not(.rosette-bg):not(.loyalty-card-art) { position:relative;z-index:1; }
+.loyalty-card-art--kratom,.loyalty-card-art--cannabis { opacity:.095; }
+.loyalty-card-art .art-bridge { stroke:rgba(239,211,133,.42);stroke-width:.9; }
+.loyalty-card-art .art-water { stroke:rgba(76,181,124,.24);stroke-width:.8; }
+.loyalty-card-art--kratom .art-botany { stroke:rgba(224,190,105,.42);fill:rgba(27,82,47,.16); }
+.loyalty-card-art--cannabis .art-botany { stroke:rgba(97,224,144,.6);fill:rgba(27,112,57,.24); }
+.brand-emblem--card .brand-emblem__frame {
+  width:84px;
+  padding:5px;
+  overflow:hidden;
+  border:1px solid rgba(229,192,74,.48);
+  border-radius:17px;
+  background:rgba(0,0,0,.4);
+  box-shadow:0 1px 0 rgba(255,255,255,.18) inset,0 8px 20px rgba(0,0,0,.32),0 0 20px rgba(47,217,138,.08);
+}
+.brand-emblem--card .brand-emblem__image { filter:drop-shadow(0 4px 7px rgba(0,0,0,.72)); }
+.member-card__qr {
+  padding:6px;
+  border:1px solid rgba(238,218,160,.62);
+  border-radius:13px;
+  background:#efe9d6;
+  box-shadow:0 5px 20px rgba(0,0,0,.28);
+}
+.member-card__qr-code { display:block;background:#efe9d6; }
+.member-card__qr p {
+  color:#394136;
+  font-size:10px;
+  line-height:1.25;
+  white-space:normal;
+}
+.member-card__qr [role="alert"] { color:#394136; }
+.member-card__qr .btn-ghost {
+  border-color:#776834;
+  background:#14241a;
+  color:#f3d887;
+}
+.member-card__qr .skeleton { background:linear-gradient(90deg,#ded8c5 25%,#f6f1df 50%,#ded8c5 75%); }
+.member-card-inner [data-testid="text-balance"] {
+  color:#f3d887;
+  letter-spacing:-.06em;
+  text-shadow:0 5px 28px rgba(229,192,74,.14);
+}
+.member-card-inner [data-testid="text-member-code"] { letter-spacing:.18em; }
+.member-card-inner .progress-track { height:6px;background:rgba(229,192,74,.13); }
+.member-card-inner .progress-fill {
+  background:linear-gradient(90deg,#23875b,#58df8d 62%,#e5c04a);
+  box-shadow:0 0 14px rgba(47,217,138,.3);
+}
+.member-card-inner .stamp[data-filled='true'] {
+  border-color:rgba(255,239,195,.9);
+  background:radial-gradient(circle at 31% 24%,#d8bd72 0%,#4c9460 39%,#102619 100%);
+  box-shadow:0 0 18px rgba(79,199,154,.25),0 1px 0 rgba(255,255,255,.45) inset,0 5px 12px rgba(0,0,0,.28);
+}
+.member-card-inner .stamp[data-filled='false'] {
+  border-color:rgba(229,192,74,.58);
+  background:radial-gradient(circle at 35% 28%,rgba(229,192,74,.1),rgba(7,14,10,.92) 72%);
+  box-shadow:0 1px 3px rgba(0,0,0,.65) inset;
+}
+.member-card-inner .stamp[data-filled='true'] .brand-icon { color:#f5e7b5;filter:drop-shadow(0 0 5px rgba(240,216,137,.5)); }
+.member-card-inner .stamp-empty-mark { opacity:.2;color:#b8cc8a; }
+.cannabis-card {
+  border-color:rgba(132,225,155,.5);
+  background:
+    radial-gradient(ellipse at 94% 5%,rgba(77,211,126,.18),transparent 38%),
+    radial-gradient(ellipse at 4% 100%,rgba(218,182,99,.11),transparent 44%),
+    linear-gradient(142deg,#111c15 0%,#080e0a 56%,#101a12 100%);
+  box-shadow:0 2px 0 rgba(255,255,255,.12) inset,0 30px 60px -32px rgba(0,0,0,.95),0 18px 44px -36px rgba(47,217,138,.55);
+}
+.cannabis-card::before { opacity:.07; }
+.cannabis-card > .loyalty-card-art { opacity:.095; }
+.cannabis-card > .loyalty-card-art .art-bridge { stroke:rgba(225,198,126,.38);stroke-width:.9; }
+.cannabis-card > .loyalty-card-art .art-water { stroke:rgba(76,190,125,.26);stroke-width:.8; }
+.cannabis-card > .loyalty-card-art--cannabis .art-botany { stroke:rgba(104,237,146,.68);fill:rgba(21,103,52,.22); }
+.cannabis-card .brand-emblem--card .brand-emblem__frame {
+  border-color:rgba(111,221,145,.56);
+  box-shadow:0 1px 0 rgba(255,255,255,.16) inset,0 8px 20px rgba(0,0,0,.32),0 0 20px rgba(47,217,138,.14);
+}
+.cannabis-stamp-slot[data-filled='false'] { border-color:rgba(113,218,140,.45); }
+@media (max-width:380px) {
+  .brand-emblem--card .brand-emblem__frame { width:72px; }
 }

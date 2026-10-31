@@ -17,7 +17,7 @@ export function LoyaltyCard({ card, qr }: { card: MemberCardData; qr: CardQr }) 
         <LoyaltyCardArtwork variant="kratom" />
         <div className="relative flex items-start justify-between gap-4">
           <div>
-            <p className="eyebrow">Private Members · Soi 6</p>
+            <p className="eyebrow">SAMUT PRAKAN · SOI 6</p>
             <p className="font-display text-xl sm:text-2xl font-semibold mt-1">Jaguar Kratom</p>
           </div>
           <BrandEmblem variant="card" />
@@ -35,7 +35,7 @@ export function LoyaltyCard({ card, qr }: { card: MemberCardData; qr: CardQr }) 
               <span className="pulse-dot" aria-hidden="true" /> {card.status === "active" ? "ใช้งานอยู่" : card.status}
             </p>
           </div>
-          <div className="shrink-0 rounded-xl border border-[var(--line-2)] bg-black/40 p-1.5 sm:p-2 text-center" aria-label="QR ส่วนตัวสำหรับให้พนักงานสแกน">
+          <div className="member-card__qr shrink-0 text-center" aria-label="QR ส่วนตัวสำหรับให้พนักงานสแกน">
             {qr.loading ? <div className="skeleton h-32 w-32 sm:h-36 sm:w-36 rounded-lg" aria-label="กำลังโหลด QR" />
               : qr.error || !qr.value ? <div className="flex h-32 w-32 sm:h-36 sm:w-36 flex-col items-center justify-center gap-1">
                   <p role="alert" className="text-[10px] leading-tight text-[var(--muted)]">โหลด QR ไม่สำเร็จ</p>
@@ -98,7 +98,7 @@ function ErrorState({ message, onRetry, retrying }: { message: string; onRetry?:
   return <div className="mock-error" role="alert">{message}{onRetry && <button type="button" onClick={onRetry} disabled={retrying}>ลองอีกครั้ง</button>}</div>;
 }
 
-/** Shared local landmark + jaguar engraving, with a card-specific botanical signature. */
+/** Samut Prakan linework with a card-specific botanical signature. */
 export function LoyaltyCardArtwork({ variant }: { variant: "kratom" | "cannabis" }) {
   return (
     <svg className={`loyalty-card-art loyalty-card-art--${variant}`} viewBox="180 0 360 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
@@ -120,15 +120,6 @@ export function LoyaltyCardArtwork({ variant }: { variant: "kratom" | "cannabis"
         <path d="M28 270c62-13 102-11 156 1s101 13 158-1 100-14 157 0 107 13 167-1" />
         <path d="M-20 296c83-13 132-10 195 1s108 11 163-2 105-12 162 1 116 13 207-3" />
         <path d="M44 321c59-9 109-8 163 2s100 10 154-1 104-10 163 1 98 9 155-2" />
-      </g>
-      <g className="art-jaguar" transform="translate(-195 0)" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M414 249c14-31 37-50 67-56 15-19 35-29 59-28 19-17 47-17 66-2 20 2 38 13 47 31 12 6 18 17 17 30l-10 17-24 2-19-11-12 9-21-4-13 15-21-7-19 14-24-2-19 14-19-5-14 15-28-2-13 11-31-4-14-12Z" />
-        <path d="M516 195c-7-15-4-30 8-43l18 18m49-5c4-14 15-23 31-26l5 23m-71 32 10 2m38-3 10 2m-31 13 18 2m-36-3 9 7m38-7-9 7m-30 9 18 2" />
-        <path d="M514 205c-7-5-13-6-18-4m82-8c6-5 12-6 18-4m-50 25 12 2" />
-        <path d="M528 219c-8 14-7 25 3 34m61-37c9 12 8 23-2 34m-48 4 12 9 13-8m31-3 12 7 11-10" />
-        <path className="art-face" d="m506 199 13-5 9 4m46-5 13-4 10 6m-74 31 14 5 12-5m25 1 12 4 13-6m-36 11 8 5 8-5" />
-        <path className="art-rosettes" d="M489 220l5-3m18 12 5-4m23-47 5-4m22 12 5-4m31-4 5-4m25 20 5-4m-112 54 5-4m51 7 5-4m-77 3 5-4m90-25 5-4" />
-        <path d="M469 252c-18 13-26 29-22 49m112-20c8 11 20 17 36 17m-104-37c-15 7-25 17-32 31m107-20c14 4 25 12 34 24" />
       </g>
       <g className="art-botany" transform="translate(180 0)" fill="none" strokeLinecap="round" strokeLinejoin="round">
         {variant === "kratom" ? <>
