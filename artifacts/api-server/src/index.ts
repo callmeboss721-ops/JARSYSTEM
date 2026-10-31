@@ -1,6 +1,5 @@
 import app from "./app";
 import { logger } from "./lib/logger";
-import { seedDevDemoData } from "./lib/loyalty-store";
 
 const rawPort = process.env["PORT"];
 
@@ -17,20 +16,14 @@ if (Number.isNaN(port) || port <= 0) {
 }
 
 async function start() {
-  try {
-    await seedDevDemoData();
-    app.listen(port, (err) => {
-      if (err) {
-        logger.error({ err }, "Error listening on port");
-        process.exit(1);
-      }
+  app.listen(port, (err) => {
+    if (err) {
+      logger.error({ err }, "Error listening on port");
+      process.exit(1);
+    }
 
-      logger.info({ port }, "Server listening");
-    });
-  } catch {
-    logger.error({ operation: "dev_seed" }, "Server startup initialization failed");
-    process.exit(1);
-  }
+    logger.info({ port }, "Server listening");
+  });
 }
 
 void start();

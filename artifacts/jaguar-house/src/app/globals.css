@@ -366,12 +366,12 @@ body { overflow-x: hidden; }
 }
 .brand-emblem--hero .brand-emblem__frame {
   width: clamp(200px, 30vw, 280px);
-  aspect-ratio: 1.25;
+  aspect-ratio: 1.4;
   border-radius: 22px;
 }
 .brand-emblem--card .brand-emblem__frame {
   width: 56px;
-  aspect-ratio: 1.25;
+  aspect-ratio: 1.4;
   padding: 1px;
 }
 .brand-emblem--card .brand-emblem__frame {
@@ -509,7 +509,6 @@ body {
 .pin-pad--gold .pin-key { border-color: rgba(229,192,74,.32); color: var(--gold-2); }
 .pin-pad--gold .pin-key:hover:not(:disabled) { border-color: var(--gold); background: rgba(229,192,74,.08); }
 .pin-key:nth-child(10), .pin-key:nth-child(12) { font-size: 15px; }
-.demo-badge { display: inline-flex; align-items: center; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .14em; padding: 3px 8px; border-radius: 99px; color: #f6c48a; border: 1px dashed rgba(246,196,138,.6); background: rgba(246,196,138,.07); white-space: nowrap; }
 .ready-badge { display: inline-flex; align-items: center; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 99px; color: #15100a; background: linear-gradient(180deg,#f6e09a,#d9b03c); white-space: nowrap; }
 .gold-alert { border: 1px solid rgba(229,192,74,.6); background: linear-gradient(120deg, rgba(229,192,74,.16), rgba(229,192,74,.04)); color: var(--gold-2); border-radius: 18px; padding: 16px; font-family: var(--font-display); font-weight: 600; font-size: 17px; }
 .card-pop { animation: card-pop .7s cubic-bezier(.2,.8,.2,1); }

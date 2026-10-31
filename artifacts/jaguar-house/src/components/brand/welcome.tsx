@@ -1,26 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { api, errorText, json, type MemberCardData } from "./loyalty-api";
+import { api, type MemberCardData } from "./loyalty-api";
 import { BrandIcon } from "./brand-icon";
 import { BrandEmblem } from "./brand-emblem";
 import { LoginForm, RegisterForm } from "./auth-forms";
 
 export function Welcome({ initialTab = "login" }: { initialTab?: "login" | "register" }) {
   const [tab, setTab] = useState<"login" | "register">(initialTab);
-  const router = useRouter();
-  const [demoBusy, setDemoBusy] = useState(false), [demoErr, setDemoErr] = useState("");
-  const health = useQuery<{ demo_member_code?: string; demo_mode?: boolean; staff_default_pin?: boolean; owner_default_pin?: boolean }>({ queryKey: ["/api/loyalty/health"], queryFn: () => api("/api/loyalty/health"), retry: false, refetchOnWindowFocus: false, staleTime: Infinity });
-  const demoCode = health.data?.demo_member_code;
-  const openDemo = async () => {
-    if (!demoCode) return;
-    setDemoBusy(true); setDemoErr("");
-    try { await api("/api/loyalty/login", json("POST", { member_code: demoCode })); router.push("/card"); }
-    catch (e) { setDemoErr(errorText(e)); } finally { setDemoBusy(false); }
-  };
   const session = useQuery<MemberCardData>({ queryKey: ["/api/loyalty/card"], queryFn: () => api("/api/loyalty/card"), retry: false, refetchOnWindowFocus: false });
 
   return (
@@ -42,7 +31,7 @@ export function Welcome({ initialTab = "login" }: { initialTab?: "login" | "regi
           </h1>
           <div className="hairline w-24 mt-6" aria-hidden="true" />
           <p className="mt-6 max-w-md text-[var(--gold-2)] font-display font-semibold text-lg sm:text-xl rise" style={{ animationDelay: "200ms" }}>
-            สะสม 10 แต้ม รับฟรี 2 ขวด
+            สะสม 10 แต้ม รับฟรี 1 ขวด
           </p>
           <p className="mt-2 max-w-md text-sm text-[var(--muted)]">บัตรอยู่ในมือถือ แสดง QR ที่เคาน์เตอร์ทุกครั้งที่ซื้อ</p>
             <ol className="loyalty-steps mt-8 hidden sm:grid grid-cols-3 gap-3 max-w-md w-full rise list-none p-0" style={{ animationDelay: "260ms" }}>
@@ -66,12 +55,15 @@ export function Welcome({ initialTab = "login" }: { initialTab?: "login" | "regi
             <Link href="/staff" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--emerald-2)] no-underline font-mono" data-testid="link-staff-mobile">พนักงาน</Link>
             <Link href="/owner" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--gold-2)] no-underline" data-testid="link-owner-mobile">เจ้าของร้าน</Link>
           </nav>
-          <div className="mb-5 flex justify-center rise" style={{ animationDelay: "80ms" }}>
+          <div className="brand-showcase mb-5 flex justify-center rise" style={{ animationDelay: "80ms" }} aria-hidden="true">
+            <BrandIcon name="lightning" size={24} tone="emerald" className="brand-showcase__icon brand-showcase__bolt" />
+            <BrandIcon name="leaf" size={23} tone="emerald" className="brand-showcase__icon brand-showcase__kratom" />
+            <BrandIcon name="cannabis" size={21} tone="emerald" className="brand-showcase__icon brand-showcase__cannabis" />
             <BrandEmblem variant="hero" />
           </div>
           <div className="flex items-baseline justify-between gap-2 mb-2 lg:hidden">
             <p className="eyebrow !mb-0">Private Members</p>
-            <p className="shrink-0 text-xs font-semibold text-[var(--gold-2)]">ครบ 10 · ฟรี 2 ขวด</p>
+            <p className="shrink-0 text-xs font-semibold text-[var(--gold-2)]">ครบ 10 · ฟรี 1 ขวด</p>
           </div>
           <p className="eyebrow mb-2 hidden lg:block">Private Members</p>
           {session.isSuccess && session.data ? (
@@ -90,11 +82,6 @@ export function Welcome({ initialTab = "login" }: { initialTab?: "login" | "regi
               <div id="panel-auth" role="tabpanel" aria-labelledby={`tab-${tab}`} className="panel auth-panel p-5 sm:p-7">
                 {tab === "login" ? <LoginForm /> : <RegisterForm />}
               </div>
-              {demoCode && <div className="mt-4 rounded-2xl border border-dashed border-[rgba(246,196,138,.5)] p-4 space-y-2">
-                <span className="demo-badge">DEMO · โหมดพัฒนาเท่านั้น</span>
-                <button type="button" className="btn btn-ghost w-full" disabled={demoBusy} onClick={() => void openDemo()} data-testid="button-demo">{demoBusy ? "กำลังเปิด…" : `ทดลองเปิดบัตรตัวอย่าง ${demoCode}`}</button>
-                {demoErr && <p role="alert" className="field-error">{demoErr}</p>}
-              </div>}
               {session.isError && (session.error as { status?: number })?.status !== 401 && (
                 <p className="mt-4 text-xs text-[var(--muted)]" role="status">เซิร์ฟเวอร์ไม่ตอบสนองชั่วคราว คุณยังลองเข้าสู่ระบบได้</p>
               )}

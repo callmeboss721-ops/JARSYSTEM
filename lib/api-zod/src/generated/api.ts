@@ -123,11 +123,7 @@ export const ListMemberActivityResponse = zod.array(ListMemberActivityResponseIt
 
 export const GetLoyaltyHealthResponse = zod.object({
   "status": zod.string(),
-  "storage": zod.string(),
-  "demo_mode": zod.boolean(),
-  "demo_member_code": zod.string().optional(),
-  "staff_default_pin": zod.boolean().optional(),
-  "owner_default_pin": zod.boolean().optional()
+  "storage": zod.string()
 })
 
 

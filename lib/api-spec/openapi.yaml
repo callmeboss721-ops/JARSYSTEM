@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Api
   version: 1.0.0
-  description: Jaguar House loyalty API
+  description: Jaguar Kratom loyalty API
 servers:
   - url: /api
 paths:
@@ -112,7 +112,7 @@ paths:
       operationId: getLoyaltyHealth
       responses:
         "200":
-          description: Store availability and development-demo capability
+          description: Store availability
           content:
             application/json:
               schema: { $ref: "#/components/schemas/LoyaltyHealth" }
@@ -573,14 +573,10 @@ components:
         qr: { type: string, pattern: "^JAGUAR1:[0-9a-f]{64}$" }
     LoyaltyHealth:
       type: object
-      required: [status, storage, demo_mode]
+      required: [status, storage]
       properties:
         status: { type: string }
         storage: { type: string }
-        demo_mode: { type: boolean }
-        demo_member_code: { type: string }
-        staff_default_pin: { type: boolean }
-        owner_default_pin: { type: boolean }
     StaffSecurityState:
       type: object
       required: [default_pin]

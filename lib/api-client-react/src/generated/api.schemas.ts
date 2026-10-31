@@ -134,10 +134,6 @@ export interface MemberQr {
 export interface LoyaltyHealth {
   status: string;
   storage: string;
-  demo_mode: boolean;
-  demo_member_code?: string;
-  staff_default_pin?: boolean;
-  owner_default_pin?: boolean;
 }
 
 export interface StaffSecurityState {
