@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { QRCodeSVG } from "qrcode.react";
 import { useGetCannabisMemberCard, getGetCannabisMemberCardQueryKey, type CannabisCard } from "@workspace/api-client-react";
 import { MemberShell } from "@/components/brand/member-shell";
+import { MemberCardCarousel } from "@/components/brand/member-card-carousel";
 import { BrandEmblem } from "@/components/brand/brand-emblem";
 import { ErrorState, SignedOutState, EmptyState } from "@/components/brand/ui";
 import { api, errorText } from "@/components/brand/loyalty-api";
@@ -75,30 +75,31 @@ export default function CannabisCardPage() {
       : <div className="cannabis-wrap">
         <header className="cannabis-heading rise">
           <div><p className="eyebrow">สมาชิก · Jaguar Cannabis</p><h1>{card.display_name || "บัตรสมาชิกพลังใบ"}</h1><p>พี่เสือพลังใบ ซุปเปอร์ฮีโร่ของคนไทย</p></div>
-          <Link href="/card" className="cannabis-switch" data-testid="link-kratom-card">บัตรกระท่อม <span aria-hidden="true">↗</span></Link>
         </header>
         {confettiKey > 0 && <CannabisConfetti key={confettiKey} />}
         {celebrate && <div role="status" className="cannabis-ready cannabis-ready--celebrate">ครบ 10 ติ๊ก — ฟรี 1 กรัม แจ้งพนักงานที่เคาน์เตอร์</div>}
-        <section key={popKey} className={`cannabis-card rise ${popKey ? "card-pop" : ""}`} aria-label="บัตรสมาชิกกัญชา">
-          <div className="cannabis-card__art" aria-hidden="true"><span className="cannabis-orbit orbit-one" /><span className="cannabis-orbit orbit-two" /><span className="cannabis-leaf" /></div>
-          <div className="cannabis-card__top">
-            <div><span className="cannabis-kicker">JAGUAR / MEMBER NO. 02</span><h2>กัญชา · Cannabis</h2></div>
-            <BrandEmblem variant="card" />
-          </div>
-          <div className="cannabis-card__balance">
-            <div><span>แต้มพร้อมใช้</span><strong data-testid="cannabis-balance">{card.balance}</strong><small>แสตมป์</small></div>
-            <div className="cannabis-qr" data-testid="cannabis-member-qr">
-              {qr.isLoading ? <span aria-busy="true">กำลังโหลด QR</span>
-                : qr.isError || !qr.data?.qr ? <button className="btn btn-ghost" type="button" onClick={() => void qr.refetch()} disabled={qr.isFetching}>โหลด QR อีกครั้ง</button>
-                : <QRCodeSVG value={qr.data.qr} size={96} level="M" aria-label={`QR บัตรสมาชิก ${card.member_code}`} />}
-              <span>ให้พนักงานสแกน</span>
+        <MemberCardCarousel active="cannabis">
+          <section key={popKey} className={`cannabis-card rise ${popKey ? "card-pop" : ""}`} aria-label="บัตรสมาชิกกัญชา">
+            <div className="cannabis-card__art" aria-hidden="true"><span className="cannabis-orbit orbit-one" /><span className="cannabis-orbit orbit-two" /><span className="cannabis-leaf" /></div>
+            <div className="cannabis-card__top">
+              <div><span className="cannabis-kicker">JAGUAR / MEMBER NO. 02</span><h2>กัญชา · Cannabis</h2></div>
+              <BrandEmblem variant="card" />
             </div>
-          </div>
-          <div className="cannabis-card__code"><span>รหัสสมาชิก</span><strong data-testid="cannabis-member-code">{card.member_code}</strong></div>
-          <div className="cannabis-progress-copy"><span>{card.balance >= 10 ? "พร้อมแลกฟรี 1 กรัม" : `อีก ${10 - card.balance} แต้ม รับฟรี 1 กรัม`}</span><b>{Math.min(card.balance, 10)}/10</b></div>
-          <div className="cannabis-progress" role="progressbar" aria-label="ความคืบหน้าสู่การแลก 1 กรัม" aria-valuemin={0} aria-valuemax={10} aria-valuenow={Math.min(card.balance, 10)}><i style={{ transform: `scaleX(${Math.min(card.balance, 10) / 10})` }} /></div>
-          <div className="cannabis-reward"><span>01</span><p>ซื้อครบทุก 1 กรัม รับ 1 แต้ม</p><b>10 แต้ม = ฟรี 1 กรัม</b></div>
-        </section>
+            <div className="cannabis-card__balance">
+              <div><span>แต้มพร้อมใช้</span><strong data-testid="cannabis-balance">{card.balance}</strong><small>แสตมป์</small></div>
+              <div className="cannabis-qr" data-testid="cannabis-member-qr">
+                {qr.isLoading ? <span aria-busy="true">กำลังโหลด QR</span>
+                  : qr.isError || !qr.data?.qr ? <button className="btn btn-ghost" type="button" onClick={() => void qr.refetch()} disabled={qr.isFetching}>โหลด QR อีกครั้ง</button>
+                  : <QRCodeSVG value={qr.data.qr} size={96} level="M" aria-label={`QR บัตรสมาชิก ${card.member_code}`} />}
+                <span>ให้พนักงานสแกน</span>
+              </div>
+            </div>
+            <div className="cannabis-card__code"><span>รหัสสมาชิก</span><strong data-testid="cannabis-member-code">{card.member_code}</strong></div>
+            <div className="cannabis-progress-copy"><span>{card.balance >= 10 ? "พร้อมแลกฟรี 1 กรัม" : `อีก ${10 - card.balance} แต้ม รับฟรี 1 กรัม`}</span><b>{Math.min(card.balance, 10)}/10</b></div>
+            <div className="cannabis-progress" role="progressbar" aria-label="ความคืบหน้าสู่การแลก 1 กรัม" aria-valuemin={0} aria-valuemax={10} aria-valuenow={Math.min(card.balance, 10)}><i style={{ transform: `scaleX(${Math.min(card.balance, 10) / 10})` }} /></div>
+            <div className="cannabis-reward"><span>01</span><p>ซื้อครบทุก 1 กรัม รับ 1 แต้ม</p><b>10 แต้ม = ฟรี 1 กรัม</b></div>
+          </section>
+        </MemberCardCarousel>
         {card.balance >= 10 && !celebrate && <div className="cannabis-ready" role="status">แต้มครบแล้ว — แจ้งพนักงานเพื่อแลกฟรี 1 กรัม</div>}
         <div className="cannabis-stats">
           <article><span>สะสมจากการซื้อ</span><strong>{card.lifetime_earned}</strong><small>กรัมทั้งหมด</small></article>

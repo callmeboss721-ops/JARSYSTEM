@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { BrandIcon } from "@/components/brand/brand-icon";
 import { MemberShell } from "@/components/brand/member-shell";
+import { MemberCardCarousel } from "@/components/brand/member-card-carousel";
 import { LoyaltyCard, LoyaltyCardSkeleton, STAMPS } from "@/components/brand/loyalty-card";
 import { EmptyState, ErrorState, SignedOutState } from "@/components/brand/ui";
 import { api, errorText, gradeFor, type MemberCardData, type Sale, formulaLabels } from "@/components/brand/loyalty-api";
@@ -60,10 +61,12 @@ export default function CardPage() {
         {(celebrate || card.data.balance >= STAMPS) && <div role="status" className="gold-alert">ครบ 10 แต้ม! รับขวดแถมฟรี 1 ขวด</div>}
         {confettiKey > 0 && <Confetti key={confettiKey} />}
         <div key={pop} className={pop ? "card-pop" : undefined}>
-          <LoyaltyCard card={card.data} qr={{
-            value: qr.data?.qr, loading: qr.isLoading, error: qr.isError ? errorText(qr.error) : undefined,
-            retry: () => { void qr.refetch(); }, retrying: qr.isFetching,
-          }} />
+          <MemberCardCarousel active="kratom">
+            <LoyaltyCard card={card.data} qr={{
+              value: qr.data?.qr, loading: qr.isLoading, error: qr.isError ? errorText(qr.error) : undefined,
+              retry: () => { void qr.refetch(); }, retrying: qr.isFetching,
+            }} />
+          </MemberCardCarousel>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div className="panel p-4"><p className="text-xs text-[var(--muted)]">สะสมทั้งหมด</p><p className="font-display text-2xl font-semibold mt-1">{card.data.lifetime_earned}</p></div>
