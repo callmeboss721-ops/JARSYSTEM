@@ -203,7 +203,7 @@ export default function StaffPage() {
 
   if (auth === null) return <main className="min-h-[100dvh] p-6"><div className="skeleton max-w-md h-48 mx-auto" aria-label="กำลังตรวจสอบสิทธิ์" /></main>;
 
-  return <div className="min-h-[100dvh]">
+  return <div className="staff-workspace min-h-[100dvh]">
     <header className="staff-topline sticky top-0 z-40 border-b border-[var(--line)]">
       <div className="mx-auto max-w-6xl px-4 h-16 flex justify-between items-center gap-2">
         <Link href="/" className="flex items-center gap-2 no-underline min-h-11"><JaguarMark size={34} /><span className="font-display text-[var(--gold-2)] tracking-wider">JAGUAR <small className="text-[var(--emerald-2)]">STAFF</small></span></Link>
@@ -215,7 +215,7 @@ export default function StaffPage() {
         <div className="text-center mb-6"><p className="eyebrow">Staff access</p><h1 className="font-display text-3xl font-semibold mt-2">เข้าสู่ระบบพนักงาน</h1><p className="text-sm text-[var(--muted)] mt-2">ใช้ PIN ที่เจ้าของร้านกำหนด</p></div>
         {msg && <p role="status" className="mb-4 rounded-xl border border-[rgba(47,217,138,.35)] bg-[rgba(47,217,138,.08)] p-3 text-sm text-[var(--emerald-2)]">{msg}</p>}
         <form className="panel p-5 sm:p-6 space-y-4" onSubmit={login}>
-          <div className="field"><label htmlFor="staff-pin">PIN พนักงาน</label><input id="staff-pin" type="password" inputMode="numeric" autoComplete="current-password" maxLength={12} className="input text-center !text-2xl !tracking-[.5em]" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 12))} aria-invalid={!!err} aria-describedby={err ? "staff-pin-err" : undefined} /></div>
+          <div className="field"><label htmlFor="staff-pin">PIN พนักงาน</label><input id="staff-pin" type="password" inputMode="numeric" autoComplete="one-time-code" maxLength={12} className="input text-center !text-2xl !tracking-[.5em]" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 12))} aria-invalid={!!err} aria-describedby={err ? "staff-pin-err" : undefined} /></div>
           <PinPad value={pin} onChange={setPin} label="แป้นตัวเลข PIN พนักงาน" />
           {err && <p id="staff-pin-err" role="alert" className="field-error">{err}</p>}
           <button className="btn btn-neon w-full" disabled={busy}>{busy ? "กำลังตรวจสอบ…" : "เข้าสู่พื้นที่ทำงาน"}</button>

@@ -9,9 +9,55 @@ import { BrandEmblem } from "./brand-emblem";
 import { SamutPrakanArt } from "./samut-prakan-art";
 import { LoginForm, RegisterForm } from "./auth-forms";
 
-export function Welcome({ initialTab = "login" }: { initialTab?: "login" | "register" }) {
-  const [tab, setTab] = useState<"login" | "register">(initialTab);
+export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
+  const [tab, setTab] = useState<"login" | "register">(initialTab ?? "login");
   const session = useQuery<MemberCardData>({ queryKey: ["/api/loyalty/card"], queryFn: () => api("/api/loyalty/card"), retry: false, refetchOnWindowFocus: false });
+
+  if (initialTab === undefined) {
+    return (
+      <main className="jaguar-home customer-art-root min-h-[100dvh]">
+        <SamutPrakanArt />
+        <header className="jaguar-home__header">
+          <Link href="/" className="jaguar-home__brand" aria-label="JAGUAR KRATOM หน้าแรก">
+            <BrandEmblem variant="card" />
+            <span><strong>JAGUAR</strong><small>KRATOM · BUN KHIRI SOI 6</small></span>
+          </Link>
+          <nav aria-label="ทางเข้าร้าน">
+            <Link href="/staff" data-testid="link-staff">พนักงาน</Link>
+            <Link href="/owner" data-testid="link-owner">เจ้าของร้าน</Link>
+          </nav>
+        </header>
+        <section className="jaguar-home__hero">
+          <div className="jaguar-home__copy rise">
+            <p className="eyebrow">NEIGHBORHOOD MEMBERSHIP · SAMUT PRAKAN</p>
+            <h1>ของที่ชอบ<br /><em>ใกล้กว่าที่คิด</em></h1>
+            <p className="jaguar-home__intro">สมาชิก JAGUAR KRATOM สะสมแต้มได้ทุกครั้งที่แวะมา แล้วเก็บสิทธิ์ของคุณไว้ในบัตรบนมือถือ</p>
+            <div className="jaguar-home__actions">
+              {session.isSuccess && session.data
+                ? <Link href="/card" className="btn btn-neon">เปิดบัตรสมาชิก <BrandIcon name="continue" tone="inherit" /></Link>
+                : <Link href="/login" className="btn btn-neon">เข้าสู่บัตรของฉัน <BrandIcon name="continue" tone="inherit" /></Link>}
+              <Link href="/register" className="jaguar-home__join">สมัครสมาชิก <span aria-hidden="true">↗</span></Link>
+            </div>
+            <div className="jaguar-home__location"><BrandIcon name="location" tone="gold" /><span>บุญคีรี ซอย 6<br /><small>สมุทรปราการ · แวะมาที่ร้านได้เลย</small></span></div>
+          </div>
+          <div className="jaguar-home__art rise" style={{ animationDelay: "120ms" }}>
+            <span className="jaguar-home__art-index">01 / MEMBERS CLUB</span>
+            <BrandEmblem variant="hero" />
+            <span className="jaguar-home__art-caption">A LOCAL CLUB, MADE TO KEEP.</span>
+          </div>
+        </section>
+        <section className="jaguar-home__programs" aria-label="บัตรสะสมแต้ม">
+          <Link href="/login" className="jaguar-home__program jaguar-home__program--kratom">
+            <span className="eyebrow">01 — JAGUAR KRATOM</span><strong>10 แต้ม</strong><span>รับฟรี 1 ขวด</span><i aria-hidden="true">↗</i>
+          </Link>
+          <Link href="/login" className="jaguar-home__program jaguar-home__program--cannabis">
+            <span className="eyebrow">02 — JAGUAR CANNABIS</span><strong>10 แต้ม</strong><span>รับฟรี 1 กรัม</span><i aria-hidden="true">↗</i>
+          </Link>
+          <p className="jaguar-home__footnote">บัตรสะสมทั้งสองประเภทแยกจากกัน · แสดง QR ให้พนักงานที่เคาน์เตอร์</p>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <div className="customer-art-root min-h-[100dvh] grid lg:grid-cols-[1.1fr_1fr]">
