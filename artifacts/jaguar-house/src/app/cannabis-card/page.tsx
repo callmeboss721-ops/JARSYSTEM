@@ -1,0 +1,130 @@
+"use client";
+
+import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+import { QRCodeSVG } from "qrcode.react";
+import { useGetCannabisMemberCard, getGetCannabisMemberCardQueryKey, type CannabisCard } from "@workspace/api-client-react";
+import { MemberShell } from "@/components/brand/member-shell";
+import { BrandEmblem } from "@/components/brand/brand-emblem";
+import { ErrorState, SignedOutState, EmptyState } from "@/components/brand/ui";
+import { api, errorText } from "@/components/brand/loyalty-api";
+
+const CARD_KEY = getGetCannabisMemberCardQueryKey();
+const CONFETTI_COLORS = ["#e5c04a", "#f6e09a", "#2fd98a", "#c4cad6", "#b8901f"];
+
+export default function CannabisCardPage() {
+  const [visible, setVisible] = useState(true);
+  const [popKey, setPopKey] = useState(0);
+  const [celebrate, setCelebrate] = useState(false);
+  const [confettiKey, setConfettiKey] = useState(0);
+  const previous = useRef<{ member_code: string; balance: number } | null>(null);
+  useEffect(() => {
+    const onVisibility = () => setVisible(document.visibilityState === "visible");
+    onVisibility();
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, []);
+  const cardQuery = useGetCannabisMemberCard({
+    query: {
+      queryKey: CARD_KEY,
+      retry: false,
+      refetchOnWindowFocus: true,
+      refetchInterval: (query) => query.state.data ? (visible ? 2000 : false) : false,
+      refetchIntervalInBackground: false,
+    },
+  });
+  const card = cardQuery.data as CannabisCard | undefined;
+  const unauthenticated = (cardQuery.error as { status?: number } | null)?.status === 401;
+  const qr = useQuery<{ qr: string }>({
+    queryKey: ["/api/loyalty/qr", card?.member_code],
+    queryFn: () => api("/api/loyalty/qr"),
+    enabled: !!card?.member_code,
+    staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    retry: false,
+  });
+  useEffect(() => {
+    if (!card) return;
+    const prev = previous.current;
+    previous.current = { member_code: card.member_code, balance: card.balance };
+    if (!prev || prev.member_code !== card.member_code) return;
+    if (prev.balance === card.balance) return;
+    setPopKey((key) => key + 1);
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prev.balance < 10 && card.balance >= 10) {
+      setCelebrate(true);
+      if (!reduced) {
+        setConfettiKey((key) => key + 1);
+        if ("vibrate" in navigator) navigator.vibrate?.([60, 40, 120]);
+      }
+    } else if (card.balance < 10) {
+      setCelebrate(false);
+    } else if (card.balance > prev.balance && !reduced && "vibrate" in navigator) {
+      navigator.vibrate?.(30);
+    }
+  }, [card?.member_code, card?.balance]);
+  useEffect(() => { if (card && card.balance < 10) setCelebrate(false); }, [card?.balance]);
+
+  return <MemberShell signedIn={cardQuery.isSuccess}>
+    {cardQuery.isLoading ? <div className="cannabis-wrap"><div className="cannabis-skeleton" aria-busy="true" aria-label="กำลังโหลดบัตร"><i /><i /><i /></div></div>
+      : unauthenticated ? <div className="max-w-md mx-auto"><SignedOutState /></div>
+      : cardQuery.isError || !card ? <div className="max-w-md mx-auto"><ErrorState message={errorText(cardQuery.error)} onRetry={() => void cardQuery.refetch()} retrying={cardQuery.isFetching} /></div>
+      : <div className="cannabis-wrap">
+        <header className="cannabis-heading rise">
+          <div><p className="eyebrow">สมาชิก · Jaguar Cannabis</p><h1>{card.display_name || "บัตรสมาชิกพลังใบ"}</h1><p>พี่เสือพลังใบ ซุปเปอร์ฮีโร่ของคนไทย</p></div>
+          <Link href="/card" className="cannabis-switch" data-testid="link-kratom-card">บัตรกระท่อม <span aria-hidden="true">↗</span></Link>
+        </header>
+        {confettiKey > 0 && <CannabisConfetti key={confettiKey} />}
+        {celebrate && <div role="status" className="cannabis-ready cannabis-ready--celebrate">ครบ 10 ติ๊ก — ฟรี 1 กรัม แจ้งพนักงานที่เคาน์เตอร์</div>}
+        <section key={popKey} className={`cannabis-card rise ${popKey ? "card-pop" : ""}`} aria-label="บัตรสมาชิกกัญชา">
+          <div className="cannabis-card__art" aria-hidden="true"><span className="cannabis-orbit orbit-one" /><span className="cannabis-orbit orbit-two" /><span className="cannabis-leaf" /></div>
+          <div className="cannabis-card__top">
+            <div><span className="cannabis-kicker">JAGUAR / MEMBER NO. 02</span><h2>กัญชา · Cannabis</h2></div>
+            <BrandEmblem variant="card" />
+          </div>
+          <div className="cannabis-card__balance">
+            <div><span>แต้มพร้อมใช้</span><strong data-testid="cannabis-balance">{card.balance}</strong><small>แสตมป์</small></div>
+            <div className="cannabis-qr" data-testid="cannabis-member-qr">
+              {qr.isLoading ? <span aria-busy="true">กำลังโหลด QR</span>
+                : qr.isError || !qr.data?.qr ? <button className="btn btn-ghost" type="button" onClick={() => void qr.refetch()} disabled={qr.isFetching}>โหลด QR อีกครั้ง</button>
+                : <QRCodeSVG value={qr.data.qr} size={96} level="M" aria-label={`QR บัตรสมาชิก ${card.member_code}`} />}
+              <span>ให้พนักงานสแกน</span>
+            </div>
+          </div>
+          <div className="cannabis-card__code"><span>รหัสสมาชิก</span><strong data-testid="cannabis-member-code">{card.member_code}</strong></div>
+          <div className="cannabis-progress-copy"><span>{card.balance >= 10 ? "พร้อมแลกฟรี 1 กรัม" : `อีก ${10 - card.balance} แต้ม รับฟรี 1 กรัม`}</span><b>{Math.min(card.balance, 10)}/10</b></div>
+          <div className="cannabis-progress" role="progressbar" aria-label="ความคืบหน้าสู่การแลก 1 กรัม" aria-valuemin={0} aria-valuemax={10} aria-valuenow={Math.min(card.balance, 10)}><i style={{ transform: `scaleX(${Math.min(card.balance, 10) / 10})` }} /></div>
+          <div className="cannabis-reward"><span>01</span><p>ซื้อครบทุก 1 กรัม รับ 1 แต้ม</p><b>10 แต้ม = ฟรี 1 กรัม</b></div>
+        </section>
+        {card.balance >= 10 && !celebrate && <div className="cannabis-ready" role="status">แต้มครบแล้ว — แจ้งพนักงานเพื่อแลกฟรี 1 กรัม</div>}
+        <div className="cannabis-stats">
+          <article><span>สะสมจากการซื้อ</span><strong>{card.lifetime_earned}</strong><small>กรัมทั้งหมด</small></article>
+          <article><span>ใช้แลกไปแล้ว</span><strong>{card.lifetime_redeemed}</strong><small>แต้มทั้งหมด</small></article>
+        </div>
+        <section className="cannabis-history panel" aria-labelledby="cannabis-history-title">
+          <div className="flex items-end justify-between gap-3"><div><p className="eyebrow">Stamp ledger</p><h2 id="cannabis-history-title">รายการล่าสุด</h2></div><span className="cannabis-count">{card.recent_transactions.length} รายการ</span></div>
+          {!card.recent_transactions.length ? <EmptyState title="ยังไม่มีรายการสะสม" body="เมื่อซื้อสินค้าที่ร้าน รายการแต้มจะปรากฏที่นี่" />
+            : <ul>{card.recent_transactions.map((tx) => <li key={tx.id}>
+              <span className={`cannabis-delta ${tx.delta < 0 ? "is-out" : ""}`}>{tx.delta > 0 ? `+${tx.delta}` : tx.delta}</span>
+              <span className="cannabis-transaction-copy"><strong>{tx.reason}</strong><small>{new Date(tx.created_at).toLocaleString("th-TH")}{tx.grams_purchased > 0 ? ` · ซื้อ ${tx.grams_purchased} กรัม` : ""}</small></span>
+              <span className="cannabis-unit">แต้ม</span>
+            </li>)}</ul>}
+        </section>
+      </div>}
+  </MemberShell>;
+}
+
+function CannabisConfetti() {
+  const bits = useMemo(() => Array.from({ length: 48 }, (_, i) => ({
+    left: `${(i * 37) % 100}%`,
+    x: `${((i * 53) % 120) - 60}px`,
+    r: `${(i * 97) % 720}deg`,
+    d: `${1.8 + ((i * 13) % 14) / 10}s`,
+    delay: `${((i * 7) % 10) / 20}s`,
+    color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+  })), []);
+  return <div className="confetti" aria-hidden="true">{bits.map((bit, i) => <i key={i} style={{ left: bit.left, background: bit.color, ["--x" as string]: bit.x, ["--r" as string]: bit.r, ["--d" as string]: bit.d, ["--delay" as string]: bit.delay }} />)}</div>;
+}

@@ -61,6 +61,15 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/MemberCard" }
+  /loyalty/cannabis-card:
+    get:
+      operationId: getCannabisMemberCard
+      responses:
+        "200":
+          description: Current member cannabis stamp card and recent activity
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CannabisCard" }
   /loyalty/rewards:
     get:
       operationId: listRewards
@@ -200,6 +209,24 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/MemberCard" }
+  /loyalty/staff/cannabis-card:
+    get:
+      operationId: getStaffCannabisCard
+      parameters:
+        - in: query
+          name: code
+          required: false
+          schema: { type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$" }
+        - in: query
+          name: qr_token
+          required: false
+          schema: { type: string, pattern: "^(JAGUAR1:)?[0-9a-f]{64}$" }
+      responses:
+        "200":
+          description: Cannabis stamps for a scanned or searched member
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CannabisCard" }
   /loyalty/staff/members:
     get:
       operationId: listStaffMembers
@@ -242,6 +269,34 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/MemberCard" }
+  /loyalty/staff/cannabis-stamp:
+    post:
+      operationId: addCannabisStamps
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CannabisStampInput" }
+      responses:
+        "200":
+          description: One stamp per purchased gram, idempotent by request_id
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CannabisCard" }
+  /loyalty/staff/cannabis-redeem:
+    post:
+      operationId: redeemCannabisAtCounter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CannabisRedeemInput" }
+      responses:
+        "200":
+          description: Redeem 10 cannabis stamps for one free gram
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CannabisCard" }
   /loyalty/staff/redeem:
     post:
       operationId: redeemAtCounter
@@ -497,6 +552,28 @@ components:
         balance: { type: integer }
         lifetime_earned: { type: integer }
         lifetime_redeemed: { type: integer }
+    CannabisCard:
+      type: object
+      required: [member_code, display_name, balance, lifetime_earned, lifetime_redeemed, recent_transactions]
+      properties:
+        member_code: { type: string }
+        display_name: { type: string }
+        balance: { type: integer, minimum: 0 }
+        lifetime_earned: { type: integer, minimum: 0 }
+        lifetime_redeemed: { type: integer, minimum: 0 }
+        recent_transactions:
+          type: array
+          maxItems: 5
+          items: { $ref: "#/components/schemas/CannabisTransaction" }
+    CannabisTransaction:
+      type: object
+      required: [id, delta, grams_purchased, reason, created_at]
+      properties:
+        id: { type: string, format: uuid }
+        delta: { type: integer }
+        grams_purchased: { type: integer, minimum: 0, maximum: 999 }
+        reason: { type: string }
+        created_at: { type: string }
     Reward:
       type: object
       required: [id, name, description, points_cost, is_active, is_demo]
@@ -539,6 +616,19 @@ components:
         qr_token: { type: string, pattern: "^(JAGUAR1:)?[0-9a-f]{64}$" }
         bottle_count: { type: integer, minimum: 1, maximum: 999 }
         formula: { $ref: "#/components/schemas/Formula" }
+        request_id: { type: string, format: uuid }
+    CannabisStampInput:
+      type: object
+      required: [member_code, grams, request_id]
+      properties:
+        member_code: { type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$" }
+        grams: { type: integer, minimum: 1, maximum: 999 }
+        request_id: { type: string, format: uuid }
+    CannabisRedeemInput:
+      type: object
+      required: [member_code, request_id]
+      properties:
+        member_code: { type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$" }
         request_id: { type: string, format: uuid }
     CounterRedemptionInput:
       type: object

@@ -24,9 +24,9 @@ export function Welcome({ initialTab = "login" }: { initialTab?: "login" | "regi
           <span className="flex gap-1"><Link href="/staff" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--emerald-2)] no-underline font-mono tracking-widest" data-testid="link-staff">STAFF DESK</Link><Link href="/owner" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--gold-2)] no-underline" data-testid="link-owner">ห้องเจ้าของร้าน</Link></span>
         </div>
 
-        <div className="relative lg:my-0 flex flex-col items-start">
-          <h1 aria-label="พี่เสือพลัง ซุปเปอร์ฮีโร่ของคนไทย" className="font-display font-semibold leading-[1.1] tracking-tight text-[30px] sm:text-[44px] lg:text-[60px] rise" style={{ animationDelay: "120ms" }}>
-            พี่เสือพลัง<br />
+          <div className="relative lg:my-0 hidden lg:flex flex-col items-start">
+          <h1 aria-label="พี่เสือพลังใบ ซุปเปอร์ฮีโร่ของคนไทย" className="font-display font-semibold leading-[1.1] tracking-tight text-[30px] sm:text-[44px] lg:text-[60px] rise" style={{ animationDelay: "120ms" }}>
+            พี่เสือพลังใบ<br />
             <span className="text-[var(--gold-2)]">ซุปเปอร์ฮีโร่<br />ของคนไทย</span>
           </h1>
           <div className="hairline w-24 mt-6" aria-hidden="true" />
@@ -61,6 +61,7 @@ export function Welcome({ initialTab = "login" }: { initialTab?: "login" | "regi
             <BrandIcon name="cannabis" size={21} tone="emerald" className="brand-showcase__icon brand-showcase__cannabis" />
             <BrandEmblem variant="hero" />
           </div>
+          <p className="brand-slogan-inline lg:hidden" data-testid="brand-slogan-mobile">พี่เสือพลังใบ ซุปเปอร์ฮีโร่ของคนไทย</p>
           <div className="flex items-baseline justify-between gap-2 mb-2 lg:hidden">
             <p className="eyebrow !mb-0">Private Members</p>
             <p className="shrink-0 text-xs font-semibold text-[var(--gold-2)]">ครบ 10 · ฟรี 1 ขวด</p>

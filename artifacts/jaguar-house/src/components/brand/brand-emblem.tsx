@@ -7,7 +7,7 @@ export function BrandEmblem({ variant }: { variant: Variant }) {
       <span className="brand-emblem__frame">
         <img
           className="brand-emblem__image"
-          src="/brand/jaguar-logo.webp"
+          src="/jaguar-kratom-transparent.png"
           alt="ตรา JAGUAR KRATOM พร้อมภาพจากัวร์"
           width={variant === "hero" ? 280 : 56}
           height={variant === "hero" ? 280 : 56}

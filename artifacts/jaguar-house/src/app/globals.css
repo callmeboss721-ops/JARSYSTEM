@@ -350,32 +350,28 @@ body { overflow-x: hidden; }
 }
 .brand-emblem__frame {
   display: grid;
-  place-items: start center;
-  padding: 2px;
-  border: 1px solid rgba(79,199,154,.4);
-  border-radius: 16px;
-  background: rgba(4,6,5,.34);
-  box-shadow: 0 0 20px -16px rgba(79,199,154,.7), 0 1px 0 rgba(255,255,255,.08) inset;
-  overflow: hidden;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
 }
 .brand-emblem__image {
   display: block;
   width: 100%;
   height: auto;
   object-fit: unset;
+  filter: drop-shadow(0 12px 20px rgba(0,0,0,.58)) drop-shadow(0 0 8px rgba(0,230,118,.14));
 }
 .brand-emblem--hero .brand-emblem__frame {
-  width: clamp(200px, 30vw, 280px);
-  aspect-ratio: 1.4;
-  border-radius: 22px;
+  width: clamp(220px, 34vw, 360px);
+  aspect-ratio: 1;
 }
 .brand-emblem--card .brand-emblem__frame {
   width: 56px;
-  aspect-ratio: 1.4;
-  padding: 1px;
-}
-.brand-emblem--card .brand-emblem__frame {
-  border-radius: 13px;
+  aspect-ratio: 1;
 }
 .brand-showcase {
   position: relative;
@@ -412,6 +408,7 @@ body { overflow-x: hidden; }
   bottom: 9%;
   transform: rotate(16deg);
 }
+.brand-slogan-inline { margin: 2px 0 16px; text-align: center; color: var(--gold-2); font-family: var(--font-display); font-size: clamp(17px, 4.7vw, 21px); font-weight: 600; line-height: 1.35; text-shadow: 0 0 18px rgba(229,192,74,.15); }
 @keyframes brand-charge {
   0%, 100% { opacity: .74; filter: drop-shadow(0 0 5px rgba(0,230,118,.45)); }
   48% { opacity: 1; filter: drop-shadow(0 0 12px rgba(0,230,118,.9)); }
@@ -518,3 +515,78 @@ body {
 .confetti i { position: absolute; top: -16px; width: 8px; height: 13px; border-radius: 2px; opacity: 0; animation: confetti-fall var(--d) cubic-bezier(.25,.6,.4,1) var(--delay) forwards; }
 @keyframes confetti-fall { 0% { opacity: 1; transform: translate3d(0,0,0) rotate(0); } 100% { opacity: 0; transform: translate3d(var(--x), 105vh, 0) rotate(var(--r)); } }
 @media (prefers-reduced-motion: reduce) { .confetti { display: none; } .card-pop { animation: none; } }
+
+/* Cannabis membership: a separate jade-and-champagne credential, not a kratom balance variant. */
+.cannabis-wrap { width: min(100%, 850px); margin: 0 auto; padding: 8px 0 36px; }
+.cannabis-heading { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin: 0 0 22px; }
+.cannabis-heading h1 { font-family: var(--font-display); font-size: clamp(24px, 6vw, 34px); font-weight: 600; margin: 5px 0 3px; }
+.cannabis-heading p:last-child { color: #b8c6b8; margin: 0; font-size: 13px; }
+.cannabis-switch { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 14px; border: 1px solid rgba(217,189,115,.4); border-radius: 999px; color: var(--gold-2); font-size: 13px; text-decoration: none; white-space: nowrap; background: rgba(217,189,115,.06); transition: transform .2s, background-color .2s; }
+.cannabis-switch:hover { transform: translateY(-2px); background: rgba(217,189,115,.13); }
+.cannabis-card { position: relative; isolation: isolate; overflow: hidden; border: 1px solid rgba(153,211,164,.44); border-radius: 26px; padding: clamp(19px, 5vw, 34px); background: radial-gradient(ellipse at 95% 6%, rgba(102,181,127,.2), transparent 38%), radial-gradient(ellipse at 0% 100%, rgba(211,176,94,.13), transparent 46%), linear-gradient(145deg,#17231b 0%,#0b120e 56%,#090e0b 100%); box-shadow: 0 2px 0 rgba(255,255,255,.13) inset, 0 30px 60px -32px rgba(0,0,0,.95), 0 18px 44px -36px rgba(93,191,128,.65); animation: cannabis-card-in .55s cubic-bezier(.2,.8,.2,1) both; }
+.cannabis-card::before { content:""; position:absolute; inset:0; z-index:-1; opacity:.15; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='76' height='76' viewBox='0 0 76 76'%3E%3Cpath d='M38 12v52M12 38h52M20 20l36 36m0-36L20 56' stroke='%23d9bd73' stroke-opacity='.45' stroke-width='.7'/%3E%3C/svg%3E"); mask-image: linear-gradient(120deg, transparent, black 60%); pointer-events:none; }
+.cannabis-card__art { position:absolute; z-index:-1; right:-26px; top:-44px; width:230px; height:230px; opacity:.7; pointer-events:none; }
+.cannabis-orbit { position:absolute; inset:20px; border:1px solid rgba(217,189,115,.2); border-radius:50%; transform:rotate(-24deg) scaleY(.55); }
+.orbit-two { inset:42px 2px; border-color:rgba(125,195,146,.26); transform:rotate(48deg) scaleY(.7); }
+.cannabis-leaf { position:absolute; top:89px; left:97px; width:32px; height:52px; border:1px solid rgba(157,217,167,.75); border-radius:100% 0 100% 0; transform:rotate(42deg); box-shadow:0 0 28px rgba(84,183,117,.2); }
+.cannabis-leaf::before,.cannabis-leaf::after { content:""; position:absolute; left:15px; top:4px; height:42px; width:1px; background:rgba(157,217,167,.55); transform:rotate(-25deg); transform-origin:bottom; }
+.cannabis-leaf::after { transform:rotate(22deg); }
+.cannabis-card__top,.cannabis-card__balance { position:relative; display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+.cannabis-kicker { color:#c7cfbc; font:10px var(--font-mono); letter-spacing:.18em; }
+.cannabis-card__top h2 { font-family:var(--font-display); font-size:clamp(21px,5vw,28px); margin:5px 0 0; }
+.cannabis-card__balance { align-items:center; margin-top:22px; padding:19px 0; border-top:1px solid rgba(221,226,208,.14); border-bottom:1px solid rgba(221,226,208,.14); }
+.cannabis-card__balance>div:first-child { display:grid; grid-template-columns:auto auto; align-items:end; column-gap:8px; }
+.cannabis-card__balance span { grid-column:1/-1; color:#c1c9bb; font-size:13px; }
+.cannabis-card__balance strong { color:#e8d59a; font:700 clamp(54px,15vw,82px)/.95 var(--font-display); letter-spacing:-.06em; text-shadow:0 8px 24px rgba(229,192,74,.14); }
+.cannabis-card__balance small { color:#b8c6b8; padding-bottom:8px; }
+.cannabis-qr { display:flex; flex-direction:column; align-items:center; gap:6px; padding:8px; border:1px solid rgba(236,226,191,.25); border-radius:14px; background:#f2efdf; color:#344034; font-size:9px; white-space:nowrap; }
+.cannabis-qr svg { display:block; max-width:100%; }
+.cannabis-card__code { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:13px 0 18px; }
+.cannabis-card__code span,.cannabis-progress-copy { color:#b8c6b8; font-size:12px; }
+.cannabis-card__code strong { color:#f0e8ce; font:600 15px var(--font-mono); letter-spacing:.12em; overflow-wrap:anywhere; }
+.cannabis-progress-copy { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.cannabis-progress-copy b { color:#e8d59a; font:12px var(--font-mono); }
+.cannabis-progress { height:7px; overflow:hidden; border-radius:9px; background:rgba(238,236,213,.12); box-shadow:0 1px 2px #000 inset; }
+.cannabis-progress i { display:block; width:100%; height:100%; transform-origin:left; border-radius:inherit; background:linear-gradient(90deg,#4db17d,#a8d38b 62%,#e8d59a); box-shadow:0 0 17px rgba(113,193,132,.28); transition:transform .4s cubic-bezier(.2,.8,.2,1); }
+.cannabis-reward { display:flex; align-items:center; gap:12px; margin-top:20px; padding:14px 15px; border:1px solid rgba(217,189,115,.2); border-radius:14px; background:linear-gradient(100deg,rgba(217,189,115,.1),rgba(255,255,255,.018)); }
+.cannabis-reward span { color:#e8d59a; font:12px var(--font-mono); }
+.cannabis-reward p { flex:1; margin:0; color:#d9dfd0; font-size:13px; }
+.cannabis-reward b { color:#e8d59a; font-size:12px; white-space:nowrap; }
+.cannabis-ready { margin-top:14px; padding:13px 16px; border:1px solid rgba(217,189,115,.45); border-radius:15px; background:rgba(217,189,115,.1); color:#efdb9d; font-weight:600; }
+.cannabis-ready--celebrate { text-align:center; box-shadow:0 0 28px rgba(86,190,126,.18),0 0 26px rgba(217,189,115,.16); animation:cannabis-ready-pulse 1.8s ease-in-out infinite; }
+@keyframes cannabis-ready-pulse { 50% { box-shadow:0 0 36px rgba(86,190,126,.3),0 0 34px rgba(217,189,115,.25); } }
+.cannabis-staff-card { margin-top:20px; padding:16px; border:1px solid rgba(159,194,160,.22); border-radius:18px; background:radial-gradient(ellipse at 100% 0%,rgba(69,145,91,.1),transparent 48%),linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.012)); box-shadow:0 1px 0 rgba(255,255,255,.05) inset; }
+.cannabis-stats { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:17px 0; }
+.cannabis-stats article { display:grid; grid-template-columns:1fr auto; align-items:center; padding:15px 17px; border:1px solid rgba(159,194,160,.16); border-radius:17px; background:linear-gradient(140deg,rgba(98,150,105,.09),rgba(255,255,255,.018)); box-shadow:0 1px 0 rgba(255,255,255,.04) inset; }
+.cannabis-stats span { color:#b8c6b8; font-size:12px; }
+.cannabis-stats strong { grid-row:span 2; color:#e8d59a; font:600 26px var(--font-display); }
+.cannabis-stats small { color:#89988a; font-size:10px; }
+.cannabis-history { padding:20px; }
+.cannabis-history h2 { margin:4px 0 0; font:600 20px var(--font-display); }
+.cannabis-count { color:#abb8ab; font:11px var(--font-mono); }
+.cannabis-history ul { list-style:none; padding:0; margin:14px 0 0; }
+.cannabis-history li { display:flex; align-items:center; gap:12px; padding:13px 0; border-top:1px solid rgba(202,216,198,.1); }
+.cannabis-delta { display:grid; place-items:center; width:42px; height:42px; flex:none; border:1px solid rgba(91,185,125,.35); border-radius:13px; color:#9de1ae; background:rgba(55,133,83,.12); font:600 14px var(--font-mono); }
+.cannabis-delta.is-out { color:#efcf83; border-color:rgba(217,189,115,.35); background:rgba(217,189,115,.08); }
+.cannabis-transaction-copy { flex:1; min-width:0; display:grid; gap:3px; }
+.cannabis-transaction-copy strong { overflow-wrap:anywhere; font-size:13px; font-weight:500; }
+.cannabis-transaction-copy small { color:#a8b0a6; font-size:11px; }
+.cannabis-unit { color:#a8b0a6; font-size:11px; }
+.cannabis-skeleton { max-width:700px; margin:22px auto; padding:26px; border:1px solid var(--glass-line); border-radius:26px; background:rgba(255,255,255,.035); display:grid; gap:24px; }
+.cannabis-skeleton i { height:28px; border-radius:10px; background:linear-gradient(90deg,rgba(196,202,214,.04),rgba(196,202,214,.12),rgba(196,202,214,.04)); background-size:200% 100%; animation:shimmer 1.6s linear infinite; }
+.cannabis-skeleton i:nth-child(2) { height:115px; }
+@keyframes cannabis-card-in { from { opacity:0; transform:translateY(12px) scale(.99); } to { opacity:1; transform:translateY(0) scale(1); } }
+@media(max-width:480px) {
+  .cannabis-wrap { padding-top:2px; }
+  .cannabis-heading { align-items:flex-start; flex-direction:column; gap:12px; }
+  .cannabis-card__art { right:-75px; opacity:.5; }
+  .cannabis-reward { align-items:flex-start; flex-wrap:wrap; }
+  .cannabis-reward b { margin-left:30px; }
+}
+@media(max-width:360px) {
+  .cannabis-card__balance { gap:8px; }
+  .cannabis-card__balance strong { font-size:42px; }
+  .cannabis-qr { padding:6px; }
+  .cannabis-qr svg { width:84px; height:84px; }
+}
+@media(prefers-reduced-motion:reduce) { .cannabis-card,.cannabis-ready--celebrate { animation:none; } }

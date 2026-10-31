@@ -10,8 +10,9 @@ import { clearMemberCache, setSessionHint } from "./api-utils";
 import { api, errorText, json } from "./loyalty-api";
 
 const NAV = [
-  { href: "/card", th: "บัตรสมาชิก", icon: "members" },
-  { href: "/redeem", th: "แลกรางวัล", icon: "rewards" },
+  { href: "/card", th: "บัตรกระท่อม", icon: "members" },
+  { href: "/cannabis-card", th: "บัตรกัญชา", icon: "cannabis" },
+  { href: "/redeem", th: "รางวัลกระท่อม", icon: "rewards" },
 ] as const;
 
 export function MemberShell({ children, signedIn }: { children: ReactNode; signedIn: boolean }) {
@@ -74,7 +75,7 @@ export function MemberShell({ children, signedIn }: { children: ReactNode; signe
       </header>
       <main className="member-main mx-auto max-w-5xl px-5 pt-6 md:pt-10">{children}</main>
       <nav aria-label="เมนูสมาชิก (มือถือ)" className="member-header md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-[var(--line)] bg-[rgba(5,5,10,.94)] backdrop-blur-md pb-[env(safe-area-inset-bottom)]">
-        <div className="grid grid-cols-2">
+        <div className="grid grid-cols-3">
           {NAV.map((n) => {
             const active = path === n.href;
             return (

@@ -3,9 +3,11 @@ import {
   RegisterMemberBody, LoginMemberBody, RequestRedemptionBody, ConfirmRedemptionParams,
   LoginStaffBody, LoginOwnerBody, ChangeStaffPinBody, ChangeOwnerPinsBody,
   CreateStaffMemberBody, CreateOwnerMemberBody, RecordStaffSaleBody, RedeemAtCounterBody,
+  AddCannabisStampsBody, RedeemCannabisAtCounterBody, GetStaffCannabisCardQueryParams,
   CreateOwnerRewardBody, UpdateOwnerRewardBody, FindMemberQueryParams,
   ListStaffMembersQueryParams, ListOwnerMembersQueryParams,
   GetMemberCardResponse, ListRewardsResponse, ListMemberActivityResponse, ListMemberSalesResponse,
+  GetCannabisMemberCardResponse, GetStaffCannabisCardResponse, AddCannabisStampsResponse, RedeemCannabisAtCounterResponse,
   ListMemberRedemptionsResponse, RequestRedemptionResponse, GetMemberQrResponse,
   ListStaffMembersResponse, RedeemAtCounterResponse, ListStaffRewardsResponse,
   ListPendingRedemptionsResponse, ConfirmRedemptionResponse, GetOwnerSummaryResponse,
@@ -95,6 +97,10 @@ router.get("/card", async (req, res) => {
   const { sub } = readSession(req, "member");
   sendJson(res, GetMemberCardResponse, await loyaltyStore("jaguar_card", { p_member: sub }));
 });
+router.get("/cannabis-card", async (req, res) => {
+  const { sub } = readSession(req, "member");
+  sendJson(res, GetCannabisMemberCardResponse, await loyaltyStore("jaguar_cannabis_card", { p_member: sub }));
+});
 router.get("/rewards", async (_req, res) => sendJson(res, ListRewardsResponse, await loyaltyStore("jaguar_rewards")));
 router.get("/activity", async (req, res) => {
   const { sub } = readSession(req, "member");
@@ -142,6 +148,14 @@ router.get("/staff/member", async (req, res) => {
   }
   sendJson(res, GetMemberCardResponse, await loyaltyStore("jaguar_member_login", { p_code: codeValue(data.code!) }));
 });
+router.get("/staff/cannabis-card", async (req, res) => {
+  const data = parse(GetStaffCannabisCardQueryParams, req.query);
+  if (Boolean(data.code) === Boolean(data.qr_token)) throw new LoyaltyError(400, "ระบุรหัสสมาชิกหรือ QR อย่างใดอย่างหนึ่ง");
+  const member = data.qr_token
+    ? await loyaltyStore<MemberCard>("jaguar_resolve_qr", { p_qr_token: data.qr_token.replace(/^JAGUAR1:/, "") })
+    : await loyaltyStore<MemberCard>("jaguar_member_login", { p_code: codeValue(data.code!) });
+  sendJson(res, GetStaffCannabisCardResponse, await loyaltyStore("jaguar_cannabis_card", { p_member: member.id }));
+});
 router.get("/staff/members", async (req, res) => {
   const { q = "" } = parse(ListStaffMembersQueryParams, req.query);
   sendJson(res, ListStaffMembersResponse, await listStaffMembers(q));
@@ -162,6 +176,24 @@ router.post("/staff/stamp", async (req, res) => {
   rateLimit(`staff-credit-member:${privateKey(member.id)}`, 30, 60_000);
   sendJson(res, GetMemberCardResponse, await loyaltyStore("jaguar_staff_stamp", {
     p_member: member.id, p_bottle_count: bottle_count, p_formula: formula, p_request: request_id,
+  }));
+});
+router.post("/staff/cannabis-stamp", async (req, res) => {
+  authLimit(req, "staff-cannabis-stamp", 60);
+  const data = parse(AddCannabisStampsBody, req.body);
+  const member = await loyaltyStore<MemberCard>("jaguar_member_login", { p_code: codeValue(data.member_code) });
+  rateLimit(`staff-cannabis-credit:${privateKey(member.id)}`, 30, 60_000);
+  sendJson(res, AddCannabisStampsResponse, await loyaltyStore("jaguar_staff_cannabis_stamp", {
+    p_member: member.id, p_grams: data.grams, p_request: data.request_id,
+  }));
+});
+router.post("/staff/cannabis-redeem", async (req, res) => {
+  authLimit(req, "staff-cannabis-redeem", 30);
+  const data = parse(RedeemCannabisAtCounterBody, req.body);
+  const member = await loyaltyStore<MemberCard>("jaguar_member_login", { p_code: codeValue(data.member_code) });
+  rateLimit(`staff-cannabis-redeem:${privateKey(member.id)}`, 15, 60_000);
+  sendJson(res, RedeemCannabisAtCounterResponse, await loyaltyStore("jaguar_staff_cannabis_redeem", {
+    p_member: member.id, p_request: data.request_id,
   }));
 });
 router.post("/staff/redeem", async (req, res) => {
