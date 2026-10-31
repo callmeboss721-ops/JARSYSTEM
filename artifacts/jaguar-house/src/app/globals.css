@@ -356,6 +356,23 @@ body { overflow-x: hidden; }
   border-radius: 16px;
   background: rgba(4,6,5,.34);
   box-shadow: 0 0 20px -16px rgba(79,199,154,.7), 0 1px 0 rgba(255,255,255,.08) inset;
+  overflow: hidden;
+}
+.brand-emblem__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.brand-emblem--hero .brand-emblem__frame {
+  width: clamp(180px, 24vw, 280px);
+  aspect-ratio: 1;
+  border-radius: 22px;
+}
+.brand-emblem--card .brand-emblem__frame {
+  width: 56px;
+  height: 56px;
+  padding: 1px;
 }
 .brand-emblem--card .brand-emblem__frame {
   border-radius: 13px;

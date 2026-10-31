@@ -235,7 +235,16 @@ router.post("/owner/redemptions/:id/confirm", async (req, res) => {
 router.get("/health", async (_req, res) => {
   await loyaltyStore("jaguar_health");
   const demo = process.env.NODE_ENV === "development";
-  res.json({ status: "ok", storage: "postgresql", demo_mode: demo, ...(demo ? { demo_member_code: "JAG-001" } : {}) });
+  res.json({
+    status: "ok",
+    storage: "postgresql",
+    demo_mode: demo,
+    ...(demo ? {
+      demo_member_code: "JAG-001",
+      staff_default_pin: await usesDefaultPin("staff"),
+      owner_default_pin: await usesDefaultPin("owner"),
+    } : {}),
+  });
 });
 router.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
   const known = err instanceof LoyaltyError;

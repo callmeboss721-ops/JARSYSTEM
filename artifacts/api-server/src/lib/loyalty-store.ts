@@ -265,23 +265,37 @@ export async function ownerReport() {
       count(s.id)::integer as total_visits from jaguar_sales s
       join jaguar_members m on m.id=s.member_id where not m.is_demo
   ), redeemed as (
-    select count(d.id)::integer as redemptions from jaguar_redemptions d
-      join jaguar_members m on m.id=d.member_id where d.status='confirmed' and not m.is_demo
+    select count(d.id) filter (where d.status='confirmed' and (d.created_at at time zone 'Asia/Bangkok')::date=local_day.day)::integer as today_redemptions,
+      count(d.id) filter (where d.status='confirmed')::integer as redemptions
+    from jaguar_redemptions d join jaguar_members m on m.id=d.member_id,local_day
+    where not m.is_demo
   )
     select totals.today_sales,totals.today_visits,all_sales.total_sales,all_sales.total_visits,
-      redeemed.redemptions,(select count(*)::integer from jaguar_members where status='active' and not is_demo) as members
+      redeemed.today_redemptions,redeemed.redemptions,(select count(*)::integer from jaguar_members where status='active' and not is_demo) as members
     from totals,all_sales,redeemed`);
-  const byFormula = (await pool.query(`select s.formula,count(*)::integer as sales_count,
+  const byFormula = (await pool.query(`with local_day as (
+    select (now() at time zone 'Asia/Bangkok')::date as day
+  )
+    select s.formula,count(*)::integer as sales_count,
+    count(s.id) filter (where (s.created_at at time zone 'Asia/Bangkok')::date=local_day.day)::integer as today_sales_count,
     coalesce(sum(s.bottle_count),0)::integer as bottles_sold,
+    coalesce(sum(s.bottle_count) filter (where (s.created_at at time zone 'Asia/Bangkok')::date=local_day.day),0)::integer as today_bottles_sold,
     coalesce(sum(s.points_awarded),0)::integer as points_awarded,
-    coalesce(sum(s.amount_baht),0)::bigint as amount_baht from jaguar_sales s
-    join jaguar_members m on m.id=s.member_id where not m.is_demo group by s.formula
+    coalesce(sum(s.points_awarded) filter (where (s.created_at at time zone 'Asia/Bangkok')::date=local_day.day),0)::integer as today_points_awarded,
+    coalesce(sum(s.amount_baht),0)::bigint as amount_baht,
+    coalesce(sum(s.amount_baht) filter (where (s.created_at at time zone 'Asia/Bangkok')::date=local_day.day),0)::bigint as today_amount_baht
+    from jaguar_sales s join jaguar_members m on m.id=s.member_id,local_day
+    where not m.is_demo group by s.formula,local_day.day
     order by case s.formula when 'red' then 1 when 'silver' then 2 else 3 end`)).rows;
   return {
     ...rows[0],
     today_sales: Number(rows[0].today_sales),
     total_sales: Number(rows[0].total_sales),
-    by_formula: byFormula.map((row) => ({ ...row, amount_baht: Number(row.amount_baht) })),
+    by_formula: byFormula.map((row) => ({
+      ...row,
+      amount_baht: Number(row.amount_baht),
+      today_amount_baht: Number(row.today_amount_baht),
+    })),
   };
 }
 

@@ -13,4 +13,5 @@ export interface Reward {
   description: string | null;
   points_cost: number;
   is_active: boolean;
+  is_demo: boolean;
 }

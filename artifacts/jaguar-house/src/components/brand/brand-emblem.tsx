@@ -1,19 +1,17 @@
-import { JaguarMark } from "./jaguar-mark";
-
 type Variant = "hero" | "card";
 
-/** Shared presentation for the original JAGUAR artwork on welcome and member card. */
+/** Use the supplied original Jaguar artwork on the welcome page and member card. */
 export function BrandEmblem({ variant }: { variant: Variant }) {
-  const isHero = variant === "hero";
-
   return (
-    <div
-      className={`brand-emblem brand-emblem--${variant}`}
-      role="img"
-      aria-label="โลโก้ Jaguar Kratom House"
-    >
+    <div className={`brand-emblem brand-emblem--${variant}`}>
       <span className="brand-emblem__frame">
-        <JaguarMark size={isHero ? 176 : 56} />
+        <img
+          className="brand-emblem__image"
+          src="/brand/jaguar-logo.webp"
+          alt="โลโก้ Jaguar Kratom House"
+          width={variant === "hero" ? 280 : 56}
+          height={variant === "hero" ? 280 : 56}
+        />
       </span>
     </div>
   );

@@ -51,6 +51,7 @@ export interface Reward {
   description: string | null;
   points_cost: number;
   is_active: boolean;
+  is_demo: boolean;
 }
 
 export interface RedemptionInput {
@@ -135,6 +136,8 @@ export interface LoyaltyHealth {
   storage: string;
   demo_mode: boolean;
   demo_member_code?: string;
+  staff_default_pin?: boolean;
+  owner_default_pin?: boolean;
 }
 
 export interface StaffSecurityState {
@@ -189,9 +192,13 @@ export interface PointTransaction {
 export interface FormulaSales {
   formula: Formula;
   sales_count: number;
+  today_sales_count: number;
   bottles_sold: number;
+  today_bottles_sold: number;
   points_awarded: number;
+  today_points_awarded: number;
   amount_baht: number;
+  today_amount_baht: number;
 }
 
 export interface OwnerSummary {
@@ -200,6 +207,7 @@ export interface OwnerSummary {
   total_sales: number;
   today_visits: number;
   total_visits: number;
+  today_redemptions: number;
   redemptions: number;
   by_formula: FormulaSales[];
 }

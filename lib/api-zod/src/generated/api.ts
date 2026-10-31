@@ -77,7 +77,8 @@ export const ListRewardsResponseItem = zod.object({
   "name": zod.string(),
   "description": zod.string().nullable(),
   "points_cost": zod.int(),
-  "is_active": zod.boolean()
+  "is_active": zod.boolean(),
+  "is_demo": zod.boolean()
 })
 export const ListRewardsResponse = zod.array(ListRewardsResponseItem)
 
@@ -124,7 +125,9 @@ export const GetLoyaltyHealthResponse = zod.object({
   "status": zod.string(),
   "storage": zod.string(),
   "demo_mode": zod.boolean(),
-  "demo_member_code": zod.string().optional()
+  "demo_member_code": zod.string().optional(),
+  "staff_default_pin": zod.boolean().optional(),
+  "owner_default_pin": zod.boolean().optional()
 })
 
 
@@ -304,7 +307,8 @@ export const ListStaffRewardsResponseItem = zod.object({
   "name": zod.string(),
   "description": zod.string().nullable(),
   "points_cost": zod.int(),
-  "is_active": zod.boolean()
+  "is_active": zod.boolean(),
+  "is_demo": zod.boolean()
 })
 export const ListStaffRewardsResponse = zod.array(ListStaffRewardsResponseItem)
 
@@ -381,13 +385,18 @@ export const GetOwnerSummaryResponse = zod.object({
   "total_sales": zod.number(),
   "today_visits": zod.int(),
   "total_visits": zod.int(),
+  "today_redemptions": zod.int(),
   "redemptions": zod.int(),
   "by_formula": zod.array(zod.object({
   "formula": zod.enum(['red', 'silver', 'gold']),
   "sales_count": zod.int(),
+  "today_sales_count": zod.int(),
   "bottles_sold": zod.int(),
+  "today_bottles_sold": zod.int(),
   "points_awarded": zod.int(),
-  "amount_baht": zod.number()
+  "today_points_awarded": zod.int(),
+  "amount_baht": zod.number(),
+  "today_amount_baht": zod.number()
 }))
 })
 
@@ -453,7 +462,8 @@ export const ListOwnerRewardsResponseItem = zod.object({
   "name": zod.string(),
   "description": zod.string().nullable(),
   "points_cost": zod.int(),
-  "is_active": zod.boolean()
+  "is_active": zod.boolean(),
+  "is_demo": zod.boolean()
 })
 export const ListOwnerRewardsResponse = zod.array(ListOwnerRewardsResponseItem)
 
@@ -478,7 +488,8 @@ export const CreateOwnerRewardResponse = zod.object({
   "name": zod.string(),
   "description": zod.string().nullable(),
   "points_cost": zod.int(),
-  "is_active": zod.boolean()
+  "is_active": zod.boolean(),
+  "is_demo": zod.boolean()
 })
 
 
@@ -495,7 +506,8 @@ export const UpdateOwnerRewardResponse = zod.object({
   "name": zod.string(),
   "description": zod.string().nullable(),
   "points_cost": zod.int(),
-  "is_active": zod.boolean()
+  "is_active": zod.boolean(),
+  "is_demo": zod.boolean()
 })
 
 

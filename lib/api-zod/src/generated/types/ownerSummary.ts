@@ -13,6 +13,7 @@ export interface OwnerSummary {
   total_sales: number;
   today_visits: number;
   total_visits: number;
+  today_redemptions: number;
   redemptions: number;
   by_formula: FormulaSales[];
 }

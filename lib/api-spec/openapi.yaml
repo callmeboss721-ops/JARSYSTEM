@@ -499,13 +499,14 @@ components:
         lifetime_redeemed: { type: integer }
     Reward:
       type: object
-      required: [id, name, description, points_cost, is_active]
+      required: [id, name, description, points_cost, is_active, is_demo]
       properties:
         id: { type: string }
         name: { type: string }
         description: { type: ["string", "null"] }
         points_cost: { type: integer }
         is_active: { type: boolean }
+        is_demo: { type: boolean }
     RedemptionInput:
       type: object
       required: [reward_id]
@@ -578,6 +579,8 @@ components:
         storage: { type: string }
         demo_mode: { type: boolean }
         demo_member_code: { type: string }
+        staff_default_pin: { type: boolean }
+        owner_default_pin: { type: boolean }
     StaffSecurityState:
       type: object
       required: [default_pin]
@@ -622,22 +625,27 @@ components:
         created_at: { type: string }
     FormulaSales:
       type: object
-      required: [formula, sales_count, bottles_sold, points_awarded, amount_baht]
+      required: [formula, sales_count, today_sales_count, bottles_sold, today_bottles_sold, points_awarded, today_points_awarded, amount_baht, today_amount_baht]
       properties:
         formula: { $ref: "#/components/schemas/Formula" }
         sales_count: { type: integer }
+        today_sales_count: { type: integer }
         bottles_sold: { type: integer }
+        today_bottles_sold: { type: integer }
         points_awarded: { type: integer }
+        today_points_awarded: { type: integer }
         amount_baht: { type: number }
+        today_amount_baht: { type: number }
     OwnerSummary:
       type: object
-      required: [members, today_sales, total_sales, today_visits, total_visits, redemptions, by_formula]
+      required: [members, today_sales, total_sales, today_visits, total_visits, today_redemptions, redemptions, by_formula]
       properties:
         members: { type: integer }
         today_sales: { type: number }
         total_sales: { type: number }
         today_visits: { type: integer }
         total_visits: { type: integer }
+        today_redemptions: { type: integer }
         redemptions: { type: integer }
         by_formula:
           type: array

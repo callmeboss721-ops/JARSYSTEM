@@ -7,14 +7,13 @@ import Link from "next/link";
 import { api, errorText, json, type MemberCardData } from "./loyalty-api";
 import { BrandIcon } from "./brand-icon";
 import { BrandEmblem } from "./brand-emblem";
-import { JaguarMark } from "./jaguar-mark";
 import { LoginForm, RegisterForm } from "./auth-forms";
 
 export function Welcome({ initialTab = "login" }: { initialTab?: "login" | "register" }) {
   const [tab, setTab] = useState<"login" | "register">(initialTab);
   const router = useRouter();
   const [demoBusy, setDemoBusy] = useState(false), [demoErr, setDemoErr] = useState("");
-  const health = useQuery<{ demo_member_code?: string }>({ queryKey: ["/api/loyalty/health"], queryFn: () => api("/api/loyalty/health"), retry: false, refetchOnWindowFocus: false, staleTime: Infinity });
+  const health = useQuery<{ demo_member_code?: string; demo_mode?: boolean; staff_default_pin?: boolean; owner_default_pin?: boolean }>({ queryKey: ["/api/loyalty/health"], queryFn: () => api("/api/loyalty/health"), retry: false, refetchOnWindowFocus: false, staleTime: Infinity });
   const demoCode = health.data?.demo_member_code;
   const openDemo = async () => {
     if (!demoCode) return;
@@ -33,7 +32,7 @@ export function Welcome({ initialTab = "login" }: { initialTab?: "login" | "regi
             <span className="block font-display text-xs font-semibold tracking-[.2em] text-[var(--gold-2)]">JAGUAR KRATOM HOUSE</span>
             <span className="mt-1 block text-xs text-[var(--muted)]">บุญศิริ ซอย 6 · สมุทรปราการ</span>
           </span>
-          <span className="flex gap-1"><Link href="/staff" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--emerald-2)] no-underline font-mono tracking-widest" data-testid="link-staff">STAFF</Link><Link href="/owner" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--gold-2)] no-underline font-mono tracking-widest" data-testid="link-owner">OWNER</Link></span>
+          <span className="flex gap-1"><Link href="/staff" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--emerald-2)] no-underline font-mono tracking-widest" data-testid="link-staff">STAFF DESK</Link><Link href="/owner" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--gold-2)] no-underline" data-testid="link-owner">ห้องเจ้าของร้าน</Link></span>
         </div>
 
         <div className="relative lg:my-0 flex flex-col items-start">
@@ -68,14 +67,14 @@ export function Welcome({ initialTab = "login" }: { initialTab?: "login" | "regi
         <div className="w-full max-w-md rise">
           <div className="flex lg:hidden items-center justify-between mb-6">
             <span className="flex items-center gap-3">
-              <JaguarMark size={34} title="Jaguar Kratom House" />
+              <img src="/brand/jaguar-logo-256.jpg" alt="Jaguar Kratom House" width={44} height={44} className="h-11 w-11 rounded-lg object-cover" />
               <span className="leading-tight">
                 <span className="brand-wordmark block font-display font-semibold text-[14px] text-[var(--gold-2)]">JAGUAR</span>
                 <span className="block eyebrow !text-[9px] !tracking-[.3em]">Kratom House</span>
                 <span className="hidden min-[380px]:block text-[9px] text-[var(--muted)]">บุญศิริ ซอย 6</span>
               </span>
             </span>
-            <span className="flex"><Link href="/staff" className="inline-flex items-center min-h-11 min-w-11 justify-center text-xs text-[var(--emerald-2)] no-underline font-mono tracking-widest px-2" data-testid="link-staff-mobile">STAFF</Link><Link href="/owner" className="inline-flex items-center min-h-11 min-w-11 justify-center text-xs text-[var(--gold-2)] no-underline font-mono tracking-widest px-2" data-testid="link-owner-mobile">OWNER</Link></span>
+            <span className="flex"><Link href="/staff" className="inline-flex items-center min-h-11 px-2 text-xs text-[var(--emerald-2)] no-underline font-mono" data-testid="link-staff-mobile">พนักงาน</Link><Link href="/owner" className="inline-flex items-center min-h-11 px-2 text-xs text-[var(--gold-2)] no-underline" data-testid="link-owner-mobile">เจ้าของร้าน</Link></span>
           </div>
           <div className="flex items-baseline justify-between gap-2 mb-2 lg:hidden">
             <p className="eyebrow !mb-0">Private Members</p>

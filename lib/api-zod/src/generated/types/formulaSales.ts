@@ -10,7 +10,11 @@ import type { Formula } from './formula';
 export interface FormulaSales {
   formula: Formula;
   sales_count: number;
+  today_sales_count: number;
   bottles_sold: number;
+  today_bottles_sold: number;
   points_awarded: number;
+  today_points_awarded: number;
   amount_baht: number;
+  today_amount_baht: number;
 }

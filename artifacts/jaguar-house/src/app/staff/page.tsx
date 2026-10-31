@@ -35,6 +35,7 @@ export default function StaffPage() {
   const controls = useRef<{ stop: () => void } | null>(null);
 
   const security = useQuery<{ default_pin: boolean }>({ queryKey: [`${STAFF}/security`], queryFn: () => api(`${STAFF}/security`), enabled: auth === true });
+  const devInfo = useQuery<{ demo_mode: boolean; staff_default_pin?: boolean }>({ queryKey: ["/api/loyalty/health"], queryFn: () => api("/api/loyalty/health"), retry: false, staleTime: Infinity });
   const queue = useQuery<RedemptionData[]>({ queryKey: [`${STAFF}/redemptions`], queryFn: () => api(`${STAFF}/redemptions`), enabled: auth === true, refetchInterval: 12000 });
   const members = useQuery<MemberCardData[]>({ queryKey: [`${STAFF}/members`, query], queryFn: () => api(`${STAFF}/members?q=${encodeURIComponent(query)}`), enabled: auth === true && tab === "members" });
 
@@ -148,6 +149,7 @@ export default function StaffPage() {
     <main className="mx-auto max-w-6xl px-4 sm:px-6 py-7">
       {!auth ? <section className="max-w-sm mx-auto pt-4">
         <div className="text-center mb-6"><p className="eyebrow">Staff access</p><h1 className="font-display text-3xl font-semibold mt-2">เข้าสู่ระบบพนักงาน</h1><p className="text-sm text-[var(--muted)] mt-2">ใช้ PIN ที่เจ้าของร้านกำหนด</p></div>
+        {devInfo.data?.demo_mode && devInfo.data.staff_default_pin && <p role="status" className="demo-badge mb-4">DEMO · พัฒนาเท่านั้น · PIN เริ่มต้นพนักงาน 2024</p>}
         {msg && <p role="status" className="mb-4 rounded-xl border border-[rgba(47,217,138,.35)] bg-[rgba(47,217,138,.08)] p-3 text-sm text-[var(--emerald-2)]">{msg}</p>}
         <form className="panel p-5 sm:p-6 space-y-4" onSubmit={login}>
           <div className="field"><label htmlFor="staff-pin">PIN พนักงาน</label><input id="staff-pin" type="password" inputMode="numeric" autoComplete="current-password" maxLength={12} className="input text-center !text-2xl !tracking-[.5em]" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 12))} aria-invalid={!!err} aria-describedby={err ? "staff-pin-err" : undefined} /></div>

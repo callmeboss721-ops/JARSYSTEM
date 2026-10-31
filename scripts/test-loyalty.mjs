@@ -142,6 +142,9 @@ try {
   assert.ok(reportAfterFirstSales.total_sales >= 1770);
   assert.ok(reportAfterFirstSales.by_formula.some((item) => item.formula === "gold"));
   assert.ok(reportAfterFirstSales.by_formula.some((item) => item.bottles_sold >= 3 && item.points_awarded >= 1));
+  assert.ok(Number.isInteger(reportAfterFirstSales.today_redemptions));
+  const todayFormula = reportAfterFirstSales.by_formula.find((item) => item.formula === "gold");
+  assert.ok(todayFormula && Number.isInteger(todayFormula.today_sales_count) && Number.isInteger(todayFormula.today_amount_baht));
   assert.equal((await request("/owner/security", { jar: ownerJar })).staff_default_pin, true);
 
   const created = await request("/staff/members", {
