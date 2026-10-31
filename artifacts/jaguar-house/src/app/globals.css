@@ -1013,3 +1013,16 @@ body {
 @media (max-width:380px) {
   .brand-emblem--card .brand-emblem__frame { width:72px; }
 }
+
+/* Login route matches the supplied centered mobile reference. */
+.login-reference-root { display:flex; justify-content:center; align-items:flex-start; }
+.login-reference-root > .auth-stage { display:none; }
+.login-reference-root > section:last-child {
+  width:100%;
+  max-width:520px;
+  padding:20px 22px 26px;
+  align-items:flex-start;
+}
+.login-reference-root .brand-showcase { margin-bottom:12px !important; }
+.login-reference-root .brand-emblem--hero .brand-emblem__frame { width:clamp(240px,64vw,310px); }
+.login-reference-root .brand-slogan-inline { margin:0 0 18px; }

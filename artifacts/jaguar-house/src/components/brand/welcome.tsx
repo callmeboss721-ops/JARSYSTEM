@@ -60,7 +60,7 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
   }
 
   return (
-    <div className="customer-art-root min-h-[100dvh] grid lg:grid-cols-[1.1fr_1fr]">
+    <div className={`customer-art-root min-h-[100dvh] ${initialTab === "login" ? "login-reference-root" : "grid lg:grid-cols-[1.1fr_1fr]"}`}>
       <SamutPrakanArt />
       <section className="auth-stage relative overflow-hidden order-2 lg:order-1 px-6 pt-10 pb-12 lg:p-16 flex flex-col justify-between border-t lg:border-t-0 lg:border-r border-[var(--line)]">
         <div className="rosette-field absolute inset-0 opacity-[.05] pointer-events-none" aria-hidden="true" />
@@ -99,10 +99,12 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
 
       <section className="order-1 lg:order-2 px-5 sm:px-6 pt-5 pb-10 lg:p-16 flex items-start lg:items-center justify-center">
         <div className="w-full max-w-md rise">
-          <nav aria-label="เมนูพนักงาน" className="flex lg:hidden justify-end mb-4">
-            <Link href="/staff" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--emerald-2)] no-underline font-mono" data-testid="link-staff-mobile">พนักงาน</Link>
-            <Link href="/owner" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--gold-2)] no-underline" data-testid="link-owner-mobile">เจ้าของร้าน</Link>
-          </nav>
+          {initialTab !== "login" && (
+            <nav aria-label="เมนูพนักงาน" className="flex lg:hidden justify-end mb-4">
+              <Link href="/staff" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--emerald-2)] no-underline font-mono" data-testid="link-staff-mobile">พนักงาน</Link>
+              <Link href="/owner" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--gold-2)] no-underline" data-testid="link-owner-mobile">เจ้าของร้าน</Link>
+            </nav>
+          )}
           <div className="brand-showcase mb-5 flex justify-center rise" style={{ animationDelay: "80ms" }} aria-hidden="true">
             <BrandIcon name="lightning" size={24} tone="emerald" className="brand-showcase__icon brand-showcase__bolt" />
             <BrandIcon name="leaf" size={23} tone="emerald" className="brand-showcase__icon brand-showcase__kratom" />
