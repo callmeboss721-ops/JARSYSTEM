@@ -6,7 +6,7 @@ export function BrandEmblemPlaceholder({ variant }: { variant: Variant }) {
   return (
     <img
       src="/brand/jaguar-logo.webp"
-      alt="โลโก้ Jaguar Kratom House"
+      alt="ตรา JAGUAR KRATOM พร้อมภาพจากัวร์"
       width={768}
       height={768}
       decoding="async"

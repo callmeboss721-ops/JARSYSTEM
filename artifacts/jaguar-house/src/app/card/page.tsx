@@ -53,12 +53,11 @@ export default function CardPage() {
     : <div className="grid gap-6 lg:grid-cols-[1.1fr_.9fr] items-start">
       <div className="space-y-5">
         <header className="rise">
-          <p className="eyebrow">สมาชิก · Jaguar House</p>
+          <p className="eyebrow">สมาชิก · Jaguar Kratom</p>
           <h1 className="font-display text-2xl sm:text-3xl font-semibold mt-1">{card.data.display_name || "บัตรสมาชิกของฉัน"}</h1>
           <p className="mt-1 text-sm text-[var(--muted)]">ระดับ {gradeFor(card.data.lifetime_earned)} · แต้มจากยอดสะสมตลอดอายุสมาชิก</p>
         </header>
-        {card.data.is_demo && <p><span className="demo-badge">DEMO · บัญชีทดลอง ไม่ใช่ข้อมูลลูกค้าจริง</span></p>}
-        {(celebrate || card.data.balance >= STAMPS) && <div role="status" className="gold-alert">ครบ 10 แต้ม! รับขวดแถมฟรี 2 ขวด</div>}
+        {(celebrate || card.data.balance >= STAMPS) && <div role="status" className="gold-alert">ครบ 10 แต้ม! รับขวดแถมฟรี 1 ขวด</div>}
         {confettiKey > 0 && <Confetti key={confettiKey} />}
         <div key={pop} className={pop ? "card-pop" : undefined}>
           <LoyaltyCard card={card.data} qr={{

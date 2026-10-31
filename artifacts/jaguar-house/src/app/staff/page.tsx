@@ -35,9 +35,9 @@ export default function StaffPage() {
   const controls = useRef<{ stop: () => void } | null>(null);
 
   const security = useQuery<{ default_pin: boolean }>({ queryKey: [`${STAFF}/security`], queryFn: () => api(`${STAFF}/security`), enabled: auth === true });
-  const devInfo = useQuery<{ demo_mode: boolean; staff_default_pin?: boolean }>({ queryKey: ["/api/loyalty/health"], queryFn: () => api("/api/loyalty/health"), retry: false, staleTime: Infinity });
   const queue = useQuery<RedemptionData[]>({ queryKey: [`${STAFF}/redemptions`], queryFn: () => api(`${STAFF}/redemptions`), enabled: auth === true, refetchInterval: 12000 });
   const members = useQuery<MemberCardData[]>({ queryKey: [`${STAFF}/members`, query], queryFn: () => api(`${STAFF}/members?q=${encodeURIComponent(query)}`), enabled: auth === true && tab === "members" });
+  const visibleMembers = (members.data ?? []).filter((m) => !m.is_demo);
 
   useEffect(() => {
     void api(`${STAFF}/security`).then(() => setAuth(true)).catch((e) => {
@@ -70,7 +70,9 @@ export default function StaffPage() {
     setErr(""); setMsg(""); setMember(null); setRedeemId(null);
     try {
       const endpoint = value.startsWith("JAGUAR1:") ? `${STAFF}/member?qr_token=${encodeURIComponent(value)}` : `${STAFF}/member?code=${encodeURIComponent(cleanCode(value))}`;
-      setMember(await api<MemberCardData>(endpoint));
+      const result = await api<MemberCardData>(endpoint);
+      if (result.is_demo) { setErr("ไม่พบรหัสสมาชิก กรุณาตรวจสอบอีกครั้ง"); return; }
+      setMember(result);
     } catch (e) { setErr(errorText(e)); }
   };
   const startCamera = async () => {
@@ -112,7 +114,7 @@ export default function StaffPage() {
       const res = await api<Partial<MemberCardData> | null>(`${STAFF}/redeem`, json("POST", { member_code: member.member_code, request_id: redeemId }));
       if (res && typeof res.balance === "number" && res.member_code) setMember(res as MemberCardData);
       else setMember(await api<MemberCardData>(`${STAFF}/member?code=${encodeURIComponent(member.member_code)}`));
-      setRedeemId(null); setMsg("แลกรับฟรี 2 ขวดเรียบร้อย หัก 10 แต้มแล้ว");
+      setRedeemId(null); setMsg("แลกรับฟรี 1 ขวดเรียบร้อย หัก 10 แต้มแล้ว");
       void qc.invalidateQueries({ queryKey: [`${STAFF}/members`] });
     } catch (e) { setErr(`${errorText(e)} · กดยืนยันอีกครั้งได้อย่างปลอดภัย ระบบจะไม่หักซ้ำ`); } finally { setBusy(false); }
   };
@@ -149,7 +151,6 @@ export default function StaffPage() {
     <main className="mx-auto max-w-6xl px-4 sm:px-6 py-7">
       {!auth ? <section className="max-w-sm mx-auto pt-4">
         <div className="text-center mb-6"><p className="eyebrow">Staff access</p><h1 className="font-display text-3xl font-semibold mt-2">เข้าสู่ระบบพนักงาน</h1><p className="text-sm text-[var(--muted)] mt-2">ใช้ PIN ที่เจ้าของร้านกำหนด</p></div>
-        {devInfo.data?.demo_mode && devInfo.data.staff_default_pin && <p role="status" className="demo-badge mb-4">DEMO · พัฒนาเท่านั้น · PIN เริ่มต้นพนักงาน 2024</p>}
         {msg && <p role="status" className="mb-4 rounded-xl border border-[rgba(47,217,138,.35)] bg-[rgba(47,217,138,.08)] p-3 text-sm text-[var(--emerald-2)]">{msg}</p>}
         <form className="panel p-5 sm:p-6 space-y-4" onSubmit={login}>
           <div className="field"><label htmlFor="staff-pin">PIN พนักงาน</label><input id="staff-pin" type="password" inputMode="numeric" autoComplete="current-password" maxLength={12} className="input text-center !text-2xl !tracking-[.5em]" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 12))} aria-invalid={!!err} aria-describedby={err ? "staff-pin-err" : undefined} /></div>
@@ -180,13 +181,13 @@ export default function StaffPage() {
             {member && <div className="mt-5">
               <div className={`rounded-xl border p-4 flex flex-wrap gap-3 justify-between ${member.balance >= STAMPS ? "border-[var(--gold)]" : "border-[var(--glass-line)]"}`}>
                 <div className="min-w-0"><p className="break-words">{member.display_name}</p><p className="font-mono text-[var(--gold-2)]">{member.member_code}</p>
-                  <div className="flex flex-wrap gap-2 mt-1">{member.is_demo && <span className="demo-badge">DEMO · ข้อมูลทดลอง</span>}{member.balance >= STAMPS && <span className="ready-badge">แลกได้</span>}</div></div>
+                  <div className="flex flex-wrap gap-2 mt-1">{member.balance >= STAMPS && <span className="ready-badge">แลกได้</span>}</div></div>
                 <p className={`font-display text-3xl ${member.balance >= STAMPS ? "text-[var(--gold-2)]" : "text-[var(--emerald-2)]"}`}>{member.balance} แต้ม</p>
               </div>
               {member.balance >= STAMPS && (redeemId === null
-                ? <button type="button" className="btn btn-gold w-full mt-3" disabled={busy} onClick={() => { setRedeemId(crypto.randomUUID()); setMsg(""); }}>แลกฟรี 2 ขวด (ใช้ 10 แต้ม)</button>
+                ? <button type="button" className="btn btn-gold w-full mt-3" disabled={busy} onClick={() => { setRedeemId(crypto.randomUUID()); setMsg(""); }}>แลกฟรี 1 ขวด (ใช้ 10 แต้ม)</button>
                 : <div role="alertdialog" aria-labelledby="redeem-q" className="gold-alert mt-3 space-y-3">
-                  <p id="redeem-q">ยืนยันส่งมอบฟรี 2 ขวดให้ {member.member_code}? ระบบจะหัก 10 แต้ม</p>
+                  <p id="redeem-q">ยืนยันส่งมอบฟรี 1 ขวดให้ {member.member_code}? ระบบจะหัก 10 แต้ม</p>
                   <div className="grid grid-cols-2 gap-2"><button type="button" className="btn btn-ghost" disabled={busy} onClick={() => setRedeemId(null)}>ยกเลิก</button><button type="button" className="btn btn-gold" disabled={busy} onClick={() => void redeem()} autoFocus>{busy ? "กำลังบันทึก…" : "ยืนยันแลก"}</button></div>
                 </div>)}
               <form onSubmit={record} className="space-y-3 mt-4" noValidate>
@@ -226,10 +227,10 @@ export default function StaffPage() {
           </form>
           {members.isLoading ? <div className="space-y-2 mt-4">{[1, 2, 3].map((x) => <div key={x} className="skeleton h-14" />)}</div>
           : members.isError ? <ErrorState message={errorText(members.error)} onRetry={() => members.refetch()} retrying={members.isFetching} />
-          : !members.data?.length ? <div className="mt-4"><EmptyState title={query ? "ไม่พบสมาชิก" : "ยังไม่มีสมาชิก"} /></div>
-          : <ul className="divide-y divide-[var(--line)] list-none p-0 mt-4">{members.data.map((m) => <li className="py-3 flex gap-3 items-center" key={m.id}>
+          : !visibleMembers.length ? <div className="mt-4"><EmptyState title={query ? "ไม่พบสมาชิก" : "ยังไม่มีสมาชิก"} /></div>
+          : <ul className="divide-y divide-[var(--line)] list-none p-0 mt-4">{visibleMembers.map((m) => <li className="py-3 flex gap-3 items-center" key={m.id}>
             <div className="min-w-0 flex-1"><p className="break-words">{m.display_name || "สมาชิก"}</p><p className="font-mono text-sm text-[var(--gold-2)]">{m.member_code}</p>
-              <div className="flex flex-wrap gap-2 mt-1">{m.is_demo && <span className="demo-badge">DEMO</span>}{m.balance >= STAMPS && <span className="ready-badge">แลกได้</span>}</div></div>
+               <div className="flex flex-wrap gap-2 mt-1">{m.balance >= STAMPS && <span className="ready-badge">แลกได้</span>}</div></div>
             <p className={`font-mono text-xl shrink-0 ${m.balance >= STAMPS ? "text-[var(--gold-2)]" : ""}`}>{m.balance}</p>
             <button type="button" className="btn btn-ghost !min-h-11 !px-3 text-sm shrink-0" onClick={() => { setTab("counter"); setLookup(m.member_code); void find(m.member_code); }}>เปิด</button>
           </li>)}</ul>}

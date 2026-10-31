@@ -214,7 +214,7 @@ h1, h2, h3 { line-height: 1.25; letter-spacing: -0.005em; }
   *, *::before, *::after { animation-duration: .001ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
 }
 
-/* Jaguar House / YOUNGBOSS — architectural detail, not a dashboard template */
+/* JAGUAR / YOUNGBOSS — architectural detail, not a dashboard template */
 body { overflow-x: hidden; }
 .eyebrow { color: #b7b9a7; opacity: .92; }
 .panel {
@@ -350,7 +350,7 @@ body { overflow-x: hidden; }
 }
 .brand-emblem__frame {
   display: grid;
-  place-items: center;
+  place-items: start center;
   padding: 2px;
   border: 1px solid rgba(79,199,154,.4);
   border-radius: 16px;
@@ -361,21 +361,61 @@ body { overflow-x: hidden; }
 .brand-emblem__image {
   display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  object-fit: unset;
 }
 .brand-emblem--hero .brand-emblem__frame {
-  width: clamp(180px, 24vw, 280px);
-  aspect-ratio: 1;
+  width: clamp(200px, 30vw, 280px);
+  aspect-ratio: 1.25;
   border-radius: 22px;
 }
 .brand-emblem--card .brand-emblem__frame {
   width: 56px;
-  height: 56px;
+  aspect-ratio: 1.25;
   padding: 1px;
 }
 .brand-emblem--card .brand-emblem__frame {
   border-radius: 13px;
+}
+.brand-showcase {
+  position: relative;
+  isolation: isolate;
+  padding: 4px 14px;
+}
+.brand-showcase::before {
+  content: "";
+  position: absolute;
+  inset: 7% 4%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0,230,118,.20), rgba(0,230,118,.07) 42%, transparent 72%);
+  filter: blur(24px);
+}
+.brand-showcase__icon {
+  position: absolute;
+  z-index: 2;
+  color: var(--emerald-2);
+  filter: drop-shadow(0 0 7px rgba(0,230,118,.7));
+}
+.brand-showcase__bolt {
+  right: 4%;
+  top: 17%;
+  animation: brand-charge 2.8s ease-in-out infinite;
+}
+.brand-showcase__kratom {
+  left: 2%;
+  bottom: 20%;
+  transform: rotate(-32deg);
+}
+.brand-showcase__cannabis {
+  right: 8%;
+  bottom: 9%;
+  transform: rotate(16deg);
+}
+@keyframes brand-charge {
+  0%, 100% { opacity: .74; filter: drop-shadow(0 0 5px rgba(0,230,118,.45)); }
+  48% { opacity: 1; filter: drop-shadow(0 0 12px rgba(0,230,118,.9)); }
+  52% { opacity: .55; }
 }
 
 @media (max-width: 639px) {

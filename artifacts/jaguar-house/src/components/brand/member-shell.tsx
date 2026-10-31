@@ -45,7 +45,7 @@ export function MemberShell({ children, signedIn }: { children: ReactNode; signe
             <JaguarMark size={34} />
             <span className="leading-tight">
               <span className="brand-wordmark block font-display font-semibold text-[14px] text-[var(--gold-2)]">JAGUAR</span>
-              <span className="block eyebrow !text-[9px] !tracking-[.3em]">Kratom House</span>
+              <span className="block eyebrow !text-[9px] !tracking-[.3em]">KRATOM</span>
             </span>
           </Link>
           <nav aria-label="เมนูสมาชิก" className="hidden md:flex items-center gap-1">

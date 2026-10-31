@@ -10,7 +10,7 @@ export function PublicPoster() {
   return <section className="panel p-5 sm:p-7 max-w-xl print-poster" aria-labelledby="poster-title">
     <div className="flex flex-wrap gap-5 items-center">
       <div className="rounded-xl bg-white p-3"><QRCodeSVG value={url} size={150} level="M" /></div>
-      <div className="min-w-0 flex-1"><p className="eyebrow">Jaguar Kratom House</p><h2 id="poster-title" className="font-display text-2xl font-semibold mt-1">สมัครสมาชิกที่นี่</h2>
+      <div className="min-w-0 flex-1"><p className="eyebrow">Jaguar Kratom</p><h2 id="poster-title" className="font-display text-2xl font-semibold mt-1">สมัครสมาชิกที่นี่</h2>
         <p className="text-sm text-[var(--muted)] mt-2">สแกนเพื่อเปิดหน้าสมัครสมาชิก หรือเข้าสู่ระบบด้วยรหัสสมาชิก</p>
       </div>
     </div>

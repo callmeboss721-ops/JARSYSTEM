@@ -8,7 +8,7 @@ export function BrandEmblem({ variant }: { variant: Variant }) {
         <img
           className="brand-emblem__image"
           src="/brand/jaguar-logo.webp"
-          alt="โลโก้ Jaguar Kratom House"
+          alt="ตรา JAGUAR KRATOM พร้อมภาพจากัวร์"
           width={variant === "hero" ? 280 : 56}
           height={variant === "hero" ? 280 : 56}
         />

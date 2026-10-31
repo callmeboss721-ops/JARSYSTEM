@@ -29,16 +29,13 @@ export function Welcome({ initialTab = "login" }: { initialTab?: "login" | "regi
         <div className="rosette-field absolute inset-0 opacity-[.05] pointer-events-none" aria-hidden="true" />
         <div className="relative hidden lg:flex items-center justify-between rise">
           <span className="leading-tight">
-            <span className="block font-display text-xs font-semibold tracking-[.2em] text-[var(--gold-2)]">JAGUAR KRATOM HOUSE</span>
+            <span className="block font-display text-xs font-semibold tracking-[.2em] text-[var(--gold-2)]">JAGUAR KRATOM</span>
             <span className="mt-1 block text-xs text-[var(--muted)]">บุญศิริ ซอย 6 · สมุทรปราการ</span>
           </span>
           <span className="flex gap-1"><Link href="/staff" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--emerald-2)] no-underline font-mono tracking-widest" data-testid="link-staff">STAFF DESK</Link><Link href="/owner" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--gold-2)] no-underline" data-testid="link-owner">ห้องเจ้าของร้าน</Link></span>
         </div>
 
         <div className="relative lg:my-0 flex flex-col items-start">
-          <div className="hidden lg:block mb-10 rise" style={{ animationDelay: "80ms" }}>
-            <BrandEmblem variant="hero" />
-          </div>
           <h1 aria-label="พี่เสือพลัง ซุปเปอร์ฮีโร่ของคนไทย" className="font-display font-semibold leading-[1.1] tracking-tight text-[30px] sm:text-[44px] lg:text-[60px] rise" style={{ animationDelay: "120ms" }}>
             พี่เสือพลัง<br />
             <span className="text-[var(--gold-2)]">ซุปเปอร์ฮีโร่<br />ของคนไทย</span>
@@ -65,16 +62,12 @@ export function Welcome({ initialTab = "login" }: { initialTab?: "login" | "regi
 
       <section className="order-1 lg:order-2 px-5 sm:px-6 pt-5 pb-10 lg:p-16 flex items-start lg:items-center justify-center">
         <div className="w-full max-w-md rise">
-          <div className="flex lg:hidden items-center justify-between mb-6">
-            <span className="flex items-center gap-3">
-              <img src="/brand/jaguar-logo-256.jpg" alt="Jaguar Kratom House" width={44} height={44} className="h-11 w-11 rounded-lg object-cover" />
-              <span className="leading-tight">
-                <span className="brand-wordmark block font-display font-semibold text-[14px] text-[var(--gold-2)]">JAGUAR</span>
-                <span className="block eyebrow !text-[9px] !tracking-[.3em]">Kratom House</span>
-                <span className="hidden min-[380px]:block text-[9px] text-[var(--muted)]">บุญศิริ ซอย 6</span>
-              </span>
-            </span>
-            <span className="flex"><Link href="/staff" className="inline-flex items-center min-h-11 px-2 text-xs text-[var(--emerald-2)] no-underline font-mono" data-testid="link-staff-mobile">พนักงาน</Link><Link href="/owner" className="inline-flex items-center min-h-11 px-2 text-xs text-[var(--gold-2)] no-underline" data-testid="link-owner-mobile">เจ้าของร้าน</Link></span>
+          <nav aria-label="เมนูพนักงาน" className="flex lg:hidden justify-end mb-4">
+            <Link href="/staff" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--emerald-2)] no-underline font-mono" data-testid="link-staff-mobile">พนักงาน</Link>
+            <Link href="/owner" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--gold-2)] no-underline" data-testid="link-owner-mobile">เจ้าของร้าน</Link>
+          </nav>
+          <div className="mb-5 flex justify-center rise" style={{ animationDelay: "80ms" }}>
+            <BrandEmblem variant="hero" />
           </div>
           <div className="flex items-baseline justify-between gap-2 mb-2 lg:hidden">
             <p className="eyebrow !mb-0">Private Members</p>

@@ -148,7 +148,7 @@ export async function loyaltyStore<T>(operation: string, args: Args = {}): Promi
         const { rows } = await client.query(`insert into jaguar_redemptions(member_id,reward_id,points_spent,status,request_id)
           values($1,$2,10,'confirmed',$3) returning id`, [args.p_member, reward.id, args.p_request]);
         await client.query("update jaguar_point_balances set balance=balance-10,lifetime_redeemed=lifetime_redeemed+10 where member_id=$1", [args.p_member]);
-        await client.query("insert into jaguar_point_transactions(member_id,delta,reason) values($1,-10,'แลกรางวัล 2 ขวด')", [args.p_member]);
+        await client.query("insert into jaguar_point_transactions(member_id,delta,reason) values($1,-10,'แลกรางวัล 1 ขวด')", [args.p_member]);
         result = { redemption_id: rows[0].id, ...await card(client, args.p_member!) };
         break;
       }
@@ -310,7 +310,7 @@ export async function seedDevDemoData() {
     const demo = rows[0] ?? (await client.query("select id from jaguar_members where member_code='JAG-001' and is_demo=true")).rows[0];
     if (demo) await client.query("insert into jaguar_point_balances(member_id) values($1) on conflict do nothing", [demo.id]);
     await client.query(`insert into jaguar_rewards(name,description,points_cost,is_demo)
-      select 'รับฟรี 2 ขวด','รางวัลตัวอย่างสำหรับทดลองระบบในสภาพแวดล้อมพัฒนา',10,true
+      select 'รับฟรี 1 ขวด','รางวัลตัวอย่างสำหรับทดลองระบบในสภาพแวดล้อมพัฒนา',10,true
       where not exists(select 1 from jaguar_rewards where is_demo=true and points_cost=10)`);
     await client.query("commit");
   } catch (error) {

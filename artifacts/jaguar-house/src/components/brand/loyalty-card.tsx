@@ -19,7 +19,7 @@ export function LoyaltyCard({ card, qr }: { card: MemberCardData; qr: CardQr }) 
         <div className="relative flex items-start justify-between gap-4">
           <div>
             <p className="eyebrow">Private Members · Soi 6</p>
-            <p className="font-display text-xl sm:text-2xl font-semibold mt-1">Jaguar Kratom House</p>
+            <p className="font-display text-xl sm:text-2xl font-semibold mt-1">Jaguar Kratom</p>
           </div>
           <BrandEmblem variant="card" />
         </div>

@@ -28,7 +28,7 @@ export default function RedeemPage() {
   if (card.isLoading) return <MemberShell signedIn={false}><div className="space-y-4"><div className="skeleton h-24" /><div className="skeleton h-48" /></div></MemberShell>;
   if ((card.error as {status?:number} | null)?.status === 401) return <MemberShell signedIn={false}><div className="max-w-md mx-auto"><SignedOutState /></div></MemberShell>;
   if (card.isError || !card.data) return <MemberShell signedIn={false}><ErrorState message={errorText(card.error)} onRetry={() => card.refetch()} retrying={card.isFetching} /></MemberShell>;
-  const activeRewards = (rewards.data ?? []).filter(r => r.is_active);
+  const activeRewards = (rewards.data ?? []).filter(r => r.is_active && !r.is_demo);
   const pendingRequests = (history.data ?? []).filter(r => r.status.toLowerCase() === "pending");
   return <MemberShell signedIn>
     <header className="flex flex-wrap items-end justify-between gap-4 mb-7 rise">
@@ -44,7 +44,7 @@ export default function RedeemPage() {
         : rewards.isError ? <ErrorState message={errorText(rewards.error)} onRetry={() => rewards.refetch()} retrying={rewards.isFetching} />
         : !activeRewards.length ? <EmptyState title="ยังไม่มีรางวัลเปิดให้แลก" body="รายการใหม่จะแสดงที่นี่เมื่อทางร้านเปิดใช้งาน" />
         : <ul className="grid sm:grid-cols-2 gap-3 list-none p-0 m-0">{activeRewards.map(r => <li key={r.id} className="panel p-5 flex flex-col gap-3">
-          <div className="flex justify-between gap-2"><div><h3 className="font-display text-lg font-semibold">{r.name}</h3>{r.is_demo&&<span className="demo-badge mt-2">DEMO · ข้อมูลทดลอง</span>}</div><span className="text-sm text-[var(--gold-2)] whitespace-nowrap">{r.points_cost} แต้ม</span></div>
+          <div className="flex justify-between gap-2"><h3 className="font-display text-lg font-semibold">{r.name}</h3><span className="text-sm text-[var(--gold-2)] whitespace-nowrap">{r.points_cost} แต้ม</span></div>
           {r.description && <p className="text-sm text-[var(--muted)]">{r.description}</p>}
           <button className="btn btn-redeem mt-auto" disabled={card.data.balance < r.points_cost || card.data.balance < 10} onClick={() => { setPicked(r); setError(""); }}>
             {card.data.balance >= r.points_cost && card.data.balance >= 10 ? "ขอแลกรางวัลนี้" : `ต้องมี ${Math.max(r.points_cost,10)} แต้ม`}

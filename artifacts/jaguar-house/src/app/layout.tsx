@@ -4,8 +4,8 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "Jaguar Kratom House — Members Club",
-  description: "บัตรสมาชิกสะสมแต้ม Jaguar Kratom House ซอยบุญคีรี 6 สมุทรปราการ",
+  title: "Jaguar Kratom — Members Club",
+  description: "บัตรสมาชิกสะสมแต้ม Jaguar Kratom ซอยบุญคีรี 6 สมุทรปราการ",
 };
 
 export const viewport: Viewport = {
