@@ -6,6 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
 import { BrandIcon } from "./brand-icon";
 import { JaguarMark } from "./jaguar-mark";
+import { SamutPrakanArt } from "./samut-prakan-art";
 import { clearMemberCache, setSessionHint } from "./api-utils";
 import { api, errorText, json } from "./loyalty-api";
 
@@ -39,7 +40,8 @@ export function MemberShell({ children, signedIn }: { children: ReactNode; signe
   };
 
   return (
-    <div className="min-h-[100dvh] pb-28 md:pb-12">
+    <div className="customer-art-root min-h-[100dvh] pb-28 md:pb-12">
+      <SamutPrakanArt />
       <header className="member-header sticky top-0 z-40 border-b border-[var(--line)] bg-[rgba(5,5,10,.85)] backdrop-blur-md">
         <div className="mx-auto max-w-5xl px-5 h-16 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center min-h-11 gap-3 no-underline text-[var(--text)]" data-testid="link-home">

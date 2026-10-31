@@ -6,6 +6,7 @@ import Link from "next/link";
 import { api, type MemberCardData } from "./loyalty-api";
 import { BrandIcon } from "./brand-icon";
 import { BrandEmblem } from "./brand-emblem";
+import { SamutPrakanArt } from "./samut-prakan-art";
 import { LoginForm, RegisterForm } from "./auth-forms";
 
 export function Welcome({ initialTab = "login" }: { initialTab?: "login" | "register" }) {
@@ -13,7 +14,8 @@ export function Welcome({ initialTab = "login" }: { initialTab?: "login" | "regi
   const session = useQuery<MemberCardData>({ queryKey: ["/api/loyalty/card"], queryFn: () => api("/api/loyalty/card"), retry: false, refetchOnWindowFocus: false });
 
   return (
-    <div className="min-h-[100dvh] grid lg:grid-cols-[1.1fr_1fr]">
+    <div className="customer-art-root min-h-[100dvh] grid lg:grid-cols-[1.1fr_1fr]">
+      <SamutPrakanArt />
       <section className="auth-stage relative overflow-hidden order-2 lg:order-1 px-6 pt-10 pb-12 lg:p-16 flex flex-col justify-between border-t lg:border-t-0 lg:border-r border-[var(--line)]">
         <div className="rosette-field absolute inset-0 opacity-[.05] pointer-events-none" aria-hidden="true" />
         <div className="relative hidden lg:flex items-center justify-between rise">

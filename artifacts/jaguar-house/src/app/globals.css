@@ -67,6 +67,10 @@ body::after {
 body { line-height: 1.6; }
 h1, h2, h3 { line-height: 1.25; letter-spacing: -0.005em; }
 
+.customer-art-root { position:relative; isolation:isolate; }
+.customer-art { position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none; opacity:.62; background:radial-gradient(ellipse at 16% 76%,rgba(47,217,138,.07),transparent 52%),radial-gradient(ellipse at 88% 46%,rgba(47,217,138,.045),transparent 48%); }
+.customer-art svg { display:block; width:100%; height:100%; }
+
 .eyebrow {
   font-family: var(--font-mono);
   font-size: 10.5px;
@@ -416,6 +420,8 @@ body { overflow-x: hidden; }
 }
 
 @media (max-width: 639px) {
+  .customer-art { opacity:.42; }
+  .customer-art svg { transform:scale(1.14); transform-origin:50% 75%; }
   .auth-stage::before { width: 84vw; left: -42%; top: 30%; }
   .auth-stage::after { width: 72vw; left: -34%; top: 36%; }
   .member-main::before { display: none; }
@@ -538,12 +544,6 @@ body {
 .cannabis-switch:hover { transform: translateY(-2px); background: rgba(217,189,115,.13); }
 .cannabis-card { position: relative; isolation: isolate; overflow: hidden; border: 1px solid rgba(153,211,164,.44); border-radius: 26px; padding: clamp(19px, 5vw, 34px); background: radial-gradient(ellipse at 95% 6%, rgba(102,181,127,.2), transparent 38%), radial-gradient(ellipse at 0% 100%, rgba(211,176,94,.13), transparent 46%), linear-gradient(145deg,#17231b 0%,#0b120e 56%,#090e0b 100%); box-shadow: 0 2px 0 rgba(255,255,255,.13) inset, 0 30px 60px -32px rgba(0,0,0,.95), 0 18px 44px -36px rgba(93,191,128,.65); animation: cannabis-card-in .55s cubic-bezier(.2,.8,.2,1) both; }
 .cannabis-card::before { content:""; position:absolute; inset:0; z-index:-1; opacity:.15; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='76' height='76' viewBox='0 0 76 76'%3E%3Cpath d='M38 12v52M12 38h52M20 20l36 36m0-36L20 56' stroke='%23d9bd73' stroke-opacity='.45' stroke-width='.7'/%3E%3C/svg%3E"); mask-image: linear-gradient(120deg, transparent, black 60%); pointer-events:none; }
-.cannabis-card__art { position:absolute; z-index:-1; right:-26px; top:-44px; width:230px; height:230px; opacity:.7; pointer-events:none; }
-.cannabis-orbit { position:absolute; inset:20px; border:1px solid rgba(217,189,115,.2); border-radius:50%; transform:rotate(-24deg) scaleY(.55); }
-.orbit-two { inset:42px 2px; border-color:rgba(125,195,146,.26); transform:rotate(48deg) scaleY(.7); }
-.cannabis-leaf { position:absolute; top:89px; left:97px; width:32px; height:52px; border:1px solid rgba(157,217,167,.75); border-radius:100% 0 100% 0; transform:rotate(42deg); box-shadow:0 0 28px rgba(84,183,117,.2); }
-.cannabis-leaf::before,.cannabis-leaf::after { content:""; position:absolute; left:15px; top:4px; height:42px; width:1px; background:rgba(157,217,167,.55); transform:rotate(-25deg); transform-origin:bottom; }
-.cannabis-leaf::after { transform:rotate(22deg); }
 .cannabis-card__top,.cannabis-card__balance { position:relative; display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
 .cannabis-kicker { color:#c7cfbc; font:10px var(--font-mono); letter-spacing:.18em; }
 .cannabis-card__top h2 { font-family:var(--font-display); font-size:clamp(21px,5vw,28px); margin:5px 0 0; }
@@ -569,7 +569,7 @@ body {
 .cannabis-stamps__count { display:inline-flex; align-items:baseline; gap:3px; padding:5px 10px; border:1px solid rgba(217,189,115,.3); border-radius:999px; background:rgba(217,189,115,.08); color:#f0dc9f; font:600 16px var(--font-mono); white-space:nowrap; }
 .cannabis-stamps__count i { color:#aeb8a8; font:10px var(--font-mono); font-style:normal; }
 .cannabis-stamp-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px; list-style:none; padding:0; margin:14px 0 8px; }
-.cannabis-stamp-slot { position:relative; display:grid; place-items:center; aspect-ratio:1; min-width:0; border:1px dashed rgba(178,201,177,.34); border-radius:50%; background:radial-gradient(circle at 34% 26%,rgba(255,255,255,.07),rgba(9,20,13,.74) 68%); color:#aeb7a9; font:10px var(--font-mono); box-shadow:0 1px 2px rgba(0,0,0,.65) inset; }
+.cannabis-stamp-slot { position:relative; display:grid; place-items:center; aspect-ratio:1; min-width:0; border:1px dashed rgba(229,192,74,.4); border-radius:50%; background:radial-gradient(circle at 34% 26%,rgba(229,192,74,.055),rgba(9,20,13,.74) 68%); color:#b7a772; font:10px var(--font-mono); box-shadow:0 1px 2px rgba(0,0,0,.65) inset; transition:border-color .25s,background .25s,color .25s,box-shadow .25s; }
 .cannabis-stamp-slot[data-filled="true"] { border-style:solid; border-color:rgba(170,225,166,.78); background:radial-gradient(circle at 34% 24%,#a8d38b 0%,#438d5f 36%,#17452e 78%); color:#f6e7a7; box-shadow:0 0 16px rgba(83,184,113,.24),0 1px 0 rgba(255,255,255,.38) inset,0 3px 8px rgba(0,0,0,.35); }
 .cannabis-stamp-slot[data-filled="true"] .brand-icon { color:#f7e5a3; filter:drop-shadow(0 0 5px rgba(240,216,137,.55)); }
 .cannabis-stamps__note { margin:0; color:#b7c5b5; text-align:center; font-size:10px; letter-spacing:.02em; }
@@ -604,7 +604,6 @@ body {
 @media(max-width:480px) {
   .cannabis-wrap { padding-top:2px; }
   .cannabis-heading { align-items:flex-start; flex-direction:column; gap:12px; }
-  .cannabis-card__art { right:-75px; opacity:.5; }
   .cannabis-reward { align-items:flex-start; flex-wrap:wrap; }
   .cannabis-reward b { margin-left:30px; }
 }
@@ -618,4 +617,50 @@ body {
   .cannabis-qr { padding:6px; }
   .cannabis-qr svg { width:84px; height:84px; }
 }
-@media(prefers-reduced-motion:reduce) { .member-card-switcher__option { transition:none; } .cannabis-card,.cannabis-ready--celebrate { animation:none; } }
+@media(prefers-reduced-motion:reduce) { .member-card-switcher__option,.cannabis-stamp-slot,.loyalty-card-art { transition:none; } .cannabis-card,.cannabis-ready--celebrate { animation:none; } }
+
+/* Samut Prakan keepsake engraving shared by both membership cards. */
+.member-card-inner > :not(.rosette-bg):not(.loyalty-card-art) { position:relative; z-index:1; }
+.loyalty-card-art {
+  position:absolute;
+  inset:0;
+  z-index:0;
+  display:block;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  overflow:hidden;
+}
+.loyalty-card-art--kratom { opacity:.40; }
+.loyalty-card-art--cannabis { opacity:.36; }
+.loyalty-card-art .art-bridge { stroke:rgba(226,197,111,.82); stroke-width:1.45; }
+.loyalty-card-art .art-water { stroke:rgba(74,190,139,.68); stroke-width:1.35; }
+.loyalty-card-art .art-jaguar { fill:rgba(7,26,17,.78); stroke:rgba(221,191,104,.82); stroke-width:1.5; }
+.loyalty-card-art .art-jaguar path:nth-child(2),
+.loyalty-card-art .art-jaguar path:nth-child(3) { fill:none; }
+.loyalty-card-art .art-jaguar > path:not(:first-child) { fill:none; }
+.loyalty-card-art .art-jaguar path:nth-child(3) { stroke:rgba(232,216,164,.9); stroke-width:2; }
+.loyalty-card-art .art-jaguar .art-rosettes { fill:none; stroke:rgba(218,190,111,.78); stroke-width:3; }
+.loyalty-card-art .art-jaguar .art-face { stroke:rgba(246,224,154,.96); stroke-width:2.5; }
+.loyalty-card-art .art-lettering { fill:rgba(229,207,143,.8); font:8px var(--font-mono); letter-spacing:2.1px; }
+.loyalty-card-art--kratom .art-botany { stroke:rgba(196,160,70,.9); stroke-width:1.6; fill:rgba(11,52,31,.76); }
+.loyalty-card-art--cannabis .art-botany { stroke:rgba(64,220,133,.92); stroke-width:1.8; fill:rgba(10,81,44,.74); }
+.stamp { position:relative; overflow:hidden; }
+.stamp[data-filled="false"] { border-color:rgba(229,192,74,.46); color:rgba(240,215,138,.72); background:radial-gradient(circle at 35% 30%,rgba(229,192,74,.075),rgba(255,255,255,.01) 70%); }
+.stamp-empty-mark { position:absolute; inset:17%; display:grid; place-items:center; opacity:.14; color:#d9bd73; }
+.stamp-empty-mark svg { width:100%; height:100%; fill:rgba(47,217,138,.28); stroke:currentColor; stroke-width:1.35; stroke-linecap:round; stroke-linejoin:round; }
+.stamp-empty-mark svg path:not(:first-child) { fill:none; }
+.stamp > .font-mono { position:relative; z-index:1; }
+.cannabis-stamp-watermark { position:absolute; inset:14%; display:grid; place-items:center; color:#d9bd73; opacity:.16; }
+.cannabis-stamp-watermark svg { width:100%; height:100%; fill:rgba(47,217,138,.25); stroke:currentColor; stroke-width:1.1; stroke-linecap:round; stroke-linejoin:round; }
+.cannabis-stamp-number { position:relative; z-index:1; }
+.cannabis-card { isolation:isolate; }
+.cannabis-card > .loyalty-card-art { z-index:-1; opacity:.35; transition:opacity .3s ease; }
+.cannabis-card__top,.cannabis-card__balance,.cannabis-card__code,.cannabis-progress-copy,.cannabis-progress,.cannabis-stamps,.cannabis-reward { position:relative; z-index:1; }
+.cannabis-qr { position:relative; z-index:2; }
+.cannabis-stamp-slot[data-filled="false"]:hover { border-color:rgba(229,192,74,.72); color:#e5c04a; background:radial-gradient(circle at 34% 24%,rgba(47,217,138,.09),rgba(9,20,13,.82) 68%); }
+@media (max-width:360px) {
+  .loyalty-card-art .art-lettering { font-size:7px; letter-spacing:1.4px; }
+  .loyalty-card-art--kratom { opacity:.32; }
+  .loyalty-card-art--cannabis { opacity:.30; }
+}

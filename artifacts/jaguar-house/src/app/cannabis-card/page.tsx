@@ -8,6 +8,7 @@ import { BrandIcon } from "@/components/brand/brand-icon";
 import { MemberShell } from "@/components/brand/member-shell";
 import { MemberCardCarousel } from "@/components/brand/member-card-carousel";
 import { BrandEmblem } from "@/components/brand/brand-emblem";
+import { LoyaltyCardArtwork } from "@/components/brand/loyalty-card";
 import { ErrorState, SignedOutState, EmptyState } from "@/components/brand/ui";
 import { api, errorText } from "@/components/brand/loyalty-api";
 
@@ -82,7 +83,7 @@ export default function CannabisCardPage() {
         {celebrate && <div role="status" className="cannabis-ready cannabis-ready--celebrate">ครบ 10 ติ๊ก — ฟรี 1 กรัม แจ้งพนักงานที่เคาน์เตอร์</div>}
         <MemberCardCarousel active="cannabis">
           <section key={popKey} className={`cannabis-card rise ${popKey ? "card-pop" : ""}`} aria-label="บัตรสมาชิกกัญชา">
-            <div className="cannabis-card__art" aria-hidden="true"><span className="cannabis-orbit orbit-one" /><span className="cannabis-orbit orbit-two" /><span className="cannabis-leaf" /></div>
+            <LoyaltyCardArtwork variant="cannabis" />
             <div className="cannabis-card__top">
               <div><span className="cannabis-kicker">JAGUAR CANNABIS / 2026</span><h2>กัญชา · Cannabis</h2></div>
               <BrandEmblem variant="card" />
@@ -109,7 +110,8 @@ export default function CannabisCardPage() {
                   const stamped = index < stampCount;
                   return (
                     <li key={index} className="cannabis-stamp-slot" data-filled={stamped} data-testid={`cannabis-stamp-${index + 1}`}>
-                      {stamped ? <BrandIcon name="cannabis" tone="emerald" size={17} /> : <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>}
+                      {!stamped && <span className="cannabis-stamp-watermark" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M20 36V13M20 25 10 12l2 9-7-7 5 12-7-2 11 8Zm0-12 10-13-2 9 8-7-5 11 8-3-11 9Zm0-8-5-11 5 7 5-9 1 13" /></svg></span>}
+                      {stamped ? <BrandIcon name="cannabis" tone="emerald" size={17} /> : <span className="cannabis-stamp-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>}
                       <span className="sr-only">{stamped ? `สะสมแล้ว ดวงที่ ${index + 1}` : `ยังไม่สะสม ดวงที่ ${index + 1}`}</span>
                     </li>
                   );
