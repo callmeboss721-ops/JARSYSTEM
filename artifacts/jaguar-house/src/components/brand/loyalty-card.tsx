@@ -17,22 +17,24 @@ export function LoyaltyCard({ card, qr }: { card: MemberCardData; qr: CardQr }) 
       <div className="member-card-inner p-4 sm:p-6">
         <div className="rosette-bg rosette-field" aria-hidden="true" />
         <LoyaltyCardArtwork variant="kratom" />
-        <div className="relative flex items-start justify-between gap-4">
-          <div>
-            <p className="eyebrow">SAMUT PRAKAN · SOI 6</p>
-            <p className="font-display text-xl sm:text-2xl font-semibold mt-1">Jaguar Kratom</p>
+        <div className="member-card-topbar relative">
+          <div className="member-card-brand">
+            <BrandEmblem variant="card" />
+            <div className="min-w-0">
+              <p className="member-card-brand__name">JAGUAR KRATOM</p>
+              <p className="member-card-brand__place">SAMUT PRAKAN · SOI 6</p>
+            </div>
           </div>
-          <BrandEmblem variant="card" />
+          <span className="member-username" data-testid="text-member-code" aria-label={`รหัสสมาชิก ${card.member_code}`}>@{card.member_code}</span>
         </div>
 
         <div className="relative mt-4 pt-4 border-t border-[var(--line)] flex items-center justify-between gap-2 sm:gap-4">
           <div className="min-w-0">
             <p className="text-xs sm:text-sm text-[var(--silver)]">แต้มคงเหลือ</p>
-            <p className="font-display font-bold leading-none text-[48px] sm:text-[70px] text-[var(--gold-2)] tabular-nums" data-testid="text-balance">
-              {card.balance}
-            </p>
-            <p className="mt-2 text-[10px] text-[var(--muted)]">รหัสสมาชิก</p>
-            <p className="font-mono text-xs sm:text-sm tracking-[.14em] text-[var(--text)] break-all" data-testid="text-member-code">{card.member_code}</p>
+            <div className="member-card-points">
+              <p className="font-display font-bold leading-none text-[48px] sm:text-[70px] text-[var(--gold-2)] tabular-nums" data-testid="text-balance">{card.balance}</p>
+              <div className="member-card-points__round"><strong>{filled}<span>/10</span></strong><small>รอบนี้</small></div>
+            </div>
             <p className="mt-1 inline-flex items-center gap-1.5 text-[10px] text-[var(--muted)]">
               <span className="pulse-dot" aria-hidden="true" /> {card.status === "active" ? "ใช้งานอยู่" : card.status}
             </p>
@@ -50,7 +52,7 @@ export function LoyaltyCard({ card, qr }: { card: MemberCardData; qr: CardQr }) 
 
         <div className="relative mt-4">
           <div className="flex justify-between text-xs mb-2">
-            <span className="inline-flex items-center gap-2 text-[var(--muted)]"><BrandIcon name="progress" tone="gold" />{ready ? "ครบ 10 ดวง พร้อมแลกรางวัล" : `อีก ${STAMPS - filled} ดวง ครบรางวัล`}</span>
+            <span className="inline-flex items-center gap-2 text-[var(--muted)]"><BrandIcon name="progress" tone="gold" />{ready ? "ครบ 10 แต้ม · แลกของแถมได้" : `อีก ${STAMPS - filled} แต้ม ถึงแลกได้`}</span>
             <span className="font-mono text-[var(--gold-2)]">{filled}/{STAMPS}</span>
           </div>
           <div
@@ -61,7 +63,7 @@ export function LoyaltyCard({ card, qr }: { card: MemberCardData; qr: CardQr }) 
             aria-valuenow={filled}
             aria-label="ความคืบหน้าการสะสมแต้ม"
           >
-            <div className="progress-fill" style={{ transform: `scaleX(${filled / STAMPS})` }} />
+            <div className="progress-fill" style={{ width: `${(filled / STAMPS) * 100}%` }} />
           </div>
         </div>
 

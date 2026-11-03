@@ -1,5 +1,5 @@
-import { Welcome } from "@/components/brand/welcome";
+import { redirect } from "next/navigation";
 
 export default function RegisterPage() {
-  return <Welcome initialTab="register" />;
+  redirect("/login?mode=register");
 }

@@ -9,7 +9,7 @@ import { MemberShell } from "@/components/brand/member-shell";
 import { MemberCardCarousel } from "@/components/brand/member-card-carousel";
 import { BrandEmblem } from "@/components/brand/brand-emblem";
 import { LoyaltyCardArtwork } from "@/components/brand/loyalty-card";
-import { ErrorState, SignedOutState, EmptyState } from "@/components/brand/ui";
+import { ErrorState, SignedOutState, EmptyState, LoadingState } from "@/components/brand/ui";
 import { api, errorText } from "@/components/brand/loyalty-api";
 
 const CARD_KEY = getGetCannabisMemberCardQueryKey();
@@ -32,6 +32,8 @@ export default function CannabisCardPage() {
       queryKey: CARD_KEY,
       retry: false,
       refetchOnWindowFocus: true,
+      refetchOnMount: true,
+      staleTime: 0,
       refetchInterval: (query) => query.state.data ? (visible ? 2000 : false) : false,
       refetchIntervalInBackground: false,
     },
@@ -72,7 +74,7 @@ export default function CannabisCardPage() {
   useEffect(() => { if (card && card.balance < 10) setCelebrate(false); }, [card?.balance]);
 
   return <MemberShell signedIn={cardQuery.isSuccess}>
-    {cardQuery.isLoading ? <div className="cannabis-wrap"><div className="cannabis-skeleton" aria-busy="true" aria-label="กำลังโหลดบัตร"><i /><i /><i /></div></div>
+    {cardQuery.isLoading ? <div className="cannabis-wrap"><LoadingState label="กำลังโหลดบัตรกัญชา" /></div>
       : unauthenticated ? <div className="max-w-md mx-auto"><SignedOutState /></div>
       : cardQuery.isError || !card ? <div className="max-w-md mx-auto"><ErrorState message={errorText(cardQuery.error)} onRetry={() => void cardQuery.refetch()} retrying={cardQuery.isFetching} /></div>
       : <div className="cannabis-wrap">

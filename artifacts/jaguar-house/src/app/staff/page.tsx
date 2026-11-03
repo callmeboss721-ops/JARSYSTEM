@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { JaguarMark } from "@/components/brand/jaguar-mark";
-import { EmptyState, ErrorState } from "@/components/brand/ui";
+import { EmptyState, ErrorState, LoadingSpinner, LoadingState } from "@/components/brand/ui";
 import { PinPad } from "@/components/brand/pin-pad";
 import { STAMPS } from "@/components/brand/loyalty-card";
 import { STAFF, api, bundlePrice, cleanCode, clearScope, codePattern, errorText, formulaLabels, isBottleCount, json, statusOf, type Formula, type MemberCardData, type RedemptionData } from "@/components/brand/loyalty-api";
@@ -201,7 +201,7 @@ export default function StaffPage() {
     } catch (e) { setErr(errorText(e)); } finally { setBusy(false); }
   };
 
-  if (auth === null) return <main className="min-h-[100dvh] p-6"><div className="skeleton max-w-md h-48 mx-auto" aria-label="กำลังตรวจสอบสิทธิ์" /></main>;
+  if (auth === null) return <main className="min-h-[100dvh] p-6"><div className="max-w-md mx-auto"><LoadingState label="กำลังตรวจสอบสิทธิ์พนักงาน" /></div></main>;
 
   return <div className="staff-workspace min-h-[100dvh]">
     <header className="staff-topline sticky top-0 z-40 border-b border-[var(--line)]">
@@ -218,7 +218,7 @@ export default function StaffPage() {
           <div className="field"><label htmlFor="staff-pin">PIN พนักงาน</label><input id="staff-pin" type="password" inputMode="numeric" autoComplete="one-time-code" maxLength={12} className="input text-center !text-2xl !tracking-[.5em]" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 12))} aria-invalid={!!err} aria-describedby={err ? "staff-pin-err" : undefined} /></div>
           <PinPad value={pin} onChange={setPin} label="แป้นตัวเลข PIN พนักงาน" />
           {err && <p id="staff-pin-err" role="alert" className="field-error">{err}</p>}
-          <button className="btn btn-neon w-full" disabled={busy}>{busy ? "กำลังตรวจสอบ…" : "เข้าสู่พื้นที่ทำงาน"}</button>
+          <button className="btn btn-neon w-full" disabled={busy}>{busy && <LoadingSpinner className="loading-spinner--button" />}{busy ? "กำลังตรวจสอบ…" : "เข้าสู่พื้นที่ทำงาน"}</button>
         </form>
         <Link href="/owner" className="flex justify-center items-center min-h-11 text-sm text-[var(--muted)] mt-4">เข้าสู่ระบบเจ้าของร้าน</Link>
       </section>
@@ -281,7 +281,7 @@ export default function StaffPage() {
           </section>
           <section className="panel p-5 sm:p-6">
             <h2 className="font-display text-xl font-semibold">รายการแลกรอส่งมอบ</h2>
-            {queue.isLoading ? <div className="skeleton h-20 mt-4" /> : queue.isError ? <ErrorState message={errorText(queue.error)} onRetry={() => queue.refetch()} retrying={queue.isFetching} /> : !queue.data?.length ? <div className="mt-4"><EmptyState title="ไม่มีรายการรอยืนยัน" /></div>
+            {queue.isLoading ? <div className="mt-4"><LoadingState label="กำลังโหลดรายการแลกรางวัล" compact /></div> : queue.isError ? <ErrorState message={errorText(queue.error)} onRetry={() => void queue.refetch()} retrying={queue.isFetching} /> : !queue.data?.length ? <div className="mt-4"><EmptyState title="ไม่มีรายการรอยืนยัน" /></div>
             : <ul className="list-none p-0 mt-4 space-y-3">{queue.data.map((r) => <li key={r.id} className="rounded-xl border border-[var(--line-2)] p-4"><p className="font-semibold">{r.reward_name}</p><p className="text-sm text-[var(--muted)]">{r.member_code} · {r.points_spent} แต้ม</p><button className="btn btn-gold w-full mt-3" disabled={busy} onClick={async () => { setBusy(true); try { await api(`${STAFF}/redemptions/${encodeURIComponent(r.id)}/confirm`, json("POST", {})); setMsg("ยืนยันการส่งมอบรางวัลแล้ว"); await queue.refetch(); } catch (e) { setErr(errorText(e)); } finally { setBusy(false); } }}>ยืนยันส่งมอบ</button></li>)}</ul>}
           </section>
           </div>}
@@ -295,7 +295,7 @@ export default function StaffPage() {
               <button type="button" className="btn btn-ghost w-full mt-2" onClick={startCamera}>เปิดกล้องสแกน QR</button>
               {scanning && <><video ref={video} className="w-full rounded-xl aspect-video bg-black mt-3" aria-label="ภาพจากกล้องสำหรับสแกน" /><button type="button" className="btn btn-ghost w-full mt-2" onClick={() => { controls.current?.stop(); setScanning(false); }}>ปิดกล้อง</button></>}
               {scanError && <p role="alert" className="field-error">{scanError}</p>}
-              {cannabisCardQuery.isLoading && cannabisLookup && <div className="skeleton h-24 mt-4" aria-label="กำลังค้นหาบัตรกัญชา" />}
+              {cannabisCardQuery.isLoading && cannabisLookup && <div className="mt-4"><LoadingState label="กำลังค้นหาบัตรกัญชา" compact /></div>}
               {cannabisCardQuery.isError && cannabisLookup && <div className="mt-4"><ErrorState message={errorText(cannabisCardQuery.error)} onRetry={() => void cannabisCardQuery.refetch()} retrying={cannabisCardQuery.isFetching} /></div>}
               {!cannabisLookup && <div className="mt-4"><EmptyState title="ค้นหาบัตรกัญชา" body="กรอกรหัสสมาชิกหรือสแกน QR เพื่อเริ่มรายการ" /></div>}
               {cannabisCard && <div className="cannabis-staff-card mt-5">
@@ -326,8 +326,8 @@ export default function StaffPage() {
             <div className="field flex-1"><label htmlFor="member-search">กรองด้วยชื่อหรือรหัส</label><input id="member-search" className="input" value={search} onChange={(e) => setSearch(e.target.value)} /></div>
             <button className="btn btn-ghost">ค้นหา</button>
           </form>
-          {members.isLoading ? <div className="space-y-2 mt-4">{[1, 2, 3].map((x) => <div key={x} className="skeleton h-14" />)}</div>
-          : members.isError ? <ErrorState message={errorText(members.error)} onRetry={() => members.refetch()} retrying={members.isFetching} />
+          {members.isLoading ? <div className="mt-4"><LoadingState label="กำลังโหลดรายชื่อสมาชิก" compact /></div>
+          : members.isError ? <ErrorState message={errorText(members.error)} onRetry={() => void members.refetch()} retrying={members.isFetching} />
           : !visibleMembers.length ? <div className="mt-4"><EmptyState title={query ? "ไม่พบสมาชิก" : "ยังไม่มีสมาชิก"} /></div>
           : <ul className="divide-y divide-[var(--line)] list-none p-0 mt-4">{visibleMembers.map((m) => <li className="py-3 flex gap-3 items-center" key={m.id}>
             <div className="min-w-0 flex-1"><p className="break-words">{m.display_name || "สมาชิก"}</p><p className="font-mono text-sm text-[var(--gold-2)]">{m.member_code}</p>

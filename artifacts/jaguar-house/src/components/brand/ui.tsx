@@ -5,6 +5,19 @@ import Link from "next/link";
 import { BrandIcon } from "./brand-icon";
 import { JaguarMark } from "./jaguar-mark";
 
+export function LoadingSpinner({ className = "" }: { className?: string }) {
+  return <span aria-hidden="true" className={`loading-spinner ${className}`} />;
+}
+
+export function LoadingState({ label = "กำลังโหลดข้อมูล", compact = false }: { label?: string; compact?: boolean }) {
+  return (
+    <div className={`loading-state${compact ? " loading-state--compact" : ""}`} role="status" aria-live="polite" aria-busy="true">
+      <LoadingSpinner />
+      <span>{label}</span>
+    </div>
+  );
+}
+
 export function ErrorState({ message, onRetry, retrying }: { message: string; onRetry?: () => void; retrying?: boolean }) {
   return (
     <div role="alert" className="panel p-6 flex flex-col items-start gap-4" data-testid="state-error">
@@ -16,8 +29,8 @@ export function ErrorState({ message, onRetry, retrying }: { message: string; on
       <p className="text-sm text-[var(--muted)]">{message}</p>
       {onRetry && (
         <button className="btn btn-ghost" onClick={onRetry} disabled={retrying} data-testid="button-retry">
-          <BrandIcon name="retry" tone="neutral" className={retrying ? "animate-spin" : undefined} />
-          ลองอีกครั้ง
+          {retrying ? <LoadingSpinner /> : <BrandIcon name="retry" tone="neutral" />}
+          {retrying ? "กำลังลองอีกครั้ง" : "ลองอีกครั้ง"}
         </button>
       )}
     </div>

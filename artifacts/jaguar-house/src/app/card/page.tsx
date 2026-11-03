@@ -6,8 +6,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { BrandIcon } from "@/components/brand/brand-icon";
 import { MemberShell } from "@/components/brand/member-shell";
 import { MemberCardCarousel } from "@/components/brand/member-card-carousel";
-import { LoyaltyCard, LoyaltyCardSkeleton, STAMPS } from "@/components/brand/loyalty-card";
-import { EmptyState, ErrorState, SignedOutState } from "@/components/brand/ui";
+import { LoyaltyCard, STAMPS } from "@/components/brand/loyalty-card";
+import { EmptyState, ErrorState, LoadingState, SignedOutState } from "@/components/brand/ui";
 import { api, errorText, gradeFor, type MemberCardData, type Sale, formulaLabels } from "@/components/brand/loyalty-api";
 
 export default function CardPage() {
@@ -18,7 +18,7 @@ export default function CardPage() {
     on(); document.addEventListener("visibilitychange", on);
     return () => document.removeEventListener("visibilitychange", on);
   }, []);
-  const card = useQuery<MemberCardData>({ queryKey: ["/api/loyalty/card"], queryFn: () => api("/api/loyalty/card"), refetchInterval: visible ? 2000 : false, refetchIntervalInBackground: false, refetchOnWindowFocus: true, retry: false });
+  const card = useQuery<MemberCardData>({ queryKey: ["/api/loyalty/card"], queryFn: () => api("/api/loyalty/card"), refetchInterval: visible ? 2000 : false, refetchIntervalInBackground: false, refetchOnWindowFocus: true, refetchOnMount: true, staleTime: 0, retry: false });
   const sales = useQuery<Sale[]>({ queryKey: ["/api/loyalty/sales"], queryFn: () => api("/api/loyalty/sales"), enabled: card.isSuccess, refetchInterval: visible ? 5000 : false, refetchIntervalInBackground: false, refetchOnWindowFocus: false });
   const code = card.data?.member_code;
   // The opaque staff-scan token is stable across reloads; keep one account-scoped fetch.
@@ -48,19 +48,19 @@ export default function CardPage() {
   useEffect(() => { if (balance !== undefined && balance < STAMPS) setCelebrate(false); }, [balance]);
 
   return <MemberShell signedIn={card.isSuccess}>
-    {card.isLoading ? <div className="max-w-xl mx-auto"><LoyaltyCardSkeleton /></div>
+    {card.isLoading ? <div className="max-w-xl mx-auto"><LoadingState label="กำลังโหลดบัตรสมาชิก" /></div>
     : card.error && (card.error as {status?: number}).status === 401 ? <div className="max-w-md mx-auto"><SignedOutState /></div>
     : card.isError || !card.data ? <div className="max-w-md mx-auto"><ErrorState message={errorText(card.error)} onRetry={() => card.refetch()} retrying={card.isFetching} /></div>
-    : <div className="grid gap-6 lg:grid-cols-[1.1fr_.9fr] items-start">
-      <div className="space-y-5">
-        <header className="rise">
-          <p className="eyebrow">สมาชิก · Jaguar Kratom</p>
-          <h1 className="font-display text-2xl sm:text-3xl font-semibold mt-1">{card.data.display_name || "บัตรสมาชิกของฉัน"}</h1>
-          <p className="mt-1 text-sm text-[var(--muted)]">ระดับ {gradeFor(card.data.lifetime_earned)} · แต้มจากยอดสะสมตลอดอายุสมาชิก</p>
+    : <div className="grid gap-4 lg:grid-cols-[1.1fr_.9fr] items-start">
+      <div className="space-y-3">
+        <header className="card-member-heading rise">
+          <p className="eyebrow">MEMBER PASS</p>
+          <h1 className="font-display text-xl sm:text-2xl font-semibold mt-1">{card.data.display_name || "บัตรสมาชิกของฉัน"}</h1>
+          <p className="mt-1 text-xs sm:text-sm text-[var(--muted)]">ระดับ {gradeFor(card.data.lifetime_earned)} · นับจากแต้มสะสมตลอดชีพ</p>
         </header>
         {(celebrate || card.data.balance >= STAMPS) && <div role="status" className="gold-alert">ครบ 10 แต้ม! รับขวดแถมฟรี 1 ขวด</div>}
         {confettiKey > 0 && <Confetti key={confettiKey} />}
-        <div key={pop} className={pop ? "card-pop" : undefined}>
+        <div className={pop ? `card-pop card-pop--${pop % 2}` : undefined}>
           <MemberCardCarousel active="kratom">
             <LoyaltyCard card={card.data} qr={{
               value: qr.data?.qr, loading: qr.isLoading, error: qr.isError ? errorText(qr.error) : undefined,
@@ -68,12 +68,16 @@ export default function CardPage() {
             }} />
           </MemberCardCarousel>
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="panel p-4"><p className="text-xs text-[var(--muted)]">สะสมทั้งหมด</p><p className="font-display text-2xl font-semibold mt-1">{card.data.lifetime_earned}</p></div>
-          <div className="panel p-4"><p className="text-xs text-[var(--muted)]">ใช้แลกไปแล้ว</p><p className="font-display text-2xl font-semibold mt-1 text-[var(--gold-2)]">{card.data.lifetime_redeemed}</p></div>
+        <div className="card-bento-grid" aria-label="สรุปสมาชิกและที่ตั้งร้าน">
+          <div className="panel card-bento-stat"><p>สะสมทั้งหมด</p><strong>{card.data.lifetime_earned}</strong><small>แต้ม</small></div>
+          <div className="panel card-bento-stat card-bento-stat--gold"><p>ใช้แลกไปแล้ว</p><strong>{card.data.lifetime_redeemed}</strong><small>แต้ม</small></div>
+          <div className="panel card-bento-location">
+            <BrandIcon name="location" tone="gold" />
+            <div><p>แวะมาที่ร้าน</p><strong>บุญศิริ ซอย 6</strong><small>สมุทรปราการ</small></div>
+          </div>
         </div>
         <div className="flex flex-col min-[390px]:flex-row gap-3">
-          <Link href="/redeem" className="btn btn-redeem flex-1">{card.data.balance >= STAMPS ? "แลกรางวัล" : "ดูรางวัล"} <BrandIcon name="redeem" tone="inherit" /></Link>
+          <Link href="/redeem" className="btn btn-redeem flex-1">{card.data.balance >= STAMPS ? "แลกของแถมเลย" : `อีก ${STAMPS - Math.min(card.data.balance, STAMPS)} แต้ม ถึงแลกได้`} <BrandIcon name="redeem" tone="inherit" /></Link>
           <Link href="/" className="btn btn-ghost flex-1">หน้าแรกร้าน</Link>
         </div>
       </div>

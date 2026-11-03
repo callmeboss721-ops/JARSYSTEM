@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { api, formulaLabels, type MemberCardData } from "./loyalty-api";
+import { api, type MemberCardData } from "./loyalty-api";
 import { BrandIcon } from "./brand-icon";
 import { BrandEmblem } from "./brand-emblem";
 import { SamutPrakanArt } from "./samut-prakan-art";
@@ -11,108 +11,45 @@ import { LoginForm, RegisterForm } from "./auth-forms";
 
 export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
   const [tab, setTab] = useState<"login" | "register">(initialTab ?? "login");
-  const [activeProgram, setActiveProgram] = useState<"kratom" | "cannabis">("kratom");
-  const session = useQuery<MemberCardData>({ queryKey: ["/api/loyalty/card"], queryFn: () => api("/api/loyalty/card"), retry: false, refetchOnWindowFocus: false });
+  const session = useQuery<MemberCardData>({ queryKey: ["/api/loyalty/card"], queryFn: () => api("/api/loyalty/card"), enabled: initialTab !== undefined, retry: false, refetchOnWindowFocus: false });
 
   if (initialTab === undefined) {
     return (
-      <main className="jaguar-home customer-art-root min-h-[100dvh]">
+      <main className="jaguar-home jaguar-home--landing customer-art-root min-h-[100dvh]">
         <SamutPrakanArt />
-        <header className="jaguar-home__header">
-          <Link href="/" className="jaguar-home__brand" aria-label="JAGUAR KRATOM หน้าแรก">
-            <BrandEmblem variant="card" />
-            <span><strong>JAGUAR</strong><small>KRATOM • BUN SIRI SOI 6</small></span>
+        <header className="landing-header landing-enter landing-enter--header">
+          <Link href="/" className="landing-brand" aria-label="JAGUAR KRATOM หน้าแรก">
+            <span className="landing-brand__logo"><BrandEmblem variant="card" /></span>
+            <span className="landing-brand__copy"><strong>JAGUAR</strong><small>KRATOM · BUN KHIRI SOI 6</small></span>
           </Link>
-          <nav aria-label="ทางเข้าร้าน">
-            <Link href="/staff" data-testid="link-staff">พนักงาน</Link>
-            <Link href="/owner" data-testid="link-owner">เจ้าของร้าน</Link>
+          <nav className="landing-header__actions" aria-label="ทางเข้าพนักงาน">
+            <Link href="/admin?desk=staff" data-testid="link-staff">พนักงาน</Link>
+            <Link href="/admin" data-testid="link-owner">เจ้าของร้าน</Link>
           </nav>
         </header>
-        <section className="jaguar-home__hero">
-          <div className="jaguar-home__copy rise">
-            <p className="eyebrow">NEIGHBORHOOD MEMBERSHIP • SAMUT PRAKAN</p>
-            <h1 aria-label="พี่เสือพลังใบ ซุปเปอร์ฮีโร่ของคนไทย">พี่เสือพลังใบ<br /><em>ซุปเปอร์ฮีโร่ของคนไทย</em></h1>
-            <p className="jaguar-home__intro">สมาชิก JAGUAR KRATOM สะสมแต้มทุกครั้งที่แวะมา แล้วเก็บสิทธิ์ไว้ในบัตรบนมือถือ</p>
-            <div className="jaguar-home__actions">
-              {session.isSuccess && session.data
-                ? <Link href="/card" className="btn btn-neon">เปิดกระเป๋าสมาชิก <BrandIcon name="continue" tone="inherit" /></Link>
-                : <Link href="/register" className="btn btn-neon">เปิดกระเป๋าสมาชิก <BrandIcon name="continue" tone="inherit" /></Link>}
-              <Link href="/login" className="btn btn-ghost jaguar-home__access"><BrandIcon name="members" tone="gold" />เข้าใช้งานบัตรสมาชิก</Link>
-            </div>
-          </div>
-          <div className="jaguar-home__art rise" style={{ animationDelay: "120ms" }}>
-            <span className="jaguar-home__art-index">01 / MEMBERS CLUB</span>
-            <div className="jaguar-home__art-seal"><BrandEmblem variant="hero" /></div>
-            <span className="jaguar-home__art-caption">A LOCAL CLUB, MADE TO KEEP.</span>
+        <section className="landing-art-card landing-enter landing-enter--hero" aria-label="JAGUAR Members Club">
+          <span className="landing-art-card__index">01 / MEMBERS CLUB</span>
+          <div className="landing-art-card__art"><BrandEmblem variant="hero" /></div>
+          <div className="landing-art-card__footer">
+            <span>SAMUT PRAKAN · SOI 6</span>
+            <span>A LOCAL CLUB, MADE TO KEEP.</span>
           </div>
         </section>
-        <section className="jaguar-home__program-section" aria-labelledby="program-heading">
-          <div className="jaguar-home__section-head">
-            <div><p className="eyebrow">MEMBERSHIP, MADE SIMPLE</p><h2 id="program-heading">สะสมทุกครั้งที่แวะ</h2></div>
-            <p>แยกบัตรตามโปรแกรม<br />แสดง QR ที่เคาน์เตอร์</p>
-          </div>
-          <div
-            className="jaguar-home__program-toggle"
-            role="tablist"
-            aria-label="เลือกบัตรสมาชิก"
-            onKeyDown={(event) => {
-              if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
-              event.preventDefault();
-              const next = activeProgram === "kratom" ? "cannabis" : "kratom";
-              setActiveProgram(next);
-              document.getElementById(`program-tab-${next}`)?.focus();
-            }}
-          >
-            <button type="button" role="tab" id="program-tab-kratom" aria-selected={activeProgram === "kratom"} aria-controls="program-panel" tabIndex={activeProgram === "kratom" ? 0 : -1} data-program="kratom" onClick={() => setActiveProgram("kratom")}>01 <span>กระท่อม</span></button>
-            <button type="button" role="tab" id="program-tab-cannabis" aria-selected={activeProgram === "cannabis"} aria-controls="program-panel" tabIndex={activeProgram === "cannabis" ? 0 : -1} data-program="cannabis" onClick={() => setActiveProgram("cannabis")}>02 <span>กัญชา</span></button>
-          </div>
-          <div className="jaguar-home__programs" id="program-panel" role="tabpanel" aria-labelledby={`program-tab-${activeProgram}`}>
-            {activeProgram === "kratom" ? (
-              <Link href="/card" className="jaguar-home__program jaguar-home__program--kratom">
-                <span className="jaguar-home__program-number">01 / JAGUAR KRATOM</span>
-                <strong>ครบ 10 แต้ม</strong>
-                <span>ซื้อ 3 ขวด รับ 1 แต้ม · ครบ 10 แต้ม รับฟรี 1 ขวด</span>
-                <i aria-hidden="true">↗</i>
-              </Link>
-            ) : (
-              <Link href="/cannabis-card" className="jaguar-home__program jaguar-home__program--cannabis">
-                <span className="jaguar-home__program-number">02 / JAGUAR CANNABIS</span>
-                <strong>ครบ 10 ติ๊ก</strong>
-                <span>ซื้อ 1 กรัม รับ 1 ติ๊ก · ครบ 10 ติ๊ก รับฟรี 1 กรัม</span>
-                <i aria-hidden="true">↗</i>
-              </Link>
-            )}
-          </div>
-          <p className="jaguar-home__footnote">บัตรสะสมแยกกัน · แตะเพื่อเปิดบัตรหรือปัดเลือกโปรแกรม</p>
+        <section className="landing-copy landing-enter landing-enter--copy" aria-labelledby="landing-title">
+          <p className="landing-eyebrow">NEIGHBORHOOD MEMBERSHIP · SAMUT PRAKAN</p>
+          <h1 id="landing-title" aria-label="จากัวร์ พลังใบ ซุปเปอร์ฮีโร่ของคนไทย">
+            <span>จากัวร์ พลังใบ</span>
+            <span>ซุปเปอร์ฮีโร่ของคนไทย</span>
+          </h1>
+          <p className="landing-subcopy">สะสมแต้มทุกครั้งที่แวะ บัตรกับคะแนนอยู่ในมือถือ</p>
         </section>
-        <section className="jaguar-home__details" aria-label="รายละเอียดร้าน">
-          <div className="jaguar-home__formulas">
-            <p className="eyebrow">OUR FORMULAS</p>
-            <h2>สามสูตรประจำร้าน</h2>
-            <ul className="jaguar-home__formula-strip" aria-label="สูตรสินค้า เลื่อนดูได้" tabIndex={0}>
-              {Object.entries(formulaLabels).map(([key, label], index) => <li key={key}><span className="jaguar-home__formula-index">0{index + 1}</span><strong>{label}</strong></li>)}
-            </ul>
-            <p className="jaguar-home__note">ปัดดูสูตร · สอบถามรายละเอียดที่ร้าน</p>
-          </div>
-          <article className="jaguar-home__map-card">
-            <div className="jaguar-home__map-graphic" aria-hidden="true">
-              <svg viewBox="0 0 360 150" role="presentation">
-                <path d="M-20 112C52 70 79 137 144 94s94-44 138-7 77 8 105-25M-4 38c47 48 73-24 124 9s71 73 125 36 82-53 131-12M76-20c-6 42 20 53 8 91s-9 63 23 99M252-10c-24 43-3 64 13 92s-2 56-31 85" />
-                <path className="jaguar-home__map-route" d="M78 107c25-15 27-39 57-45s43 16 64 6 24-28 46-34" />
-                <circle cx="245" cy="34" r="7" />
-              </svg>
-              <span className="jaguar-home__map-label">SAMUT PRAKAN · THAILAND</span>
-            </div>
-            <div className="jaguar-home__map-copy">
-              <BrandIcon name="location" tone="gold" />
-              <div><p className="eyebrow">FIND US HERE</p><h2>บุญศิริ ซอย 6</h2><p>สมุทรปราการ · แวะมาที่ร้านได้เลย</p></div>
-            </div>
-            <span className="jaguar-home__map-coord" aria-hidden="true">SOI 06</span>
-          </article>
-        </section>
-        <nav className="jaguar-home__bottom-nav" aria-label="เมนูสมาชิก">
-          <Link href="/card" data-selected={activeProgram === "kratom"}><BrandIcon name="leaf" tone="gold" /><span>บัตรกระท่อม</span></Link>
-          <Link href="/cannabis-card" data-selected={activeProgram === "cannabis"}><BrandIcon name="cannabis" tone="emerald" /><span>บัตรกัญชา</span></Link>
+        <div className="landing-ctas landing-enter landing-enter--ctas">
+          <Link href="/login?mode=register" className="btn btn-gold" data-testid="link-open-wallet">เปิดกระเป๋าสมาชิก <BrandIcon name="continue" tone="inherit" /></Link>
+          <Link href="/login" className="btn btn-ghost" data-testid="link-member-login">เข้าใช้งานบัตร <BrandIcon name="members" tone="gold" /></Link>
+        </div>
+        <nav className="landing-bottom-nav landing-enter landing-enter--nav" aria-label="เมนูสมาชิก">
+          <Link href="/card" data-selected="true"><BrandIcon name="leaf" tone="inherit" /><span>บัตรกระท่อม</span></Link>
+          <Link href="/cannabis-card"><BrandIcon name="cannabis" tone="emerald" /><span>บัตรกัญชา</span></Link>
           <Link href="/redeem"><BrandIcon name="rewards" tone="gold" /><span>รางวัลกระท่อม</span></Link>
         </nav>
       </main>
@@ -120,7 +57,7 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
   }
 
   return (
-    <div className={`customer-art-root min-h-[100dvh] ${initialTab === "login" ? "login-reference-root" : "grid lg:grid-cols-[1.1fr_1fr]"}`}>
+    <div className={`customer-art-root min-h-[100dvh] ${initialTab === "login" ? "login-reference-root" : "auth-register-root grid lg:grid-cols-[1.1fr_1fr]"}`}>
       <SamutPrakanArt />
       <section className="auth-stage relative overflow-hidden order-2 lg:order-1 px-6 pt-10 pb-12 lg:p-16 flex flex-col justify-between border-t lg:border-t-0 lg:border-r border-[var(--line)]">
         <div className="rosette-field absolute inset-0 opacity-[.05] pointer-events-none" aria-hidden="true" />
@@ -158,7 +95,7 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
       </section>
 
       <section className="order-1 lg:order-2 px-5 sm:px-6 pt-5 pb-10 lg:p-16 flex items-start lg:items-center justify-center">
-        <div className="w-full max-w-md rise">
+        <div className="auth-form-layout w-full max-w-md rise">
           {initialTab !== "login" && (
             <nav aria-label="เมนูพนักงาน" className="flex lg:hidden justify-end mb-4">
               <Link href="/staff" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--emerald-2)] no-underline font-mono" data-testid="link-staff-mobile">พนักงาน</Link>
@@ -190,7 +127,7 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
                 <button role="tab" id="tab-login" aria-selected={tab === "login"} tabIndex={tab === "login" ? 0 : -1} aria-controls="panel-auth" className="tab" onClick={() => setTab("login")} data-testid="tab-login">เข้าสู่ระบบ</button>
                 <button role="tab" id="tab-register" aria-selected={tab === "register"} tabIndex={tab === "register" ? 0 : -1} aria-controls="panel-auth" className="tab" onClick={() => setTab("register")} data-testid="tab-register">สมัครสมาชิก</button>
               </div>
-              <div id="panel-auth" role="tabpanel" aria-labelledby={`tab-${tab}`} className="panel auth-panel p-5 sm:p-7">
+              <div id="panel-auth" role="tabpanel" aria-labelledby={`tab-${tab}`} className="panel auth-panel auth-form-panel p-5 sm:p-7">
                 {tab === "login" ? <LoginForm /> : <RegisterForm />}
               </div>
               {session.isError && (session.error as { status?: number })?.status !== 401 && (
