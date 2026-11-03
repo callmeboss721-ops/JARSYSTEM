@@ -70,7 +70,7 @@ export function LoyaltyCard({ card, qr }: { card: MemberCardData; qr: CardQr }) 
             const on = i < filled;
             return (
               <li key={i} className="stamp" data-filled={on} data-testid={`stamp-${i + 1}`}>
-                {on ? <BrandIcon name="progress" tone="emerald" /> : <span className="stamp-empty-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 27C8 23 5 17 7 10c4 1 7 3 9 7 2-7 5-10 10-11 1 8-2 15-10 21Z"/><path d="M16 27c0-6 0-10 1-15"/></svg></span>}
+                {on ? <BrandIcon name="progress" tone="emerald" /> : <span className="stamp-empty-mark" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M19 35C9 31 5 24 8 15c5 1 9 4 11 9 2-9 6-14 14-15 1 11-3 20-14 26Z"/><path d="M19 35c0-8 1-15 4-22M19 26l-8-8m9 2 8-9"/></svg></span>}
                 {!on && <span className="font-mono text-[11px]">{i + 1}</span>}
                 <span className="sr-only">{on ? "ประทับแล้ว" : "ว่าง"}</span>
               </li>
@@ -90,33 +90,57 @@ export function LoyaltyCard({ card, qr }: { card: MemberCardData; qr: CardQr }) 
 /** Samut Prakan bridge engraving and card-specific botanical signature. */
 export function LoyaltyCardArtwork({ variant }: { variant: "kratom" | "cannabis" }) {
   return (
-    <svg className={`loyalty-card-art loyalty-card-art--${variant}`} viewBox="180 0 360 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+    <svg className={`loyalty-card-art loyalty-card-art--${variant}`} viewBox="0 0 400 560" preserveAspectRatio="none" aria-hidden="true" focusable="false">
       <g className="art-lettering">
-        <text x="204" y="68">SAMUT PRAKAN</text>
-        <text x="515" y="68" textAnchor="end">SOI 6</text>
+        <text x="22" y="34">SAMUT PRAKAN</text>
+        <text x="378" y="34" textAnchor="end">SOI 6</text>
       </g>
-      <g className="art-bridge" transform="translate(180 0) scale(.6 1)" fill="none" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M40 184H680M80 177h88m10 0h70m324 0h45m12 0h55" />
-        <path d="M191 181V83l-12 98m12-98 13 98m-21-70h17m-19 24h21m-23 24h25m-26 23h28" />
-        <path d="M191 83 111 179m80-96-49 95m49-95 0 95m0-95 51 95m-51-95 81 96" />
-        <path d="M526 181V63l-14 118m14-118 14 118m-23-88h19m-22 29h25m-28 29h31m-33 29h36" />
-        <path d="M526 63 434 178m92-115-55 114m55-114 0 114m0-114 57 114m-57-114 93 115" />
-        <path d="M79 186c113-10 207-10 313-2 96 8 177 9 248 0" />
+      <g className="art-bridge" transform="translate(82 54) scale(.78)" fill="none" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M24 177H376M34 171h58m216 0h58" />
+        <path d="M105 174V92l-8 82m8-82 9 82m-16-59h14m-17 21h20m-21 21h23m-25 17h27" />
+        <path d="M105 92 48 171m57-79-34 78m34-78v78m0-78 35 78m-35-78 57 79" />
+        <path d="M286 174V77l-10 97m10-97 11 97m-18-72h15m-19 24h22m-24 24h27m-29 17h31" />
+        <path d="M286 77 224 171m62-94-38 93m38-93v93m0-93 39 93m-39-93 63 94" />
+        <path d="M37 180c72-7 136-8 196-2 53 5 94 5 131 0M18 194c56-7 112-7 167-2m28 0c64 4 116 3 168-3" />
       </g>
       <g className="art-water" fill="none" strokeLinecap="round">
-        <path d="M20 226c66-18 111-18 175-2s108 17 169-1 109-19 173-2 105 17 165-1" />
-        <path d="M-9 247c69-15 120-15 182 0s109 16 169 0 111-16 173 0 109 16 177-1" />
-        <path d="M28 270c62-13 102-11 156 1s101 13 158-1 100-14 157 0 107 13 167-1" />
-        <path d="M-20 296c83-13 132-10 195 1s108 11 163-2 105-12 162 1 116 13 207-3" />
-        <path d="M44 321c59-9 109-8 163 2s100 10 154-1 104-10 163 1 98 9 155-2" />
+        <path d="M-10 222c35-10 64-10 98 0s64 10 98 0 64-10 98 0 64 10 98 0 64-10 98 0" />
+        <path d="M-20 245c39-9 71-9 108 0s68 9 104 0 68-9 104 0 68 9 104 0 68-9 104 0" />
+        <path d="M-4 270c34-8 63-8 95 0s62 8 94 0 62-8 94 0 62 8 94 0 62-8 94 0" />
+        <path d="M-18 296c45-8 81-8 122 0s77 8 118 0 77-8 118 0 77 8 118 0" />
+        <path d="M8 324c34-7 62-7 94 0s62 7 94 0 62-7 94 0 62 7 94 0" />
+        <path d="M-4 350c42-6 77-6 116 0s72 6 110 0 72-6 110 0 72 6 110 0" />
       </g>
-      <g className="art-botany" transform="translate(180 0)" fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="art-watermark" x="12" y="112" width="198" height="222" viewBox="235 48 280 350" preserveAspectRatio="xMidYMid meet">
+        <image href="/jaguar-kratom-transparent.png" x="0" y="0" width="1024" height="1024" preserveAspectRatio="none" />
+      </svg>
+      <g className="art-botany" fillRule="evenodd" strokeLinecap="round" strokeLinejoin="round">
         {variant === "kratom" ? <>
-          <path d="M70 315c-7-54-4-92 8-133m7 113c-34-13-48-35-39-68 27 5 42 22 43 51m2-30c21-26 44-31 68-15-10 26-30 39-61 39m-13-32c-23-29-23-53 1-73 22 20 27 43 13 68m40 71c-7-45-4-77 9-105m7 87c-25-11-34-28-28-52 22 4 33 17 31 39m1-19c16-20 34-24 52-11-7 20-22 30-45 30" />
-          <path d="M60 316h106m-63-37 10 15m-15-43 14 16m28 42 8 11m-2-42 9 12" />
+          <g className="kratom-leaf">
+            <path d="M47 506C44 456 49 409 62 362C35 380 19 374 13 344C39 334 58 344 68 365C60 333 66 311 92 298C114 321 111 345 77 371C105 344 128 347 145 373C129 400 107 405 74 382C102 411 101 438 78 458C51 443 45 419 59 385C44 425 47 467 57 506Z" />
+            <path d="M52 505c5-45 10-83 17-122m-14 91-29-47m37 23 35-43m-33 10-7-53m-1 38 42-11m-39 39-40-31" />
+          </g>
+          <g className="kratom-leaf secondary">
+            <path d="M116 520c-2-38 2-73 12-108-22 15-37 9-41-14 20-8 34-2 42 17-6-25-1-42 20-51 17 18 14 37-13 56 22-19 40-16 51 5-13 21-31 25-55 8 21 22 20 42 2 58-21-12-25-29-13-55-8 30-9 57-4 84Z" />
+            <path d="M119 519c4-32 8-59 15-87m-11 64-25-32m30 14 27-31m-25 6-5-37" />
+          </g>
+          <g className="kratom-leaf corner-leaf" transform="translate(263 -70) scale(.32)">
+            <path d="M116 520c-2-38 2-73 12-108-22 15-37 9-41-14 20-8 34-2 42 17-6-25-1-42 20-51 17 18 14 37-13 56 22-19 40-16 51 5-13 21-31 25-55 8 21 22 20 42 2 58-21-12-25-29-13-55-8 30-9 57-4 84Z" />
+            <path d="M119 519c4-32 8-59 15-87m-11 64-25-32m30 14 27-31m-25 6-5-37" />
+          </g>
         </> : <>
-          <path d="M89 320c-1-52 0-93 5-133m0 71-31-51 6 31-23-24 13 34-25-14 23 29-27-1 36 22Zm4-55 28-50-5 30 24-24-13 34 26-14-23 29 28-1-39 25Zm0-39-12-35 13 22 10-34 2 40" />
-          <path d="M94 235 60 204m34 48 35-31m-34-20-1-24m-3 126 4 22m-30-68 30 21m31-49-30 27" />
+          <g className="cannabis-leaf">
+            <path d="M79 520c3-54 3-100 0-139C65 414 51 425 36 412c8-17 18-26 34-28-26 0-39-9-42-26 17-11 33-10 48 2-20-19-24-36-14-51 20 6 31 19 34 42-1-30 8-46 26-49 13 20 11 39-7 58 21-18 39-20 53-6-6 22-20 34-47 35 29 3 43 14 40 33-21 7-39 1-55-20 12 24 13 42 1 55-21-11-29-28-25-54-3 39-3 78 1 117Z" />
+            <path d="M79 519c0-58 0-98 0-137m0 88-36-49m36 18-43-68m43 37-31-73m31 40-13-62m13 62 16-62m-16 90 40-68m-40 97 43-48m-43 76 39-25" />
+          </g>
+          <g className="cannabis-leaf small-leaf" transform="translate(43 35) scale(.58)">
+            <path d="M79 520c3-54 3-100 0-139C65 414 51 425 36 412c8-17 18-26 34-28-26 0-39-9-42-26 17-11 33-10 48 2-20-19-24-36-14-51 20 6 31 19 34 42-1-30 8-46 26-49 13 20 11 39-7 58 21-18 39-20 53-6-6 22-20 34-47 35 29 3 43 14 40 33-21 7-39 1-55-20 12 24 13 42 1 55-21-11-29-28-25-54-3 39-3 78 1 117Z" />
+            <path d="M79 519v-137m0 88-36-49m36 18-43-68m43 37-31-73m31 40-13-62m13 62 16-62m-16 90 40-68m-40 97 43-48" />
+          </g>
+          <g className="cannabis-leaf corner-leaf" transform="translate(278 -55) scale(.28)">
+            <path d="M79 520c3-54 3-100 0-139C65 414 51 425 36 412c8-17 18-26 34-28-26 0-39-9-42-26 17-11 33-10 48 2-20-19-24-36-14-51 20 6 31 19 34 42-1-30 8-46 26-49 13 20 11 39-7 58 21-18 39-20 53-6-6 22-20 34-47 35 29 3 43 14 40 33-21 7-39 1-55-20 12 24 13 42 1 55-21-11-29-28-25-54-3 39-3 78 1 117Z" />
+            <path d="M79 519v-137m0 88-36-49m36 18-43-68m43 37-31-73m31 40-13-62m13 62 16-62m-16 90 40-68m-40 97 43-48" />
+          </g>
         </>}
       </g>
     </svg>
