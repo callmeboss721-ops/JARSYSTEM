@@ -6,7 +6,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { BrandIcon } from "@/components/brand/brand-icon";
 import { MemberShell } from "@/components/brand/member-shell";
 import { MemberCardCarousel } from "@/components/brand/member-card-carousel";
-import { LoyaltyCard, STAMPS } from "@/components/brand/loyalty-card";
+import { LoyaltyCard, LoyaltyProgress, STAMPS } from "@/components/brand/loyalty-card";
 import { EmptyState, ErrorState, LoadingState, SignedOutState } from "@/components/brand/ui";
 import { api, errorText, gradeFor, type MemberCardData, type Sale, formulaLabels } from "@/components/brand/loyalty-api";
 
@@ -54,9 +54,9 @@ export default function CardPage() {
     : <div className="grid gap-4 lg:grid-cols-[1.1fr_.9fr] items-start">
       <div className="space-y-3">
         <header className="card-member-heading rise">
-          <p className="eyebrow">MEMBER PASS</p>
+          <p className="eyebrow">MEMBERS CLUB · DIGITAL PASS</p>
           <h1 className="font-display text-xl sm:text-2xl font-semibold mt-1">{card.data.display_name || "บัตรสมาชิกของฉัน"}</h1>
-          <p className="mt-1 text-xs sm:text-sm text-[var(--muted)]">ระดับ {gradeFor(card.data.lifetime_earned)} · นับจากแต้มสะสมตลอดชีพ</p>
+          <p className="mt-1 text-xs sm:text-sm text-[var(--muted)]">ระดับ {gradeFor(card.data.lifetime_earned)} · สมาชิก JAGUAR HOUSE</p>
         </header>
         {(celebrate || card.data.balance >= STAMPS) && <div role="status" className="gold-alert">ครบ 10 แต้ม! รับขวดแถมฟรี 1 ขวด</div>}
         {confettiKey > 0 && <Confetti key={confettiKey} />}
@@ -68,18 +68,18 @@ export default function CardPage() {
             }} />
           </MemberCardCarousel>
         </div>
+        <LoyaltyProgress balance={card.data.balance} />
         <div className="card-bento-grid" aria-label="สรุปสมาชิกและที่ตั้งร้าน">
-          <div className="panel card-bento-stat"><p>สะสมทั้งหมด</p><strong>{card.data.lifetime_earned}</strong><small>แต้ม</small></div>
-          <div className="panel card-bento-stat card-bento-stat--gold"><p>ใช้แลกไปแล้ว</p><strong>{card.data.lifetime_redeemed}</strong><small>แต้ม</small></div>
+          <div className="panel card-bento-stat card-bento-stat--primary"><p>แต้มคงเหลือ</p><strong data-testid="text-balance">{card.data.balance}</strong><small>แต้ม</small></div>
+          <div className="panel card-bento-stat card-bento-stat--gold"><p>อีกกี่แต้มถึงแลก</p><strong>{Math.max(STAMPS - Math.min(card.data.balance, STAMPS), 0)}</strong><small>แต้ม</small></div>
+          <div className="panel card-bento-stat"><p>สะสมตลอดชีพ</p><strong>{card.data.lifetime_earned}</strong><small>แต้ม</small></div>
+          <div className="panel card-bento-stat"><p>ใช้แลกไปแล้ว</p><strong>{card.data.lifetime_redeemed}</strong><small>แต้ม</small></div>
           <div className="panel card-bento-location">
             <BrandIcon name="location" tone="gold" />
             <div><p>แวะมาที่ร้าน</p><strong>บุญศิริ ซอย 6</strong><small>สมุทรปราการ</small></div>
           </div>
         </div>
-        <div className="flex flex-col min-[390px]:flex-row gap-3">
-          <Link href="/redeem" className="btn btn-redeem flex-1">{card.data.balance >= STAMPS ? "แลกของแถมเลย" : `อีก ${STAMPS - Math.min(card.data.balance, STAMPS)} แต้ม ถึงแลกได้`} <BrandIcon name="redeem" tone="inherit" /></Link>
-          <Link href="/" className="btn btn-ghost flex-1">หน้าแรกร้าน</Link>
-        </div>
+        <Link href="/" className="btn btn-ghost w-full sm:w-auto">กลับหน้าแรกร้าน</Link>
       </div>
       <aside className="space-y-5">
         <section className="panel p-5" aria-labelledby="sales-title">

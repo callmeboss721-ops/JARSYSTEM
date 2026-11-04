@@ -1,4 +1,5 @@
 import { BrandIcon } from "./brand-icon";
+import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
 import { ErrorState } from "./ui";
 import type { MemberCardData } from "./loyalty-api";
@@ -10,80 +11,82 @@ type CardQr = { value?: string; loading: boolean; error?: string; retry?: () => 
 
 export function LoyaltyCard({ card, qr }: { card: MemberCardData; qr: CardQr }) {
   const filled = Math.min(card.balance, STAMPS);
-  const extra = Math.max(card.balance - STAMPS, 0);
   const ready = card.balance >= STAMPS;
   return (
     <section className="member-card rise" aria-label="บัตรสมาชิกดิจิทัล" data-testid="card-member">
-      <div className="member-card-inner p-4 sm:p-6">
+      <div className="member-card-inner">
         <div className="rosette-bg rosette-field" aria-hidden="true" />
         <LoyaltyCardArtwork variant="kratom" />
-        <div className="member-card-topbar relative">
+        <header className="member-card-topbar relative">
           <div className="member-card-brand">
             <BrandEmblem variant="card" />
             <div className="min-w-0">
-              <p className="member-card-brand__name">JAGUAR KRATOM</p>
-              <p className="member-card-brand__place">SAMUT PRAKAN · SOI 6</p>
+              <p className="member-card-brand__name">JAGUAR KRATOM · MEMBER</p>
+              <p className="member-card-brand__place">บุญศิริ ซอย 6 · สมุทรปราการ</p>
             </div>
           </div>
-          <span className="member-username" data-testid="text-member-code" aria-label={`รหัสสมาชิก ${card.member_code}`}>@{card.member_code}</span>
-        </div>
-
-        <div className="relative mt-4 pt-4 border-t border-[var(--line)] flex items-center justify-between gap-2 sm:gap-4">
+        </header>
+        <div className="member-card-identity">
           <div className="min-w-0">
-            <p className="text-xs sm:text-sm text-[var(--silver)]">แต้มคงเหลือ</p>
-            <div className="member-card-points">
-              <p className="font-display font-bold leading-none text-[48px] sm:text-[70px] text-[var(--gold-2)] tabular-nums" data-testid="text-balance">{card.balance}</p>
-              <div className="member-card-points__round"><strong>{filled}<span>/10</span></strong><small>รอบนี้</small></div>
-            </div>
-            <p className="mt-1 inline-flex items-center gap-1.5 text-[10px] text-[var(--muted)]">
-              <span className="pulse-dot" aria-hidden="true" /> {card.status === "active" ? "ใช้งานอยู่" : card.status}
-            </p>
+            <p className="member-card-label">MEMBER ID</p>
+            <span className="member-username" data-testid="text-member-code" aria-label={`รหัสสมาชิก ${card.member_code}`}>@{card.member_code}</span>
           </div>
-          <div className="member-card__qr shrink-0 text-center" aria-label="QR ส่วนตัวสำหรับให้พนักงานสแกน">
-            {qr.loading ? <div className="skeleton h-32 w-32 sm:h-36 sm:w-36 rounded-lg" aria-label="กำลังโหลด QR" />
-              : qr.error || !qr.value ? <div className="flex h-32 w-32 sm:h-36 sm:w-36 flex-col items-center justify-center gap-1">
-                  <p role="alert" className="text-[10px] leading-tight text-[var(--muted)]">โหลด QR ไม่สำเร็จ</p>
-                  <button type="button" className="btn btn-ghost !min-h-10 !px-2 text-xs" onClick={qr.retry} disabled={qr.retrying}>{qr.retrying ? "กำลังโหลด…" : "ลองอีกครั้ง"}</button>
+          <div className="member-card__qr text-center" aria-label="QR ส่วนตัวสำหรับให้พนักงานสแกน">
+            {qr.loading ? <div className="member-card__qr-placeholder skeleton" aria-label="กำลังโหลด QR" />
+              : qr.error || !qr.value ? <div className="member-card__qr-error">
+                  <p role="alert">QR ไม่พร้อม</p>
+                  <button type="button" className="btn btn-ghost" onClick={qr.retry} disabled={qr.retrying}>{qr.retrying ? "รอ…" : "ลองใหม่"}</button>
                 </div>
-                : <QRCodeSVG value={qr.value} size={128} level="M" className="member-card__qr-code h-32 w-32 sm:h-36 sm:w-36" aria-label="QR สมาชิกส่วนบุคคล" />}
-            <p className="mt-1 text-[9px] sm:text-[10px] text-[var(--muted)]">สแกนที่เคาน์เตอร์</p>
+                : <QRCodeSVG value={qr.value} size={96} level="M" className="member-card__qr-code" aria-label="QR สมาชิกส่วนบุคคล" />}
+            <p className="member-card__qr-caption">สแกนที่ร้าน</p>
           </div>
         </div>
+        <footer className="member-card-footer">
+          <div className="member-card-points">
+            <span className="member-card-label">POINTS</span>
+            <strong>{filled}<small>/10</small></strong>
+          </div>
+          <span className={`member-card-status${ready ? " is-ready" : ""}`} role="status">
+            {ready ? "READY TO REDEEM" : "COLLECTING"}
+          </span>
+        </footer>
+      </div>
+    </section>
+  );
+}
 
-        <div className="relative mt-4">
-          <div className="flex justify-between text-xs mb-2">
-            <span className="inline-flex items-center gap-2 text-[var(--muted)]"><BrandIcon name="progress" tone="gold" />{ready ? "ครบ 10 แต้ม · แลกของแถมได้" : `อีก ${STAMPS - filled} แต้ม ถึงแลกได้`}</span>
-            <span className="font-mono text-[var(--gold-2)]">{filled}/{STAMPS}</span>
-          </div>
-          <div
-            className="progress-track"
-            role="progressbar"
-            aria-valuemin={0}
-            aria-valuemax={STAMPS}
-            aria-valuenow={filled}
-            aria-label="ความคืบหน้าการสะสมแต้ม"
-          >
-            <div className="progress-fill" style={{ width: `${(filled / STAMPS) * 100}%` }} />
-          </div>
+export function LoyaltyProgress({ balance }: { balance: number }) {
+  const filled = Math.min(balance, STAMPS);
+  const ready = balance >= STAMPS;
+  const remaining = Math.max(STAMPS - filled, 0);
+  return (
+    <section className="member-progress-panel panel" aria-labelledby="member-progress-title">
+      <div className="member-progress-heading">
+        <div>
+          <p className="member-card-label">LOYALTY PROGRESS</p>
+          <h2 id="member-progress-title">สะสมแต้ม</h2>
         </div>
-
-        <ol className="relative mt-4 grid grid-cols-5 gap-2 sm:gap-3 list-none p-0 m-0" aria-label={`ตราประทับ ${filled} จาก ${STAMPS} ดวง`}>
-          {Array.from({ length: STAMPS }, (_, i) => {
-            const on = i < filled;
-            return (
-              <li key={i} className="stamp" data-filled={on} data-testid={`stamp-${i + 1}`}>
-                {on ? <BrandIcon name="progress" tone="emerald" /> : <span className="stamp-empty-mark" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M19 35C9 31 5 24 8 15c5 1 9 4 11 9 2-9 6-14 14-15 1 11-3 20-14 26Z"/><path d="M19 35c0-8 1-15 4-22M19 26l-8-8m9 2 8-9"/></svg></span>}
-                {!on && <span className="font-mono text-[11px]">{i + 1}</span>}
-                <span className="sr-only">{on ? "ประทับแล้ว" : "ว่าง"}</span>
-              </li>
-            );
-          })}
-        </ol>
-        {extra > 0 && (
-          <p className="relative mt-4 text-sm text-[var(--gold-2)]" data-testid="text-extra-points">
-            แต้มเกินบัตร +{extra} แต้ม — ยอดจริงทั้งหมด {card.balance} แต้ม
-          </p>
-        )}
+        <strong>{filled}<span> / {STAMPS}</span></strong>
+      </div>
+      <div className="progress-track" role="progressbar" aria-valuemin={0} aria-valuemax={STAMPS} aria-valuenow={filled} aria-label="ความคืบหน้าการสะสมแต้ม">
+        <div className="progress-fill" style={{ width: `${(filled / STAMPS) * 100}%` }} />
+      </div>
+      <ol className="member-stamp-grid" aria-label={`ตราประทับ ${filled} จาก ${STAMPS} ดวง`}>
+        {Array.from({ length: STAMPS }, (_, i) => {
+          const on = i < filled;
+          return (
+            <li key={i} className="stamp" data-filled={on} data-testid={`stamp-${i + 1}`}>
+              {on ? <BrandIcon name="progress" tone="emerald" /> : <span className="stamp-empty-mark" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M19 35C9 31 5 24 8 15c5 1 9 4 11 9 2-9 6-14 14-15 1 11-3 20-14 26Z"/><path d="M19 35c0-8 1-15 4-22M19 26l-8-8m9 2 8-9"/></svg></span>}
+              {!on && <span className="font-mono text-[11px]">{i + 1}</span>}
+              <span className="sr-only">{on ? "ประทับแล้ว" : "ว่าง"}</span>
+            </li>
+          );
+        })}
+      </ol>
+      {balance > STAMPS && <p className="member-progress-extra" data-testid="text-extra-points">แต้มสะสมทั้งหมด {balance} แต้ม</p>}
+      <div className="member-progress-actions">
+        <p>{ready ? "ครบ 10 แต้ม · แลกของแถมได้" : `อีก ${remaining} แต้ม ถึงแลกได้`}</p>
+        <Link href="/redeem" className="btn btn-redeem">{ready ? "แลกของแถมเลย" : `อีก ${remaining} แต้ม`} <BrandIcon name="redeem" tone="inherit" /></Link>
       </div>
     </section>
   );
@@ -92,7 +95,7 @@ export function LoyaltyCard({ card, qr }: { card: MemberCardData; qr: CardQr }) 
 /** Samut Prakan bridge engraving and card-specific botanical signature. */
 export function LoyaltyCardArtwork({ variant }: { variant: "kratom" | "cannabis" }) {
   return (
-    <svg className={`loyalty-card-art loyalty-card-art--${variant}`} viewBox="0 0 400 560" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+    <svg className={`loyalty-card-art loyalty-card-art--${variant}`} viewBox="0 0 400 560" preserveAspectRatio={variant === "kratom" ? "xMidYMid slice" : "none"} aria-hidden="true" focusable="false">
       <g className="art-lettering">
         <text x="22" y="34">SAMUT PRAKAN</text>
         <text x="378" y="34" textAnchor="end">SOI 6</text>

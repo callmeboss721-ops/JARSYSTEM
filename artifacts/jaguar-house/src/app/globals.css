@@ -2036,6 +2036,133 @@ body {
 }
 button:not(:disabled):active { transform: scale(.97); transition-duration: .12s; }
 
+/* Virtual member pass: compact, horizontal, and credit-card proportioned. */
+.member-shell-brand { min-width: 0; }
+.member-shell-brand .brand-wordmark { letter-spacing: .08em; white-space: nowrap; }
+.member-shell-brand .eyebrow { color: #b8c0b5; font-family: var(--font-sans); letter-spacing: .08em !important; text-transform: none; }
+.member-card {
+  width: 100%;
+  max-width: 620px;
+  aspect-ratio: 1.586;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 23px;
+  background: linear-gradient(135deg,#f0d786 0%,#9a7733 13%,#253326 36%,#132219 65%,#5c824d 86%,#ebd07a 100%);
+  box-shadow: 0 24px 56px -34px rgba(0,0,0,.94),0 0 34px -22px rgba(229,192,74,.48),0 0 28px -22px rgba(47,217,138,.34);
+}
+.member-card-inner {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 12px 14px;
+  overflow: hidden;
+  border-radius: 22px;
+  background:
+    radial-gradient(ellipse at 88% 0%,rgba(47,217,138,.15),transparent 43%),
+    radial-gradient(ellipse at 4% 100%,rgba(229,192,74,.12),transparent 48%),
+    linear-gradient(145deg,#172219 0%,#0a100c 54%,#121a12 100%);
+}
+.member-card-inner > .loyalty-card-art--kratom { opacity: .15; }
+.member-card-inner > .rosette-bg { opacity: .035; }
+.member-card-topbar { display: flex; align-items: center; justify-content: flex-start; min-height: 34px; }
+.member-card-brand { gap: 8px; }
+.member-card-topbar .brand-emblem--card .brand-emblem__frame { width: 34px; padding: 2px; border-radius: 9px; }
+.member-card-brand__name { color: #f0dfa9; font-size: 9px; letter-spacing: .06em; }
+.member-card-brand__place { margin-top: 2px; color: #b9c2b5; font: 8px/1.25 var(--font-sans); letter-spacing: .02em; }
+.member-card-identity { display: flex; min-height: 0; flex: 1; align-items: center; justify-content: space-between; gap: 8px; }
+.member-card-label { margin: 0; color: #c7b56d; font: 700 8px/1.2 var(--font-mono); letter-spacing: .14em; }
+.member-username {
+  display: inline-block;
+  max-width: 100%;
+  margin-top: 6px;
+  padding: 7px 10px;
+  overflow: hidden;
+  border-color: rgba(86,227,141,.4);
+  background: rgba(0,0,0,.4);
+  color: #78efa0;
+  font: 700 13px/1.2 var(--font-mono);
+  letter-spacing: .06em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow: 0 0 13px rgba(47,217,138,.24);
+}
+.member-card__qr { width: max-content; padding: 4px; border-radius: 9px; background: #eee9d9; }
+.member-card__qr-code { display: block; width: 82px; height: 82px; background: #eee9d9; }
+.member-card__qr .member-card__qr-caption { margin: 3px 0 0; color: #26352b; font: 7px/1.15 var(--font-sans); }
+.member-card__qr-placeholder { width: 82px; height: 82px; border-radius: 4px; background: #e7e1cf; }
+.member-card__qr-error { display: grid; width: 82px; height: 82px; align-content: center; justify-items: center; gap: 3px; color: #27342a; font-size: 8px; text-align: center; }
+.member-card__qr-error p { margin: 0; }
+.member-card__qr-error .btn { min-height: 25px; padding: 2px 6px; border-radius: 6px; font-size: 8px; }
+.member-card-footer { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; padding-top: 6px; border-top: 1px solid rgba(240,215,138,.2); }
+.member-card-points { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+.member-card-points strong { color: #f0d889; font: 700 24px/.95 var(--font-display); letter-spacing: -.04em; text-shadow: 0 3px 18px rgba(229,192,74,.18); }
+.member-card-points strong small { margin-left: 3px; color: #d6c58f; font: 600 11px/1 var(--font-mono); letter-spacing: .02em; }
+.member-card-status { display: inline-flex; align-items: center; min-height: 24px; max-width: 60%; padding: 4px 8px; border: 1px solid rgba(130,188,145,.35); border-radius: 999px; background: rgba(39,105,65,.18); color: #b6d8b7; font: 700 7px/1 var(--font-mono); letter-spacing: .08em; white-space: nowrap; }
+.member-card-status.is-ready { border-color: rgba(229,192,74,.6); background: rgba(229,192,74,.13); color: #f3dc91; box-shadow: 0 0 16px -12px rgba(229,192,74,.8); }
+.member-card-stage .member-card-swipe-hint { margin-bottom: 8px; }
+
+.member-progress-panel {
+  display: grid;
+  gap: 12px;
+  padding: 15px;
+  border-color: rgba(229,192,74,.2);
+  border-radius: 18px;
+  background: linear-gradient(145deg,rgba(255,255,255,.05),rgba(9,17,12,.84));
+}
+.member-progress-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.member-progress-heading h2 { margin: 4px 0 0; color: #eee9d9; font: 600 15px/1.2 var(--font-display); }
+.member-progress-heading > strong { color: #f0d889; font: 700 19px/1 var(--font-mono); }
+.member-progress-heading > strong span { color: #aeb5a9; font-size: 12px; }
+.member-progress-panel .progress-track { height: 5px; }
+.member-stamp-grid { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: clamp(7px,2.3vw,11px); margin: 0; padding: 0; list-style: none; }
+.member-stamp-grid .stamp { width: 100%; }
+.member-stamp-grid .stamp[data-filled='true'] {
+  border-color: rgba(242,221,160,.86);
+  background: radial-gradient(circle at 31% 24%,#d8bd72 0%,#4c9460 39%,#102619 100%);
+  box-shadow: 0 0 16px rgba(79,199,154,.2),0 1px 0 rgba(255,255,255,.36) inset,0 5px 12px rgba(0,0,0,.28);
+}
+.member-stamp-grid .stamp[data-filled='false'] {
+  border-color: rgba(229,192,74,.58);
+  background: radial-gradient(circle at 35% 28%,rgba(229,192,74,.1),rgba(7,14,10,.92) 72%);
+}
+.member-stamp-grid .stamp[data-filled='true'] .brand-icon { color: #f5e7b5; filter: drop-shadow(0 0 5px rgba(240,216,137,.5)); }
+.member-progress-extra { margin: -3px 0 0; color: #e7d690; font-size: 11px; }
+.member-progress-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 10px; border-top: 1px solid rgba(196,202,214,.11); }
+.member-progress-actions p { margin: 0; color: #b8c0b5; font-size: 11px; line-height: 1.45; }
+.member-progress-actions .btn { min-height: 42px; padding: 7px 12px; border-radius: 12px; font-size: 12px; white-space: nowrap; }
+.card-bento-stat--primary strong { color: #f0d889; }
+
+@media (max-width: 380px) {
+  .member-card-inner { gap: 3px; padding: 9px 10px; }
+  .member-card-topbar .brand-emblem--card .brand-emblem__frame { width: 29px; }
+  .member-card-brand { gap: 6px; }
+  .member-card-brand__name { font-size: 7.5px; }
+  .member-card-brand__place { font-size: 7px; }
+  .member-card__qr-code, .member-card__qr-placeholder { width: 68px; height: 68px; }
+  .member-card__qr-error { width: 68px; height: 68px; }
+  .member-card-footer { padding-top: 4px; }
+  .member-card-points strong { font-size: 21px; }
+  .member-card-status { min-height: 21px; padding-inline: 6px; font-size: 6px; }
+  .member-progress-panel { gap: 10px; padding: 12px; }
+  .member-progress-actions { align-items: stretch; flex-direction: column; }
+  .member-progress-actions .btn { width: 100%; }
+}
+
+@media (min-width: 640px) {
+  .member-card-inner { padding: 16px 18px; }
+  .member-card-topbar .brand-emblem--card .brand-emblem__frame { width: 40px; }
+  .member-card-brand__name { font-size: 10px; }
+  .member-card-brand__place { font-size: 9px; }
+  .member-card__qr-code, .member-card__qr-placeholder { width: 96px; height: 96px; }
+  .member-card__qr-error { width: 96px; height: 96px; }
+  .member-card-footer { padding-top: 9px; }
+  .member-card-points strong { font-size: 28px; }
+  .member-card-status { min-height: 27px; font-size: 8px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     scroll-behavior: auto !important;
