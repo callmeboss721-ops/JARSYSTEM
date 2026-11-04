@@ -17,9 +17,13 @@ export const loyaltyMembers = pgTable("jaguar_members", {
 export const loyaltyBalances = pgTable("jaguar_point_balances", {
   memberId: uuid("member_id").primaryKey().references(() => loyaltyMembers.id),
   balance: integer("balance").notNull().default(0),
+  cannabisBalance: integer("cannabis_balance"),
   lifetimeEarned: integer("lifetime_earned").notNull().default(0),
   lifetimeRedeemed: integer("lifetime_redeemed").notNull().default(0),
-}, (t) => [check("jaguar_balances_nonnegative", sql`${t.balance} >= 0 and ${t.lifetimeEarned} >= 0 and ${t.lifetimeRedeemed} >= 0`)]);
+}, (t) => [
+  check("jaguar_balances_nonnegative", sql`${t.balance} >= 0 and ${t.lifetimeEarned} >= 0 and ${t.lifetimeRedeemed} >= 0`),
+  check("jaguar_cannabis_point_balance_nonnegative", sql`${t.cannabisBalance} is null or ${t.cannabisBalance} >= 0`),
+]);
 
 export const loyaltyRewards = pgTable("jaguar_rewards", {
   id: uuid("id").primaryKey().defaultRandom(),

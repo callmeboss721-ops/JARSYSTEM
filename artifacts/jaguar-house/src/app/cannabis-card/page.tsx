@@ -2,13 +2,11 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { QRCodeSVG } from "qrcode.react";
 import { useGetCannabisMemberCard, getGetCannabisMemberCardQueryKey, type CannabisCard } from "@workspace/api-client-react";
 import { BrandIcon } from "@/components/brand/brand-icon";
 import { MemberShell } from "@/components/brand/member-shell";
 import { MemberCardCarousel } from "@/components/brand/member-card-carousel";
-import { BrandEmblem } from "@/components/brand/brand-emblem";
-import { LoyaltyCardArtwork } from "@/components/brand/loyalty-card";
+import { SharedMemberCard } from "@/components/brand/loyalty-card";
 import { ErrorState, SignedOutState, EmptyState, LoadingState } from "@/components/brand/ui";
 import { api, errorText } from "@/components/brand/loyalty-api";
 
@@ -84,46 +82,43 @@ export default function CannabisCardPage() {
         {confettiKey > 0 && <CannabisConfetti key={confettiKey} />}
         {celebrate && <div role="status" className="cannabis-ready cannabis-ready--celebrate">ครบ 10 ติ๊ก — ฟรี 1 กรัม แจ้งพนักงานที่เคาน์เตอร์</div>}
         <MemberCardCarousel active="cannabis">
-          <section key={popKey} className={`cannabis-card rise ${popKey ? "card-pop" : ""}`} aria-label="บัตรสมาชิกกัญชา">
-            <LoyaltyCardArtwork variant="cannabis" />
-            <div className="cannabis-card__top">
-              <div><span className="cannabis-kicker">JAGUAR CANNABIS / 2026</span><h2>กัญชา · Cannabis</h2></div>
-              <BrandEmblem variant="card" />
-            </div>
-            <div className="cannabis-card__balance">
-              <div><span>แต้มพร้อมใช้</span><strong data-testid="cannabis-balance">{card.balance}</strong><small>แสตมป์</small></div>
-              <div className="cannabis-qr" data-testid="cannabis-member-qr">
-                {qr.isLoading ? <span aria-busy="true">กำลังโหลด QR</span>
-                  : qr.isError || !qr.data?.qr ? <button className="btn btn-ghost" type="button" onClick={() => void qr.refetch()} disabled={qr.isFetching}>โหลด QR อีกครั้ง</button>
-                  : <QRCodeSVG value={qr.data.qr} size={96} level="M" aria-label={`QR บัตรสมาชิก ${card.member_code}`} />}
-                <span>ให้พนักงานสแกน</span>
-              </div>
-            </div>
-            <div className="cannabis-card__code"><span>รหัสสมาชิก</span><strong data-testid="cannabis-member-code">{card.member_code}</strong></div>
-            <div className="cannabis-progress-copy"><span>{card.balance >= 10 ? "พร้อมแลกฟรี 1 กรัม" : `อีก ${10 - card.balance} แต้ม รับฟรี 1 กรัม`}</span><b>{stampCount}/10</b></div>
-            <div className="cannabis-progress" role="progressbar" aria-label="ความคืบหน้าสู่การแลก 1 กรัม" aria-valuemin={0} aria-valuemax={10} aria-valuenow={stampCount}><i style={{ transform: `scaleX(${stampCount / 10})` }} /></div>
-            <section className="cannabis-stamps" aria-labelledby="cannabis-stamps-title" data-testid="cannabis-stamps">
-              <div className="cannabis-stamps__heading">
-                <div><span className="cannabis-stamps__eyebrow">STAMP COLLECTION · 1 G</span><h3 id="cannabis-stamps-title">แสตมป์สะสม</h3></div>
-                <span className="cannabis-stamps__count" aria-label={`${stampCount} จาก 10 ดวง`}>{String(stampCount).padStart(2, "0")}<i>/10</i></span>
-              </div>
-              <ol className="cannabis-stamp-grid" aria-label={`สะสมแล้ว ${stampCount} จาก 10 ดวง`}>
-                {Array.from({ length: 10 }, (_, index) => {
-                  const stamped = index < stampCount;
-                  return (
-                    <li key={index} className="cannabis-stamp-slot" data-filled={stamped} data-testid={`cannabis-stamp-${index + 1}`}>
-                       {!stamped && <span className="cannabis-stamp-watermark" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M20 36V18l-5 7-5-8 4 2-6-9 8 5-2-9 6 8 3-10 2 12 7-7-3 10 8-4-7 10 7-1-9 8-6-6v18Z" /></svg></span>}
-                      {stamped ? <BrandIcon name="cannabis" tone="emerald" size={17} /> : <span className="cannabis-stamp-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>}
-                      <span className="sr-only">{stamped ? `สะสมแล้ว ดวงที่ ${index + 1}` : `ยังไม่สะสม ดวงที่ ${index + 1}`}</span>
-                    </li>
-                  );
-                })}
-              </ol>
-              <p className="cannabis-stamps__note">ครบ 10 ดวง รับฟรี 1 กรัม</p>
-            </section>
-            <div className="cannabis-reward"><span>01</span><p>ซื้อครบทุก 1 กรัม รับ 1 แต้ม</p><b>10 แต้ม = ฟรี 1 กรัม</b></div>
-          </section>
+          <SharedMemberCard
+            key={popKey}
+            kind="cannabis"
+            memberCode={card.member_code}
+            balance={card.balance}
+            className={popKey ? "card-pop" : ""}
+            qr={{
+              value: qr.data?.qr,
+              loading: qr.isLoading,
+              error: qr.isError ? errorText(qr.error) : undefined,
+              retry: () => { void qr.refetch(); },
+              retrying: qr.isFetching,
+            }}
+          />
         </MemberCardCarousel>
+        <section className="cannabis-stamps panel" aria-labelledby="cannabis-stamps-title" data-testid="cannabis-stamps">
+          <div className="cannabis-stamps__heading">
+            <div><span className="cannabis-stamps__eyebrow">STAMP COLLECTION · 1 G</span><h3 id="cannabis-stamps-title">แสตมป์สะสม</h3></div>
+            <span className="cannabis-stamps__count" aria-label={`${stampCount} จาก 10 ดวง`}>{String(stampCount).padStart(2, "0")}<i>/10</i></span>
+          </div>
+          <div className="cannabis-progress-copy"><span>{card.balance >= 10 ? "พร้อมแลกฟรี 1 กรัม" : `อีก ${10 - card.balance} แต้ม รับฟรี 1 กรัม`}</span><b>{stampCount}/10</b></div>
+          <div className="cannabis-progress" role="progressbar" aria-label="ความคืบหน้าสู่การแลก 1 กรัม" aria-valuemin={0} aria-valuemax={10} aria-valuenow={stampCount}><i style={{ transform: `scaleX(${stampCount / 10})` }} /></div>
+          <ol className="cannabis-stamp-grid" aria-label={`สะสมแล้ว ${stampCount} จาก 10 ดวง`}>
+            {Array.from({ length: 10 }, (_, index) => {
+              const stamped = index < stampCount;
+              return (
+                <li key={index} className="cannabis-stamp-slot" data-filled={stamped} data-testid={`cannabis-stamp-${index + 1}`}>
+                  {!stamped && <span className="cannabis-stamp-watermark" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M20 36V18l-5 7-5-8 4 2-6-9 8 5-2-9 6 8 3-10 2 12 7-7-3 10 8-4-7 10 7-1-9 8-6-6v18Z" /></svg></span>}
+                  {stamped ? <BrandIcon name="cannabis" tone="emerald" size={17} /> : <span className="cannabis-stamp-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>}
+                  <span className="sr-only">{stamped ? `สะสมแล้ว ดวงที่ ${index + 1}` : `ยังไม่สะสม ดวงที่ ${index + 1}`}</span>
+                </li>
+              );
+            })}
+          </ol>
+          <p className="cannabis-stamps__note">ครบ 10 ดวง รับฟรี 1 กรัม</p>
+          <div className="cannabis-reward"><span>01</span><p>ซื้อครบทุก 1 กรัม รับ 1 แต้ม</p><b>10 แต้ม = ฟรี 1 กรัม</b></div>
+        </section>
         {card.balance >= 10 && !celebrate && <div className="cannabis-ready" role="status">แต้มครบแล้ว — แจ้งพนักงานเพื่อแลกฟรี 1 กรัม</div>}
         <div className="cannabis-stats">
           <article><span>สะสมจากการซื้อ</span><strong>{card.lifetime_earned}</strong><small>กรัมทั้งหมด</small></article>

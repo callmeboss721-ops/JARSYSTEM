@@ -49,7 +49,7 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
         </div>
         <nav className="landing-bottom-nav landing-enter landing-enter--nav" aria-label="เมนูสมาชิก">
           <Link href="/card" data-selected="true"><BrandIcon name="leaf" tone="inherit" /><span>บัตรกระท่อม</span></Link>
-          <Link href="/cannabis-card"><BrandIcon name="cannabis" tone="emerald" /><span>บัตรกัญชา</span></Link>
+          <Link href="/card/cannabis"><BrandIcon name="cannabis" tone="emerald" /><span>บัตรกัญชา</span></Link>
           <Link href="/redeem"><BrandIcon name="rewards" tone="gold" /><span>รางวัลกระท่อม</span></Link>
         </nav>
       </main>

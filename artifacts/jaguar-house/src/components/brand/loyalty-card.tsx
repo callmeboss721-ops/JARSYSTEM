@@ -1,52 +1,79 @@
 import { BrandIcon } from "./brand-icon";
 import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
-import { ErrorState } from "./ui";
 import type { MemberCardData } from "./loyalty-api";
-import { BrandEmblem } from "./brand-emblem";
 
 export const STAMPS = 10;
 
 type CardQr = { value?: string; loading: boolean; error?: string; retry?: () => void; retrying?: boolean };
 
 export function LoyaltyCard({ card, qr }: { card: MemberCardData; qr: CardQr }) {
-  const filled = Math.min(card.balance, STAMPS);
-  const ready = card.balance >= STAMPS;
+  return <SharedMemberCard kind="kratom" memberCode={card.member_code} balance={card.balance} qr={qr} />;
+}
+
+export function SharedMemberCard({
+  kind,
+  memberCode,
+  balance,
+  qr,
+  className,
+}: {
+  kind: "kratom" | "cannabis";
+  memberCode: string;
+  balance: number;
+  qr: CardQr;
+  className?: string;
+}) {
+  const filled = Math.min(Math.max(balance, 0), STAMPS);
+  const ready = balance >= STAMPS;
+  const cannabis = kind === "cannabis";
   return (
-    <section className="member-card rise" aria-label="บัตรสมาชิกดิจิทัล" data-testid="card-member">
-      <div className="member-card-inner">
-        <div className="rosette-bg rosette-field" aria-hidden="true" />
-        <LoyaltyCardArtwork variant="kratom" />
-        <header className="member-card-topbar relative">
-          <div className="member-card-brand">
-            <BrandEmblem variant="card" />
-            <div className="min-w-0">
-              <p className="member-card-brand__name">JAGUAR KRATOM · MEMBER</p>
-              <p className="member-card-brand__place">บุญศิริ ซอย 6 · สมุทรปราการ</p>
+    <section
+      className={`member-pass-card${className ? ` ${className}` : ""}`}
+      data-kind={kind}
+      aria-label={cannabis ? "บัตรสมาชิกกัญชา" : "บัตรสมาชิกกระท่อม"}
+      data-testid={cannabis ? "card-cannabis-member" : "card-member"}
+    >
+      <div className="member-pass-card__inner">
+        <header className="member-pass-card__top">
+          <div className="member-pass-card__identity">
+            {/* Public SVG mark for each club; replace only if the approved vector mark changes. */}
+            <img
+              src={cannabis ? "/brand/mark-leaf.svg" : "/brand/mark-jaguar.svg"}
+              alt=""
+              aria-hidden="true"
+              width={38}
+              height={38}
+              decoding="async"
+            />
+            <div>
+              <p className="member-pass-card__label">{cannabis ? "JAGUAR CANNABIS · MEMBER" : "JAGUAR KRATOM · MEMBER"}</p>
+              <p className="member-pass-card__location">บุญศิริ ซอย 6 · สมุทรปราการ</p>
             </div>
           </div>
+          <span className="member-pass-card__edition" aria-hidden="true">{cannabis ? "02" : "01"}</span>
         </header>
-        <div className="member-card-identity">
-          <div className="min-w-0">
-            <p className="member-card-label">MEMBER ID</p>
-            <span className="member-username" data-testid="text-member-code" aria-label={`รหัสสมาชิก ${card.member_code}`}>@{card.member_code}</span>
+        <div className="member-pass-card__body">
+          <div className="member-pass-card__member">
+            <span>MEMBER ID</span>
+            <strong data-testid={cannabis ? "cannabis-member-code" : "text-member-code"} aria-label={`รหัสสมาชิก ${memberCode}`}>@{memberCode}</strong>
           </div>
-          <div className="member-card__qr text-center" aria-label="QR ส่วนตัวสำหรับให้พนักงานสแกน">
-            {qr.loading ? <div className="member-card__qr-placeholder skeleton" aria-label="กำลังโหลด QR" />
-              : qr.error || !qr.value ? <div className="member-card__qr-error">
-                  <p role="alert">QR ไม่พร้อม</p>
-                  <button type="button" className="btn btn-ghost" onClick={qr.retry} disabled={qr.retrying}>{qr.retrying ? "รอ…" : "ลองใหม่"}</button>
+          <div className="member-pass-card__qr" data-testid={cannabis ? "cannabis-member-qr" : undefined} aria-label="QR ส่วนตัวสำหรับให้พนักงานสแกน">
+            {qr.loading ? <span className="member-pass-card__qr-placeholder" aria-label="กำลังโหลด QR" />
+              : qr.error || !qr.value ? <div className="member-pass-card__qr-error">
+                  <span role="alert">QR ไม่พร้อม</span>
+                  <button type="button" onClick={qr.retry} disabled={qr.retrying}>{qr.retrying ? "รอ…" : "ลองใหม่"}</button>
                 </div>
-                : <QRCodeSVG value={qr.value} size={96} level="M" className="member-card__qr-code" aria-label="QR สมาชิกส่วนบุคคล" />}
-            <p className="member-card__qr-caption">สแกนที่ร้าน</p>
+                : <QRCodeSVG value={qr.value} size={96} level="M" className="member-pass-card__qr-code" aria-label={`QR สมาชิก ${memberCode}`} />}
+            <small>สแกนที่ร้าน</small>
           </div>
         </div>
-        <footer className="member-card-footer">
-          <div className="member-card-points">
-            <span className="member-card-label">POINTS</span>
+        <footer className="member-pass-card__footer">
+          <div className="member-pass-card__points">
+            <span>{cannabis ? "STAMPS" : "POINTS"}</span>
             <strong>{filled}<small>/10</small></strong>
           </div>
-          <span className={`member-card-status${ready ? " is-ready" : ""}`} role="status">
+          <span className={`member-pass-card__status${ready ? " is-ready" : ""}`} role="status">
             {ready ? "READY TO REDEEM" : "COLLECTING"}
           </span>
         </footer>

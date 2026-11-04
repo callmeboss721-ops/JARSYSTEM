@@ -2189,3 +2189,103 @@ input.input, textarea.input, select.input { font-size: 16px; }
     transition-duration: .01ms !important;
   }
 }
+
+/* Shared club pass: same geometry, with only the accent and mark changing. */
+.member-pass-card {
+  --pass-accent: #00FF9D;
+  position: relative;
+  isolation: isolate;
+  width: min(100%, 349px);
+  max-height: 220px;
+  aspect-ratio: 1.586;
+  min-height: 0;
+  margin-inline: auto;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--pass-accent) 48%, #D4AF37);
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse at 95% 2%, color-mix(in srgb, var(--pass-accent) 18%, transparent), transparent 44%),
+    radial-gradient(ellipse at 4% 100%, rgba(212,175,55,.13), transparent 48%),
+    linear-gradient(145deg, #18231c 0%, #09110c 56%, #111a13 100%);
+  box-shadow: 0 18px 42px -29px rgba(0,0,0,.98), 0 0 28px -19px color-mix(in srgb, var(--pass-accent) 75%, transparent), 0 1px 0 rgba(255,255,255,.08) inset;
+  contain: layout style;
+  animation: member-pass-enter .42s cubic-bezier(.22,1,.36,1) both;
+}
+.member-pass-card[data-kind="cannabis"] {
+  --pass-accent: #7CFF6B;
+  background:
+    radial-gradient(ellipse at 93% 0%, rgba(124,255,107,.19), transparent 43%),
+    radial-gradient(ellipse at 0 100%, rgba(212,175,55,.1), transparent 46%),
+    linear-gradient(145deg, #142017 0%, #08110b 58%, #102014 100%);
+}
+.member-pass-card__inner {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0,1fr) auto;
+  gap: 7px;
+  width: 100%;
+  height: 100%;
+  padding: 13px 15px;
+  overflow: hidden;
+  border-radius: 15px;
+  background:
+    repeating-linear-gradient(135deg, transparent 0 18px, rgba(255,255,255,.012) 18px 19px),
+    linear-gradient(145deg, rgba(4,10,7,.28), rgba(5,8,6,.72));
+}
+.member-pass-card__top,
+.member-pass-card__identity,
+.member-pass-card__body,
+.member-pass-card__footer { position: relative; z-index: 1; }
+.member-pass-card__top,
+.member-pass-card__identity { display: flex; align-items: center; min-width: 0; }
+.member-pass-card__top { justify-content: space-between; gap: 8px; }
+.member-pass-card__identity { gap: 9px; }
+.member-pass-card__identity > img { width: 36px; height: 36px; flex: 0 0 auto; filter: drop-shadow(0 0 8px color-mix(in srgb, var(--pass-accent) 34%, transparent)); }
+.member-pass-card__label { margin: 0; color: #efe0a8; font: 700 9px/1.25 var(--font-mono); letter-spacing: .045em; white-space: nowrap; }
+.member-pass-card__location { margin: 3px 0 0; color: #bfc9bc; font: 9px/1.2 var(--font-sans); letter-spacing: .015em; }
+.member-pass-card__edition { flex: 0 0 auto; color: rgba(236,218,158,.34); font: 600 20px/1 var(--font-mono); }
+.member-pass-card__body { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 0; }
+.member-pass-card__member { display: grid; min-width: 0; gap: 5px; }
+.member-pass-card__member > span,
+.member-pass-card__points > span { color: #b7bcae; font: 700 8px/1.2 var(--font-mono); letter-spacing: .16em; }
+.member-pass-card__member > strong { max-width: 210px; overflow: hidden; color: var(--pass-accent); font: 700 clamp(12px,3.7vw,15px)/1.2 var(--font-mono); letter-spacing: .075em; text-overflow: ellipsis; white-space: nowrap; text-shadow: 0 0 14px color-mix(in srgb, var(--pass-accent) 28%, transparent); }
+.member-pass-card__qr { display: grid; justify-items: center; width: 80px; flex: 0 0 80px; padding: 4px 4px 3px; border: 1px solid rgba(231,220,183,.42); border-radius: 8px; background: #f1eddf; }
+.member-pass-card__qr-code,
+.member-pass-card__qr-placeholder { display: block; width: 70px; height: 70px; background: #f1eddf; }
+.member-pass-card__qr small { margin-top: 2px; color: #28342b; font: 8px/1.1 var(--font-sans); }
+.member-pass-card__qr-placeholder { border-radius: 3px; background: linear-gradient(90deg,#d7d2c4 25%,#efecdf 45%,#d7d2c4 65%); background-size: 200% 100%; animation: shimmer 1.4s linear infinite; }
+.member-pass-card__qr-error { display: grid; width: 70px; height: 70px; align-content: center; justify-items: center; gap: 4px; color: #27342a; font-size: 8px; text-align: center; }
+.member-pass-card__qr-error button { min-height: 30px; padding: 4px 7px; border: 1px solid rgba(36,57,41,.3); border-radius: 6px; background: #e7e1cf; color: #17231b; font: 600 9px var(--font-sans); cursor: pointer; }
+.member-pass-card__qr-error button:focus-visible { outline: 2px solid #163b22; outline-offset: 2px; }
+.member-pass-card__footer { display: flex; align-items: end; justify-content: space-between; gap: 8px; padding-top: 6px; border-top: 1px solid rgba(232,212,151,.24); }
+.member-pass-card__points { display: grid; gap: 2px; }
+.member-pass-card__points strong { color: #f0d889; font: 700 21px/.95 var(--font-display); letter-spacing: -.04em; }
+.member-pass-card__points strong small { margin-left: 3px; color: #d6c58f; font: 600 10px/1 var(--font-mono); letter-spacing: 0; }
+.member-pass-card__status { display: inline-flex; align-items: center; min-height: 22px; padding: 4px 7px; border: 1px solid rgba(124,181,138,.38); border-radius: 999px; background: rgba(39,105,65,.18); color: #c0dbbd; font: 700 7px/1 var(--font-mono); letter-spacing: .065em; white-space: nowrap; }
+.member-pass-card__status.is-ready { border-color: rgba(229,192,74,.62); background: rgba(229,192,74,.13); color: #f3dc91; box-shadow: 0 0 15px -11px rgba(229,192,74,.88); }
+.member-pass-card.card-pop { animation: card-pop .42s cubic-bezier(.22,1,.36,1) both; }
+.member-nav-icon { display: block; width: 20px; height: 20px; object-fit: contain; transition: filter .18s ease, transform .18s ease; }
+nav[aria-label="เมนูสมาชิก (มือถือ)"] > div { width: min(100%, 560px); margin-inline: auto; gap: 6px; padding: 5px 8px 2px; }
+.member-bottom-nav__item { min-width: 0; min-height: 56px; border-radius: 12px; color: #c2c7bd; font-size: 10px; transition: color .18s ease, background-color .18s ease, box-shadow .18s ease; }
+.member-bottom-nav__item .member-nav-icon { width: 22px; height: 22px; }
+.member-bottom-nav__item.is-active { background: rgba(229,192,74,.1); color: #f1d987; box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 0 21px -14px rgba(229,192,74,.8); }
+.member-bottom-nav__item.is-active .member-nav-icon { filter: sepia(1) saturate(2.2) hue-rotate(350deg) brightness(1.12) drop-shadow(0 0 4px rgba(229,192,74,.5)); }
+.member-bottom-nav__item:focus-visible { outline: 2px solid #e5c04a; outline-offset: 2px; }
+.cannabis-stamps.panel { width: min(100%, 420px); margin: 12px auto 0; }
+@keyframes member-pass-enter { from { opacity: 0; transform: translateY(8px) scale(.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (max-width: 359px) {
+  .member-pass-card__inner { padding: 10px 11px; gap: 5px; }
+  .member-pass-card__identity { gap: 7px; }
+  .member-pass-card__identity > img { width: 31px; height: 31px; }
+  .member-pass-card__label { font-size: 8px; }
+  .member-pass-card__location { font-size: 8px; }
+  .member-pass-card__qr { width: 73px; flex-basis: 73px; }
+  .member-pass-card__qr-code,
+  .member-pass-card__qr-placeholder { width: 63px; height: 63px; }
+  .member-pass-card__qr-error { width: 63px; height: 63px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .member-pass-card,
+  .member-pass-card.card-pop,
+  .member-nav-icon { animation: none; transition: none; }
+}

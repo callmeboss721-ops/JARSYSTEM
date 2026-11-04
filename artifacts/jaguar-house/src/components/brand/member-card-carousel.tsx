@@ -9,7 +9,7 @@ type CardKind = "kratom" | "cannabis";
 export function MemberCardCarousel({ active, children }: { active: CardKind; children: ReactNode }) {
   const router = useRouter();
   const touchStart = useRef<{ x: number; y: number } | null>(null);
-  const targetPath = active === "kratom" ? "/cannabis-card" : "/card";
+  const targetPath = active === "kratom" ? "/card/cannabis" : "/card";
 
   const onTouchStart = (event: TouchEvent<HTMLDivElement>) => {
     if (event.touches.length !== 1) {
@@ -60,7 +60,7 @@ export function MemberCardCarousel({ active, children }: { active: CardKind; chi
           <span>กระท่อม</span>
         </Link>
         <Link
-          href="/cannabis-card"
+          href="/card/cannabis"
           aria-current={active === "cannabis" ? "page" : undefined}
           aria-label="เปิดบัตรสะสมแต้มกัญชา"
           className="member-card-switcher__option"

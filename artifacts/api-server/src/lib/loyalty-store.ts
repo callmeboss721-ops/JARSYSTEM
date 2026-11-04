@@ -35,8 +35,10 @@ async function card(client: DbClient, id: string, lock = false): Promise<MemberC
 async function cannabisCard(client: DbClient, id: string, lock = false): Promise<CannabisCard> {
   const member = await card(client, id, lock);
   await client.query("insert into jaguar_cannabis_balances(member_id) values($1) on conflict do nothing", [id]);
-  const balance = (await client.query(`select balance,lifetime_earned,lifetime_redeemed
-    from jaguar_cannabis_balances where member_id=$1${lock ? " for update" : ""}`, [id])).rows[0];
+  const balance = (await client.query(`select coalesce(p.cannabis_balance,c.balance,0)::integer as balance,
+      c.lifetime_earned,c.lifetime_redeemed
+    from jaguar_point_balances p join jaguar_cannabis_balances c on c.member_id=p.member_id
+    where p.member_id=$1${lock ? " for update of p,c" : ""}`, [id])).rows[0];
   if (!balance) fail(503, "บัตรกัญชายังไม่พร้อมใช้งาน");
   const recent = (await client.query(`select id,delta,grams_purchased,reason,created_at::text as created_at
     from jaguar_cannabis_transactions where member_id=$1 order by created_at desc,id desc limit 5`, [id])).rows;
@@ -169,7 +171,10 @@ export async function loyaltyStore<T>(operation: string, args: Args = {}): Promi
         }
         await card(client, args.p_member!, true);
         await client.query("insert into jaguar_cannabis_balances(member_id) values($1) on conflict do nothing", [args.p_member]);
-        await client.query("select member_id from jaguar_cannabis_balances where member_id=$1 for update", [args.p_member]);
+        const current = (await client.query(`select p.cannabis_balance,c.balance as legacy_balance
+          from jaguar_point_balances p join jaguar_cannabis_balances c on c.member_id=p.member_id
+          where p.member_id=$1 for update of p,c`, [args.p_member])).rows[0];
+        if (!current) fail(503, "บัตรกัญชายังไม่พร้อมใช้งาน");
         const prior = (await client.query(`select member_id,delta,grams_purchased from jaguar_cannabis_transactions where request_id=$1`,
           [args.p_request])).rows[0];
         if (prior) {
@@ -177,6 +182,8 @@ export async function loyaltyStore<T>(operation: string, args: Args = {}): Promi
             fail(409, "รหัสคำขอซ้ำ กรุณาค้นหาสมาชิกใหม่ก่อนตอกแต้ม");
           }
         } else {
+          await client.query(`update jaguar_point_balances set cannabis_balance=coalesce(cannabis_balance,$2)+$3 where member_id=$1`,
+            [args.p_member, current.legacy_balance, grams]);
           await client.query(`update jaguar_cannabis_balances set balance=balance+$2,lifetime_earned=lifetime_earned+$2 where member_id=$1`,
             [args.p_member, grams]);
           await client.query(`insert into jaguar_cannabis_transactions(member_id,request_id,delta,grams_purchased,reason)
@@ -190,7 +197,9 @@ export async function loyaltyStore<T>(operation: string, args: Args = {}): Promi
         if (!args.p_request || !/^[0-9a-f-]{36}$/i.test(args.p_request)) fail(400, "รหัสรายการแลกไม่ถูกต้อง");
         await card(client, args.p_member!, true);
         await client.query("insert into jaguar_cannabis_balances(member_id) values($1) on conflict do nothing", [args.p_member]);
-        const balance = (await client.query("select balance from jaguar_cannabis_balances where member_id=$1 for update", [args.p_member])).rows[0];
+        const balance = (await client.query(`select coalesce(p.cannabis_balance,c.balance,0)::integer as balance
+          from jaguar_point_balances p join jaguar_cannabis_balances c on c.member_id=p.member_id
+          where p.member_id=$1 for update of p,c`, [args.p_member])).rows[0];
         const prior = (await client.query(`select member_id,delta,grams_purchased from jaguar_cannabis_transactions where request_id=$1`,
           [args.p_request])).rows[0];
         if (prior) {
@@ -199,6 +208,8 @@ export async function loyaltyStore<T>(operation: string, args: Args = {}): Promi
           }
         } else {
           if (!balance || balance.balance < 10) fail(409, "แต้มกัญชายังไม่ครบ 10 ติ๊ก");
+          await client.query("update jaguar_point_balances set cannabis_balance=$2 where member_id=$1",
+            [args.p_member, balance.balance - 10]);
           await client.query(`update jaguar_cannabis_balances set balance=balance-10,lifetime_redeemed=lifetime_redeemed+10 where member_id=$1`,
             [args.p_member]);
           await client.query(`insert into jaguar_cannabis_transactions(member_id,request_id,delta,grams_purchased,reason)
