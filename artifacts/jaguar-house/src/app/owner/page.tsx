@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { JaguarMark } from "@/components/brand/jaguar-mark";
 import { EmptyState, ErrorState, LoadingSpinner, LoadingState } from "@/components/brand/ui";
@@ -10,7 +11,14 @@ import { PublicPoster } from "@/components/brand/shop-tools";
 import { OWNER, api, clearScope, statusOf, isWholeBaht, cleanCode, codePattern, errorText, formulaLabels, json, type MemberCardData, type RedemptionData, type RewardData, type Summary } from "@/components/brand/loyalty-api";
 
 type View="reports"|"members"|"rewards"|"pending"|"security"|"poster";
-const tabs:{id:View;label:string}[]=[{id:"reports",label:"ยอดขาย"},{id:"members",label:"สมาชิก"},{id:"rewards",label:"รางวัล"},{id:"pending",label:"แลกรางวัล"},{id:"security",label:"ความปลอดภัย"},{id:"poster",label:"ป้าย QR"}];
+const tabs:{id:View;label:string;icon:string}[]=[
+  {id:"reports",label:"ยอดขาย",icon:"overview"},
+  {id:"members",label:"สมาชิก",icon:"members"},
+  {id:"rewards",label:"รางวัล",icon:"rewards"},
+  {id:"pending",label:"แลกรางวัล",icon:"redemptions"},
+  {id:"security",label:"ความปลอดภัย",icon:"security"},
+  {id:"poster",label:"ป้าย QR",icon:"qr-poster"},
+];
 export default function OwnerPage(){
   const qc=useQueryClient();
   const [auth,setAuth]=useState<boolean|null>(null),[view,setView]=useState<View>("reports"),[pin,setPin]=useState(""),[pinError,setPinError]=useState(""),[busy,setBusy]=useState(false),[message,setMessage]=useState("");
@@ -39,7 +47,7 @@ export default function OwnerPage(){
     :<div className="space-y-5"><header className="flex flex-wrap justify-between items-end gap-3"><div><p className="eyebrow">Owner control room</p><h1 className="font-display text-3xl sm:text-4xl font-semibold">ภาพรวมร้าน</h1></div><Link href="/staff" className="btn btn-ghost !min-h-11 !px-4 text-sm">พื้นที่พนักงาน</Link></header>
     {(security.data?.staff_default_pin||security.data?.owner_default_pin)&&<p role="status" className="rounded-xl border border-[var(--glass-line)] p-3 text-sm text-[var(--gold-2)]">ยังมี PIN เริ่มต้นที่ต้องเปลี่ยนในเมนูความปลอดภัย</p>}
     {message&&<p role="status" className="rounded-xl border border-[rgba(47,217,138,.35)] bg-[rgba(47,217,138,.08)] p-3 text-sm text-[var(--emerald-2)]">{message}</p>}
-    <nav className="pill-switch grid grid-cols-2 min-[520px]:grid-cols-3 lg:grid-cols-6 p-1 gap-1 !rounded-[22px]" aria-label="เมนูเจ้าของร้าน">{tabs.map(t=><button key={t.id} type="button" className="tab !px-2 !rounded-[18px]" aria-pressed={view===t.id} onClick={()=>setView(t.id)}>{t.label}</button>)}</nav>
+    <nav className="owner-menu-tabs pill-switch grid grid-cols-2 min-[520px]:grid-cols-3 lg:grid-cols-6 p-1 gap-1 !rounded-[22px]" aria-label="เมนูเจ้าของร้าน">{tabs.map(t=><button key={t.id} type="button" className="owner-menu-tab tab !px-2 !rounded-[18px]" aria-pressed={view===t.id} data-testid={`owner-tab-${t.id}`} onClick={()=>setView(t.id)}><Image className="owner-menu-tab__image" src={`/brand/owner-menu/${t.icon}.svg`} alt="" aria-hidden="true" width={32} height={32} /><span>{t.label}</span></button>)}</nav>
      {view==="reports"&&(summary.isLoading?<LoadingState label="กำลังโหลดภาพรวมร้าน" />:summary.isError?<ErrorState message={errorText(summary.error)} onRetry={()=>void summary.refetch()} retrying={summary.isFetching}/>:summary.data&&<div className="space-y-6">
        <section aria-label="ตัวเลขภาพรวม" className="grid grid-cols-2 lg:grid-cols-3 gap-3">{[["ยอดขายวันนี้",summary.data.today_sales,"บาท"],["จำนวนครั้งเข้าร้านวันนี้",summary.data.today_visits,"ครั้ง"],["แลกรางวัลวันนี้",summary.data.today_redemptions,"ครั้ง"],["ยอดขายรวม",summary.data.total_sales,"บาท"],["จำนวนครั้งเข้าร้านรวม",summary.data.total_visits,"ครั้ง"],["แลกรางวัลรวม",summary.data.redemptions,"ครั้ง"],["สมาชิกทั้งหมด",summary.data.members,"คน"]].map(([label,value,unit])=><div className="panel p-4 sm:p-5" key={String(label)}><p className="text-xs text-[var(--muted)]">{label}</p><p className="font-display text-2xl sm:text-3xl font-semibold mt-2 tabular-nums">{Number(value).toLocaleString("th-TH")} <span className="text-sm font-normal text-[var(--muted)]">{unit}</span></p></div>)}</section>
       <section className="panel p-4 sm:p-6"><p className="eyebrow">Sales mix</p><h2 className="font-display text-xl font-semibold mt-1 mb-4">ยอดขายแยกตามสูตร</h2>{!summary.data.by_formula.length?<EmptyState title="ยังไม่มีรายการยอดขาย"/>:<>
