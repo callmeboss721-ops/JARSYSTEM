@@ -28,3 +28,17 @@ mtime_ms = 1793460856848
 storage_uri = "gcs://replit-rams-assets-pike/rams/assets/repl:88281769-8bb3-4209-b865-ee699aa50e18/ed0c014e-a08d-44ba-b551-f9ddbbc5483c/6c8bc1d7-a75c-42f8-842d-8748d1642651"
 storage_version_token = "1793460869711055"
 content_type = "text/html"
+
+[[outputs]]
+id = "kJ68M92cjHUD_pQaF9o9p"
+uri = "file://generated-artifacts/jaguar-design-ai-handoff.txt"
+type = "text"
+title = "ไฟล์บรีฟให้ Coding AI ออกแบบ JAGUAR ใหม่"
+description = "บรีฟภาษาไทยพร้อมบริบทโปรเจกต์ เส้นทางหน้า ข้อห้ามด้านระบบ และรายการไฟล์ภาพอ้างอิง สำหรับส่งให้ Coding AI แล้วนำ diff กลับมาให้ตรวจและแสดงผลต่อ"
+logical_id = "55ef1e16-3cad-4aa8-862d-69f283db8bc3"
+content_hash = "sha256:8da08b72d0686e3c3a869981cdb42b739559607618e93cf2db7074ef23efc19c"
+size = 6334
+mtime_ms = 1793887798368
+storage_uri = "gcs://replit-rams-assets-pike/rams/assets/repl:88281769-8bb3-4209-b865-ee699aa50e18/55ef1e16-3cad-4aa8-862d-69f283db8bc3/403442a5-ddd3-4a62-bf29-d11f267375c9"
+storage_version_token = "1793887810079426"
+content_type = "text/plain"
