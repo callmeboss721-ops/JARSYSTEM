@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import Image from "next/image";
 import { api, type MemberCardData } from "./loyalty-api";
 import { BrandIcon } from "./brand-icon";
 import { BrandEmblem } from "./brand-emblem";
@@ -27,31 +28,78 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
             <Link href="/admin" data-testid="link-owner">เจ้าของร้าน</Link>
           </nav>
         </header>
-        <section className="landing-art-card landing-enter landing-enter--hero" aria-label="JAGUAR Members Club">
-          <span className="landing-art-card__index">01 / MEMBERS CLUB</span>
-          <div className="landing-art-card__art"><BrandEmblem variant="hero" /></div>
-          <div className="landing-art-card__footer">
-            <span>SAMUT PRAKAN · SOI 6</span>
-            <span>A LOCAL CLUB, MADE TO KEEP.</span>
-          </div>
-        </section>
-        <section className="landing-copy landing-enter landing-enter--copy" aria-labelledby="landing-title">
-          <p className="landing-eyebrow">NEIGHBORHOOD MEMBERSHIP · SAMUT PRAKAN</p>
-          <h1 id="landing-title" aria-label="จากัวร์ พลังใบ ซุปเปอร์ฮีโร่ของคนไทย">
-            <span>จากัวร์ พลังใบ</span>
-            <span>ซุปเปอร์ฮีโร่ของคนไทย</span>
-          </h1>
-          <p className="landing-subcopy">สะสมแต้มทุกครั้งที่แวะ บัตรกับคะแนนอยู่ในมือถือ</p>
-        </section>
-        <div className="landing-ctas landing-enter landing-enter--ctas">
-          <Link href="/login?mode=register" className="btn btn-gold" data-testid="link-open-wallet">เปิดกระเป๋าสมาชิก <BrandIcon name="continue" tone="inherit" /></Link>
-          <Link href="/login" className="btn btn-ghost" data-testid="link-member-login">เข้าใช้งานบัตร <BrandIcon name="members" tone="gold" /></Link>
+        <div className="landing-shell">
+          <section className="landing-feature landing-enter landing-enter--hero" aria-labelledby="landing-title">
+            <div className="landing-feature__copy">
+              <p className="landing-eyebrow">NEIGHBORHOOD MEMBERSHIP · SAMUT PRAKAN</p>
+              <h1 id="landing-title">
+                จากัวร์ พลังใบ
+                <span>ซุปเปอร์ฮีโร่ของคนไทย</span>
+              </h1>
+              <p className="landing-subcopy">แวะที่บุญศิริ ซอย 6 สะสมแต้ม แล้วเปิดบัตรจากมือถือได้เลย</p>
+              <div className="landing-ctas">
+                <Link href="/login?mode=register" className="btn btn-gold" data-testid="link-open-wallet">สมัครสมาชิก <BrandIcon name="continue" tone="inherit" /></Link>
+                <Link href="/login" className="btn btn-ghost" data-testid="link-member-login">เข้าสู่ระบบ <BrandIcon name="members" tone="gold" /></Link>
+              </div>
+              <div className="landing-local-note">
+                <span className="landing-local-note__mark" aria-hidden="true" />
+                <span><strong>JAGUAR KRATOM</strong><small>บุญศิริ ซอย 6 · สมุทรปราการ</small></span>
+              </div>
+            </div>
+            <figure className="landing-campaign landing-campaign--hero">
+              <Image
+                src="/brand/campaign/jaguar-samut-prakan-campaign.jpg"
+                alt="โปสเตอร์ JAGUAR SPK พลังใบซุปเปอร์ฮีโร่ของคนไทย พร้อมมาสคอตเสือจากัวร์และสินค้า"
+                width={1024}
+                height={576}
+                priority
+                sizes="(max-width: 760px) 100vw, 62vw"
+              />
+              <figcaption><span>JAGUAR SPK</span><span>LOCAL CAMPAIGN · SAMUT PRAKAN</span></figcaption>
+            </figure>
+          </section>
+
+          <section className="landing-details" aria-label="รายละเอียดร้านและสมาชิก">
+            <div className="landing-price">
+              <div className="landing-section-heading">
+                <span className="landing-kicker">AT THE COUNTER</span>
+                <h2>เมนูที่หน้าร้าน</h2>
+                <p>รายการสินค้าและราคาจากทางร้าน</p>
+              </div>
+              <figure className="landing-campaign landing-campaign--board">
+                <Image
+                  src="/brand/campaign/jaguar-price-board.jpg"
+                  alt="ป้ายประชาสัมพันธ์ร้าน แสดงรายการเครื่องดื่มกระท่อมและกัญชาพรีเมียมตามที่ระบุในภาพ"
+                  width={1024}
+                  height={1024}
+                  sizes="(max-width: 760px) 100vw, 48vw"
+                />
+                <figcaption><span>JAGUAR KRATOM</span><span>รายการหน้าร้าน</span></figcaption>
+              </figure>
+            </div>
+            <div className="landing-members">
+              <div className="landing-section-heading">
+                <span className="landing-kicker">MADE FOR THE NEIGHBORHOOD</span>
+                <h2>สมาชิกจากัวร์</h2>
+                <p className="landing-reward-rule">กระท่อมทุก 3 ขวดในบิลเดียว รับ 1 แต้ม · ครบ 10 แต้ม ฟรี 1 ขวด</p>
+                <p>สมัครด้วยเบอร์โทร แล้วเปิดบัตรบนมือถือที่เคาน์เตอร์</p>
+              </div>
+              <ol className="landing-steps">
+                <li><span>01</span><strong>สมัครสมาชิก</strong><small>ใช้เบอร์โทรของคุณ</small></li>
+                <li><span>02</span><strong>สะสมแต้ม</strong><small>แสดงบัตรเมื่อแวะซื้อ</small></li>
+                <li><span>03</span><strong>แลกรางวัล</strong><small>ตรวจสอบสิทธิ์ในบัตร</small></li>
+              </ol>
+              <Link href="/login?mode=register" className="landing-text-link">เริ่มต้นเป็นสมาชิก <BrandIcon name="continue" tone="gold" /></Link>
+            </div>
+          </section>
+
+          <nav className="landing-bottom-nav landing-enter landing-enter--nav" aria-label="เมนูสมาชิก">
+            <Link href="/card" data-selected="true"><BrandIcon name="leaf" tone="inherit" /><span>บัตรกระท่อม</span></Link>
+            <Link href="/card/cannabis"><BrandIcon name="cannabis" tone="emerald" /><span>บัตรกัญชา</span></Link>
+            <Link href="/redeem"><BrandIcon name="rewards" tone="gold" /><span>รางวัลกระท่อม</span></Link>
+          </nav>
+          <footer className="landing-footer"><span>JAGUAR KRATOM</span><span>บุญศิริ ซอย 6 · สมุทรปราการ</span></footer>
         </div>
-        <nav className="landing-bottom-nav landing-enter landing-enter--nav" aria-label="เมนูสมาชิก">
-          <Link href="/card" data-selected="true"><BrandIcon name="leaf" tone="inherit" /><span>บัตรกระท่อม</span></Link>
-          <Link href="/card/cannabis"><BrandIcon name="cannabis" tone="emerald" /><span>บัตรกัญชา</span></Link>
-          <Link href="/redeem"><BrandIcon name="rewards" tone="gold" /><span>รางวัลกระท่อม</span></Link>
-        </nav>
       </main>
     );
   }

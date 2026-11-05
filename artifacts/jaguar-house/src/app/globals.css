@@ -499,6 +499,149 @@ body {
   .print-poster .text-\[var\(--silver\)\] { color: #45463f !important; }
 }
 
+/* Homepage — a local editorial frame for the original campaign artwork. */
+.jaguar-home--landing {
+  --landing-ink: #090d0b;
+  --landing-paper: #e9e3d1;
+  --landing-gold: #d8bd73;
+  min-height: 100dvh;
+  padding: 0 24px 28px;
+  background:
+    radial-gradient(ellipse at 78% 12%, rgba(108, 139, 88, .13), transparent 34rem),
+    linear-gradient(155deg, #111711, #080b09 55%, #10150f);
+}
+.jaguar-home--landing .customer-art { opacity: .14; }
+.landing-header {
+  width: min(1300px, 100%);
+  min-height: 78px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(219,211,183,.16);
+}
+.landing-brand { display: inline-flex; align-items: center; gap: 12px; color: var(--text); text-decoration: none; }
+.landing-brand__logo .brand-emblem__frame { width: 43px; }
+.landing-brand__copy { display: grid; gap: 1px; }
+.landing-brand__copy strong { font-family: var(--font-display); font-size: 15px; letter-spacing: .2em; }
+.landing-brand__copy small { color: #c4bea8; font: 9px var(--font-mono); letter-spacing: .11em; }
+.landing-header__actions { display: flex; gap: 7px; }
+.landing-header__actions a {
+  min-height: 42px; display: inline-flex; align-items: center; padding: 0 12px;
+  color: #d7d2c1; font-size: 12px; text-decoration: none; border: 1px solid transparent; border-radius: 8px;
+}
+.landing-header__actions a:hover { border-color: rgba(216,189,115,.28); color: var(--gold-2); }
+.landing-shell { width: min(1300px, 100%); margin: 0 auto; }
+.landing-feature {
+  display: grid; grid-template-columns: minmax(270px, .72fr) minmax(0, 1.28fr);
+  align-items: center; gap: clamp(26px, 5vw, 76px); padding: clamp(32px, 6vw, 76px) 0 54px;
+}
+.landing-feature__copy { padding: 12px 0; }
+.landing-eyebrow, .landing-kicker {
+  color: #d8bd73; font: 10px var(--font-mono); letter-spacing: .18em; line-height: 1.7;
+}
+.landing-feature h1 {
+  margin: 15px 0 0; font-family: var(--font-display); font-size: clamp(34px, 4.5vw, 62px);
+  font-weight: 600; letter-spacing: -.045em; line-height: 1.18; color: #f1ead8;
+}
+.landing-feature h1 span { display: block; color: #d8bd73; font-size: .72em; letter-spacing: -.02em; }
+.landing-subcopy { max-width: 390px; margin: 20px 0 0; color: #c4c9bb; font-size: 15px; line-height: 1.9; }
+.landing-feature .landing-ctas { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+.landing-feature .btn { min-height: 50px; padding-inline: 17px; }
+.landing-local-note { display: flex; align-items: center; gap: 12px; margin-top: 34px; color: #e2ddcd; }
+.landing-local-note__mark { width: 1px; height: 34px; background: linear-gradient(var(--gold), transparent); }
+.landing-local-note span:last-child { display: grid; gap: 2px; }
+.landing-local-note strong { font: 10px var(--font-mono); letter-spacing: .15em; }
+.landing-local-note small { color: #9ea89d; font-size: 12px; }
+.landing-campaign { position: relative; margin: 0; overflow: hidden; background: #050706; }
+.landing-campaign img { display: block; width: 100%; height: auto; }
+.landing-campaign--hero {
+  border: 1px solid rgba(216,189,115,.26);
+  box-shadow: 0 25px 70px -42px rgba(0,0,0,.9), 0 0 0 7px rgba(255,255,255,.018);
+}
+.landing-campaign--hero img { aspect-ratio: 16 / 9; object-fit: cover; }
+.landing-campaign figcaption {
+  position: absolute; right: 0; bottom: 0; left: 0;
+  display: flex; justify-content: space-between; gap: 12px; padding: 13px 16px 11px;
+  color: #f1e9d1; font: 9px var(--font-mono); letter-spacing: .14em;
+  background: linear-gradient(transparent, rgba(4,7,5,.86));
+}
+.landing-details {
+  display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(300px, .92fr);
+  gap: clamp(28px, 6vw, 84px); padding: 32px 0 46px;
+  border-top: 1px solid rgba(219,211,183,.16);
+}
+.landing-price { display: grid; grid-template-columns: minmax(150px, .6fr) minmax(0, 1fr); align-items: start; gap: 22px; }
+.landing-section-heading h2 { margin: 9px 0 8px; color: #eee8d7; font: 500 clamp(21px,2.5vw,30px)/1.3 var(--font-display); letter-spacing: -.03em; }
+.landing-section-heading p { margin: 0; color: #aeb5a9; font-size: 13px; line-height: 1.8; }
+.landing-section-heading .landing-reward-rule {
+  margin: 14px 0 8px;
+  padding-left: 12px;
+  border-left: 1px solid var(--landing-gold);
+  color: #ead28a;
+  font-weight: 600;
+}
+.landing-section-heading .landing-reward-rule + p { margin-top: 10px; }
+.landing-campaign--board { border: 1px solid rgba(216,189,115,.2); }
+.landing-campaign--board img { width: 100%; height: auto; }
+.landing-campaign--board figcaption { padding: 12px; font-size: 8px; }
+.landing-members { padding: 0 0 0 clamp(0px, 1vw, 14px); }
+.landing-members .landing-section-heading p { max-width: 420px; }
+.landing-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; padding: 0; margin: 26px 0 21px; list-style: none; border-block: 1px solid rgba(219,211,183,.15); }
+.landing-steps li { display: grid; align-content: start; gap: 5px; min-height: 108px; padding: 14px 10px 14px 0; }
+.landing-steps li + li { border-left: 1px solid rgba(219,211,183,.15); padding-left: 13px; }
+.landing-steps li > span { color: #d8bd73; font: 10px var(--font-mono); }
+.landing-steps strong { color: #eee8d7; font-size: 13px; }
+.landing-steps small { color: #aeb5a9; font-size: 11px; line-height: 1.5; }
+.landing-text-link { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; color: #e6d398; font-size: 13px; text-decoration: none; }
+.landing-text-link:hover { color: #fff0b8; }
+.landing-bottom-nav {
+  display: flex; justify-content: center; gap: 8px; padding: 12px;
+  border: 1px solid rgba(216,189,115,.16); background: rgba(255,255,255,.018);
+}
+.landing-bottom-nav a {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px;
+  padding: 0 18px; color: #bdc4b8; font-size: 12px; text-decoration: none; border-radius: 8px;
+}
+.landing-bottom-nav a:hover, .landing-bottom-nav a[data-selected="true"] { background: rgba(216,189,115,.09); color: #f0dda2; }
+.landing-footer { display: flex; justify-content: space-between; padding: 17px 2px 0; color: #879187; font: 9px var(--font-mono); letter-spacing: .12em; }
+
+@media (max-width: 760px) {
+  .jaguar-home--landing { padding: 0 16px 20px; }
+  .landing-header { min-height: 68px; }
+  .landing-brand__logo .brand-emblem__frame { width: 36px; }
+  .landing-brand__copy strong { font-size: 13px; }
+  .landing-brand__copy small { font-size: 8px; }
+  .landing-header__actions { gap: 0; }
+  .landing-header__actions a { padding: 0 8px; font-size: 11px; }
+  .landing-feature { grid-template-columns: 1fr; gap: 25px; padding: 30px 0 35px; }
+  .landing-feature__copy { padding: 0; }
+  .landing-feature h1 { margin-top: 10px; font-size: clamp(34px, 9vw, 48px); }
+  .landing-subcopy { margin-top: 13px; font-size: 14px; }
+  .landing-feature .landing-ctas { margin-top: 20px; }
+  .landing-feature .btn { flex: 1 1 145px; }
+  .landing-local-note { margin-top: 21px; }
+  .landing-campaign--hero img { aspect-ratio: 16 / 9; object-fit: cover; }
+  .landing-campaign figcaption { padding: 10px 11px 9px; font-size: 8px; }
+  .landing-details { grid-template-columns: 1fr; gap: 34px; padding: 26px 0 30px; }
+  .landing-price { grid-template-columns: 1fr; gap: 14px; }
+  .landing-section-heading h2 { font-size: 24px; }
+  .landing-campaign--board { max-width: 520px; margin-inline: auto; }
+  .landing-members { padding: 0; }
+  .landing-steps li { min-height: 98px; }
+  .landing-steps li + li { padding-left: 9px; }
+  .landing-steps small { font-size: 10px; }
+  .landing-bottom-nav { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; padding: 5px; }
+  .landing-bottom-nav a { flex-direction: column; gap: 3px; padding: 7px 3px; font-size: 10px; text-align: center; }
+  .landing-footer { font-size: 8px; letter-spacing: .06em; }
+}
+@media (max-width: 390px) {
+  .landing-brand__copy small { letter-spacing: .06em; }
+  .landing-header__actions a { padding-inline: 5px; font-size: 10px; }
+  .landing-eyebrow { font-size: 9px; letter-spacing: .12em; }
+  .landing-steps strong { font-size: 12px; }
+}
+
 /* JAGUAR HOUSE — editorial midnight, oxidised emerald and warm champagne.
    Customer pages read like a private membership object; counter tools stay brisk and operational. */
 :root {
@@ -2318,6 +2461,61 @@ input.input, textarea.input, select.input { font-size: 16px; }
   .member-progress-actions p { max-width: none; }
 }
 */
+
+/* Final homepage layout overrides the former single-screen landing shell. */
+.jaguar-home--landing {
+  width: 100%;
+  max-width: none;
+  min-height: 100dvh;
+  margin: 0;
+  padding: 0 24px 28px;
+  overflow: clip;
+  box-shadow: none;
+}
+.jaguar-home--landing .landing-header {
+  width: min(1300px, 100%);
+  min-height: 78px;
+  margin: 0 auto;
+}
+.jaguar-home--landing .landing-brand__logo {
+  flex: 0 0 43px;
+  width: 43px;
+  height: 43px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.jaguar-home--landing .landing-brand__logo .brand-emblem__frame { width: 43px; height: auto; }
+.jaguar-home--landing .landing-brand__copy strong { font-size: 15px; }
+.jaguar-home--landing .landing-brand__copy small { font-size: 9px; letter-spacing: .11em; }
+.jaguar-home--landing .landing-bottom-nav {
+  position: static;
+  left: auto;
+  bottom: auto;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  transform: none;
+  border-radius: 0;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.jaguar-home--landing .landing-bottom-nav a { font-size: 12px; }
+@media (max-width: 760px) {
+  .jaguar-home--landing { padding: 0 16px 20px; }
+  .jaguar-home--landing .landing-header { min-height: 68px; }
+  .jaguar-home--landing .landing-brand__logo { flex-basis: 36px; width: 36px; height: 36px; }
+  .jaguar-home--landing .landing-brand__logo .brand-emblem__frame { width: 36px; }
+  .jaguar-home--landing .landing-brand__copy strong { font-size: 13px; }
+  .jaguar-home--landing .landing-brand__copy small { font-size: 8px; letter-spacing: .06em; }
+  .jaguar-home--landing .landing-bottom-nav { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; padding: 5px; }
+  .jaguar-home--landing .landing-bottom-nav a { flex-direction: column; gap: 3px; padding: 7px 3px; font-size: 10px; }
+}
+@media (max-width: 390px) {
+  .jaguar-home--landing .landing-header__actions a { padding-inline: 5px; font-size: 10px; }
+}
 
 /* Shared club pass: same geometry, with only the accent and mark changing. */
 .member-pass-card {
