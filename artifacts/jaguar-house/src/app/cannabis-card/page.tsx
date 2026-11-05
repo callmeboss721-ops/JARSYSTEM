@@ -77,10 +77,10 @@ export default function CannabisCardPage() {
       : cardQuery.isError || !card ? <div className="max-w-md mx-auto"><ErrorState message={errorText(cardQuery.error)} onRetry={() => void cardQuery.refetch()} retrying={cardQuery.isFetching} /></div>
       : <div className="cannabis-wrap">
         <header className="cannabis-heading rise">
-          <div><p className="eyebrow">สมาชิก · Jaguar Cannabis</p><h1>{card.display_name || "บัตรสมาชิกพลังใบ"}</h1><p>พี่เสือพลังใบ ซุปเปอร์ฮีโร่ของคนไทย</p></div>
+          <div className="member-heading-top"><div><p className="eyebrow">MEMBERS CLUB · DIGITAL PASS</p><h1>{card.display_name || "บัตรสมาชิกพลังใบ"}</h1><p>พี่เสือพลังใบ ซุปเปอร์ฮีโร่ของคนไทย</p></div><img src="/brand/jaguar-logo.webp" alt="ตรา JAGUAR KRATOM" width={58} height={58} /></div>
         </header>
         {confettiKey > 0 && <CannabisConfetti key={confettiKey} />}
-        {celebrate && <div role="status" className="cannabis-ready cannabis-ready--celebrate">ครบ 10 ติ๊ก — ฟรี 1 กรัม แจ้งพนักงานที่เคาน์เตอร์</div>}
+        {celebrate && <div role="status" className="cannabis-ready cannabis-ready--celebrate">ครบ 10 แสตมป์ — แลกฟรี 1 กรัมได้ที่เคาน์เตอร์</div>}
         <MemberCardCarousel active="cannabis">
           <SharedMemberCard
             key={popKey}
@@ -102,7 +102,7 @@ export default function CannabisCardPage() {
             <div><span className="cannabis-stamps__eyebrow">STAMP COLLECTION · 1 G</span><h3 id="cannabis-stamps-title">แสตมป์สะสม</h3></div>
             <span className="cannabis-stamps__count" aria-label={`${stampCount} จาก 10 ดวง`}>{String(stampCount).padStart(2, "0")}<i>/10</i></span>
           </div>
-          <div className="cannabis-progress-copy"><span>{card.balance >= 10 ? "พร้อมแลกฟรี 1 กรัม" : `อีก ${10 - card.balance} แต้ม รับฟรี 1 กรัม`}</span><b>{stampCount}/10</b></div>
+          <div className="cannabis-progress-copy"><span>{card.balance >= 10 ? "พร้อมแลกฟรี 1 กรัม" : `อีก ${10 - card.balance} แสตมป์ รับฟรี 1 กรัม`}</span><b>{stampCount}/10</b></div>
           <div className="cannabis-progress" role="progressbar" aria-label="ความคืบหน้าสู่การแลก 1 กรัม" aria-valuemin={0} aria-valuemax={10} aria-valuenow={stampCount}><i style={{ transform: `scaleX(${stampCount / 10})` }} /></div>
           <ol className="cannabis-stamp-grid" aria-label={`สะสมแล้ว ${stampCount} จาก 10 ดวง`}>
             {Array.from({ length: 10 }, (_, index) => {
@@ -116,21 +116,21 @@ export default function CannabisCardPage() {
               );
             })}
           </ol>
-          <p className="cannabis-stamps__note">ครบ 10 ดวง รับฟรี 1 กรัม</p>
-          <div className="cannabis-reward"><span>01</span><p>ซื้อครบทุก 1 กรัม รับ 1 แต้ม</p><b>10 แต้ม = ฟรี 1 กรัม</b></div>
+          <p className="cannabis-stamps__note">สะสมครบ 10 แสตมป์ รับฟรี 1 กรัม</p>
+          <div className="cannabis-reward"><span>01</span><p>ซื้อทุก 1 กรัม รับ 1 แสตมป์</p><b>10 แสตมป์ = ฟรี 1 กรัม</b></div>
         </section>
-        {card.balance >= 10 && !celebrate && <div className="cannabis-ready" role="status">แต้มครบแล้ว — แจ้งพนักงานเพื่อแลกฟรี 1 กรัม</div>}
+        {card.balance >= 10 && !celebrate && <div className="cannabis-ready" role="status">แสตมป์ครบแล้ว — แจ้งพนักงานเพื่อแลกฟรี 1 กรัม</div>}
         <div className="cannabis-stats">
-          <article><span>สะสมจากการซื้อ</span><strong>{card.lifetime_earned}</strong><small>กรัมทั้งหมด</small></article>
-          <article><span>ใช้แลกไปแล้ว</span><strong>{card.lifetime_redeemed}</strong><small>แต้มทั้งหมด</small></article>
+          <article><span>แสตมป์สะสมตลอดชีพ</span><strong>{card.lifetime_earned}</strong><small>แสตมป์</small></article>
+          <article><span>แสตมป์ที่ใช้แลก</span><strong>{card.lifetime_redeemed}</strong><small>ดวงทั้งหมด</small></article>
         </div>
         <section className="cannabis-history panel" aria-labelledby="cannabis-history-title">
           <div className="flex items-end justify-between gap-3"><div><p className="eyebrow">Stamp ledger</p><h2 id="cannabis-history-title">รายการล่าสุด</h2></div><span className="cannabis-count">{card.recent_transactions.length} รายการ</span></div>
-          {!card.recent_transactions.length ? <EmptyState title="ยังไม่มีรายการสะสม" body="เมื่อซื้อสินค้าที่ร้าน รายการแต้มจะปรากฏที่นี่" />
+          {!card.recent_transactions.length ? <EmptyState title="ยังไม่มีรายการสะสม" body="เมื่อซื้อสินค้าที่ร้าน รายการแสตมป์จะปรากฏที่นี่" />
             : <ul>{card.recent_transactions.map((tx) => <li key={tx.id}>
               <span className={`cannabis-delta ${tx.delta < 0 ? "is-out" : ""}`}>{tx.delta > 0 ? `+${tx.delta}` : tx.delta}</span>
               <span className="cannabis-transaction-copy"><strong>{tx.reason}</strong><small>{new Date(tx.created_at).toLocaleString("th-TH")}{tx.grams_purchased > 0 ? ` · ซื้อ ${tx.grams_purchased} กรัม` : ""}</small></span>
-              <span className="cannabis-unit">แต้ม</span>
+              <span className="cannabis-unit">แสตมป์</span>
             </li>)}</ul>}
         </section>
       </div>}

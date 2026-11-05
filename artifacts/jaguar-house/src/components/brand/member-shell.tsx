@@ -52,7 +52,7 @@ export function MemberShell({ children, signedIn }: { children: ReactNode; signe
           <Link href="/" className="member-shell-brand flex items-center min-h-11 gap-3 no-underline text-[var(--text)]" data-testid="link-home">
             <JaguarMark size={30} />
             <span className="leading-tight">
-              <span className="brand-wordmark block font-display font-semibold text-[13px] text-[var(--gold-2)]">JAGUAR HOUSE</span>
+              <span className="brand-wordmark block font-display font-semibold text-[13px] text-[var(--gold-2)]">JAGUAR KRATOM</span>
               <span className="block eyebrow !text-[9px] !tracking-[.2em]">Members Club</span>
             </span>
           </Link>

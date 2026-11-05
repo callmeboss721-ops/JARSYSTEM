@@ -55,8 +55,13 @@ export default function CardPage() {
       <div className="space-y-3">
         <header className="card-member-heading rise">
           <p className="eyebrow">MEMBERS CLUB · DIGITAL PASS</p>
-          <h1 className="font-display text-xl sm:text-2xl font-semibold mt-1">{card.data.display_name || "บัตรสมาชิกของฉัน"}</h1>
-          <p className="mt-1 text-xs sm:text-sm text-[var(--muted)]">ระดับ {gradeFor(card.data.lifetime_earned)} · สมาชิก JAGUAR HOUSE</p>
+          <div className="member-heading-top">
+            <div><h1 className="font-display text-xl sm:text-2xl font-semibold mt-1">{card.data.display_name || "บัตรสมาชิกของฉัน"}</h1>
+          <p className="mt-1 text-xs sm:text-sm text-[var(--muted)]">ระดับ {gradeFor(card.data.lifetime_earned)} · สมาชิก JAGUAR KRATOM</p>
+            </div>
+            <img src="/brand/jaguar-logo.webp" alt="ตรา JAGUAR KRATOM" width={58} height={58} />
+          </div>
+          <p className="member-slogan">พี่เสือพลังใบ ซุปเปอร์ฮีโร่ของคนไทย</p>
         </header>
         {(celebrate || card.data.balance >= STAMPS) && <div role="status" className="gold-alert">ครบ 10 แต้ม! รับขวดแถมฟรี 1 ขวด</div>}
         {confettiKey > 0 && <Confetti key={confettiKey} />}
@@ -71,7 +76,7 @@ export default function CardPage() {
         <LoyaltyProgress balance={card.data.balance} />
         <div className="card-bento-grid" aria-label="สรุปสมาชิกและที่ตั้งร้าน">
           <div className="panel card-bento-stat card-bento-stat--primary"><p>แต้มคงเหลือ</p><strong data-testid="text-balance">{card.data.balance}</strong><small>แต้ม</small></div>
-          <div className="panel card-bento-stat card-bento-stat--gold"><p>อีกกี่แต้มถึงแลก</p><strong>{Math.max(STAMPS - Math.min(card.data.balance, STAMPS), 0)}</strong><small>แต้ม</small></div>
+          <div className="panel card-bento-stat card-bento-stat--gold"><p>{card.data.balance >= STAMPS ? "แลกขวดฟรีได้แล้ว" : "อีกกี่แต้มถึงแลก"}</p><strong>{Math.max(STAMPS - Math.min(card.data.balance, STAMPS), 0)}</strong><small>แต้ม</small></div>
           <div className="panel card-bento-stat"><p>สะสมตลอดชีพ</p><strong>{card.data.lifetime_earned}</strong><small>แต้ม</small></div>
           <div className="panel card-bento-stat"><p>ใช้แลกไปแล้ว</p><strong>{card.data.lifetime_redeemed}</strong><small>แต้ม</small></div>
           <div className="panel card-bento-location">
@@ -89,7 +94,7 @@ export default function CardPage() {
           : !sales.data?.length ? <EmptyState title="ยังไม่มีรายการซื้อ" body="รายการจากร้านจะแสดงที่นี่" />
           : <ul className="divide-y divide-[var(--line)] list-none p-0 m-0">{sales.data.slice(0,5).map(s => <li key={s.id} className="py-3 flex gap-3 items-center">
             <div className="min-w-0 flex-1"><p className="text-sm font-medium">{formulaLabels[s.formula] || s.formula} · {s.bottle_count} ขวด</p><p className="text-xs text-[var(--muted)]">{new Date(s.created_at).toLocaleString("th-TH")}</p></div>
-            <div className="text-right shrink-0"><p className="font-mono">฿{s.amount_baht.toLocaleString("th-TH")}</p><p className={`text-xs ${s.points_awarded ? "text-[var(--emerald-2)]" : "text-[var(--muted)]"}`}>{s.points_awarded ? `+${s.points_awarded} แต้ม` : "ไม่ครบ 3 ขวด"}</p></div>
+            <div className="text-right shrink-0"><p className="font-mono">฿{s.amount_baht.toLocaleString("th-TH")}</p><p className={`text-xs ${s.points_awarded ? "text-[var(--emerald-2)]" : "text-[var(--muted)]"}`}>{s.points_awarded ? `+${s.points_awarded} แต้ม` : "บิลนี้ไม่ครบ 3 ขวด"}</p></div>
           </li>)}</ul>}
         </section>
       </aside>

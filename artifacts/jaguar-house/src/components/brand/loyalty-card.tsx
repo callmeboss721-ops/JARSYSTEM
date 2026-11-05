@@ -70,11 +70,11 @@ export function SharedMemberCard({
         </div>
         <footer className="member-pass-card__footer">
           <div className="member-pass-card__points">
-            <span>{cannabis ? "STAMPS" : "POINTS"}</span>
+            <span>{cannabis ? "แสตมป์" : "แต้ม"}</span>
             <strong>{filled}<small>/10</small></strong>
           </div>
           <span className={`member-pass-card__status${ready ? " is-ready" : ""}`} role="status">
-            {ready ? "READY TO REDEEM" : "COLLECTING"}
+            {ready ? "พร้อมแลก" : "กำลังสะสม"}
           </span>
         </footer>
       </div>
@@ -112,7 +112,7 @@ export function LoyaltyProgress({ balance }: { balance: number }) {
       </ol>
       {balance > STAMPS && <p className="member-progress-extra" data-testid="text-extra-points">แต้มสะสมทั้งหมด {balance} แต้ม</p>}
       <div className="member-progress-actions">
-        <p>{ready ? "ครบ 10 แต้ม · แลกของแถมได้" : `อีก ${remaining} แต้ม ถึงแลกได้`}</p>
+        <p>{ready ? "ครบ 10 แต้ม · แลกฟรี 1 ขวดได้" : `ครบ 3 ขวดในบิล รับ 1 แต้ม · อีก ${remaining} แต้มแลกฟรี 1 ขวด`}</p>
         <Link href="/redeem" className="btn btn-redeem">{ready ? "แลกของแถมเลย" : `อีก ${remaining} แต้ม`} <BrandIcon name="redeem" tone="inherit" /></Link>
       </div>
     </section>
