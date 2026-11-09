@@ -6,6 +6,7 @@ import { useGetCannabisMemberCard, getGetCannabisMemberCardQueryKey, type Cannab
 import { MemberShell } from "@/components/brand/member-shell";
 import { MemberCardCarousel } from "@/components/brand/member-card-carousel";
 import { MemberCardFaces, MemberStatusPanel } from "@/components/brand/member-card-experience";
+import { MemberRankLabel, RankEmblem } from "@/components/brand/rank-emblem";
 import { ErrorState, SignedOutState, EmptyState, LoadingState } from "@/components/brand/ui";
 import { api, errorText } from "@/components/brand/loyalty-api";
 
@@ -75,7 +76,7 @@ export default function CannabisCardPage() {
       : cardQuery.isError || !card ? <div className="max-w-md mx-auto"><ErrorState message={errorText(cardQuery.error)} onRetry={() => void cardQuery.refetch()} retrying={cardQuery.isFetching} /></div>
       : <div className="cannabis-wrap">
         <header className="cannabis-heading rise">
-          <div className="member-heading-top"><div><h1>{card.display_name || "บัตรกัญชา"}</h1><p className="member-tier">สมาชิกกัญชา</p></div></div>
+          <div className="member-heading-top"><div><h1>{card.display_name || "บัตรกัญชา"}</h1><MemberRankLabel earned={card.lifetime_earned} /></div></div>
         </header>
         {confettiKey > 0 && <CannabisConfetti key={confettiKey} />}
         {celebrate && <div role="status" className="cannabis-ready cannabis-ready--celebrate">ครบ 10 · แลกฟรี 1 กรัมที่เคาน์เตอร์</div>}
@@ -100,8 +101,8 @@ export default function CannabisCardPage() {
           }}
         />
         <div className="cannabis-stats">
-          <article><span>สะสมรวม</span><strong>{card.lifetime_earned}</strong><small>แต้ม</small></article>
-          <article><span>แลกแล้ว</span><strong>{card.lifetime_redeemed}</strong><small>แต้ม</small></article>
+          <article><RankEmblem name="organic-premium" size={22} className="cannabis-stats__emblem" /><span>สะสมรวม</span><strong>{card.lifetime_earned}</strong><small>แต้ม</small></article>
+          <article><RankEmblem name="ultimate-legend" size={22} className="cannabis-stats__emblem" /><span>แลกแล้ว</span><strong>{card.lifetime_redeemed}</strong><small>แต้ม</small></article>
         </div>
         <section className="cannabis-history panel" aria-labelledby="cannabis-history-title">
           <div className="flex items-end justify-between gap-3"><h2 id="cannabis-history-title">รายการล่าสุด</h2></div>

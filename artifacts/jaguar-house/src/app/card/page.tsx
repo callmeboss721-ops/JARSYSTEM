@@ -7,8 +7,9 @@ import { MemberShell } from "@/components/brand/member-shell";
 import { MemberCardCarousel } from "@/components/brand/member-card-carousel";
 import { STAMPS } from "@/components/brand/loyalty-card";
 import { MemberCardFaces, MemberStatusPanel } from "@/components/brand/member-card-experience";
+import { MemberRankLabel, RankEmblem } from "@/components/brand/rank-emblem";
 import { EmptyState, ErrorState, LoadingState, SignedOutState } from "@/components/brand/ui";
-import { api, errorText, gradeFor, type MemberCardData, type Sale, formulaLabels } from "@/components/brand/loyalty-api";
+import { api, errorText, type MemberCardData, type Sale, formulaLabels } from "@/components/brand/loyalty-api";
 
 export default function CardPage() {
   const qc = useQueryClient();
@@ -57,7 +58,7 @@ export default function CardPage() {
           <div className="member-heading-top">
             <div>
               <h1 className="font-display text-xl sm:text-2xl font-semibold">{card.data.display_name || "บัตรสมาชิก"}</h1>
-              <p className="member-tier">ระดับ {gradeFor(card.data.lifetime_earned)}</p>
+              <MemberRankLabel earned={card.data.lifetime_earned} />
             </div>
           </div>
         </header>
@@ -86,9 +87,9 @@ export default function CardPage() {
           }}
         />
         <div className="card-bento-grid" aria-label="สรุปแต้มสมาชิก">
-          <div className="panel card-bento-stat card-bento-stat--primary"><p>ตอนนี้</p><strong data-testid="text-balance">{card.data.balance}</strong><small>แต้ม</small></div>
-          <div className="panel card-bento-stat"><p>สะสมรวม</p><strong>{card.data.lifetime_earned}</strong><small>แต้ม</small></div>
-          <div className="panel card-bento-stat"><p>แลกแล้ว</p><strong>{card.data.lifetime_redeemed}</strong><small>แต้ม</small></div>
+          <div className="panel card-bento-stat card-bento-stat--primary"><RankEmblem name="dragon-emperor" size={22} className="card-bento-stat__emblem" /><p>ตอนนี้</p><strong data-testid="text-balance">{card.data.balance}</strong><small>แต้ม</small></div>
+          <div className="panel card-bento-stat"><RankEmblem name="diamond-member" size={22} className="card-bento-stat__emblem" /><p>สะสมรวม</p><strong>{card.data.lifetime_earned}</strong><small>แต้ม</small></div>
+          <div className="panel card-bento-stat"><RankEmblem name="ultimate-legend" size={22} className="card-bento-stat__emblem" /><p>แลกแล้ว</p><strong>{card.data.lifetime_redeemed}</strong><small>แต้ม</small></div>
         </div>
         <Link href="/" className="btn btn-ghost w-full sm:w-auto">กลับหน้าแรกร้าน</Link>
       </div>

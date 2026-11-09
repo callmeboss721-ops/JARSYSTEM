@@ -9,6 +9,7 @@ import { BrandIcon } from "./brand-icon";
 import { SamutPrakanArt } from "./samut-prakan-art";
 import { LoginForm, RegisterForm } from "./auth-forms";
 import { BrandButton } from "./brand-button";
+import { RankEmblem } from "./rank-emblem";
 
 export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
   const [tab, setTab] = useState<"login" | "register">(initialTab ?? "login");
@@ -59,11 +60,11 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
           <section className="landing-club-previews" aria-label="บัตรสมาชิก">
             <Link href="/card" className="landing-club-preview" aria-label="ดูบัตรสมาชิกกระท่อม">
               <Image src="/brand/kratom-club-preview.webp" alt="ลายบัตรสมาชิกกระท่อม" width={768} height={484} priority sizes="(max-width: 440px) 44vw, 200px" />
-              <span>กระท่อม</span>
+              <span className="landing-club-preview__caption"><RankEmblem name="nature-green" size={18} /><span>กระท่อม</span></span>
             </Link>
             <Link href="/card/cannabis" className="landing-club-preview" aria-label="ดูบัตรสมาชิกกัญชา">
               <Image src="/brand/cannabis-club-preview.webp" alt="ลายบัตรสมาชิกกัญชา" width={768} height={484} sizes="(max-width: 440px) 44vw, 200px" />
-              <span>กัญชา</span>
+              <span className="landing-club-preview__caption"><RankEmblem name="organic-premium" size={18} /><span>กัญชา</span></span>
             </Link>
           </section>
           <details className="landing-menu-preview">

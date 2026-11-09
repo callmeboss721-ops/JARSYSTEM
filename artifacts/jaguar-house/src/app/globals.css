@@ -2541,6 +2541,98 @@ input.input, textarea.input, select.input { font-size: 16px; }
   }
 }
 
+/* Accent emblems cropped from the supplied member-badge artwork. */
+.rank-emblem {
+  display: inline-flex;
+  flex: 0 0 auto;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  border: 1px solid rgba(222, 202, 142, .44);
+  border-radius: 50%;
+  background: #0b120e;
+  box-shadow: 0 0 12px rgba(69, 205, 119, .19), 0 1px 0 rgba(255,255,255,.18) inset;
+  vertical-align: middle;
+}
+.rank-emblem img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+.rank-emblem--royal-king { border-color: rgba(231, 197, 84, .7); box-shadow: 0 0 12px rgba(231,197,84,.24); }
+.rank-emblem--leopard-vip,
+.rank-emblem--nature-green,
+.rank-emblem--organic-premium,
+.rank-emblem--dragon-emperor { border-color: rgba(91, 228, 128, .58); box-shadow: 0 0 12px rgba(55,224,112,.22); }
+.rank-emblem--diamond-member { border-color: rgba(81, 191, 255, .6); box-shadow: 0 0 12px rgba(54,166,255,.2); }
+.rank-emblem--cyber-start,
+.rank-emblem--cosmic-world { border-color: rgba(190, 120, 255, .64); box-shadow: 0 0 12px rgba(178,95,255,.22); }
+.rank-emblem--inferno-power { border-color: rgba(255, 131, 45, .68); box-shadow: 0 0 12px rgba(255,105,31,.23); }
+.rank-emblem--ultimate-legend { border-color: rgba(230, 193, 83, .62); box-shadow: 0 0 12px rgba(230,193,83,.2); }
+
+.member-tier {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 27px;
+}
+.member-tier > span:last-child {
+  padding: 4px 9px;
+  border: 1px solid rgba(196, 202, 214, .17);
+  border-radius: 999px;
+  background: rgba(255,255,255,.035);
+  color: #c8cec3;
+  font-size: inherit;
+  line-height: 1.15;
+}
+.member-tier--cyber-start > span:last-child {
+  color: #d8c5ff;
+  border-color: rgba(178, 123, 255, .28);
+  background: rgba(120, 62, 190, .1);
+}
+.member-tier--royal-king > span:last-child {
+  color: #f0d88b;
+  border-color: rgba(229, 192, 74, .32);
+  background: rgba(160, 126, 40, .1);
+}
+.member-tier--leopard-vip > span:last-child {
+  color: #9af2b0;
+  border-color: rgba(91, 228, 128, .28);
+  background: rgba(39, 133, 71, .12);
+}
+
+.landing-club-preview__caption {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 22px;
+}
+.landing-club-preview__caption > span:last-child { color: #e5d9b3; }
+.card-bento-stat { padding-right: 34px; }
+.card-bento-stat__emblem {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+}
+.card-bento-stat p { max-width: calc(100% - 14px); }
+.cannabis-stats article { position: relative; padding-right: 39px; }
+.cannabis-stats__emblem {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+}
+.redeem-heading-lockup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rank-emblem { scroll-behavior: auto; }
+}
+
 /* Matching physical member-card faces and live dashboard status. */
 .club-pass {
   --club-neon: #00ff9d;

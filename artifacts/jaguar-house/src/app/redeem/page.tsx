@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { BrandIcon } from "@/components/brand/brand-icon";
 import { MemberShell } from "@/components/brand/member-shell";
+import { RankEmblem } from "@/components/brand/rank-emblem";
 import { EmptyState, ErrorState, LoadingState, Modal, SignedOutState } from "@/components/brand/ui";
 import { api, errorText, json, type MemberCardData, type RewardData, type RedemptionData } from "@/components/brand/loyalty-api";
 
@@ -61,7 +61,7 @@ export default function RedeemPage() {
   const pendingRequests = (history.data ?? []).filter(r => r.status.toLowerCase() === "pending");
   return <MemberShell signedIn>
     <header className="flex flex-wrap items-end justify-between gap-4 mb-7 rise">
-      <div><p className="eyebrow">Rewards</p><h1 className="font-display text-3xl sm:text-4xl font-semibold mt-1">แลกรางวัล</h1></div>
+       <div className="redeem-heading-lockup"><RankEmblem name="inferno-power" size={32} /><div><p className="eyebrow">Rewards</p><h1 className="font-display text-3xl sm:text-4xl font-semibold mt-1">แลกรางวัล</h1></div></div>
        <div className="panel px-5 py-3 text-right"><p className="text-xs text-[var(--muted)]">แต้มคงเหลือ</p><p className="font-display text-3xl font-bold text-[var(--gold-2)]">{card.balance}</p></div>
     </header>
      {success && <div role="status" className="redeem-success panel mb-5 p-5 sm:p-6">
@@ -85,7 +85,7 @@ export default function RedeemPage() {
         </li>)}</ul>}
       </section>
        <section id="pending-redemptions" className="panel p-5 scroll-mt-24">
-        <h2 className="font-display text-lg font-semibold mb-3 flex items-center gap-2"><BrandIcon name="pending" tone="gold" />คำขอรอยืนยัน <span className="ml-auto font-mono text-sm">{pendingRequests.length}</span></h2>
+         <h2 className="font-display text-lg font-semibold mb-3 flex items-center gap-2"><RankEmblem name="cosmic-world" size={22} />คำขอรอยืนยัน <span className="ml-auto font-mono text-sm">{pendingRequests.length}</span></h2>
          {history.isLoading ? <LoadingState label="กำลังโหลดคำขอ" compact /> : history.isError ? <ErrorState message={errorText(history.error)} onRetry={() => void history.refetch()} retrying={history.isFetching} /> : !pendingRequests.length ? <EmptyState title="ไม่มีคำขอที่รออยู่" body="คำขอแลกรางวัลของคุณจะแสดงที่นี่" />
         : <ul className="space-y-2 list-none p-0 m-0">{pendingRequests.map(r => <li key={r.id} className="rounded-xl border border-[var(--line-2)] p-3"><p className="font-semibold">{r.reward_name}</p><p className="text-xs text-[var(--muted)]">{r.points_spent} แต้ม · {new Date(r.created_at).toLocaleString("th-TH")}</p></li>)}</ul>}
       </section>
