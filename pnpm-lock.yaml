@@ -239,6 +239,9 @@ importers:
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.104.1(react@19.1.0)
+      '@thesvg/ui-react':
+        specifier: 4.4.0
+        version: 4.4.0(react@19.1.0)
       '@workspace/api-client-react':
         specifier: workspace:*
         version: link:../../lib/api-client-react
@@ -1893,6 +1896,12 @@ packages:
     resolution: {integrity: sha512-Zz70EgjahNI7aCz8BZxM3vUGU44ycxEAzMuCUjLeA7SVhhOkg3ZgPjPJPvHjs6Rmky/dtmnu1WzjGHNHmhCoZQ==}
     peerDependencies:
       react: ^18 || ^19
+
+  '@thesvg/ui-react@4.4.0':
+    resolution: {integrity: sha512-n5ZObSdgRRZZ+4VDbyUCTy9axYSPuwIbh5DvM0GeHUGd73ydy1inN3JajaKMM+mDzPdFew7csqt+hjvoC7Dk5Q==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      react: '>=18'
 
   '@types/babel__core@7.20.5':
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
@@ -4633,6 +4642,10 @@ snapshots:
   '@tanstack/react-query@5.104.1(react@19.1.0)':
     dependencies:
       '@tanstack/query-core': 5.104.1
+      react: 19.1.0
+
+  '@thesvg/ui-react@4.4.0(react@19.1.0)':
+    dependencies:
       react: 19.1.0
 
   '@types/babel__core@7.20.5':
