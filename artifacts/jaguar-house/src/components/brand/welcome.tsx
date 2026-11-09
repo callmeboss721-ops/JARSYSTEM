@@ -69,10 +69,10 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
           </section>
           <figure className="landing-member-guide">
             <Image
-              src="/brand/jaguar-member-guide.jpg"
-              alt="วิธีใช้บัตรสมาชิก JAGUAR 3 ขั้นตอน: เปิดบัตร ตั้งรหัส สะสมแต้ม และแลกรับของฟรี"
-              width={1792}
-              height={2400}
+              src="/brand/jaguar-landing-promo.jpg"
+              alt="โปรโมชัน JAGUAR SPK: น้ำกระท่อมเริ่มต้น 50 บาท และกัญชาเกรดพรีเมียม 10 บาทต่อกรัม"
+              width={2752}
+              height={1536}
               sizes="(max-width: 540px) calc(100vw - 32px), 540px"
             />
           </figure>

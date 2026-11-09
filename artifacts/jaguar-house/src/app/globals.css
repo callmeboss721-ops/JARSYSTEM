@@ -3672,7 +3672,7 @@ input.input, textarea.input, select.input { font-size: 16px; }
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 1792 / 2400;
+  aspect-ratio: 2752 / 1536;
   border-radius: 11px 3px 11px 3px;
 }
 .landing-menu-preview {
