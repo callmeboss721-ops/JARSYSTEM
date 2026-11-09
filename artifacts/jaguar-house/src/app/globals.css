@@ -2545,6 +2545,8 @@ input.input, textarea.input, select.input { font-size: 16px; }
 .club-pass {
   --club-neon: #00ff9d;
   --club-gold: #d4af37;
+  display: grid;
+  gap: 10px;
   width: min(100%,390px);
   margin: 0 auto;
 }
@@ -2552,34 +2554,6 @@ input.input, textarea.input, select.input { font-size: 16px; }
   --club-neon: #8dff00;
   --club-gold: #e5c04a;
 }
-.club-pass__switch {
-  display: flex;
-  width: fit-content;
-  gap: 3px;
-  margin: 0 auto 8px;
-  padding: 3px;
-  border: 1px solid color-mix(in srgb,var(--club-gold) 30%,transparent);
-  border-radius: 999px;
-  background: rgba(5,8,6,.88);
-}
-.club-pass__switch button {
-  min-width: 82px;
-  min-height: 32px;
-  padding: 6px 12px;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: #b9bdb3;
-  font: 600 11px/1 var(--font-sans);
-  cursor: pointer;
-  transition: color .18s ease, background .18s ease, box-shadow .18s ease;
-}
-.club-pass__switch button[aria-pressed="true"] {
-  background: linear-gradient(110deg,color-mix(in srgb,var(--club-neon) 13%,transparent),color-mix(in srgb,var(--club-gold) 14%,transparent));
-  color: #f0dfa0;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb,var(--club-gold) 32%,transparent), 0 0 16px -10px var(--club-neon);
-}
-.club-pass__switch button:focus-visible,
 .member-dashboard-status__cta:focus-visible,
 .member-dashboard-status__qr-error button:focus-visible {
   outline: 2px solid var(--club-neon);
@@ -2955,7 +2929,6 @@ input.input, textarea.input, select.input { font-size: 16px; }
   .club-pass__stamp-face,
   .club-pass__stamp[data-pop="true"],
   .member-dashboard-status__qr-loading { animation: none; }
-  .club-pass__switch button,
   .club-pass__stamp,
   .member-dashboard-status__bar > span { transition: none; }
 }
@@ -4150,6 +4123,39 @@ input.input, textarea.input, select.input { font-size: 16px; }
 @media (prefers-reduced-motion: reduce) {
   .landing-members-club,
   .landing-members-club__art { animation: none !important; transition: none !important; }
+}
+
+/* Keep the landing navigation clear of the last content and phone safe area. */
+.landing-site-footer {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 14px;
+  border-top: 1px solid rgba(229,192,74,.12);
+}
+.landing-site-footer img {
+  display: block;
+  width: 20px;
+  height: 20px;
+  opacity: .58;
+  filter: brightness(0) invert(1);
+}
+.jaguar-home--landing .landing-bottom-nav .brand-icon {
+  width: 20px;
+  height: 20px;
+}
+.jaguar-home--landing .landing-bottom-nav a {
+  min-height: 48px;
+  font-size: 10px;
+}
+@media (max-width: 760px) {
+  .jaguar-home--landing .landing-shell {
+    padding-bottom: calc(88px + env(safe-area-inset-bottom));
+  }
+}
+@media (min-width: 761px) {
+  .jaguar-home--landing .landing-shell { padding-bottom: 28px; }
 }
 
 .owner-menu-tabs {

@@ -58,7 +58,7 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
 
           <section className="landing-club-previews" aria-label="บัตรสมาชิก">
             <Link href="/card" className="landing-club-preview" aria-label="ดูบัตรสมาชิกกระท่อม">
-              <Image src="/brand/kratom-club-preview.webp" alt="ลายบัตรสมาชิกกระท่อม" width={768} height={484} sizes="(max-width: 440px) 44vw, 200px" />
+              <Image src="/brand/kratom-club-preview.webp" alt="ลายบัตรสมาชิกกระท่อม" width={768} height={484} priority sizes="(max-width: 440px) 44vw, 200px" />
               <span>กระท่อม</span>
             </Link>
             <Link href="/card/cannabis" className="landing-club-preview" aria-label="ดูบัตรสมาชิกกัญชา">
@@ -76,6 +76,17 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
             <Link href="/card/cannabis"><BrandIcon name="cannabis" tone="emerald" /><span>บัตรกัญชา</span></Link>
             <Link href="/redeem"><BrandIcon name="rewards" tone="gold" /><span>รางวัลกระท่อม</span></Link>
           </nav>
+          <footer className="landing-site-footer" aria-label="ไอคอนท้ายหน้า">
+            <img
+              src="https://thesvg.org/icons/github/default.svg"
+              alt=""
+              width="20"
+              height="20"
+              loading="lazy"
+              decoding="async"
+              aria-hidden="true"
+            />
+          </footer>
         </div>
       </main>
     );

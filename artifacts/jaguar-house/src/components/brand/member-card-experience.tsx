@@ -5,7 +5,6 @@ import { QRCodeSVG } from "qrcode.react";
 import { BrandButton } from "./brand-button";
 
 export type MemberClub = "kratom" | "cannabis";
-export type MemberCardSide = "front" | "stamps";
 
 type CardQr = {
   value?: string;
@@ -39,15 +38,11 @@ export function MemberCardFaces({
   memberCode,
   balance,
   popKey,
-  side,
-  onSideChange,
 }: {
   kind: MemberClub;
   memberCode: string;
   balance: number;
   popKey: number;
-  side: MemberCardSide;
-  onSideChange: (side: MemberCardSide) => void;
 }) {
   const club = CLUBS[kind];
   const filled = Math.min(Math.max(balance, 0), 10);
@@ -55,83 +50,68 @@ export function MemberCardFaces({
 
   return (
     <div className={`club-pass club-pass--${kind}`} data-testid={kind === "kratom" ? "card-member" : "card-cannabis-member"}>
-      <div className="club-pass__switch" role="group" aria-label={`ด้านบัตร ${kind === "kratom" ? "กระท่อม" : "กัญชา"}`}>
-        <button type="button" aria-pressed={side === "front"} onClick={() => onSideChange("front")}>
-          หน้าบัตร
-        </button>
-        <button type="button" aria-pressed={side === "stamps"} onClick={() => onSideChange("stamps")}>
-          แสตมป์
-        </button>
-      </div>
-
-      {side === "front" ? (
-        <figure id="member-card-face" className="club-pass__front">
-          <Image
-            src={club.image}
-            alt={club.alt}
-            fill
-            priority
-            sizes="(max-width: 480px) calc(100vw - 32px), 349px"
-            className="club-pass__front-art"
-          />
-          <span className="club-pass__front-frame" aria-hidden="true" />
-          <span className="sr-only">บัตรด้านหน้าสมาชิก @{memberCode}</span>
-          <figcaption className="sr-only">{club.title} · บุญศิริ ซอย 6 · สมุทรปราการ</figcaption>
-        </figure>
-      ) : (
-        <section id="member-card-face" className="club-pass__stamp-face" aria-label={`ด้านแสตมป์ ${club.title}`}>
-          <header className="club-pass__stamp-head">
-            <div>
-              <span>JAGUAR SPK · COLLECTING</span>
-              <strong>{filled}<small>/10</small></strong>
-            </div>
-            <Image src={club.stampIcon} alt="" width={23} height={23} aria-hidden="true" />
-          </header>
-          <ol className="club-pass__stamp-grid" aria-label={`${filled} จาก 10 แต้มสะสม`}>
-            {Array.from({ length: 10 }, (_, index) => {
-              const rewardSlot = index === 9;
-              const isFilled = index < filled;
-              return (
-                <li
-                  key={`${popKey}-${index}`}
-                  className="club-pass__stamp"
-                  data-filled={isFilled}
-                  data-reward={rewardSlot}
-                  data-ready={ready}
-                  data-pop={popKey > 0 && isFilled}
-                  data-testid={`${kind === "kratom" ? "stamp" : "cannabis-stamp"}-${index + 1}`}
-                  aria-label={
-                    rewardSlot
-                      ? `ช่อง 10 ฟรี ${ready ? "พร้อมแลก" : ""}`
-                      : `ช่อง ${index + 1} ${isFilled ? "สะสมแล้ว" : "ยังไม่สะสม"}`
-                  }
-                >
-                  {rewardSlot ? (
-                    <>
-                      <strong>FREE!</strong>
-                      <small>แถมฟรี</small>
-                    </>
-                  ) : isFilled ? (
-                    <Image src={club.stampIcon} alt="" width={28} height={28} aria-hidden="true" />
-                  ) : (
-                    <span className="club-pass__stamp-number">{String(index + 1).padStart(2, "0")}</span>
-                  )}
-                  <span className="sr-only">
-                    {rewardSlot ? `ครบ 10 แต้ม ${club.reward}` : isFilled ? "สะสมแล้ว" : "ยังไม่สะสม"}
-                  </span>
-                </li>
-              );
-            })}
-          </ol>
-          <footer className="club-pass__stamp-foot">
-            <span>{club.rule}</span>
-            <span>{club.reward}</span>
-          </footer>
-        </section>
-      )}
-      <span className="sr-only" aria-live="polite">
-        {side === "front" ? "แสดงหน้าบัตร" : `แสดงแสตมป์ ${filled} จาก 10`}
-      </span>
+      <figure id="member-front-face" className="club-pass__front">
+        <Image
+          src={club.image}
+          alt={club.alt}
+          fill
+          priority
+          sizes="(max-width: 480px) calc(100vw - 32px), 349px"
+          className="club-pass__front-art"
+        />
+        <span className="club-pass__front-frame" aria-hidden="true" />
+        <figcaption className="sr-only">{club.title} · บัตรสมาชิก @{memberCode} · บุญศิริ ซอย 6 · สมุทรปราการ</figcaption>
+      </figure>
+      <section id="member-stamps-face" className="club-pass__stamp-face" aria-label={`แสตมป์ ${club.title}`}>
+        <header className="club-pass__stamp-head">
+          <div>
+            <span>JAGUAR SPK · COLLECTING</span>
+            <strong>{filled}<small>/10</small></strong>
+          </div>
+          <Image src={club.stampIcon} alt="" width={23} height={23} aria-hidden="true" />
+        </header>
+        <ol className="club-pass__stamp-grid" aria-label={`${filled} จาก 10 แต้มสะสม`}>
+          {Array.from({ length: 10 }, (_, index) => {
+            const rewardSlot = index === 9;
+            const isFilled = index < filled;
+            return (
+              <li
+                key={`${popKey}-${index}`}
+                className="club-pass__stamp"
+                data-filled={isFilled}
+                data-reward={rewardSlot}
+                data-ready={ready}
+                data-pop={popKey > 0 && isFilled}
+                data-testid={`${kind === "kratom" ? "stamp" : "cannabis-stamp"}-${index + 1}`}
+                aria-label={
+                  rewardSlot
+                    ? `ช่อง 10 ฟรี ${ready ? "พร้อมแลก" : ""}`
+                    : `ช่อง ${index + 1} ${isFilled ? "สะสมแล้ว" : "ยังไม่สะสม"}`
+                }
+              >
+                {rewardSlot ? (
+                  <>
+                    <strong>FREE!</strong>
+                    <small>แถมฟรี</small>
+                  </>
+                ) : isFilled ? (
+                  <Image src={club.stampIcon} alt="" width={28} height={28} aria-hidden="true" />
+                ) : (
+                  <span className="club-pass__stamp-number">{String(index + 1).padStart(2, "0")}</span>
+                )}
+                <span className="sr-only">
+                  {rewardSlot ? `ครบ 10 แต้ม ${club.reward}` : isFilled ? "สะสมแล้ว" : "ยังไม่สะสม"}
+                </span>
+              </li>
+            );
+          })}
+        </ol>
+        <footer className="club-pass__stamp-foot">
+          <span>{club.rule}</span>
+          <span>{club.reward}</span>
+        </footer>
+      </section>
+      <span className="sr-only" aria-live="polite">แต้มสะสม {filled} จาก 10</span>
       <span className="sr-only">สมาชิก @{memberCode}</span>
     </div>
   );
@@ -142,13 +122,11 @@ export function MemberStatusPanel({
   memberCode,
   balance,
   qr,
-  onShowCard,
 }: {
   kind: MemberClub;
   memberCode: string;
   balance: number;
   qr: CardQr;
-  onShowCard?: () => void;
 }) {
   const club = CLUBS[kind];
   const filled = Math.min(Math.max(balance, 0), 10);
@@ -185,15 +163,14 @@ export function MemberStatusPanel({
           <span style={{ width: `${filled * 10}%` }} />
         </div>
         {balance > 10 && <span className="member-dashboard-status__extra" data-testid="text-extra-points">แต้มคงเหลือ {balance}</span>}
-        {ready && kind === "cannabis" && <span className="member-dashboard-status__redeem-note">แสดง QR ให้พนักงานยืนยันรับฟรี 1 g</span>}
+        {ready && kind === "cannabis" && <span className="member-dashboard-status__redeem-note">QR สำหรับพนักงาน</span>}
         {ready && kind === "kratom" ? (
           <BrandButton href="/redeem" asset="btn-crown" label="แลกของแถม" testId="member-redeem-cta" />
         ) : ready ? (
           <BrandButton asset="btn-leaf-cannabis" label="แสดง QR" onClick={() => {
-            onShowCard?.();
             const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
             requestAnimationFrame(() => {
-              document.getElementById("member-card-face")?.scrollIntoView({
+              document.getElementById("member-qr-target")?.scrollIntoView({
                 behavior: reducedMotion ? "auto" : "smooth",
                 block: "center",
               });
@@ -205,6 +182,7 @@ export function MemberStatusPanel({
       </div>
       <div
         className="member-dashboard-status__qr"
+        id="member-qr-target"
         aria-label="QR ส่วนตัวสำหรับพนักงานสแกน"
         data-testid={kind === "kratom" ? "member-qr" : "cannabis-member-qr"}
       >

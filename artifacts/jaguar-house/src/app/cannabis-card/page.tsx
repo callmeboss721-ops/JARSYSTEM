@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useGetCannabisMemberCard, getGetCannabisMemberCardQueryKey, type CannabisCard } from "@workspace/api-client-react";
 import { MemberShell } from "@/components/brand/member-shell";
 import { MemberCardCarousel } from "@/components/brand/member-card-carousel";
-import { MemberCardFaces, MemberStatusPanel, type MemberCardSide } from "@/components/brand/member-card-experience";
+import { MemberCardFaces, MemberStatusPanel } from "@/components/brand/member-card-experience";
 import { ErrorState, SignedOutState, EmptyState, LoadingState } from "@/components/brand/ui";
 import { api, errorText } from "@/components/brand/loyalty-api";
 
@@ -14,7 +14,6 @@ const CONFETTI_COLORS = ["#e5c04a", "#f6e09a", "#2fd98a", "#c4cad6", "#b8901f"];
 
 export default function CannabisCardPage() {
   const [visible, setVisible] = useState(true);
-  const [cardSide, setCardSide] = useState<MemberCardSide>("front");
   const [popKey, setPopKey] = useState(0);
   const [celebrate, setCelebrate] = useState(false);
   const [confettiKey, setConfettiKey] = useState(0);
@@ -86,8 +85,6 @@ export default function CannabisCardPage() {
             memberCode={card.member_code}
             balance={card.balance}
             popKey={popKey}
-            side={cardSide}
-            onSideChange={setCardSide}
           />
         </MemberCardCarousel>
         <MemberStatusPanel
@@ -101,7 +98,6 @@ export default function CannabisCardPage() {
             retry: () => { void qr.refetch(); },
             retrying: qr.isFetching,
           }}
-          onShowCard={() => setCardSide("front")}
         />
         <div className="cannabis-stats">
           <article><span>สะสมรวม</span><strong>{card.lifetime_earned}</strong><small>แต้ม</small></article>

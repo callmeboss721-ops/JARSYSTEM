@@ -6,14 +6,13 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { MemberShell } from "@/components/brand/member-shell";
 import { MemberCardCarousel } from "@/components/brand/member-card-carousel";
 import { STAMPS } from "@/components/brand/loyalty-card";
-import { MemberCardFaces, MemberStatusPanel, type MemberCardSide } from "@/components/brand/member-card-experience";
+import { MemberCardFaces, MemberStatusPanel } from "@/components/brand/member-card-experience";
 import { EmptyState, ErrorState, LoadingState, SignedOutState } from "@/components/brand/ui";
 import { api, errorText, gradeFor, type MemberCardData, type Sale, formulaLabels } from "@/components/brand/loyalty-api";
 
 export default function CardPage() {
   const qc = useQueryClient();
   const [visible, setVisible] = useState(true);
-  const [cardSide, setCardSide] = useState<MemberCardSide>("front");
   useEffect(() => {
     const on = () => setVisible(document.visibilityState === "visible");
     on(); document.addEventListener("visibilitychange", on);
@@ -71,8 +70,6 @@ export default function CardPage() {
               memberCode={card.data.member_code}
               balance={card.data.balance}
               popKey={pop}
-              side={cardSide}
-              onSideChange={setCardSide}
             />
           </MemberCardCarousel>
         </div>
