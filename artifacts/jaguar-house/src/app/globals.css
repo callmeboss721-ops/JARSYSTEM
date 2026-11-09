@@ -5166,6 +5166,210 @@ body {
   .owner-menu-tab[aria-pressed="true"] .owner-menu-tab__image { transform: none; }
 }
 
+/* Member controls: framed capsules and quiet botanical status signals. */
+.member-header .btn-ghost {
+  min-height: 44px;
+  padding-inline: 15px;
+  border: 1px solid rgba(212,175,55,.42);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(35,36,27,.94), rgba(14,17,13,.96));
+  color: #f0d995;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.09), 0 5px 15px -12px rgba(212,175,55,.6);
+}
+.member-header .btn-ghost:hover:not(:disabled) {
+  border-color: rgba(240,217,149,.72);
+  background: linear-gradient(180deg, rgba(49,47,33,.96), rgba(18,22,16,.98));
+  transform: translateY(-1px);
+}
+.member-card-switcher {
+  max-width: 410px;
+  padding: 5px;
+  gap: 5px;
+  border: 1px solid rgba(212,175,55,.42);
+  border-radius: 999px;
+  background: linear-gradient(145deg, rgba(28,31,23,.98), rgba(8,12,9,.98));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.065), 0 9px 22px -17px rgba(212,175,55,.56);
+}
+.member-card-switcher__option {
+  min-height: 48px;
+  border-radius: 999px;
+  color: #c5c8b9;
+  transition: color .18s ease, background-color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+.member-card-switcher__option:hover { color: #f3efdf; }
+.member-card-switcher__option[data-card="kratom"][data-active="true"] {
+  color: #1c180d;
+  border-color: rgba(255,239,194,.48);
+  background: linear-gradient(180deg, #f0d995, #c9a536);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.34), 0 4px 13px -9px rgba(212,175,55,.72);
+}
+.member-card-switcher__option[data-card="cannabis"][data-active="true"] {
+  color: #07160d;
+  border-color: rgba(166,225,179,.58);
+  background: linear-gradient(180deg, #b2e4b8, #71bd89);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.36), 0 4px 14px -9px rgba(75,168,108,.75);
+}
+.member-card-switcher__option:active { transform: scale(.985); }
+.member-card-switcher__option:focus-visible {
+  outline: 2px solid #9be0b5;
+  outline-offset: 3px;
+}
+
+/* Ten calm, tactile stamps: filled marks read as collected, not arcade tokens. */
+.club-pass__stamp {
+  border-color: rgba(212,175,55,.47);
+  background: radial-gradient(circle at 35% 28%, rgba(212,175,55,.075), rgba(5,9,7,.96) 74%);
+  color: rgba(240,217,149,.52);
+  box-shadow: inset 0 1px 4px rgba(0,0,0,.55);
+}
+.club-pass__stamp-number { color: rgba(231,223,196,.68); }
+.club-pass__stamp[data-filled="true"]:not([data-reward="true"]),
+.club-pass--kratom .club-pass__stamp[data-filled="true"]:not([data-reward="true"]) {
+  border-color: rgba(139,216,176,.62);
+  background: radial-gradient(circle at 36% 28%, rgba(89,163,117,.2), rgba(8,25,16,.96) 76%);
+  box-shadow: inset 0 1px 4px rgba(0,0,0,.48), 0 0 9px -7px rgba(139,216,176,.52);
+}
+.club-pass--cannabis { --club-neon: #8bd8a2; --club-gold: #d4af37; }
+.club-pass--cannabis .club-pass__stamp[data-filled="true"]:not([data-reward="true"]) {
+  border-color: rgba(139,216,176,.72);
+  background: radial-gradient(circle at 36% 28%, rgba(91,174,120,.22), rgba(8,26,16,.96) 76%);
+  box-shadow: inset 0 1px 4px rgba(0,0,0,.48), 0 0 10px -7px rgba(139,216,176,.56);
+}
+.club-pass__stamp[data-reward="true"] {
+  border-color: rgba(212,175,55,.7);
+  background: radial-gradient(circle at 36% 25%, rgba(212,175,55,.1), rgba(8,13,9,.97) 73%);
+  color: #f0d995;
+}
+.club-pass__stamp[data-reward="true"][data-ready="true"] {
+  box-shadow: inset 0 0 8px rgba(212,175,55,.08), 0 0 12px -8px rgba(212,175,55,.62);
+}
+.member-dashboard-status__chip {
+  border-color: rgba(139,216,176,.34);
+  background: rgba(47,125,78,.14);
+  color: #b7dec1;
+  font-size: 9px;
+}
+.member-dashboard-status__chip[data-ready="true"] {
+  border-color: rgba(212,175,55,.56);
+  background: rgba(212,175,55,.12);
+  color: #f0d995;
+}
+
+/* Crisp framed actions keep the supplied inline brand art legible at phone widths. */
+.member-dashboard-status .brand-button {
+  min-height: 46px;
+  border: 1px solid rgba(212,175,55,.45);
+  border-radius: 999px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 5px 16px -12px rgba(212,175,55,.55);
+}
+.member-dashboard-status--cannabis .brand-button {
+  border-color: rgba(139,216,176,.58);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 5px 16px -12px rgba(82,177,118,.62);
+}
+.member-dashboard-status .brand-button:disabled {
+  border-color: rgba(220,201,143,.2);
+  border-radius: 999px;
+  filter: saturate(.42);
+}
+.member-main .btn-redeem {
+  border: 1px solid rgba(240,217,149,.58);
+  border-radius: 999px;
+  color: #231b08;
+  background: linear-gradient(180deg, #f0d995, #c8a137);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.34), 0 7px 18px -13px rgba(212,175,55,.74);
+  transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+}
+.member-main .btn-redeem:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.045);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.36), 0 9px 20px -12px rgba(212,175,55,.82);
+}
+.member-main .btn-redeem:active:not(:disabled) { transform: scale(.985); }
+.member-main .btn-redeem:focus-visible { outline: 2px solid #b8e8c3; outline-offset: 3px; }
+.member-main .btn-redeem:disabled {
+  border-color: rgba(220,201,143,.22);
+  color: #9aa99b;
+  background: linear-gradient(180deg, rgba(31,54,39,.94), rgba(15,29,20,.98));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+/* Three equal destinations remain comfortable at 375px and above. */
+.member-mobile-dock { width: min(calc(100vw - 20px), 460px); }
+.member-bottom-nav__track {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  padding: 5px;
+  border-color: rgba(212,175,55,.31);
+  border-radius: 19px;
+  background: linear-gradient(145deg, rgba(19,25,19,.98), rgba(7,11,8,.98));
+}
+.member-bottom-nav__item {
+  min-height: 66px;
+  gap: 3px;
+  border-radius: 14px;
+  font-size: 10px;
+}
+.member-bottom-nav__icon-wrap {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+}
+.member-bottom-nav__item.is-active {
+  border-color: rgba(212,175,55,.34);
+  background: linear-gradient(150deg, rgba(212,175,55,.11), rgba(15,44,27,.25));
+  color: #f0d995;
+}
+.member-bottom-nav__item[data-kind="cannabis"].is-active {
+  border-color: rgba(139,216,176,.38);
+  background: linear-gradient(150deg, rgba(47,125,78,.2), rgba(12,35,22,.38));
+  color: #b9e2c4;
+}
+.member-bottom-nav__item.is-active::before {
+  background: linear-gradient(90deg, #d4af37, #69bd88);
+  box-shadow: 0 0 8px rgba(105,189,136,.3);
+}
+.member-bottom-nav__item.is-active .member-bottom-nav__icon-wrap {
+  transform: translateY(-1px);
+  border-color: rgba(212,175,55,.4);
+  background: linear-gradient(145deg, rgba(212,175,55,.16), rgba(21,59,37,.64));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.13), 0 4px 10px rgba(0,0,0,.24);
+}
+.member-bottom-nav__item[data-kind="cannabis"].is-active .member-bottom-nav__icon-wrap {
+  border-color: rgba(139,216,176,.44);
+  background: linear-gradient(145deg, rgba(47,125,78,.32), rgba(8,25,12,.92));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.13), 0 4px 10px rgba(0,0,0,.24);
+}
+.member-bottom-nav__item:active { transform: scale(.985); }
+.member-bottom-nav__item:focus-visible { outline-color: #9be0b5; outline-offset: 2px; }
+@media (max-width: 390px) {
+  .member-mobile-dock { width: calc(100vw - 20px); }
+  .member-bottom-nav__track { gap: 3px; padding: 5px; }
+  .member-bottom-nav__item { min-height: 64px; font-size: 9px; }
+  .member-bottom-nav__icon-wrap { width: 32px; height: 32px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .member-header .btn-ghost,
+  .member-card-switcher__option,
+  .member-bottom-nav__item,
+  .member-bottom-nav__icon-wrap,
+  .member-dashboard-status .brand-button {
+    transition: none;
+  }
+  .member-main .btn-redeem {
+    transition: none;
+  }
+  .member-header .btn-ghost:hover:not(:disabled),
+  .member-card-switcher__option:active,
+  .member-bottom-nav__item:active,
+  .member-bottom-nav__item.is-active .member-bottom-nav__icon-wrap {
+    transform: none;
+  }
+  .member-main .btn-redeem:hover:not(:disabled),
+  .member-main .btn-redeem:active:not(:disabled) {
+    transform: none;
+  }
+}
+
 /* Landing-only ambient system: quiet jade/gold light, fine mesh, botanical linework. */
 .jaguar-home--landing {
   position: relative;
