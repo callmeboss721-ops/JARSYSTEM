@@ -6,7 +6,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { api, type MemberCardData } from "./loyalty-api";
 import { BrandIcon } from "./brand-icon";
-import { BrandEmblem } from "./brand-emblem";
 import { SamutPrakanArt } from "./samut-prakan-art";
 import { LoginForm, RegisterForm } from "./auth-forms";
 
@@ -19,9 +18,11 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
       <main className="jaguar-home jaguar-home--landing customer-art-root min-h-[100dvh]">
         <SamutPrakanArt />
         <header className="landing-header landing-enter landing-enter--header">
-          <Link href="/" className="landing-brand" aria-label="JAGUAR KRATOM หน้าแรก">
-            <span className="landing-brand__logo"><BrandEmblem variant="card" /></span>
-            <span className="landing-brand__copy"><strong>JAGUAR</strong><small>KRATOM · BUN KHIRI SOI 6</small></span>
+          <Link href="/" className="landing-brand" aria-label="JAGUAR SPK หน้าแรก">
+            <span className="landing-brand__logo">
+              <Image src="/brand/jaguar-spk-wordmark.png" alt="JAGUAR SPK" width={669} height={373} priority sizes="(max-width: 760px) 96px, 110px" />
+            </span>
+            <span className="landing-brand__copy"><small>KRATOM</small><small>BUN KHIRI SOI 6</small></span>
           </Link>
           <nav className="landing-header__actions" aria-label="ทางเข้าพนักงาน">
             <Link href="/admin?desk=staff" data-testid="link-staff">พนักงาน</Link>
@@ -53,10 +54,10 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
               </div>
               <div className="landing-members-club__art">
                 <Image
-                  src="/brand/campaign/jaguar-samut-prakan-campaign.jpg"
-                  alt="ภาพโปรโมชัน Jaguar SPK มีมาสคอตเสือจากัวร์ ผู้หญิงในเสื้อสีเขียว และเครื่องดื่มของร้าน"
-                  width={1024}
-                  height={576}
+                  src="/brand/jaguar-spk-promo.png"
+                  alt="ภาพโปรโมชัน Jaguar SPK พี่เสือและทีมงาน พร้อมเวลาเปิด 24 ชั่วโมง ราคาเริ่มต้น 50 บาท และพิกัดบุญคีรี ซอย 6"
+                  width={500}
+                  height={500}
                   priority
                   sizes="(max-width: 760px) 78vw, 430px"
                 />
@@ -162,7 +163,15 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
             <BrandIcon name="lightning" size={24} tone="emerald" className="brand-showcase__icon brand-showcase__bolt" />
             <BrandIcon name="leaf" size={23} tone="emerald" className="brand-showcase__icon brand-showcase__kratom" />
             <BrandIcon name="cannabis" size={21} tone="emerald" className="brand-showcase__icon brand-showcase__cannabis" />
-            <BrandEmblem variant="hero" />
+            <Image
+              className="brand-showcase__campaign"
+              src="/brand/jaguar-spk-campaign-square.jpg"
+              alt="โปสเตอร์ JAGUAR SPK เปิด 24 ชั่วโมง ราคาเริ่มต้นขวดละ 50 บาท ที่บุญคีรี ซอย 6"
+              width={2048}
+              height={2048}
+              priority
+              sizes="(max-width: 760px) 62vw, 310px"
+            />
           </div>
           <p className="brand-slogan-inline lg:hidden" data-testid="brand-slogan-mobile">พี่เสือพลังใบ ซุปเปอร์ฮีโร่ของคนไทย</p>
           <p className="brand-promo-subtitle">Jaguar SPK · เปิด 24 ชม. · บุญคีรี ซอย 6</p>

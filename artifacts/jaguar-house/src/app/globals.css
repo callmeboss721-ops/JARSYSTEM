@@ -2608,6 +2608,78 @@ input.input, textarea.input, select.input { font-size: 16px; }
   .collecting-track__crown { transition: none; }
 }
 
+/* The new transparent SPK mark and campaign artwork replace the older welcome art. */
+.jaguar-home--landing .landing-brand__logo {
+  display: block;
+  flex: 0 0 clamp(82px, 24vw, 104px);
+  width: clamp(82px, 24vw, 104px);
+  height: auto;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.jaguar-home--landing .landing-brand__logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0,255,157,.18));
+}
+.jaguar-home--landing .landing-brand__copy {
+  display: grid;
+  gap: 3px;
+}
+.jaguar-home--landing .landing-brand__copy small {
+  color: #b9c6b7;
+  font: 7px/1.25 var(--font-mono);
+  letter-spacing: .075em;
+  white-space: nowrap;
+}
+.landing-members-club__art img { object-fit: contain; }
+.brand-showcase__campaign {
+  display: block;
+  width: clamp(200px, 62vw, 280px);
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: contain;
+  border: 1px solid rgba(229,192,74,.32);
+  border-radius: 18px 5px 18px 5px;
+  background: rgba(5,9,7,.75);
+  box-shadow: 0 18px 40px -24px rgba(0,0,0,.9),0 0 24px -17px rgba(0,255,157,.38);
+}
+.member-heading-top img {
+  width: clamp(82px, 20vw, 108px);
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  filter: drop-shadow(0 3px 8px rgba(0,255,157,.2));
+}
+@media (max-width: 760px) {
+  .login-reference-root .brand-showcase__campaign {
+    width: min(62vw, 205px);
+  }
+  .auth-register-root .brand-showcase__campaign {
+    width: min(56vw, 210px);
+  }
+}
+@media (max-width: 390px) {
+  .jaguar-home--landing .landing-brand__logo {
+    flex-basis: 82px;
+    width: 82px;
+  }
+  .jaguar-home--landing .landing-brand__copy small {
+    font-size: 6px;
+    letter-spacing: .045em;
+  }
+  .member-heading-top img { width: 78px; }
+}
+
 /* Jaguar SPK promotional hero: existing campaign art, framed as a members-club seal. */
 .landing-members-club {
   position: relative;

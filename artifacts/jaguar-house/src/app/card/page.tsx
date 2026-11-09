@@ -59,7 +59,7 @@ export default function CardPage() {
             <div><h1 className="font-display text-xl sm:text-2xl font-semibold mt-1">{card.data.display_name || "บัตรสมาชิกของฉัน"}</h1>
           <p className="mt-1 text-xs sm:text-sm text-[var(--muted)]">ระดับ {gradeFor(card.data.lifetime_earned)} · สมาชิก JAGUAR KRATOM</p>
             </div>
-            <img src="/brand/jaguar-logo.webp" alt="ตรา JAGUAR KRATOM" width={58} height={58} />
+            <img src="/brand/jaguar-spk-wordmark.png" alt="ตรา JAGUAR SPK" width={669} height={373} />
           </div>
           <p className="member-slogan">พี่เสือพลังใบ ซุปเปอร์ฮีโร่ของคนไทย</p>
         </header>
