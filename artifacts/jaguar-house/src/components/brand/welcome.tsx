@@ -46,16 +46,24 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
                 <span><strong>JAGUAR KRATOM</strong><small>บุญศิริ ซอย 6 · สมุทรปราการ</small></span>
               </div>
             </div>
-            <figure className="landing-campaign landing-campaign--hero">
-              <Image
-                src="/brand/campaign/jaguar-samut-prakan-campaign.jpg"
-                alt="โปสเตอร์ JAGUAR SPK พลังใบซุปเปอร์ฮีโร่ของคนไทย พร้อมมาสคอตเสือจากัวร์และสินค้า"
-                width={1024}
-                height={576}
-                priority
-                sizes="(max-width: 760px) 100vw, 62vw"
-              />
-              <figcaption><span>JAGUAR SPK</span><span>LOCAL CAMPAIGN · SAMUT PRAKAN</span></figcaption>
+            <figure className="landing-campaign landing-campaign--hero landing-members-club">
+              <div className="landing-members-club__topline">
+                <span>01 / MEMBERS CLUB</span>
+                <span>JAGUAR SPK</span>
+              </div>
+              <div className="landing-members-club__art">
+                <Image
+                  src="/brand/campaign/jaguar-samut-prakan-campaign.jpg"
+                  alt="ภาพโปรโมชัน Jaguar SPK มีมาสคอตเสือจากัวร์ ผู้หญิงในเสื้อสีเขียว และเครื่องดื่มของร้าน"
+                  width={1024}
+                  height={576}
+                  priority
+                  sizes="(max-width: 760px) 78vw, 430px"
+                />
+              </div>
+              <figcaption className="landing-members-club__footer">
+                <span>เปิด 24 ชั่วโมง · เริ่มต้นขวดละ 50.-</span>
+              </figcaption>
             </figure>
           </section>
 
@@ -157,6 +165,7 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
             <BrandEmblem variant="hero" />
           </div>
           <p className="brand-slogan-inline lg:hidden" data-testid="brand-slogan-mobile">พี่เสือพลังใบ ซุปเปอร์ฮีโร่ของคนไทย</p>
+          <p className="brand-promo-subtitle">Jaguar SPK · เปิด 24 ชม. · บุญคีรี ซอย 6</p>
           <div className="flex items-baseline justify-between gap-2 mb-2 lg:hidden">
             <p className="eyebrow !mb-0">Private Members</p>
             <p className="shrink-0 text-xs font-semibold text-[var(--gold-2)]">ครบ 10 · ฟรี 1 ขวด</p>
