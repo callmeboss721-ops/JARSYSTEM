@@ -8,14 +8,16 @@ import { BrandIcon, type BrandIconName } from "@/components/brand/brand-icon";
 import { EmptyState, ErrorState, LoadingSpinner, LoadingState } from "@/components/brand/ui";
 import { PinPad } from "@/components/brand/pin-pad";
 import { PublicPoster } from "@/components/brand/shop-tools";
+import { OwnerBanking } from "@/components/brand/banking";
 import { OWNER, api, clearScope, statusOf, isWholeBaht, cleanCode, codePattern, errorText, formulaLabels, json, type MemberCardData, type RedemptionData, type RewardData, type Summary } from "@/components/brand/loyalty-api";
 
-type View="reports"|"members"|"rewards"|"pending"|"security"|"poster";
+type View="reports"|"members"|"rewards"|"pending"|"banking"|"security"|"poster";
 const tabs:{id:View;label:string;icon:BrandIconName}[]=[
   {id:"reports",label:"ยอดขาย",icon:"dashboard"},
   {id:"members",label:"สมาชิก",icon:"members"},
   {id:"rewards",label:"รางวัล",icon:"rewards"},
   {id:"pending",label:"แลกรางวัล",icon:"redeem"},
+  {id:"banking",label:"บัญชี / โอน",icon:"banking"},
   {id:"security",label:"ความปลอดภัย",icon:"security"},
   {id:"poster",label:"ป้าย QR",icon:"qr"},
 ];
@@ -47,7 +49,7 @@ export default function OwnerPage(){
     :<div className="space-y-5"><header className="flex flex-wrap justify-between items-end gap-3"><div><p className="eyebrow">Owner control room</p><h1 className="font-display text-3xl sm:text-4xl font-semibold">ภาพรวมร้าน</h1></div><Link href="/staff" className="btn btn-ghost !min-h-11 !px-4 text-sm">พื้นที่พนักงาน</Link></header>
     {(security.data?.staff_default_pin||security.data?.owner_default_pin)&&<p role="status" className="rounded-xl border border-[var(--glass-line)] p-3 text-sm text-[var(--gold-2)]">ยังมี PIN เริ่มต้นที่ต้องเปลี่ยนในเมนูความปลอดภัย</p>}
     {message&&<p role="status" className="rounded-xl border border-[rgba(47,217,138,.35)] bg-[rgba(47,217,138,.08)] p-3 text-sm text-[var(--emerald-2)]">{message}</p>}
-    <nav className="owner-menu-tabs pill-switch grid grid-cols-2 min-[520px]:grid-cols-3 lg:grid-cols-6 p-1 gap-1 !rounded-[18px]" aria-label="เมนูเจ้าของร้าน">{tabs.map(t=><button key={t.id} type="button" className="owner-menu-tab tab !px-2 !rounded-[14px]" aria-pressed={view===t.id} data-testid={`owner-tab-${t.id}`} onClick={()=>setView(t.id)}><BrandIcon className="owner-menu-tab__image" name={t.icon} size={23} tone={view===t.id ? "gold" : "neutral"} /><span>{t.label}</span></button>)}</nav>
+    <nav className="owner-menu-tabs pill-switch grid grid-cols-2 min-[520px]:grid-cols-3 lg:grid-cols-7 p-1 gap-1 !rounded-[18px]" aria-label="เมนูเจ้าของร้าน">{tabs.map(t=><button key={t.id} type="button" className="owner-menu-tab tab !px-2 !rounded-[14px]" aria-pressed={view===t.id} data-testid={`owner-tab-${t.id}`} onClick={()=>setView(t.id)}><BrandIcon className="owner-menu-tab__image" name={t.icon} size={23} tone={view===t.id ? "gold" : "neutral"} /><span>{t.label}</span></button>)}</nav>
      {view==="reports"&&(summary.isLoading?<LoadingState label="กำลังโหลดภาพรวมร้าน" />:summary.isError?<ErrorState message={errorText(summary.error)} onRetry={()=>void summary.refetch()} retrying={summary.isFetching}/>:summary.data&&<div className="space-y-6">
        <section aria-label="ตัวเลขภาพรวม" className="grid grid-cols-2 lg:grid-cols-3 gap-3">{[["ยอดขายวันนี้",summary.data.today_sales,"บาท"],["จำนวนครั้งเข้าร้านวันนี้",summary.data.today_visits,"ครั้ง"],["แลกรางวัลวันนี้",summary.data.today_redemptions,"ครั้ง"],["ยอดขายรวม",summary.data.total_sales,"บาท"],["จำนวนครั้งเข้าร้านรวม",summary.data.total_visits,"ครั้ง"],["แลกรางวัลรวม",summary.data.redemptions,"ครั้ง"],["สมาชิกทั้งหมด",summary.data.members,"คน"]].map(([label,value,unit])=><div className="panel p-4 sm:p-5" key={String(label)}><p className="text-xs text-[var(--muted)]">{label}</p><p className="font-display text-2xl sm:text-3xl font-semibold mt-2 tabular-nums">{Number(value).toLocaleString("th-TH")} <span className="text-sm font-normal text-[var(--muted)]">{unit}</span></p></div>)}</section>
       <section className="panel p-4 sm:p-6"><p className="eyebrow">Sales mix</p><h2 className="font-display text-xl font-semibold mt-1 mb-4">ยอดขายแยกตามสูตร</h2>{!summary.data.by_formula.length?<EmptyState title="ยังไม่มีรายการยอดขาย"/>:<>
@@ -61,6 +63,7 @@ export default function OwnerPage(){
      {view==="pending"&&<section className="panel p-5 sm:p-6"><h2 className="font-display text-xl font-semibold mb-4">คำขอแลกรางวัล</h2>{pending.isLoading?<LoadingState label="กำลังโหลดคำขอ" compact />:pending.isError?<ErrorState message={errorText(pending.error)} onRetry={()=>void pending.refetch()} retrying={pending.isFetching}/>:!pending.data?.length?<EmptyState title="ไม่มีคำขอรอยืนยัน"/>:<ul className="grid md:grid-cols-2 gap-3 list-none p-0">{pending.data.map(r=><li key={r.id} className="rounded-xl border border-[var(--line-2)] p-4"><p className="font-semibold">{r.reward_name}</p><p className="text-sm text-[var(--muted)]">{r.member_code} · {r.points_spent} แต้ม · {new Date(r.created_at).toLocaleString("th-TH")}</p><button className="btn btn-gold w-full mt-3" disabled={busy} onClick={()=>void confirmReward(r.id)}>ยืนยันส่งมอบ</button></li>)}</ul>}</section>}
      {view==="security"&&(security.isLoading?<LoadingState label="กำลังโหลดสถานะ PIN" />:security.isError?<ErrorState message={errorText(security.error)} onRetry={()=>void security.refetch()} retrying={security.isFetching}/>:<section className="panel p-5 sm:p-6 max-w-xl"><p className="eyebrow">Separate access</p><h2 className="font-display text-xl font-semibold mb-2">PIN พนักงานและเจ้าของร้าน</h2><p className="text-sm text-[var(--muted)] mb-5">เปลี่ยนอย่างใดอย่างหนึ่งหรือทั้งสองอย่างได้ ระบบจะปิดห้องเจ้าของร้านหลังบันทึก</p><form onSubmit={changePins} className="space-y-4"><Field id="staff-new-pin" label={`PIN ใหม่สำหรับพนักงาน${security.data?.staff_default_pin?" · ยังเป็นค่าเริ่มต้น":""}`} value={staffPin} set={v=>setStaffPin(v.replace(/\D/g,""))} type="password"/><Field id="owner-new-pin" label={`PIN ใหม่สำหรับเจ้าของร้าน${security.data?.owner_default_pin?" · ยังเป็นค่าเริ่มต้น":""}`} value={ownerPin} set={v=>setOwnerPin(v.replace(/\D/g,""))} type="password"/><p className="text-xs text-[var(--muted)]">พนักงาน 4–12 หลัก · เจ้าของร้าน 6–12 หลัก · ค่า PIN จะไม่แสดงในหน้าจอหลังบันทึก</p><button className="btn btn-neon w-full" disabled={busy}>บันทึก PIN</button></form></section>)}
     {view==="poster"&&<PublicPoster/>}
+    {view==="banking"&&<OwnerBanking/>}
     </div>}
   </main></div>;
 }

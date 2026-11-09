@@ -13,11 +13,18 @@ import {
   ListPendingRedemptionsResponse, ConfirmRedemptionResponse, GetOwnerSummaryResponse,
   ListOwnerMembersResponse, ListOwnerRewardsResponse, CreateOwnerRewardResponse, UpdateOwnerRewardResponse,
   ListOwnerPendingResponse, ConfirmOwnerRedemptionResponse,
+  GetStaffBankingResponse, RecordStaffBankTransferBody, RecordStaffBankTransferResponse,
+  GetOwnerBankingResponse, CreateOwnerBankAccountBody, CreateOwnerBankAccountResponse,
+  UpdateOwnerBankAccountBody, UpdateOwnerBankAccountResponse, SelectOwnerBankAccountForTodayResponse,
 } from "@workspace/api-zod";
 import {
   loyaltyStore, listStaffRewards, createReward, setRewardActive, listStaffMembers,
   createMember, softDeleteMember, ownerReport, getMemberQr,
 } from "../lib/loyalty-store";
+import {
+  getStaffBanking, getOwnerBanking, createBankAccount, updateBankAccount,
+  selectBankAccountForToday, recordBankTransfer,
+} from "../lib/banking-store";
 import { LoyaltyError } from "../lib/loyalty-errors";
 import {
   clearSession, issueSession, loyaltyGuard, ownerSetPins, privateKey, rateLimit,
@@ -209,6 +216,13 @@ router.post("/staff/redemptions/:id/confirm", async (req, res) => {
   sendJson(res, ConfirmRedemptionResponse, await loyaltyStore("jaguar_confirm_redemption", { p_redemption: id }));
 });
 router.get("/staff/rewards", async (_req, res) => sendJson(res, ListStaffRewardsResponse, await listStaffRewards()));
+router.get("/staff/banking/today", async (_req, res) =>
+  sendJson(res, GetStaffBankingResponse, await getStaffBanking()));
+router.post("/staff/banking/transfers", async (req, res) => {
+  authLimit(req, "staff-bank-transfer", 90);
+  const data = parse(RecordStaffBankTransferBody, req.body);
+  sendJson(res, RecordStaffBankTransferResponse, await recordBankTransfer(data, "staff"), 201);
+});
 
 // Owner suite: separate cookie and access boundary, no staff-session escalation.
 router.post("/owner/login", async (req, res) => loginRole("owner", parse(LoginOwnerBody, req.body).pin, req, res));
@@ -230,6 +244,24 @@ router.post("/owner/pins", async (req, res) => {
   res.json({ ok: true, staff_default_pin: await usesDefaultPin("staff"), owner_default_pin: await usesDefaultPin("owner") });
 });
 router.get("/owner/summary", async (_req, res) => sendJson(res, GetOwnerSummaryResponse, await ownerReport()));
+router.get("/owner/banking", async (_req, res) =>
+  sendJson(res, GetOwnerBankingResponse, await getOwnerBanking()));
+router.post("/owner/banking/accounts", async (req, res) => {
+  authLimit(req, "owner-bank-account-create", 20);
+  const data = parse(CreateOwnerBankAccountBody, req.body);
+  sendJson(res, CreateOwnerBankAccountResponse, await createBankAccount(data), 201);
+});
+router.patch("/owner/banking/accounts/:id", async (req, res) => {
+  authLimit(req, "owner-bank-account-update", 30);
+  const { id } = parse(ConfirmRedemptionParams, req.params);
+  const data = parse(UpdateOwnerBankAccountBody, req.body);
+  sendJson(res, UpdateOwnerBankAccountResponse, await updateBankAccount(id, data));
+});
+router.post("/owner/banking/accounts/:id/select-today", async (req, res) => {
+  authLimit(req, "owner-bank-account-select", 20);
+  const { id } = parse(ConfirmRedemptionParams, req.params);
+  sendJson(res, SelectOwnerBankAccountForTodayResponse, await selectBankAccountForToday(id));
+});
 router.get("/owner/members", async (req, res) => {
   const { q = "" } = parse(ListOwnerMembersQueryParams, req.query);
   sendJson(res, ListOwnerMembersResponse, await listStaffMembers(q));

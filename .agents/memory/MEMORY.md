@@ -4,3 +4,4 @@
 - [Drizzle check diffs](drizzle-check-constraint-diffs.md) — A successful schema push may retain an old CHECK expression under an unchanged constraint name; verify the live definition.
 - [JAGUAR points policy](jaguar-points-policy.md) — Each complete set of three bottles on one bill earns a point; remaining bottles do not carry over.
 - [Design reference extraction fallback](design-reference-extraction.md) — if browser capture is blocked, use the installed component package and skip repeated browser installs.
+- [Banking operations](banking-operations.md) — owner configures today's account; staff records transfer in/out; limits are warnings, not blockers.

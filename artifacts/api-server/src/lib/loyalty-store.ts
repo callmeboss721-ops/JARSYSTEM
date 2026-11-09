@@ -63,6 +63,8 @@ export async function loyaltyStore<T>(operation: string, args: Args = {}): Promi
     switch (operation) {
       case "jaguar_health":
         await client.query("select id from jaguar_members limit 0");
+        await client.query("select id from jaguar_bank_accounts limit 0");
+        await client.query("select id from jaguar_bank_transfers limit 0");
         result = { status: "ok", storage: "postgresql" };
         break;
       case "jaguar_register": {

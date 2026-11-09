@@ -250,6 +250,118 @@ export interface OwnerSummary {
   by_formula: FormulaSales[];
 }
 
+export interface BankAccount {
+  id: string;
+  bank_name: string;
+  /** @pattern ^[0-9]{6,20}$ */
+  account_number: string;
+  account_holder: string;
+  /** @minimum 0 */
+  daily_limit: number;
+  is_active: boolean;
+  created_at: string;
+}
+
+export type BankTransferDirection = typeof BankTransferDirection[keyof typeof BankTransferDirection];
+
+
+export const BankTransferDirection = {
+  in: 'in',
+  out: 'out',
+} as const;
+
+export type BankTransferRecordedBy = typeof BankTransferRecordedBy[keyof typeof BankTransferRecordedBy];
+
+
+export const BankTransferRecordedBy = {
+  staff: 'staff',
+  owner: 'owner',
+} as const;
+
+export interface BankTransfer {
+  id: string;
+  direction: BankTransferDirection;
+  /** @exclusiveMinimum 0 */
+  amount: number;
+  note: string;
+  recorded_by: BankTransferRecordedBy;
+  created_at: string;
+}
+
+export interface BankToday {
+  business_date: string;
+  account: BankAccount | null;
+  /** @minimum 0 */
+  received_total: number;
+  /** @minimum 0 */
+  sent_total: number;
+  daily_limit: number | null;
+  remaining_limit: number | null;
+  over_limit: boolean;
+  /** @maxItems 50 */
+  transfers: BankTransfer[];
+}
+
+export interface StaffBanking {
+  today: BankToday;
+}
+
+export interface OwnerBanking {
+  /** @maxItems 100 */
+  accounts: BankAccount[];
+  today: BankToday;
+}
+
+export interface BankAccountInput {
+  /**
+     * @minLength 1
+     * @maxLength 80
+     */
+  bank_name: string;
+  /**
+     * @minLength 6
+     * @maxLength 24
+     * @pattern ^[0-9 -]+$
+     */
+  account_number: string;
+  /**
+     * @minLength 1
+     * @maxLength 100
+     */
+  account_holder: string;
+  /**
+     * @minLength 1
+     * @maxLength 12
+     * @pattern ^[0-9]+(\.[0-9]{1,2})?$
+     */
+  daily_limit: string;
+}
+
+export type BankAccountUpdateInput = BankAccountInput & {
+  is_active: boolean;
+};
+
+export type BankTransferInputDirection = typeof BankTransferInputDirection[keyof typeof BankTransferInputDirection];
+
+
+export const BankTransferInputDirection = {
+  in: 'in',
+  out: 'out',
+} as const;
+
+export interface BankTransferInput {
+  direction: BankTransferInputDirection;
+  /**
+     * @minLength 1
+     * @maxLength 12
+     * @pattern ^[0-9]+(\.[0-9]{1,2})?$
+     */
+  amount: string;
+  /** @maxLength 160 */
+  note?: string;
+  request_id: string;
+}
+
 export type FindMemberParams = {
 /**
  * @pattern ^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$

@@ -322,6 +322,29 @@ paths:
               schema:
                 type: array
                 items: { $ref: "#/components/schemas/Reward" }
+  /loyalty/staff/banking/today:
+    get:
+      operationId: getStaffBanking
+      responses:
+        "200":
+          description: Today's receiving account, daily limit and transfer ledger
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/StaffBanking" }
+  /loyalty/staff/banking/transfers:
+    post:
+      operationId: recordStaffBankTransfer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/BankTransferInput" }
+      responses:
+        "201":
+          description: Transfer entry recorded idempotently in the active Bangkok-day account ledger
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/StaffBanking" }
   /loyalty/staff/redemptions:
     get:
       operationId: listPendingRedemptions
@@ -402,6 +425,62 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/OwnerSummary" }
+  /loyalty/owner/banking:
+    get:
+      operationId: getOwnerBanking
+      responses:
+        "200":
+          description: Saved bank accounts and today's transfer ledger
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OwnerBanking" }
+  /loyalty/owner/banking/accounts:
+    post:
+      operationId: createOwnerBankAccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/BankAccountInput" }
+      responses:
+        "201":
+          description: Receiving account saved
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/BankAccount" }
+  /loyalty/owner/banking/accounts/{id}:
+    patch:
+      operationId: updateOwnerBankAccount
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/BankAccountUpdateInput" }
+      responses:
+        "200":
+          description: Bank account details updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/BankAccount" }
+  /loyalty/owner/banking/accounts/{id}/select-today:
+    post:
+      operationId: selectOwnerBankAccountForToday
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Receiving account selected for the current Bangkok business day
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OwnerBanking" }
   /loyalty/owner/members:
     get:
       operationId: listOwnerMembers
@@ -736,3 +815,76 @@ components:
         by_formula:
           type: array
           items: { $ref: "#/components/schemas/FormulaSales" }
+    BankAccount:
+      type: object
+      required: [id, bank_name, account_number, account_holder, daily_limit, is_active, created_at]
+      properties:
+        id: { type: string, format: uuid }
+        bank_name: { type: string }
+        account_number: { type: string, pattern: "^[0-9]{6,20}$" }
+        account_holder: { type: string }
+        daily_limit: { type: number, minimum: 0 }
+        is_active: { type: boolean }
+        created_at: { type: string, format: date-time }
+    BankTransfer:
+      type: object
+      required: [id, direction, amount, note, recorded_by, created_at]
+      properties:
+        id: { type: string, format: uuid }
+        direction: { type: string, enum: [in, out] }
+        amount: { type: number, exclusiveMinimum: 0 }
+        note: { type: string }
+        recorded_by: { type: string, enum: [staff, owner] }
+        created_at: { type: string, format: date-time }
+    BankToday:
+      type: object
+      required: [business_date, account, received_total, sent_total, daily_limit, remaining_limit, over_limit, transfers]
+      properties:
+        business_date: { type: string }
+        account: { anyOf: [{ $ref: "#/components/schemas/BankAccount" }, { type: "null" }] }
+        received_total: { type: number, minimum: 0 }
+        sent_total: { type: number, minimum: 0 }
+        daily_limit: { anyOf: [{ type: number, minimum: 0 }, { type: "null" }] }
+        remaining_limit: { anyOf: [{ type: number }, { type: "null" }] }
+        over_limit: { type: boolean }
+        transfers:
+          type: array
+          maxItems: 50
+          items: { $ref: "#/components/schemas/BankTransfer" }
+    StaffBanking:
+      type: object
+      required: [today]
+      properties:
+        today: { $ref: "#/components/schemas/BankToday" }
+    OwnerBanking:
+      type: object
+      required: [accounts, today]
+      properties:
+        accounts:
+          type: array
+          maxItems: 100
+          items: { $ref: "#/components/schemas/BankAccount" }
+        today: { $ref: "#/components/schemas/BankToday" }
+    BankAccountInput:
+      type: object
+      required: [bank_name, account_number, account_holder, daily_limit]
+      properties:
+        bank_name: { type: string, minLength: 1, maxLength: 80 }
+        account_number: { type: string, minLength: 6, maxLength: 24, pattern: "^[0-9 -]+$" }
+        account_holder: { type: string, minLength: 1, maxLength: 100 }
+        daily_limit: { type: string, minLength: 1, maxLength: 12, pattern: "^[0-9]+(\\.[0-9]{1,2})?$" }
+    BankAccountUpdateInput:
+      allOf:
+        - $ref: "#/components/schemas/BankAccountInput"
+        - type: object
+          required: [is_active]
+          properties:
+            is_active: { type: boolean }
+    BankTransferInput:
+      type: object
+      required: [direction, amount, request_id]
+      properties:
+        direction: { type: string, enum: [in, out] }
+        amount: { type: string, minLength: 1, maxLength: 12, pattern: "^[0-9]+(\\.[0-9]{1,2})?$" }
+        note: { type: string, maxLength: 160 }
+        request_id: { type: string, format: uuid }

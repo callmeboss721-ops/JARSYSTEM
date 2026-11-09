@@ -499,6 +499,88 @@ body {
   .print-poster .text-\[var\(--silver\)\] { color: #45463f !important; }
 }
 
+/* Banking workflow — fast-scanning ledger and high-contrast counter actions. */
+.bank-layout, .bank-owner-layout { display: grid; grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr); gap: 16px; align-items: start; }
+.bank-owner-layout { grid-template-columns: minmax(0, 1.18fr) minmax(300px, .82fr); }
+.bank-account-card { overflow: hidden; }
+.bank-account-details {
+  padding: 16px;
+  border: 1px solid rgba(217,189,115,.27);
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(217,189,115,.095), rgba(47,217,138,.035) 72%);
+}
+.bank-building {
+  flex: 0 0 auto; width: 42px; height: 42px; display: grid; place-items: center;
+  border: 1px solid rgba(217,189,115,.3); border-radius: 13px;
+  color: var(--gold-2); background: rgba(217,189,115,.08);
+}
+.bank-account-number { font: 600 clamp(19px, 4vw, 25px)/1.4 var(--font-mono); letter-spacing: .055em; color: #f2e8c7; overflow-wrap: anywhere; }
+.bank-transfer-form { display: grid; gap: 15px; }
+.field-label { display: block; margin-bottom: 8px; font-size: 13.5px; font-weight: 500; color: var(--silver); }
+.bank-direction-select { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.bank-direction-select button {
+  min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 8px;
+  border: 1px solid rgba(255,255,255,.16); border-radius: 13px; color: var(--silver);
+  background: rgba(255,255,255,.035); font: 600 14px var(--font-display); cursor: pointer;
+}
+.bank-direction-select button[aria-pressed="true"] { border-color: rgba(217,189,115,.55); color: var(--gold-2); background: rgba(217,189,115,.1); }
+.bank-limit-help, .bank-lock-note, .bank-immutable { display: flex; align-items: flex-start; gap: 8px; color: #bac5b8; font-size: 12px; line-height: 1.65; }
+.bank-lock-note { color: var(--gold-2); }
+.bank-feedback { padding: 11px 13px; border: 1px solid; border-radius: 12px; font-size: 13px; }
+.bank-feedback.is-success { color: #9fdfba; border-color: rgba(87,190,127,.38); background: rgba(39,112,66,.15); }
+.bank-feedback.is-error { color: var(--danger); border-color: rgba(255,122,107,.4); background: rgba(134,48,42,.13); }
+.bank-ledger-count, .bank-chip { display: inline-flex; align-items: center; min-height: 25px; padding: 2px 9px; border: 1px solid rgba(217,189,115,.34); border-radius: 99px; color: var(--gold-2); background: rgba(217,189,115,.07); font: 10px var(--font-mono); white-space: nowrap; }
+.bank-summary-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; }
+.bank-summary-grid > div { min-width: 0; display: grid; gap: 4px; padding: 12px; border: 1px solid rgba(255,255,255,.1); border-radius: 13px; background: rgba(255,255,255,.025); }
+.bank-summary-grid span { color: var(--muted); font-size: 11px; line-height: 1.4; }
+.bank-summary-grid strong { color: #e9e6d7; font: 600 clamp(14px, 2.4vw, 19px)/1.35 var(--font-mono); overflow-wrap: anywhere; }
+.bank-summary-grid .is-over strong, .bank-summary-grid .is-over span { color: #ffb0a3; }
+.bank-limit { padding: 12px; border-radius: 12px; background: rgba(255,255,255,.03); color: #d0d3c4; }
+.bank-limit.is-over { border: 1px solid rgba(255,122,107,.32); color: #ffb0a3; }
+.bank-limit-track { height: 6px; overflow: hidden; border-radius: 99px; background: rgba(255,255,255,.12); }
+.bank-limit-track span { display: block; height: 100%; width: 100%; transform-origin: left center; border-radius: inherit; background: linear-gradient(90deg, #62c996, #d8bd73); }
+.bank-limit.is-over .bank-limit-track span { background: #e67e6d; }
+.bank-over-note { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.bank-transfers { margin-bottom: 0; padding: 0; list-style: none; }
+.bank-transfers li { display: flex; align-items: center; gap: 11px; padding: 13px 0; border-bottom: 1px solid rgba(255,255,255,.085); }
+.bank-transfers li:last-child { border-bottom: 0; }
+.bank-direction { flex: 0 0 auto; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 11px; }
+.bank-direction.is-in { color: #8fdab0; background: rgba(47,217,138,.1); }
+.bank-direction.is-out { color: #e5c887; background: rgba(217,189,115,.1); }
+.bank-transfer-amount { flex: 0 0 auto; font: 600 14px var(--font-mono); white-space: nowrap; }
+.bank-transfer-amount.is-in { color: #9fdfba; }
+.bank-transfer-amount.is-out { color: #e8d19c; }
+.bank-immutable { color: var(--muted); }
+.bank-account-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.bank-account-row { padding: 15px; border: 1px solid rgba(255,255,255,.11); border-radius: 15px; background: rgba(255,255,255,.025); }
+.bank-account-row.is-today { border-color: rgba(217,189,115,.45); background: linear-gradient(120deg, rgba(217,189,115,.07), rgba(255,255,255,.02)); }
+.bank-account-row h3 { margin: 0; font: 600 16px/1.4 var(--font-display); }
+.bank-account-row p { margin: 3px 0 0; color: var(--muted); font-size: 12px; }
+.bank-account-row .bank-number { margin-top: 8px; color: #e9e4d4; font: 14px var(--font-mono); overflow-wrap: anywhere; }
+.bank-account-row .bank-limit-label { color: #d7c792; }
+.bank-chip.is-muted { color: var(--muted); border-color: rgba(255,255,255,.16); background: rgba(255,255,255,.03); }
+.bank-account-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+.bank-account-actions .btn { min-height: 43px; padding-inline: 10px; font-size: 13px; }
+.bank-selected-button { border: 1px solid rgba(103,197,140,.35); border-radius: 999px; color: #a7ddb6; background: rgba(47,217,138,.08); font-weight: 600; }
+.bank-checkbox { display: flex; align-items: center; gap: 9px; min-height: 44px; color: #d8d9cc; font-size: 13px; }
+.bank-checkbox input { width: 19px; height: 19px; accent-color: #56bd82; }
+.owner-menu-tab { min-height: 60px; }
+.staff-workspace nav[aria-label="พื้นที่พนักงาน"] .tab[aria-pressed="true"] { background: linear-gradient(145deg, rgba(217,189,115,.12), rgba(255,255,255,.025)); border-color: rgba(217,189,115,.32); color: var(--gold-2); }
+
+@media (max-width: 767px) {
+  .bank-layout, .bank-owner-layout { grid-template-columns: minmax(0,1fr); }
+  .bank-summary-grid { gap: 6px; }
+  .bank-summary-grid > div { padding: 10px 8px; }
+  .bank-summary-grid span { font-size: 10px; }
+  .bank-account-actions .btn { font-size: 12px; }
+}
+@media (max-width: 390px) {
+  .bank-summary-grid { grid-template-columns: 1fr 1fr; }
+  .bank-summary-grid > div:last-child { grid-column: 1 / -1; }
+  .bank-transfers li { gap: 8px; }
+  .bank-transfer-amount { font-size: 12px; }
+}
+
 /* Homepage — a local editorial frame for the original campaign artwork. */
 .jaguar-home--landing {
   --landing-ink: #090d0b;

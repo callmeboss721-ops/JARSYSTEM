@@ -4,14 +4,16 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { JaguarMark } from "@/components/brand/jaguar-mark";
+import { BrandIcon, type BrandIconName } from "@/components/brand/brand-icon";
 import { EmptyState, ErrorState, LoadingSpinner, LoadingState } from "@/components/brand/ui";
 import { PinPad } from "@/components/brand/pin-pad";
+import { StaffBanking } from "@/components/brand/banking";
 import { STAMPS } from "@/components/brand/loyalty-card";
 import { STAFF, api, bundlePrice, cleanCode, clearScope, codePattern, errorText, formulaLabels, isBottleCount, json, statusOf, type Formula, type MemberCardData, type RedemptionData } from "@/components/brand/loyalty-api";
 import { getGetCannabisMemberCardQueryKey, getGetStaffCannabisCardQueryKey, useGetStaffCannabisCard, useAddCannabisStamps, useRedeemCannabisAtCounter } from "@workspace/api-client-react";
 
-type Tab = "counter" | "members" | "open" | "settings";
-const TABS: [Tab, string][] = [["counter", "ขาย / แลก"], ["members", "สมาชิก"], ["open", "เปิดบัญชี"], ["settings", "ตั้งค่า PIN"]];
+type Tab = "counter" | "members" | "open" | "banking" | "settings";
+const TABS: [Tab, string, BrandIconName][] = [["counter", "ขาย / แลก", "lightning"], ["members", "สมาชิก", "members"], ["open", "เปิดบัญชี", "add"], ["banking", "บัญชี / โอน", "banking"], ["settings", "ตั้งค่า PIN", "security"]];
 const formulaShort: Record<Formula, string> = { red: "แดง · Original", silver: "ฟ้า · Refresh", gold: "ทอง · Premium" };
 
 export default function StaffPage() {
@@ -226,8 +228,8 @@ export default function StaffPage() {
         <div className="flex flex-wrap justify-between items-end gap-3"><div><p className="eyebrow">Counter operations</p><h1 className="font-display text-3xl font-semibold">เคาน์เตอร์ร้าน</h1></div>{security.data?.default_pin && <p className="text-xs text-[var(--gold-2)]">กำลังใช้ PIN เริ่มต้น · เปลี่ยนได้ในตั้งค่า PIN</p>}</div>
         {msg && <p role="status" className="rounded-xl border border-[rgba(47,217,138,.35)] bg-[rgba(47,217,138,.08)] p-3 text-sm text-[var(--emerald-2)]">{msg}</p>}
         {err && <p role="alert" className="field-error">{err}</p>}
-        <nav className="pill-switch grid grid-cols-2 min-[480px]:grid-cols-4 p-1 gap-1 !rounded-[22px]" aria-label="พื้นที่พนักงาน">
-          {TABS.map(([id, label]) => <button key={id} type="button" className="tab !px-2 !rounded-[18px]" aria-pressed={tab === id} onClick={() => { setTab(id); setErr(""); }}>{label}</button>)}
+        <nav className="pill-switch grid grid-cols-2 min-[480px]:grid-cols-3 lg:grid-cols-5 p-1 gap-1 !rounded-[22px]" aria-label="พื้นที่พนักงาน">
+          {TABS.map(([id, label, icon]) => <button key={id} type="button" className="tab !px-2 !rounded-[18px] flex items-center justify-center gap-2" aria-pressed={tab === id} onClick={() => { setTab(id); setErr(""); }}><BrandIcon name={icon} size={18} tone={tab === id ? "gold" : "neutral"} />{label}</button>)}
         </nav>
 
         {tab === "counter" && <div className="space-y-4">
@@ -347,6 +349,7 @@ export default function StaffPage() {
             <PinPad value={newPin} onChange={setNewPin} label="แป้นตัวเลขสำหรับ PIN ใหม่" />
             <button className="btn btn-neon w-full" disabled={busy}>บันทึก PIN</button>
           </form></section>}
+        {tab === "banking" && <StaffBanking />}
       </div>}
     </main>
   </div>;

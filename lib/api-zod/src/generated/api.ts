@@ -453,6 +453,109 @@ export const ListStaffRewardsResponseItem = zod.object({
 export const ListStaffRewardsResponse = zod.array(ListStaffRewardsResponseItem)
 
 
+export const getStaffBankingResponseTodayAccountOneAccountNumberRegExp = new RegExp('^[0-9]{6,20}$');
+export const getStaffBankingResponseTodayAccountOneDailyLimitMin = 0;
+
+export const getStaffBankingResponseTodayReceivedTotalMin = 0;
+
+export const getStaffBankingResponseTodaySentTotalMin = 0;
+
+export const getStaffBankingResponseTodayDailyLimitOneMin = 0;
+
+export const getStaffBankingResponseTodayTransfersItemAmountExclusiveMin = 0;
+
+export const getStaffBankingResponseTodayTransfersMax = 50;
+
+
+
+export const GetStaffBankingResponse = zod.object({
+  "today": zod.object({
+  "business_date": zod.string(),
+  "account": zod.union([zod.object({
+  "id": zod.uuid(),
+  "bank_name": zod.string(),
+  "account_number": zod.string().regex(getStaffBankingResponseTodayAccountOneAccountNumberRegExp),
+  "account_holder": zod.string(),
+  "daily_limit": zod.number().min(getStaffBankingResponseTodayAccountOneDailyLimitMin),
+  "is_active": zod.boolean(),
+  "created_at": zod.coerce.date()
+}),zod.null()]),
+  "received_total": zod.number().min(getStaffBankingResponseTodayReceivedTotalMin),
+  "sent_total": zod.number().min(getStaffBankingResponseTodaySentTotalMin),
+  "daily_limit": zod.union([zod.number().min(getStaffBankingResponseTodayDailyLimitOneMin),zod.null()]),
+  "remaining_limit": zod.union([zod.number(),zod.null()]),
+  "over_limit": zod.boolean(),
+  "transfers": zod.array(zod.object({
+  "id": zod.uuid(),
+  "direction": zod.enum(['in', 'out']),
+  "amount": zod.number().gt(getStaffBankingResponseTodayTransfersItemAmountExclusiveMin),
+  "note": zod.string(),
+  "recorded_by": zod.enum(['staff', 'owner']),
+  "created_at": zod.coerce.date()
+})).max(getStaffBankingResponseTodayTransfersMax)
+})
+})
+
+
+export const recordStaffBankTransferBodyAmountMax = 12;
+
+
+export const recordStaffBankTransferBodyAmountRegExp = new RegExp('^[0-9]+(\\.[0-9]{1,2})?$');
+export const recordStaffBankTransferBodyNoteMax = 160;
+
+
+
+export const RecordStaffBankTransferBody = zod.object({
+  "direction": zod.enum(['in', 'out']),
+  "amount": zod.string().min(1).max(recordStaffBankTransferBodyAmountMax).regex(recordStaffBankTransferBodyAmountRegExp),
+  "note": zod.string().max(recordStaffBankTransferBodyNoteMax).optional(),
+  "request_id": zod.uuid()
+})
+
+export const recordStaffBankTransferResponseTodayAccountOneAccountNumberRegExp = new RegExp('^[0-9]{6,20}$');
+export const recordStaffBankTransferResponseTodayAccountOneDailyLimitMin = 0;
+
+export const recordStaffBankTransferResponseTodayReceivedTotalMin = 0;
+
+export const recordStaffBankTransferResponseTodaySentTotalMin = 0;
+
+export const recordStaffBankTransferResponseTodayDailyLimitOneMin = 0;
+
+export const recordStaffBankTransferResponseTodayTransfersItemAmountExclusiveMin = 0;
+
+export const recordStaffBankTransferResponseTodayTransfersMax = 50;
+
+
+
+export const RecordStaffBankTransferResponse = zod.object({
+  "today": zod.object({
+  "business_date": zod.string(),
+  "account": zod.union([zod.object({
+  "id": zod.uuid(),
+  "bank_name": zod.string(),
+  "account_number": zod.string().regex(recordStaffBankTransferResponseTodayAccountOneAccountNumberRegExp),
+  "account_holder": zod.string(),
+  "daily_limit": zod.number().min(recordStaffBankTransferResponseTodayAccountOneDailyLimitMin),
+  "is_active": zod.boolean(),
+  "created_at": zod.coerce.date()
+}),zod.null()]),
+  "received_total": zod.number().min(recordStaffBankTransferResponseTodayReceivedTotalMin),
+  "sent_total": zod.number().min(recordStaffBankTransferResponseTodaySentTotalMin),
+  "daily_limit": zod.union([zod.number().min(recordStaffBankTransferResponseTodayDailyLimitOneMin),zod.null()]),
+  "remaining_limit": zod.union([zod.number(),zod.null()]),
+  "over_limit": zod.boolean(),
+  "transfers": zod.array(zod.object({
+  "id": zod.uuid(),
+  "direction": zod.enum(['in', 'out']),
+  "amount": zod.number().gt(recordStaffBankTransferResponseTodayTransfersItemAmountExclusiveMin),
+  "note": zod.string(),
+  "recorded_by": zod.enum(['staff', 'owner']),
+  "created_at": zod.coerce.date()
+})).max(recordStaffBankTransferResponseTodayTransfersMax)
+})
+})
+
+
 export const ListPendingRedemptionsResponseItem = zod.object({
   "id": zod.string(),
   "member_id": zod.string(),
@@ -538,6 +641,208 @@ export const GetOwnerSummaryResponse = zod.object({
   "amount_baht": zod.number(),
   "today_amount_baht": zod.number()
 }))
+})
+
+
+export const getOwnerBankingResponseAccountsItemAccountNumberRegExp = new RegExp('^[0-9]{6,20}$');
+export const getOwnerBankingResponseAccountsItemDailyLimitMin = 0;
+
+export const getOwnerBankingResponseAccountsMax = 100;
+
+export const getOwnerBankingResponseTodayAccountOneAccountNumberRegExp = new RegExp('^[0-9]{6,20}$');
+export const getOwnerBankingResponseTodayAccountOneDailyLimitMin = 0;
+
+export const getOwnerBankingResponseTodayReceivedTotalMin = 0;
+
+export const getOwnerBankingResponseTodaySentTotalMin = 0;
+
+export const getOwnerBankingResponseTodayDailyLimitOneMin = 0;
+
+export const getOwnerBankingResponseTodayTransfersItemAmountExclusiveMin = 0;
+
+export const getOwnerBankingResponseTodayTransfersMax = 50;
+
+
+
+export const GetOwnerBankingResponse = zod.object({
+  "accounts": zod.array(zod.object({
+  "id": zod.uuid(),
+  "bank_name": zod.string(),
+  "account_number": zod.string().regex(getOwnerBankingResponseAccountsItemAccountNumberRegExp),
+  "account_holder": zod.string(),
+  "daily_limit": zod.number().min(getOwnerBankingResponseAccountsItemDailyLimitMin),
+  "is_active": zod.boolean(),
+  "created_at": zod.coerce.date()
+})).max(getOwnerBankingResponseAccountsMax),
+  "today": zod.object({
+  "business_date": zod.string(),
+  "account": zod.union([zod.object({
+  "id": zod.uuid(),
+  "bank_name": zod.string(),
+  "account_number": zod.string().regex(getOwnerBankingResponseTodayAccountOneAccountNumberRegExp),
+  "account_holder": zod.string(),
+  "daily_limit": zod.number().min(getOwnerBankingResponseTodayAccountOneDailyLimitMin),
+  "is_active": zod.boolean(),
+  "created_at": zod.coerce.date()
+}),zod.null()]),
+  "received_total": zod.number().min(getOwnerBankingResponseTodayReceivedTotalMin),
+  "sent_total": zod.number().min(getOwnerBankingResponseTodaySentTotalMin),
+  "daily_limit": zod.union([zod.number().min(getOwnerBankingResponseTodayDailyLimitOneMin),zod.null()]),
+  "remaining_limit": zod.union([zod.number(),zod.null()]),
+  "over_limit": zod.boolean(),
+  "transfers": zod.array(zod.object({
+  "id": zod.uuid(),
+  "direction": zod.enum(['in', 'out']),
+  "amount": zod.number().gt(getOwnerBankingResponseTodayTransfersItemAmountExclusiveMin),
+  "note": zod.string(),
+  "recorded_by": zod.enum(['staff', 'owner']),
+  "created_at": zod.coerce.date()
+})).max(getOwnerBankingResponseTodayTransfersMax)
+})
+})
+
+
+export const createOwnerBankAccountBodyBankNameMax = 80;
+
+export const createOwnerBankAccountBodyAccountNumberMin = 6;
+export const createOwnerBankAccountBodyAccountNumberMax = 24;
+
+
+export const createOwnerBankAccountBodyAccountNumberRegExp = new RegExp('^[0-9 -]+$');
+export const createOwnerBankAccountBodyAccountHolderMax = 100;
+
+export const createOwnerBankAccountBodyDailyLimitMax = 12;
+
+
+export const createOwnerBankAccountBodyDailyLimitRegExp = new RegExp('^[0-9]+(\\.[0-9]{1,2})?$');
+
+
+export const CreateOwnerBankAccountBody = zod.object({
+  "bank_name": zod.string().min(1).max(createOwnerBankAccountBodyBankNameMax),
+  "account_number": zod.string().min(createOwnerBankAccountBodyAccountNumberMin).max(createOwnerBankAccountBodyAccountNumberMax).regex(createOwnerBankAccountBodyAccountNumberRegExp),
+  "account_holder": zod.string().min(1).max(createOwnerBankAccountBodyAccountHolderMax),
+  "daily_limit": zod.string().min(1).max(createOwnerBankAccountBodyDailyLimitMax).regex(createOwnerBankAccountBodyDailyLimitRegExp)
+})
+
+export const createOwnerBankAccountResponseAccountNumberRegExp = new RegExp('^[0-9]{6,20}$');
+export const createOwnerBankAccountResponseDailyLimitMin = 0;
+
+
+
+export const CreateOwnerBankAccountResponse = zod.object({
+  "id": zod.uuid(),
+  "bank_name": zod.string(),
+  "account_number": zod.string().regex(createOwnerBankAccountResponseAccountNumberRegExp),
+  "account_holder": zod.string(),
+  "daily_limit": zod.number().min(createOwnerBankAccountResponseDailyLimitMin),
+  "is_active": zod.boolean(),
+  "created_at": zod.coerce.date()
+})
+
+
+export const UpdateOwnerBankAccountParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const updateOwnerBankAccountBodyOneBankNameMax = 80;
+
+export const updateOwnerBankAccountBodyOneAccountNumberMin = 6;
+export const updateOwnerBankAccountBodyOneAccountNumberMax = 24;
+
+
+export const updateOwnerBankAccountBodyOneAccountNumberRegExp = new RegExp('^[0-9 -]+$');
+export const updateOwnerBankAccountBodyOneAccountHolderMax = 100;
+
+export const updateOwnerBankAccountBodyOneDailyLimitMax = 12;
+
+
+export const updateOwnerBankAccountBodyOneDailyLimitRegExp = new RegExp('^[0-9]+(\\.[0-9]{1,2})?$');
+
+
+export const UpdateOwnerBankAccountBody = zod.object({
+  "bank_name": zod.string().min(1).max(updateOwnerBankAccountBodyOneBankNameMax),
+  "account_number": zod.string().min(updateOwnerBankAccountBodyOneAccountNumberMin).max(updateOwnerBankAccountBodyOneAccountNumberMax).regex(updateOwnerBankAccountBodyOneAccountNumberRegExp),
+  "account_holder": zod.string().min(1).max(updateOwnerBankAccountBodyOneAccountHolderMax),
+  "daily_limit": zod.string().min(1).max(updateOwnerBankAccountBodyOneDailyLimitMax).regex(updateOwnerBankAccountBodyOneDailyLimitRegExp)
+}).and(zod.object({
+  "is_active": zod.boolean()
+}))
+
+export const updateOwnerBankAccountResponseAccountNumberRegExp = new RegExp('^[0-9]{6,20}$');
+export const updateOwnerBankAccountResponseDailyLimitMin = 0;
+
+
+
+export const UpdateOwnerBankAccountResponse = zod.object({
+  "id": zod.uuid(),
+  "bank_name": zod.string(),
+  "account_number": zod.string().regex(updateOwnerBankAccountResponseAccountNumberRegExp),
+  "account_holder": zod.string(),
+  "daily_limit": zod.number().min(updateOwnerBankAccountResponseDailyLimitMin),
+  "is_active": zod.boolean(),
+  "created_at": zod.coerce.date()
+})
+
+
+export const SelectOwnerBankAccountForTodayParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const selectOwnerBankAccountForTodayResponseAccountsItemAccountNumberRegExp = new RegExp('^[0-9]{6,20}$');
+export const selectOwnerBankAccountForTodayResponseAccountsItemDailyLimitMin = 0;
+
+export const selectOwnerBankAccountForTodayResponseAccountsMax = 100;
+
+export const selectOwnerBankAccountForTodayResponseTodayAccountOneAccountNumberRegExp = new RegExp('^[0-9]{6,20}$');
+export const selectOwnerBankAccountForTodayResponseTodayAccountOneDailyLimitMin = 0;
+
+export const selectOwnerBankAccountForTodayResponseTodayReceivedTotalMin = 0;
+
+export const selectOwnerBankAccountForTodayResponseTodaySentTotalMin = 0;
+
+export const selectOwnerBankAccountForTodayResponseTodayDailyLimitOneMin = 0;
+
+export const selectOwnerBankAccountForTodayResponseTodayTransfersItemAmountExclusiveMin = 0;
+
+export const selectOwnerBankAccountForTodayResponseTodayTransfersMax = 50;
+
+
+
+export const SelectOwnerBankAccountForTodayResponse = zod.object({
+  "accounts": zod.array(zod.object({
+  "id": zod.uuid(),
+  "bank_name": zod.string(),
+  "account_number": zod.string().regex(selectOwnerBankAccountForTodayResponseAccountsItemAccountNumberRegExp),
+  "account_holder": zod.string(),
+  "daily_limit": zod.number().min(selectOwnerBankAccountForTodayResponseAccountsItemDailyLimitMin),
+  "is_active": zod.boolean(),
+  "created_at": zod.coerce.date()
+})).max(selectOwnerBankAccountForTodayResponseAccountsMax),
+  "today": zod.object({
+  "business_date": zod.string(),
+  "account": zod.union([zod.object({
+  "id": zod.uuid(),
+  "bank_name": zod.string(),
+  "account_number": zod.string().regex(selectOwnerBankAccountForTodayResponseTodayAccountOneAccountNumberRegExp),
+  "account_holder": zod.string(),
+  "daily_limit": zod.number().min(selectOwnerBankAccountForTodayResponseTodayAccountOneDailyLimitMin),
+  "is_active": zod.boolean(),
+  "created_at": zod.coerce.date()
+}),zod.null()]),
+  "received_total": zod.number().min(selectOwnerBankAccountForTodayResponseTodayReceivedTotalMin),
+  "sent_total": zod.number().min(selectOwnerBankAccountForTodayResponseTodaySentTotalMin),
+  "daily_limit": zod.union([zod.number().min(selectOwnerBankAccountForTodayResponseTodayDailyLimitOneMin),zod.null()]),
+  "remaining_limit": zod.union([zod.number(),zod.null()]),
+  "over_limit": zod.boolean(),
+  "transfers": zod.array(zod.object({
+  "id": zod.uuid(),
+  "direction": zod.enum(['in', 'out']),
+  "amount": zod.number().gt(selectOwnerBankAccountForTodayResponseTodayTransfersItemAmountExclusiveMin),
+  "note": zod.string(),
+  "recorded_by": zod.enum(['staff', 'owner']),
+  "created_at": zod.coerce.date()
+})).max(selectOwnerBankAccountForTodayResponseTodayTransfersMax)
+})
 })
 
 

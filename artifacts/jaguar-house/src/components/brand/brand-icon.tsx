@@ -1,6 +1,7 @@
 import {
   Cannabis,
   Leaf,
+  Landmark,
   type LucideIcon,
 } from "lucide-react";
 import { ArrowLeftRightGlassIcon } from "@thesvg/ui-react/arrow-left-right";
@@ -34,12 +35,13 @@ import { ZapGlassIcon } from "@thesvg/ui-react/zap";
 export type BrandIconName =
   | "members" | "memberSearch" | "cannabis" | "leaf" | "sprout" | "lightning" | "points" | "progress"
   | "rewards" | "redeem" | "dashboard" | "addPoints" | "history" | "settings" | "search"
-  | "logout" | "location" | "continue" | "security" | "error" | "retry" | "success"
+  | "logout" | "location" | "continue" | "security" | "banking" | "error" | "retry" | "success"
   | "pending" | "staffAccess" | "confirm" | "add" | "subtract" | "close" | "qr" | "crown";
 
 const LUCIDE_ICONS: Partial<Record<BrandIconName, LucideIcon>> = {
   cannabis: Cannabis,
   leaf: Leaf,
+  banking: Landmark,
 };
 type IconTone = "neutral" | "gold" | "emerald" | "danger" | "inherit";
 
