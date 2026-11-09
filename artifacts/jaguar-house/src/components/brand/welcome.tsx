@@ -20,7 +20,7 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
         <header className="landing-header landing-enter landing-enter--header">
           <Link href="/" className="landing-brand" aria-label="JAGUAR SPK หน้าแรก">
             <span className="landing-brand__logo">
-              <Image src="/brand/jaguar-spk-emblem.webp" alt="JAGUAR SPK · Break All Limit" width={999} height={746} priority sizes="(max-width: 760px) 76px, 92px" />
+              <Image src="/brand/jaguar-spk-wordmark-final.webp" alt="JAGUAR SPK" width={1200} height={536} priority sizes="(max-width: 760px) 92px, 110px" />
             </span>
             <span className="landing-brand__copy"><small>KRATOM</small><small>BUN KHIRI SOI 6</small></span>
           </Link>
@@ -54,10 +54,10 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
               </div>
               <div className="landing-members-club__art">
                 <Image
-                  src="/brand/jaguar-spk-promo.png"
-                  alt="ภาพโปรโมชัน Jaguar SPK พี่เสือและทีมงาน พร้อมเวลาเปิด 24 ชั่วโมง ราคาเริ่มต้น 50 บาท และพิกัดบุญคีรี ซอย 6"
-                  width={500}
-                  height={500}
+                  src="/brand/jaguar-spk-city-campaign.webp"
+                  alt="ภาพโปรโมชัน JAGUAR SPK กับพี่เสือ สะพานและแลนด์มาร์กสมุทรปราการ เปิด 24 ชั่วโมง เริ่มต้น 50 บาท"
+                  width={1400}
+                  height={1400}
                   priority
                   sizes="(max-width: 760px) 78vw, 430px"
                 />
@@ -165,10 +165,10 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
             <BrandIcon name="cannabis" size={21} tone="emerald" className="brand-showcase__icon brand-showcase__cannabis" />
             <Image
               className="brand-showcase__campaign"
-              src="/brand/jaguar-spk-campaign-square.jpg"
-              alt="โปสเตอร์ JAGUAR SPK เปิด 24 ชั่วโมง ราคาเริ่มต้นขวดละ 50 บาท ที่บุญคีรี ซอย 6"
-              width={2048}
-              height={2048}
+              src="/brand/jaguar-login-plaque.webp"
+              alt="ป้ายตรา JAGUAR SPK พร้อมภาพพี่เสือ"
+              width={1026}
+              height={370}
               priority
               sizes="(max-width: 760px) 62vw, 310px"
             />

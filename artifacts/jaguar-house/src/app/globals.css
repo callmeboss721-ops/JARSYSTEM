@@ -2461,6 +2461,86 @@ input.input, textarea.input, select.input { font-size: 16px; }
   .member-progress-actions p { max-width: none; }
 }
 
+/* Latest SPK campaign, lockup, card frames, and reward status artwork. */
+.jaguar-home--landing .landing-brand__logo {
+  flex-basis: clamp(80px, 24vw, 110px);
+  width: clamp(80px, 24vw, 110px);
+}
+.jaguar-home--landing .landing-brand__logo img {
+  object-fit: contain;
+}
+.member-heading-top img {
+  width: clamp(70px, 19vw, 96px);
+  max-height: 58px;
+  height: auto;
+  object-fit: contain;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  filter: drop-shadow(0 2px 7px rgba(0,255,157,.16));
+}
+.brand-showcase__campaign {
+  width: clamp(280px, 34vw, 400px);
+  height: auto;
+  aspect-ratio: auto;
+  object-fit: contain;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,.42));
+}
+.member-pass-card__identity {
+  background-image: url("/brand/kratom-card-plaque.webp");
+}
+.member-pass-card[data-kind="cannabis"] .member-pass-card__identity {
+  background-image: url("/brand/cannabis-card-plaque.webp");
+}
+.member-pass-card__status {
+  width: min(47%, 138px);
+  min-height: 29px;
+  justify-content: center;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 0;
+  background: url("/brand/member-status-collecting.webp") center / 100% 100% no-repeat;
+  color: #dbe3d6;
+  font-size: 7px;
+  letter-spacing: .035em;
+  text-shadow: 0 1px 4px rgba(0,0,0,.9);
+  box-shadow: none;
+}
+.member-pass-card__status.is-ready {
+  justify-content: flex-start;
+  padding-left: 27px;
+  background-image: url("/brand/member-status-ready.webp");
+  color: #f4df9b;
+  box-shadow: none;
+}
+@media (max-width: 760px) {
+  .brand-showcase__campaign {
+    width: min(calc(100vw - 70px), 320px);
+  }
+  .login-reference-root .brand-showcase__campaign {
+    width: min(calc(100vw - 70px), 320px);
+  }
+  .auth-register-root .brand-showcase__campaign {
+    width: min(calc(100vw - 82px), 304px);
+  }
+}
+@media (max-width: 390px) {
+  .jaguar-home--landing .landing-brand__logo {
+    flex-basis: 80px;
+    width: 80px;
+  }
+  .member-heading-top img { width: 70px; max-height: 46px; }
+  .member-pass-card__identity {
+    min-height: 48px;
+    padding-left: 59px;
+  }
+}
+
 /* SPK brand art, local landmark artwork, and club-specific foliage plaques. */
 .jaguar-home--landing .landing-brand__logo {
   display: block;
@@ -3330,4 +3410,133 @@ nav[aria-label="เมนูสมาชิก (มือถือ)"] > div { wi
   .member-pass-card__qr-code,
   .member-pass-card__qr-placeholder { width: 62px; height: 62px; }
   .member-progress-actions p { max-width: none; }
+}
+
+/* Final artwork overrides: campaign banner, city pass, club plaques, status labels. */
+.jaguar-home--landing .landing-brand__logo {
+  display: block;
+  flex: 0 0 clamp(80px, 24vw, 110px);
+  width: clamp(80px, 24vw, 110px);
+  height: auto;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.jaguar-home--landing .landing-brand__logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+.member-heading-top img {
+  width: clamp(70px, 19vw, 96px);
+  height: auto;
+  max-height: 58px;
+  object-fit: contain;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.brand-showcase {
+  width: fit-content;
+  max-width: 100%;
+  height: auto;
+  min-height: 0;
+  margin-inline: auto;
+  padding: 4px 0;
+}
+.brand-showcase__campaign {
+  display: block;
+  width: clamp(280px, 34vw, 400px);
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: auto;
+  object-fit: contain;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,.42));
+}
+.login-reference-root .brand-showcase__campaign {
+  width: clamp(280px, 34vw, 400px);
+  height: auto;
+  aspect-ratio: auto;
+}
+.auth-register-root .brand-showcase__campaign {
+  width: clamp(270px, 32vw, 380px);
+  height: auto;
+  aspect-ratio: auto;
+}
+.member-pass-card__inner {
+  background:
+    linear-gradient(90deg,rgba(4,8,6,.76) 0%,rgba(4,8,6,.48) 52%,rgba(4,8,6,.72) 100%),
+    url("/brand/samut-prakan-card.webp") center 51% / cover no-repeat,
+    repeating-linear-gradient(135deg,transparent 0 18px,rgba(255,255,255,.012) 18px 19px),
+    linear-gradient(145deg,rgba(4,10,7,.28),rgba(5,8,6,.72));
+}
+.member-pass-card__identity {
+  width: min(100%,274px);
+  min-height: 52px;
+  flex: 0 1 auto;
+  gap: 0;
+  padding: 7px 10px 7px 66px;
+  border-radius: 9px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.member-pass-card[data-kind="kratom"] .member-pass-card__identity {
+  background-image: url("/brand/kratom-card-plaque.webp");
+}
+.member-pass-card[data-kind="cannabis"] .member-pass-card__identity {
+  background-image: url("/brand/cannabis-card-plaque.webp");
+}
+.member-pass-card__identity > div { min-width: 0; }
+.member-pass-card__label,
+.member-pass-card__location { text-shadow: 0 1px 4px rgba(0,0,0,.85); }
+.member-pass-card__status {
+  width: min(47%,138px);
+  max-width: 138px;
+  min-height: 29px;
+  justify-content: center;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 0;
+  background: url("/brand/member-status-collecting.webp") center / 100% 100% no-repeat;
+  color: #dbe3d6;
+  font-size: 7px;
+  letter-spacing: .035em;
+  text-shadow: 0 1px 4px rgba(0,0,0,.9);
+  box-shadow: none;
+}
+.member-pass-card__status.is-ready {
+  justify-content: flex-start;
+  padding-left: 27px;
+  background-image: url("/brand/member-status-ready.webp");
+  color: #f4df9b;
+  box-shadow: none;
+}
+@media (max-width: 760px) {
+  .brand-showcase__campaign,
+  .login-reference-root .brand-showcase__campaign {
+    width: min(calc(100vw - 70px),320px);
+  }
+  .auth-register-root .brand-showcase__campaign {
+    width: min(calc(100vw - 82px),304px);
+  }
+}
+@media (max-width: 390px) {
+  .jaguar-home--landing .landing-brand__logo {
+    flex-basis: 80px;
+    width: 80px;
+  }
+  .member-heading-top img { width: 70px; max-height: 46px; }
+  .member-pass-card__identity {
+    min-height: 48px;
+    padding-left: 59px;
+  }
 }
