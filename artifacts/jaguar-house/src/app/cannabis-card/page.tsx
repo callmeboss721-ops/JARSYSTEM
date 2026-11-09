@@ -76,7 +76,7 @@ export default function CannabisCardPage() {
       : cardQuery.isError || !card ? <div className="max-w-md mx-auto"><ErrorState message={errorText(cardQuery.error)} onRetry={() => void cardQuery.refetch()} retrying={cardQuery.isFetching} /></div>
       : <div className="cannabis-wrap">
         <header className="cannabis-heading rise">
-          <div className="member-heading-top"><div><p className="eyebrow">MEMBERS CLUB · DIGITAL PASS</p><h1>{card.display_name || "บัตรสมาชิกพลังใบ"}</h1><p>พี่เสือพลังใบ ซุปเปอร์ฮีโร่ของคนไทย</p></div><img src="/brand/jaguar-spk-wordmark.png" alt="ตรา JAGUAR SPK" width={669} height={373} /></div>
+          <div className="member-heading-top"><div><p className="eyebrow">MEMBERS CLUB · DIGITAL PASS</p><h1>{card.display_name || "บัตรสมาชิกพลังใบ"}</h1><p>พี่เสือพลังใบ ซุปเปอร์ฮีโร่ของคนไทย</p></div><img src="/brand/jaguar-spk-emblem.webp" alt="ตรา JAGUAR SPK · Break All Limit" width={999} height={746} /></div>
         </header>
         {confettiKey > 0 && <CannabisConfetti key={confettiKey} />}
         {celebrate && <div role="status" className="cannabis-ready cannabis-ready--celebrate">ครบ 10 แสตมป์ — แลกฟรี 1 กรัมได้ที่เคาน์เตอร์</div>}

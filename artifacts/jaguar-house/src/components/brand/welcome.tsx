@@ -20,7 +20,7 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
         <header className="landing-header landing-enter landing-enter--header">
           <Link href="/" className="landing-brand" aria-label="JAGUAR SPK หน้าแรก">
             <span className="landing-brand__logo">
-              <Image src="/brand/jaguar-spk-wordmark.png" alt="JAGUAR SPK" width={669} height={373} priority sizes="(max-width: 760px) 96px, 110px" />
+              <Image src="/brand/jaguar-spk-emblem.webp" alt="JAGUAR SPK · Break All Limit" width={999} height={746} priority sizes="(max-width: 760px) 76px, 92px" />
             </span>
             <span className="landing-brand__copy"><small>KRATOM</small><small>BUN KHIRI SOI 6</small></span>
           </Link>

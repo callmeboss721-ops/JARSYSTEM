@@ -2461,6 +2461,80 @@ input.input, textarea.input, select.input { font-size: 16px; }
   .member-progress-actions p { max-width: none; }
 }
 
+/* SPK brand art, local landmark artwork, and club-specific foliage plaques. */
+.jaguar-home--landing .landing-brand__logo {
+  display: block;
+  flex: 0 0 clamp(66px, 21vw, 88px);
+  width: clamp(66px, 21vw, 88px);
+  height: auto;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.jaguar-home--landing .landing-brand__logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 9px rgba(0,255,157,.18));
+}
+.member-heading-top img {
+  width: clamp(62px, 18vw, 82px);
+  height: auto;
+  max-height: 62px;
+  object-fit: contain;
+  object-position: center;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  filter: drop-shadow(0 3px 8px rgba(0,255,157,.2));
+}
+.member-pass-card__inner {
+  background:
+    linear-gradient(90deg,rgba(4,8,6,.76) 0%,rgba(4,8,6,.48) 52%,rgba(4,8,6,.72) 100%),
+    url("/brand/samut-prakan-card.webp") center 51% / cover no-repeat,
+    repeating-linear-gradient(135deg,transparent 0 18px,rgba(255,255,255,.012) 18px 19px),
+    linear-gradient(145deg,rgba(4,10,7,.28),rgba(5,8,6,.72));
+}
+.member-pass-card__identity {
+  width: min(100%,274px);
+  min-height: 52px;
+  flex: 0 1 auto;
+  gap: 0;
+  padding: 7px 10px 7px 66px;
+  border-radius: 9px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.member-pass-card[data-kind="kratom"] .member-pass-card__identity {
+  background-image: url("/brand/kratom-card-plaque.webp");
+}
+.member-pass-card[data-kind="cannabis"] .member-pass-card__identity {
+  background-image: url("/brand/cannabis-card-plaque.webp");
+}
+.member-pass-card__identity > div { min-width: 0; }
+.member-pass-card__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 4px rgba(0,0,0,.75);
+}
+.member-pass-card__location { text-shadow: 0 1px 4px rgba(0,0,0,.75); }
+@media (max-width: 390px) {
+  .jaguar-home--landing .landing-brand__logo {
+    flex-basis: 66px;
+    width: 66px;
+  }
+  .member-heading-top img { width: 62px; max-height: 48px; }
+  .member-pass-card__identity {
+    min-height: 48px;
+    padding-left: 59px;
+  }
+}
+
 /* Shared premium points track for both member clubs. */
 .collecting-track {
   --track-accent: #00ff9d;

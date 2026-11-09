@@ -38,15 +38,6 @@ export function SharedMemberCard({
       <div className="member-pass-card__inner">
         <header className="member-pass-card__top">
           <div className="member-pass-card__identity">
-            {/* Public SVG mark for each club; replace only if the approved vector mark changes. */}
-            <img
-              src={cannabis ? "/brand/mark-leaf.svg" : "/brand/mark-jaguar.svg"}
-              alt=""
-              aria-hidden="true"
-              width={38}
-              height={38}
-              decoding="async"
-            />
             <div>
               <p className="member-pass-card__label">{cannabis ? "JAGUAR CANNABIS · MEMBER" : "JAGUAR KRATOM · MEMBER"}</p>
               <p className="member-pass-card__location">บุญศิริ ซอย 6 · สมุทรปราการ</p>

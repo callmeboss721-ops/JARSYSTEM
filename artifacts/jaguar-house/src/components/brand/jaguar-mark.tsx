@@ -1,11 +1,11 @@
 type Props = { size?: number; className?: string; animated?: boolean; title?: string };
 
-/** Original supplied JAGUAR logo image (full image, never cropped). */
+/** Transparent supplied JAGUAR SPK emblem, kept uncropped across app headers. */
 export function JaguarMark({ size = 40, className, title }: Props) {
   return (
     /* eslint-disable-next-line @next/next/no-img-element */
     <img
-      src={size > 64 ? "/brand/jaguar-logo.webp" : "/brand/jaguar-logo-256.jpg"}
+      src="/brand/jaguar-spk-emblem.webp"
       width={size}
       height={size}
       alt={title ?? ""}
