@@ -2461,6 +2461,153 @@ input.input, textarea.input, select.input { font-size: 16px; }
   .member-progress-actions p { max-width: none; }
 }
 
+/* Shared premium points track for both member clubs. */
+.collecting-track {
+  --track-accent: #00ff9d;
+  min-width: 0;
+}
+.collecting-track--cannabis { --track-accent: #7cff6b; }
+.collecting-track__heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.collecting-track__heading p {
+  margin: 0;
+  color: #cdb665;
+  font: 700 8px/1.3 var(--font-mono);
+  letter-spacing: .115em;
+}
+.collecting-track__heading h2 {
+  margin: 4px 0 0;
+  color: #f2e2ad;
+  font: 700 14px/1.1 var(--font-mono);
+  letter-spacing: .055em;
+}
+.collecting-track__heading h2 span {
+  color: #b9c0b2;
+  font-weight: 500;
+}
+.collecting-track__status {
+  flex: 0 0 auto;
+  padding: 4px 6px;
+  border: 1px solid color-mix(in srgb, var(--track-accent) 38%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--track-accent) 7%, transparent);
+  color: #c8dfc8;
+  font: 700 7px/1.1 var(--font-mono);
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+.collecting-track__status.is-ready {
+  border-color: rgba(229,192,74,.48);
+  background: rgba(229,192,74,.09);
+  color: #f0d889;
+}
+.collecting-track__visual {
+  position: relative;
+  min-width: 0;
+  padding: 4px 0 1px;
+}
+.collecting-track__connector {
+  position: absolute;
+  z-index: 0;
+  top: 27px;
+  right: 5%;
+  left: 5%;
+  height: 2px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: rgba(207, 190, 129, .14);
+  box-shadow: 0 1px 2px rgba(0,0,0,.65) inset;
+}
+.collecting-track__connector span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg,#c49a30 0%,#efdc92 48%,var(--track-accent) 100%);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--track-accent) 55%, transparent);
+  transition: width .38s cubic-bezier(.22,1,.36,1);
+}
+.collecting-track__visual ol {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(10,minmax(0,1fr));
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.collecting-track__coin {
+  position: relative;
+  display: flex;
+  height: 48px;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+}
+.collecting-track__crown {
+  position: absolute;
+  top: 0;
+  width: 13px;
+  height: 13px;
+  color: #94845c;
+  fill: rgba(148,132,92,.13);
+  stroke-width: 1.7;
+  transition: color .2s ease, filter .2s ease;
+}
+.collecting-track__coin-face {
+  display: grid;
+  place-items: center;
+  width: clamp(22px,6.7vw,30px);
+  aspect-ratio: 1;
+  margin-top: 13px;
+  border: 1px solid rgba(190,180,143,.23);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 28%,#33382f,#171b17 72%);
+  color: #879083;
+  font: 600 8px/1 var(--font-mono);
+  box-shadow: 0 2px 5px rgba(0,0,0,.45) inset,0 1px 0 rgba(255,255,255,.035);
+  transition: background .24s ease,border-color .24s ease,color .24s ease,box-shadow .24s ease,transform .24s ease;
+}
+.collecting-track__coin[data-filled="true"] .collecting-track__crown {
+  color: #e5c04a;
+  fill: rgba(229,192,74,.35);
+  filter: drop-shadow(0 0 4px rgba(0,255,157,.5));
+}
+.collecting-track__coin[data-filled="true"] .collecting-track__coin-face {
+  border-color: var(--track-accent);
+  background:
+    radial-gradient(circle at 31% 22%,#fff1bd 0%,#e5c04a 42%,#98701c 100%);
+  color: #087344;
+  box-shadow: 0 0 0 2px color-mix(in srgb,var(--track-accent) 63%,transparent),0 0 14px color-mix(in srgb,var(--track-accent) 48%,transparent),0 2px 5px rgba(0,0,0,.35) inset;
+  transform: translateY(-1px);
+}
+.collecting-track__coin[data-filled="true"] .collecting-track__coin-face::first-letter { color: #087344; }
+.collecting-track--cannabis .collecting-track__coin[data-filled="true"] .collecting-track__coin-face {
+  color: #07562b;
+  box-shadow: 0 0 0 2px rgba(124,255,107,.62),0 0 14px rgba(124,255,107,.38),0 2px 5px rgba(0,0,0,.35) inset;
+}
+.collecting-track--cannabis .collecting-track__coin[data-filled="true"] .collecting-track__crown {
+  color: #b5e78c;
+  filter: drop-shadow(0 0 4px rgba(124,255,107,.48));
+}
+.collecting-track__coin:focus-within { outline: 2px solid var(--track-accent); }
+@media (max-width: 380px) {
+  .collecting-track__heading p { font-size: 7px; letter-spacing: .08em; }
+  .collecting-track__heading h2 { font-size: 13px; }
+  .collecting-track__status { padding-inline: 5px; font-size: 6px; }
+  .collecting-track__coin-face { width: 22px; font-size: 7px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .collecting-track__connector span,
+  .collecting-track__coin-face,
+  .collecting-track__crown { transition: none; }
+}
+
 /* Jaguar SPK promotional hero: existing campaign art, framed as a members-club seal. */
 .landing-members-club {
   position: relative;

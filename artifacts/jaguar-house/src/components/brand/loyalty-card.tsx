@@ -1,4 +1,5 @@
 import { BrandIcon } from "./brand-icon";
+import { Crown } from "lucide-react";
 import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
 import type { MemberCardData } from "./loyalty-api";
@@ -70,11 +71,11 @@ export function SharedMemberCard({
         </div>
         <footer className="member-pass-card__footer">
           <div className="member-pass-card__points">
-            <span>{cannabis ? "แสตมป์" : "แต้ม"}</span>
+            <span>POINTS</span>
             <strong>{filled}<small>/10</small></strong>
           </div>
           <span className={`member-pass-card__status${ready ? " is-ready" : ""}`} role="status">
-            {ready ? "พร้อมแลก" : "กำลังสะสม"}
+            {ready ? "READY TO REDEEM" : "COLLECTING"}
           </span>
         </footer>
       </div>
@@ -88,34 +89,63 @@ export function LoyaltyProgress({ balance }: { balance: number }) {
   const remaining = Math.max(STAMPS - filled, 0);
   return (
     <section className="member-progress-panel panel" aria-labelledby="member-progress-title">
-      <div className="member-progress-heading">
-        <div>
-          <p className="member-card-label">LOYALTY PROGRESS</p>
-          <h2 id="member-progress-title">สะสมแต้ม</h2>
-        </div>
-        <strong>{filled}<span> / {STAMPS}</span></strong>
-      </div>
-      <div className="progress-track" role="progressbar" aria-valuemin={0} aria-valuemax={STAMPS} aria-valuenow={filled} aria-label="ความคืบหน้าการสะสมแต้ม">
-        <div className="progress-fill" style={{ width: `${(filled / STAMPS) * 100}%` }} />
-      </div>
-      <ol className="member-stamp-grid" aria-label={`ตราประทับ ${filled} จาก ${STAMPS} ดวง`}>
-        {Array.from({ length: STAMPS }, (_, i) => {
-          const on = i < filled;
-          return (
-            <li key={i} className="stamp" data-filled={on} data-testid={`stamp-${i + 1}`}>
-              {on ? <BrandIcon name="progress" tone="emerald" /> : <span className="stamp-empty-mark" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M19 35C9 31 5 24 8 15c5 1 9 4 11 9 2-9 6-14 14-15 1 11-3 20-14 26Z"/><path d="M19 35c0-8 1-15 4-22M19 26l-8-8m9 2 8-9"/></svg></span>}
-              {!on && <span className="font-mono text-[11px]">{i + 1}</span>}
-              <span className="sr-only">{on ? "ประทับแล้ว" : "ว่าง"}</span>
-            </li>
-          );
-        })}
-      </ol>
+      <CollectingTrack balance={balance} kind="kratom" titleId="member-progress-title" />
       {balance > STAMPS && <p className="member-progress-extra" data-testid="text-extra-points">แต้มสะสมทั้งหมด {balance} แต้ม</p>}
       <div className="member-progress-actions">
         <p>{ready ? "ครบ 10 แต้ม · แลกฟรี 1 ขวดได้" : `ครบ 3 ขวดในบิล รับ 1 แต้ม · อีก ${remaining} แต้มแลกฟรี 1 ขวด`}</p>
         <Link href="/redeem" className="btn btn-redeem">{ready ? "แลกของแถมเลย" : `อีก ${remaining} แต้ม`} <BrandIcon name="redeem" tone="inherit" /></Link>
       </div>
     </section>
+  );
+}
+
+export function CollectingTrack({
+  balance,
+  kind,
+  titleId,
+}: {
+  balance: number;
+  kind: "kratom" | "cannabis";
+  titleId?: string;
+}) {
+  const filled = Math.min(Math.max(balance, 0), STAMPS);
+  const connectorProgress = Math.max(0, ((filled - 1) / (STAMPS - 1)) * 100);
+  return (
+    <div className={`collecting-track collecting-track--${kind}`}>
+      <div className="collecting-track__heading">
+        <div>
+          <p>JAGUAR SPK COLLECTING TRACK</p>
+          <h2 id={titleId}>POINTS: {filled}<span>/{STAMPS}</span></h2>
+        </div>
+        <span className={`collecting-track__status${filled >= STAMPS ? " is-ready" : ""}`}>
+          {filled >= STAMPS ? "READY TO REDEEM" : "COLLECTING"}
+        </span>
+      </div>
+      <div className="collecting-track__visual">
+        <div className="collecting-track__connector" aria-hidden="true">
+          <span style={{ width: `${connectorProgress}%` }} />
+        </div>
+        <ol aria-label={`แต้ม ${filled} จาก ${STAMPS}`}>
+          {Array.from({ length: STAMPS }, (_, index) => {
+            const isFilled = index < filled;
+            return (
+              <li
+                key={index}
+                className="collecting-track__coin"
+                data-filled={isFilled}
+                data-testid={`${kind === "kratom" ? "stamp" : "cannabis-stamp"}-${index + 1}`}
+                data-coin-number={index + 1}
+              >
+                <Crown className="collecting-track__crown" aria-hidden="true" />
+                <span className="collecting-track__coin-face">{String(index + 1).padStart(2, "0")}</span>
+                <span className="sr-only">{isFilled ? "สะสมแล้ว" : "ยังไม่สะสม"} แต้มที่ {index + 1}</span>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+      <span className="sr-only" role="progressbar" aria-valuemin={0} aria-valuemax={STAMPS} aria-valuenow={filled} aria-label={`ความคืบหน้า ${filled} จาก ${STAMPS} แต้ม`} />
+    </div>
   );
 }
 
