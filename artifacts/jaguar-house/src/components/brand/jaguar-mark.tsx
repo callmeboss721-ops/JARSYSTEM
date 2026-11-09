@@ -5,7 +5,7 @@ export function JaguarMark({ size = 40, className, title }: Props) {
   return (
     /* eslint-disable-next-line @next/next/no-img-element */
     <img
-      src="/brand/jaguar-spk-emblem.webp"
+      src="/brand/jaguar-spk-emblem-crisp.webp"
       width={size}
       height={size}
       alt={title ?? ""}

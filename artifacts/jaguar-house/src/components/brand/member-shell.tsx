@@ -4,17 +4,17 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
-import { BrandIcon } from "./brand-icon";
+import { BrandIcon, type BrandIconName } from "./brand-icon";
 import { JaguarMark } from "./jaguar-mark";
 import { SamutPrakanArt } from "./samut-prakan-art";
 import { clearMemberCache, setSessionHint } from "./api-utils";
 import { api, errorText, json } from "./loyalty-api";
 
 const NAV = [
-  { href: "/card", th: "บัตรกระท่อม", icon: "/brand/icon-card-kratom.svg" },
-  { href: "/card/cannabis", th: "บัตรกัญชา", icon: "/brand/icon-card-cannabis.svg" },
-  { href: "/redeem", th: "รางวัล", icon: "/brand/icon-reward.svg" },
-] as const;
+  { href: "/card", th: "บัตรกระท่อม", icon: "sprout", kind: "kratom" },
+  { href: "/card/cannabis", th: "บัตรกัญชา", icon: "cannabis", kind: "cannabis" },
+  { href: "/redeem", th: "รางวัล", icon: "rewards", kind: "rewards" },
+] as const satisfies readonly { href: string; th: string; icon: BrandIconName; kind: string }[];
 
 export function MemberShell({ children, signedIn }: { children: ReactNode; signedIn: boolean }) {
   const path = usePathname();
@@ -57,17 +57,21 @@ export function MemberShell({ children, signedIn }: { children: ReactNode; signe
             </span>
           </Link>
           <nav aria-label="เมนูสมาชิก" className="hidden md:flex items-center gap-1">
-            {NAV.map((n) => (
-              <Link
-                key={n.href}
-                href={n.href}
-                aria-current={isActive(n.href) ? "page" : undefined}
-                className={`inline-flex items-center gap-2 min-h-11 px-4 py-2 rounded-xl font-display text-sm no-underline transition-colors ${isActive(n.href) ? "text-[var(--gold-2)] bg-[rgba(196,202,214,.07)] shadow-[inset_0_-2px_0_var(--gold)]" : "text-[var(--muted)] hover:text-[var(--text)]"}`}
-                data-testid={`link-nav-${n.href.slice(1)}`}
-              >
-                <img src={n.icon} width={20} height={20} alt="" aria-hidden="true" className="member-nav-icon" />{n.th}
-              </Link>
-            ))}
+            {NAV.map((n) => {
+              const active = isActive(n.href);
+              return (
+                <Link
+                  key={n.href}
+                  href={n.href}
+                  aria-current={active ? "page" : undefined}
+                  className={`inline-flex items-center gap-2 min-h-11 px-4 py-2 rounded-xl font-display text-sm no-underline transition-colors ${active ? "text-[var(--gold-2)] bg-[rgba(196,202,214,.07)] shadow-[inset_0_-2px_0_var(--gold)]" : "text-[var(--muted)] hover:text-[var(--text)]"}`}
+                  data-testid={`link-nav-${n.href.slice(1)}`}
+                >
+                  <BrandIcon name={n.icon} size={20} tone={active ? n.kind === "cannabis" ? "emerald" : "gold" : "neutral"} className="member-nav-icon" />
+                  {n.th}
+                </Link>
+              );
+            })}
           </nav>
           {signedIn && (
             <button onClick={doLogout} disabled={loggingOut} className="btn btn-ghost !min-h-11 !min-w-11 !px-3 text-sm" aria-label="ออกจากระบบ" data-testid="button-logout">
@@ -81,8 +85,8 @@ export function MemberShell({ children, signedIn }: { children: ReactNode; signe
         )}
       </header>
       <main className="member-main mx-auto max-w-5xl px-5 pt-6 md:pt-10">{children}</main>
-      <nav aria-label="เมนูสมาชิก (มือถือ)" className="member-header md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-[var(--line)] bg-[rgba(5,5,10,.94)] backdrop-blur-md pb-[env(safe-area-inset-bottom)]">
-        <div className="grid grid-cols-3">
+      <nav aria-label="เมนูสมาชิก (มือถือ)" className="member-mobile-dock md:hidden">
+        <div className="member-bottom-nav__track">
           {NAV.map((n) => {
             const active = isActive(n.href);
             return (
@@ -90,11 +94,14 @@ export function MemberShell({ children, signedIn }: { children: ReactNode; signe
                 key={n.href}
                 href={n.href}
                 aria-current={active ? "page" : undefined}
-                className={`member-bottom-nav__item flex flex-col items-center justify-center gap-1 py-2 no-underline text-xs font-display ${active ? "is-active" : ""}`}
+                className={`member-bottom-nav__item ${active ? "is-active" : ""}`}
                 data-testid={`mobile-nav-${n.href.slice(1).replaceAll("/", "-")}`}
+                data-kind={n.kind}
               >
-                <img src={n.icon} width={22} height={22} alt="" aria-hidden="true" className="member-nav-icon" />
-                {n.th}
+                <span className="member-bottom-nav__icon-wrap">
+                  <BrandIcon name={n.icon} size={21} tone={active ? n.kind === "cannabis" ? "emerald" : "gold" : "neutral"} className="member-bottom-nav__icon" />
+                </span>
+                <span className="member-bottom-nav__label">{n.th}</span>
               </Link>
             );
           })}

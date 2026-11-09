@@ -22,7 +22,7 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
         <header className="landing-header landing-enter landing-enter--header">
           <Link href="/" className="landing-brand" aria-label="JAGUAR SPK หน้าแรก">
             <span className="landing-brand__logo">
-            <Image src="/ui/logo-spk-circle.webp" alt="JAGUAR SPK" width={360} height={269} priority sizes="52px" />
+              <Image src="/ui/jaguar-spk-emblem.png" alt="โลโก้ JAGUAR SPK รูปจากัวร์" width={1254} height={1162} priority sizes="(max-width: 390px) 80px, (max-width: 760px) 88px, 110px" />
             </span>
             <span className="landing-brand__copy"><small>KRATOM · SOI 6</small></span>
           </Link>
@@ -74,8 +74,6 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
 
           <nav className="landing-bottom-nav landing-enter landing-enter--nav" aria-label="เมนูสมาชิก">
             <Link href="/card" data-selected="true"><BrandIcon name="leaf" tone="inherit" /><span>บัตรกระท่อม</span></Link>
-            <Link href="/card/cannabis"><BrandIcon name="cannabis" tone="emerald" /><span>บัตรกัญชา</span></Link>
-            <Link href="/redeem"><BrandIcon name="rewards" tone="gold" /><span>รางวัลกระท่อม</span></Link>
           </nav>
           <footer className="landing-site-footer" aria-label="ไอคอนท้ายหน้า">
             <img
@@ -142,10 +140,10 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
           <div className="brand-showcase mb-4 flex justify-center rise" style={{ animationDelay: "80ms" }}>
             <Image
               className="brand-showcase__campaign"
-              src="/ui/logo-spk-text.webp"
-              alt="JAGUAR SPK"
-              width={480}
-              height={214}
+              src="/ui/jaguar-spk-wordmark.png"
+              alt="โลโก้ตัวอักษร JAGUAR SPK"
+              width={1416}
+              height={575}
               priority
               sizes="(max-width: 760px) 82vw, 400px"
             />

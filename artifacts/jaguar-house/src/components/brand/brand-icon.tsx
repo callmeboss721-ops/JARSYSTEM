@@ -22,6 +22,7 @@ import { SettingsGlassIcon } from "@thesvg/ui-react/settings";
 import { ShieldAlertGlassIcon } from "@thesvg/ui-react/shield-alert";
 import { ShieldCheckGlassIcon } from "@thesvg/ui-react/shield-check";
 import { SparklesGlassIcon } from "@thesvg/ui-react/sparkles";
+import { SproutGlassIcon } from "@thesvg/ui-react/sprout";
 import { TriangleAlertGlassIcon } from "@thesvg/ui-react/triangle-alert";
 import { UserRoundGlassIcon } from "@thesvg/ui-react/user-round";
 import { UsersGlassIcon } from "@thesvg/ui-react/users";
@@ -29,7 +30,7 @@ import { XGlassIcon } from "@thesvg/ui-react/x";
 import { ZapGlassIcon } from "@thesvg/ui-react/zap";
 
 export type BrandIconName =
-  | "members" | "memberSearch" | "cannabis" | "leaf" | "lightning" | "points" | "progress"
+  | "members" | "memberSearch" | "cannabis" | "leaf" | "sprout" | "lightning" | "points" | "progress"
   | "rewards" | "redeem" | "dashboard" | "addPoints" | "history" | "settings" | "search"
   | "logout" | "location" | "continue" | "security" | "error" | "retry" | "success"
   | "pending" | "staffAccess" | "confirm" | "add" | "subtract" | "close";
@@ -47,6 +48,7 @@ const GLASS_ICONS: Partial<Record<BrandIconName, typeof UsersGlassIcon>> = {
   points: SparklesGlassIcon,
   progress: AwardGlassIcon,
   rewards: GiftGlassIcon,
+  sprout: SproutGlassIcon,
   redeem: ArrowLeftRightGlassIcon,
   dashboard: LayoutDashboardGlassIcon,
   addPoints: CirclePlusGlassIcon,
