@@ -9,6 +9,7 @@ import { AwardGlassIcon } from "@thesvg/ui-react/award";
 import { CircleCheckGlassIcon } from "@thesvg/ui-react/circle-check";
 import { CirclePlusGlassIcon } from "@thesvg/ui-react/circle-plus";
 import { ClockGlassIcon } from "@thesvg/ui-react/clock";
+import { CrownGlassIcon } from "@thesvg/ui-react/crown";
 import { GiftGlassIcon } from "@thesvg/ui-react/gift";
 import { KeyGlassIcon } from "@thesvg/ui-react/key";
 import { LayoutDashboardGlassIcon } from "@thesvg/ui-react/layout-dashboard";
@@ -16,6 +17,7 @@ import { LogOutGlassIcon } from "@thesvg/ui-react/log-out";
 import { MinusGlassIcon } from "@thesvg/ui-react/minus";
 import { PinGlassIcon } from "@thesvg/ui-react/pin";
 import { PlusGlassIcon } from "@thesvg/ui-react/plus";
+import { QrCodeGlassIcon } from "@thesvg/ui-react/qr-code";
 import { RefreshCwGlassIcon } from "@thesvg/ui-react/refresh-cw";
 import { SearchGlassIcon } from "@thesvg/ui-react/search";
 import { SettingsGlassIcon } from "@thesvg/ui-react/settings";
@@ -33,7 +35,7 @@ export type BrandIconName =
   | "members" | "memberSearch" | "cannabis" | "leaf" | "sprout" | "lightning" | "points" | "progress"
   | "rewards" | "redeem" | "dashboard" | "addPoints" | "history" | "settings" | "search"
   | "logout" | "location" | "continue" | "security" | "error" | "retry" | "success"
-  | "pending" | "staffAccess" | "confirm" | "add" | "subtract" | "close";
+  | "pending" | "staffAccess" | "confirm" | "add" | "subtract" | "close" | "qr" | "crown";
 
 const LUCIDE_ICONS: Partial<Record<BrandIconName, LucideIcon>> = {
   cannabis: Cannabis,
@@ -68,6 +70,8 @@ const GLASS_ICONS: Partial<Record<BrandIconName, typeof UsersGlassIcon>> = {
   add: PlusGlassIcon,
   subtract: MinusGlassIcon,
   close: XGlassIcon,
+  qr: QrCodeGlassIcon,
+  crown: CrownGlassIcon,
 };
 
 /** Glass UI icons from theSVG; botanical marks keep their dedicated leaf shapes. */

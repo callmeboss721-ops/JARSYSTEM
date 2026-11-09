@@ -72,9 +72,6 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
             <Image src="/brand/jaguar-price-board.webp" alt="เมนูสินค้าและราคาหน้าร้าน" width={760} height={760} sizes="(max-width: 440px) 90vw, 440px" />
           </details>
 
-          <nav className="landing-bottom-nav landing-enter landing-enter--nav" aria-label="เมนูสมาชิก">
-            <Link href="/card" data-selected="true"><BrandIcon name="leaf" tone="inherit" /><span>บัตรกระท่อม</span></Link>
-          </nav>
           <footer className="landing-site-footer" aria-label="ไอคอนท้ายหน้า">
             <img
               src="https://thesvg.org/icons/github/default.svg"

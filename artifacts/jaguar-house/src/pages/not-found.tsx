@@ -1,23 +1,18 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { AlertCircle } from 'lucide-react';
+import Link from "next/link";
+import { BrandIcon } from "@/components/brand/brand-icon";
+import { JaguarMark } from "@/components/brand/jaguar-mark";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md mx-4">
-        <CardContent className="pt-6">
-          <div className="flex mb-4 gap-2">
-            <AlertCircle className="h-8 w-8 text-red-500" />
-            <h1 className="text-2xl font-bold text-gray-900">
-              404 Page Not Found
-            </h1>
-          </div>
-
-          <p className="mt-4 text-sm text-gray-600">
-            Did you forget to add the page to the router?
-          </p>
-        </CardContent>
-      </Card>
-    </div>
+    <main className="min-h-[100dvh] grid place-items-center p-6 text-center">
+      <section className="panel flex w-full max-w-sm flex-col items-center gap-4 p-7">
+        <JaguarMark size={64} />
+        <BrandIcon name="error" tone="danger" size={26} />
+        <p className="eyebrow">404 · NOT FOUND</p>
+        <h1 className="font-display text-2xl font-semibold">ไม่พบหน้านี้</h1>
+        <p className="text-sm text-[var(--muted)]">ลิงก์นี้ไม่มีในระบบ</p>
+        <Link href="/" className="btn btn-neon w-full">กลับหน้าแรก</Link>
+      </section>
+    </main>
   );
 }

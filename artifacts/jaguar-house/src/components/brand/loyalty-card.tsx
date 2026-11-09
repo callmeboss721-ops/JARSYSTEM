@@ -1,5 +1,4 @@
 import { BrandIcon } from "./brand-icon";
-import { Crown } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
@@ -126,7 +125,7 @@ export function CollectingTrack({
                 data-testid={`${kind === "kratom" ? "stamp" : "cannabis-stamp"}-${index + 1}`}
                 data-coin-number={index + 1}
               >
-                <Crown className="collecting-track__crown" aria-hidden="true" />
+                <BrandIcon name="crown" className="collecting-track__crown" tone="gold" size={14} />
                 <span className="collecting-track__coin-face">{String(index + 1).padStart(2, "0")}</span>
                 <span className="sr-only">{isFilled ? "สะสมแล้ว" : "ยังไม่สะสม"} แต้มที่ {index + 1}</span>
               </li>

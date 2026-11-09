@@ -4217,7 +4217,7 @@ input.input, textarea.input, select.input { font-size: 16px; }
   .landing-members-club__art { animation: none !important; transition: none !important; }
 }
 
-/* Keep the landing navigation clear of the last content and phone safe area. */
+/* Keep the landing footer clear of the last content and phone safe area. */
 .landing-site-footer {
   display: flex;
   min-height: 48px;
@@ -4945,4 +4945,55 @@ input.input, textarea.input, select.input { font-size: 16px; }
   .member-bottom-nav__icon-wrap,
   .member-bottom-nav__icon { transition: none; }
   .member-bottom-nav__item.is-active .member-bottom-nav__icon-wrap { transform: none; }
+}
+
+/* Club palette refinement: warm metal, clear jade and a quiet blue-green signal. */
+:root {
+  --gold-2: #f0d995;
+  --emerald-2: #8bd8b0;
+  --green: #55c895;
+  --cyan: #9bcbd0;
+  --lime: #c5e6a0;
+  --glass-line: rgba(220, 201, 143, .24);
+}
+::selection { background: #d8bd73; color: #10140f; }
+:focus-visible { outline-color: #a7d8cb; }
+.input:focus { border-color: #8bd8b0; box-shadow: 0 0 0 3px rgba(139,216,176,.17); }
+.brand-icon {
+  overflow: visible;
+  color: currentColor;
+  transition: color .18s ease, transform .18s ease;
+}
+.brand-icon--neutral { color: #bdc8bd; }
+.brand-icon--gold { color: #f0d995; }
+.brand-icon--emerald { color: #8bd8b0; }
+.brand-icon--danger { color: #f2a092; }
+.owner-menu-tab__image {
+  width: 23px;
+  height: 23px;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,.28));
+}
+.owner-menu-tab[aria-pressed="true"] .owner-menu-tab__image { transform: translateY(-1px); }
+.member-bottom-nav__track {
+  border-color: rgba(216,189,115,.27);
+  background: linear-gradient(148deg, rgba(23,32,25,.97), rgba(8,13,10,.98) 72%);
+  box-shadow: 0 16px 38px rgba(0,0,0,.5), 0 1px 0 rgba(255,255,255,.08) inset;
+}
+.member-bottom-nav__item[data-kind="cannabis"].is-active {
+  border-color: rgba(139,216,176,.32);
+  background: linear-gradient(145deg, rgba(139,216,176,.12), rgba(70,111,82,.07));
+  color: #c8efd9;
+  box-shadow: 0 5px 16px -11px rgba(139,216,176,.45), 0 1px 0 rgba(255,255,255,.045) inset;
+}
+.member-bottom-nav__item.is-active::before {
+  background: linear-gradient(90deg, #d8bd73, #8bd8b0);
+  box-shadow: none;
+}
+.landing-header__actions a:focus-visible,
+.landing-ctas a:focus-visible,
+.member-bottom-nav__item:focus-visible { outline-color: #a7d8cb; }
+@media (prefers-reduced-motion: reduce) {
+  .brand-icon { transition: none; }
+  .owner-menu-tab[aria-pressed="true"] .owner-menu-tab__image { transform: none; }
 }
