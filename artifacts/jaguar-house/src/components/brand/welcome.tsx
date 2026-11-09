@@ -67,6 +67,15 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
               <span className="landing-club-preview__caption"><RankEmblem name="organic-premium" size={18} /><span>กัญชา</span></span>
             </Link>
           </section>
+          <figure className="landing-member-guide">
+            <Image
+              src="/brand/jaguar-member-guide.jpg"
+              alt="วิธีใช้บัตรสมาชิก JAGUAR 3 ขั้นตอน: เปิดบัตร ตั้งรหัส สะสมแต้ม และแลกรับของฟรี"
+              width={1792}
+              height={2400}
+              sizes="(max-width: 540px) calc(100vw - 32px), 540px"
+            />
+          </figure>
           <details className="landing-menu-preview">
             <summary>เมนูหน้าร้าน</summary>
             <Image src="/brand/jaguar-price-board.webp" alt="เมนูสินค้าและราคาหน้าร้าน" width={760} height={760} sizes="(max-width: 440px) 90vw, 440px" />

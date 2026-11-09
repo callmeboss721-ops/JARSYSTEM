@@ -3657,6 +3657,24 @@ input.input, textarea.input, select.input { font-size: 16px; }
   font-size: 10px;
   line-height: 1.2;
 }
+.landing-member-guide {
+  width: min(100%, 540px);
+  margin: 12px auto 18px;
+  padding: 7px;
+  overflow: hidden;
+  border: 1px solid rgba(212,175,55,.26);
+  border-radius: 16px 6px 16px 6px;
+  background: linear-gradient(145deg, rgba(212,175,55,.07), rgba(0,230,118,.035) 52%, rgba(255,255,255,.02));
+  box-shadow: 0 16px 36px -24px rgba(0,0,0,.88), 0 0 24px -20px rgba(0,230,118,.38);
+  contain: layout;
+}
+.landing-member-guide img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1792 / 2400;
+  border-radius: 11px 3px 11px 3px;
+}
 .landing-menu-preview {
   margin: 0 0 12px;
   border-top: 1px solid rgba(219,211,183,.12);
