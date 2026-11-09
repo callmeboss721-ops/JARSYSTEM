@@ -5131,6 +5131,28 @@ body {
 .jaguar-home--landing .landing-site-footer { gap: 8px; border-top-color: rgba(220,201,143,.14); color: #a2aca1; font-size: 11px; }
 .jaguar-home--landing .landing-campaign--hero { border-color: rgba(212,175,55,.3); box-shadow: 0 22px 48px -36px rgba(0,0,0,.9); }
 .jaguar-home--landing .landing-campaign figcaption { color: #fff9e9; }
+.jaguar-home--landing .landing-members-club__art {
+  width: clamp(220px, 38vw, 390px);
+  aspect-ratio: 1792 / 2400;
+  height: auto;
+  overflow: hidden;
+  border-radius: 5px;
+  background: #080b09;
+  box-shadow: 0 0 0 4px rgba(229,192,74,.035), 0 18px 36px -22px rgba(0,0,0,.72);
+}
+.jaguar-home--landing .landing-members-club__art::after {
+  border-radius: inherit;
+  background: linear-gradient(145deg, rgba(255,255,255,.045), transparent 24% 78%, rgba(0,0,0,.08));
+}
+.jaguar-home--landing .landing-members-club__art img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  object-fit: contain;
+  object-position: center;
+}
 .auth-stage { color: var(--text); }
 .auth-stage .text-\[var\(--muted\)\] { color: #a2aca1; }
 .auth-stage .text-\[var\(--gold-2\)\] { color: #f0d995; }
@@ -5142,4 +5164,77 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .brand-icon { transition: none; }
   .owner-menu-tab[aria-pressed="true"] .owner-menu-tab__image { transform: none; }
+}
+
+/* Landing-only ambient system: quiet jade/gold light, fine mesh, botanical linework. */
+.jaguar-home--landing {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse 46rem 31rem at 7% 5%, rgba(36, 115, 78, .12), transparent 72%),
+    radial-gradient(ellipse 38rem 28rem at 96% 9%, rgba(216, 189, 115, .085), transparent 74%),
+    radial-gradient(ellipse 58rem 38rem at 54% 100%, rgba(19, 67, 46, .14), transparent 76%),
+    linear-gradient(145deg, #070908 0%, #0b100c 56%, #080b09 100%);
+}
+.jaguar-home--landing > .landing-atmosphere {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(224, 230, 215, .018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(224, 230, 215, .018) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(ellipse at 52% 42%, #000 8%, rgba(0,0,0,.7) 44%, transparent 83%);
+  mask-image: radial-gradient(ellipse at 52% 42%, #000 8%, rgba(0,0,0,.7) 44%, transparent 83%);
+}
+.jaguar-home--landing > .landing-atmosphere .landing-atmosphere__botanical {
+  position: absolute;
+  width: clamp(118px, 19vw, 228px);
+  height: auto;
+  fill: none;
+  stroke: rgba(130, 174, 129, .28);
+  stroke-width: .8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: .22;
+}
+.jaguar-home--landing > .landing-atmosphere .landing-atmosphere__botanical--left {
+  top: 3.5rem;
+  left: max(2.5rem, calc((100vw - 1300px) / 2 - 1rem));
+  transform: rotate(-8deg);
+}
+.jaguar-home--landing > .landing-atmosphere .landing-atmosphere__botanical--right {
+  right: max(1rem, calc((100vw - 1300px) / 2 - 1rem));
+  bottom: 3rem;
+  stroke: rgba(216, 189, 115, .34);
+  opacity: .17;
+  transform: rotate(8deg);
+}
+.jaguar-home--landing > :not(.landing-atmosphere):not(.customer-art) {
+  position: relative;
+  z-index: 1;
+}
+@media (max-width: 760px) {
+  .jaguar-home--landing > .landing-atmosphere {
+    background-size: 52px 52px;
+    -webkit-mask-image: radial-gradient(ellipse at 50% 28%, rgba(0,0,0,.72) 5%, transparent 73%);
+    mask-image: radial-gradient(ellipse at 50% 28%, rgba(0,0,0,.72) 5%, transparent 73%);
+  }
+  .jaguar-home--landing > .landing-atmosphere .landing-atmosphere__botanical {
+    width: 116px;
+    opacity: .14;
+  }
+  .jaguar-home--landing > .landing-atmosphere .landing-atmosphere__botanical--left {
+    top: 5.5rem;
+    left: -1.25rem;
+  }
+  .jaguar-home--landing > .landing-atmosphere .landing-atmosphere__botanical--right {
+    right: -1.75rem;
+    bottom: 4rem;
+  }
+  .jaguar-home--landing .landing-members-club__art {
+    width: clamp(225px, 72vw, 350px);
+  }
 }

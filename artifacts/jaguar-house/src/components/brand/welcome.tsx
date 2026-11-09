@@ -18,6 +18,14 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
   if (initialTab === undefined) {
     return (
       <main className="jaguar-home jaguar-home--landing customer-art-root min-h-[100dvh]">
+        <div className="landing-atmosphere" aria-hidden="true">
+          <svg className="landing-atmosphere__botanical landing-atmosphere__botanical--left" viewBox="0 0 180 220" focusable="false">
+            <path d="M20 196C62 148 76 91 83 22M41 165C23 137 18 116 22 94c21 12 34 30 39 53M58 133c-2-29 5-51 20-68 12 22 14 44 7 67M72 99c-1-22 6-41 20-57 11 19 13 38 7 56M33 173c25-4 45-15 60-33" />
+          </svg>
+          <svg className="landing-atmosphere__botanical landing-atmosphere__botanical--right" viewBox="0 0 180 220" focusable="false">
+            <path d="M160 197C118 150 104 92 97 22M139 165c18-28 23-49 19-71-21 12-34 30-39 53m-1-14c2-29-5-51-20-68-12 22-14 44-7 67m13-33c1-22-6-41-20-57-11 19-13 38-7 56m54 48c-25-4-45-15-60-33" />
+          </svg>
+        </div>
         <SamutPrakanArt />
         <header className="landing-header landing-enter landing-enter--header">
           <Link href="/" className="landing-brand" aria-label="JAGUAR SPK หน้าแรก">
@@ -46,10 +54,10 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
             <figure className="landing-campaign landing-campaign--hero landing-members-club">
               <div className="landing-members-club__art">
                 <Image
-                  src="/brand/jaguar-spk-city-hero.webp"
-                  alt="ภาพโปรโมชัน JAGUAR SPK"
-                  width={840}
-                  height={840}
+                  src="/brand/jaguar-member-onboarding-guide.jpg"
+                  alt="คู่มือแนะนำการสมัครและใช้งานบัตรสมาชิก JAGUAR SPK"
+                  width={1792}
+                  height={2400}
                   priority
                   sizes="(max-width: 440px) 84vw, 430px"
                 />
