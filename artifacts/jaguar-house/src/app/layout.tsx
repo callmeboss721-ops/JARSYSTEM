@@ -4,12 +4,12 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "Jaguar Kratom — Members Club",
-  description: "บัตรสมาชิกสะสมแต้ม Jaguar Kratom ซอยบุญคีรี 6 สมุทรปราการ",
+  title: "JAGUAR SPK — บัตรสมาชิก",
+  description: "บัตรสมาชิกกระท่อมและกัญชา JAGUAR SPK · บุญศิริ ซอย 6 สมุทรปราการ",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#05050A",
+  themeColor: "#070908",
   width: "device-width",
   initialScale: 1,
 };
