@@ -1,5 +1,6 @@
 import { BrandIcon } from "./brand-icon";
 import { Crown } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
 import type { MemberCardData } from "./loyalty-api";
@@ -38,6 +39,7 @@ export function SharedMemberCard({
       <div className="member-pass-card__inner">
         <header className="member-pass-card__top">
           <div className="member-pass-card__identity">
+            <Image className="member-pass-card__brand-mark" src="/brand/jaguar-card-mark.webp" alt="" width={36} height={36} sizes="36px" />
             <div>
               <p className="member-pass-card__label">{cannabis ? "JAGUAR CANNABIS · MEMBER" : "JAGUAR KRATOM · MEMBER"}</p>
               <p className="member-pass-card__location">บุญศิริ ซอย 6 · สมุทรปราการ</p>
@@ -83,7 +85,7 @@ export function LoyaltyProgress({ balance }: { balance: number }) {
       <CollectingTrack balance={balance} kind="kratom" titleId="member-progress-title" />
       {balance > STAMPS && <p className="member-progress-extra" data-testid="text-extra-points">แต้มสะสมทั้งหมด {balance} แต้ม</p>}
       <div className="member-progress-actions">
-        <p>{ready ? "ครบ 10 แต้ม · แลกฟรี 1 ขวดได้" : `ครบ 3 ขวดในบิล รับ 1 แต้ม · อีก ${remaining} แต้มแลกฟรี 1 ขวด`}</p>
+        <p>{ready ? "ครบ 10 · ฟรี 1 ขวด" : `3 ขวด/บิล = 1 แต้ม · เหลือ ${remaining} แต้ม`}</p>
         <Link href="/redeem" className="btn btn-redeem">{ready ? "แลกของแถมเลย" : `อีก ${remaining} แต้ม`} <BrandIcon name="redeem" tone="inherit" /></Link>
       </div>
     </section>
@@ -105,12 +107,9 @@ export function CollectingTrack({
     <div className={`collecting-track collecting-track--${kind}`}>
       <div className="collecting-track__heading">
         <div>
-          <p>JAGUAR SPK COLLECTING TRACK</p>
-          <h2 id={titleId}>POINTS: {filled}<span>/{STAMPS}</span></h2>
+          <p>แต้มสะสม</p>
+          <h2 id={titleId}>{filled}<span>/{STAMPS}</span></h2>
         </div>
-        <span className={`collecting-track__status${filled >= STAMPS ? " is-ready" : ""}`}>
-          {filled >= STAMPS ? "READY TO REDEEM" : "COLLECTING"}
-        </span>
       </div>
       <div className="collecting-track__visual">
         <div className="collecting-track__connector" aria-hidden="true">

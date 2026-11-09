@@ -8,6 +8,7 @@ import { api, type MemberCardData } from "./loyalty-api";
 import { BrandIcon } from "./brand-icon";
 import { SamutPrakanArt } from "./samut-prakan-art";
 import { LoginForm, RegisterForm } from "./auth-forms";
+import { BrandButton } from "./brand-button";
 
 export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
   const [tab, setTab] = useState<"login" | "register">(initialTab ?? "login");
@@ -20,9 +21,9 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
         <header className="landing-header landing-enter landing-enter--header">
           <Link href="/" className="landing-brand" aria-label="JAGUAR SPK หน้าแรก">
             <span className="landing-brand__logo">
-              <Image src="/brand/jaguar-spk-wordmark-final.webp" alt="JAGUAR SPK" width={1200} height={536} priority sizes="(max-width: 760px) 92px, 110px" />
+            <Image src="/ui/logo-spk-circle.webp" alt="JAGUAR SPK" width={360} height={269} priority sizes="52px" />
             </span>
-            <span className="landing-brand__copy"><small>KRATOM</small><small>BUN KHIRI SOI 6</small></span>
+            <span className="landing-brand__copy"><small>KRATOM · SOI 6</small></span>
           </Link>
           <nav className="landing-header__actions" aria-label="ทางเข้าพนักงาน">
             <Link href="/admin?desk=staff" data-testid="link-staff">พนักงาน</Link>
@@ -32,82 +33,49 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
         <div className="landing-shell">
           <section className="landing-feature landing-enter landing-enter--hero" aria-labelledby="landing-title">
             <div className="landing-feature__copy">
-              <p className="landing-eyebrow">NEIGHBORHOOD MEMBERSHIP · SAMUT PRAKAN</p>
               <h1 id="landing-title">
-                จากัวร์ พลังใบ
+                พี่เสือพลังใบ
                 <span>ซุปเปอร์ฮีโร่ของคนไทย</span>
               </h1>
-              <p className="landing-subcopy">แวะที่บุญศิริ ซอย 6 สะสมแต้ม แล้วเปิดบัตรจากมือถือได้เลย</p>
               <div className="landing-ctas">
-                <Link href="/login?mode=register" className="btn btn-gold" data-testid="link-open-wallet">สมัครสมาชิก <BrandIcon name="continue" tone="inherit" /></Link>
-                <Link href="/login" className="btn btn-ghost" data-testid="link-member-login">เข้าสู่ระบบ <BrandIcon name="members" tone="gold" /></Link>
-              </div>
-              <div className="landing-local-note">
-                <span className="landing-local-note__mark" aria-hidden="true" />
-                <span><strong>JAGUAR KRATOM</strong><small>บุญศิริ ซอย 6 · สมุทรปราการ</small></span>
+                <BrandButton href="/login?mode=register" asset="btn-jaguar" label="เปิดบัตรสมาชิก" testId="link-open-wallet" />
+                <BrandButton href="/login" asset="btn-leaf" label="เข้าใช้งาน" testId="link-member-login" />
               </div>
             </div>
             <figure className="landing-campaign landing-campaign--hero landing-members-club">
-              <div className="landing-members-club__topline">
-                <span>01 / MEMBERS CLUB</span>
-                <span>JAGUAR SPK</span>
-              </div>
               <div className="landing-members-club__art">
                 <Image
-                  src="/brand/jaguar-spk-city-campaign.webp"
-                  alt="ภาพโปรโมชัน JAGUAR SPK กับพี่เสือ สะพานและแลนด์มาร์กสมุทรปราการ เปิด 24 ชั่วโมง เริ่มต้น 50 บาท"
-                  width={1400}
-                  height={1400}
+                  src="/brand/jaguar-spk-city-hero.webp"
+                  alt="ภาพโปรโมชัน JAGUAR SPK"
+                  width={840}
+                  height={840}
                   priority
-                  sizes="(max-width: 760px) 78vw, 430px"
+                  sizes="(max-width: 440px) 84vw, 430px"
                 />
               </div>
-              <figcaption className="landing-members-club__footer">
-                <span>เปิด 24 ชั่วโมง · เริ่มต้นขวดละ 50.-</span>
-              </figcaption>
             </figure>
           </section>
 
-          <section className="landing-details" aria-label="รายละเอียดร้านและสมาชิก">
-            <div className="landing-price">
-              <div className="landing-section-heading">
-                <span className="landing-kicker">AT THE COUNTER</span>
-                <h2>เมนูที่หน้าร้าน</h2>
-                <p>รายการสินค้าและราคาจากทางร้าน</p>
-              </div>
-              <figure className="landing-campaign landing-campaign--board">
-                <Image
-                  src="/brand/campaign/jaguar-price-board.jpg"
-                  alt="ป้ายประชาสัมพันธ์ร้าน แสดงรายการเครื่องดื่มกระท่อมและกัญชาพรีเมียมตามที่ระบุในภาพ"
-                  width={1024}
-                  height={1024}
-                  sizes="(max-width: 760px) 100vw, 48vw"
-                />
-                <figcaption><span>JAGUAR KRATOM</span><span>รายการหน้าร้าน</span></figcaption>
-              </figure>
-            </div>
-            <div className="landing-members">
-              <div className="landing-section-heading">
-                <span className="landing-kicker">MADE FOR THE NEIGHBORHOOD</span>
-                <h2>สมาชิกจากัวร์</h2>
-                <p className="landing-reward-rule">กระท่อมทุก 3 ขวดในบิลเดียว รับ 1 แต้ม · ครบ 10 แต้ม ฟรี 1 ขวด</p>
-                <p>สมัครด้วยเบอร์โทร แล้วเปิดบัตรบนมือถือที่เคาน์เตอร์</p>
-              </div>
-              <ol className="landing-steps">
-                <li><span>01</span><strong>สมัครสมาชิก</strong><small>ใช้เบอร์โทรของคุณ</small></li>
-                <li><span>02</span><strong>สะสมแต้ม</strong><small>แสดงบัตรเมื่อแวะซื้อ</small></li>
-                <li><span>03</span><strong>แลกรางวัล</strong><small>ตรวจสอบสิทธิ์ในบัตร</small></li>
-              </ol>
-              <Link href="/login?mode=register" className="landing-text-link">เริ่มต้นเป็นสมาชิก <BrandIcon name="continue" tone="gold" /></Link>
-            </div>
+          <section className="landing-club-previews" aria-label="บัตรสมาชิก">
+            <Link href="/card" className="landing-club-preview" aria-label="ดูบัตรสมาชิกกระท่อม">
+              <Image src="/brand/kratom-club-preview.webp" alt="ลายบัตรสมาชิกกระท่อม" width={768} height={484} sizes="(max-width: 440px) 44vw, 200px" />
+              <span>กระท่อม</span>
+            </Link>
+            <Link href="/card/cannabis" className="landing-club-preview" aria-label="ดูบัตรสมาชิกกัญชา">
+              <Image src="/brand/cannabis-club-preview.webp" alt="ลายบัตรสมาชิกกัญชา" width={768} height={484} sizes="(max-width: 440px) 44vw, 200px" />
+              <span>กัญชา</span>
+            </Link>
           </section>
+          <details className="landing-menu-preview">
+            <summary>เมนูหน้าร้าน</summary>
+            <Image src="/brand/jaguar-price-board.webp" alt="เมนูสินค้าและราคาหน้าร้าน" width={760} height={760} sizes="(max-width: 440px) 90vw, 440px" />
+          </details>
 
           <nav className="landing-bottom-nav landing-enter landing-enter--nav" aria-label="เมนูสมาชิก">
             <Link href="/card" data-selected="true"><BrandIcon name="leaf" tone="inherit" /><span>บัตรกระท่อม</span></Link>
             <Link href="/card/cannabis"><BrandIcon name="cannabis" tone="emerald" /><span>บัตรกัญชา</span></Link>
             <Link href="/redeem"><BrandIcon name="rewards" tone="gold" /><span>รางวัลกระท่อม</span></Link>
           </nav>
-          <footer className="landing-footer"><span>JAGUAR KRATOM</span><span>บุญศิริ ซอย 6 · สมุทรปราการ</span></footer>
         </div>
       </main>
     );
@@ -159,39 +127,29 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
               <Link href="/owner" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--gold-2)] no-underline" data-testid="link-owner-mobile">เจ้าของร้าน</Link>
             </nav>
           )}
-          <div className="brand-showcase mb-5 flex justify-center rise" style={{ animationDelay: "80ms" }} aria-hidden="true">
-            <BrandIcon name="lightning" size={24} tone="emerald" className="brand-showcase__icon brand-showcase__bolt" />
-            <BrandIcon name="leaf" size={23} tone="emerald" className="brand-showcase__icon brand-showcase__kratom" />
-            <BrandIcon name="cannabis" size={21} tone="emerald" className="brand-showcase__icon brand-showcase__cannabis" />
+          <div className="brand-showcase mb-4 flex justify-center rise" style={{ animationDelay: "80ms" }}>
             <Image
               className="brand-showcase__campaign"
-              src="/brand/jaguar-login-plaque.webp"
-              alt="ป้ายตรา JAGUAR SPK พร้อมภาพพี่เสือ"
-              width={1026}
-              height={370}
+              src="/ui/logo-spk-text.webp"
+              alt="JAGUAR SPK"
+              width={480}
+              height={214}
               priority
-              sizes="(max-width: 760px) 62vw, 310px"
+              sizes="(max-width: 760px) 82vw, 400px"
             />
           </div>
-          <p className="brand-slogan-inline lg:hidden" data-testid="brand-slogan-mobile">พี่เสือพลังใบ ซุปเปอร์ฮีโร่ของคนไทย</p>
-          <p className="brand-promo-subtitle">Jaguar SPK · เปิด 24 ชม. · บุญคีรี ซอย 6</p>
-          <div className="flex items-baseline justify-between gap-2 mb-2 lg:hidden">
-            <p className="eyebrow !mb-0">Private Members</p>
-            <p className="shrink-0 text-xs font-semibold text-[var(--gold-2)]">ครบ 10 · ฟรี 1 ขวด</p>
-          </div>
-          <p className="eyebrow mb-2 hidden lg:block">Private Members</p>
           {session.isSuccess && session.data ? (
               <div className="panel auth-panel p-7 space-y-5" data-testid="panel-session">
-              <h2 className="font-display text-2xl font-semibold">ยินดีต้อนรับกลับ</h2>
-              <p className="text-[var(--muted)] text-sm">อุปกรณ์นี้เข้าสู่ระบบอยู่แล้ว บัตร <span className="font-mono text-[var(--gold-2)]">{session.data.member_code}</span></p>
-              <Link href="/card" className="btn btn-neon w-full" data-testid="link-open-card">เปิดบัตรของฉัน <BrandIcon name="continue" tone="inherit" /></Link>
+              <h2 className="font-display text-2xl font-semibold">เข้าสู่ระบบแล้ว</h2>
+              <p className="text-[var(--muted)] text-sm">@{session.data.member_code}</p>
+              <BrandButton href="/card" asset="btn-jaguar" label="เปิดบัตรสมาชิก" testId="link-open-card" />
             </div>
           ) : (
             <>
-              <h2 className="font-display text-2xl sm:text-3xl font-semibold mb-5">{tab === "login" ? "เปิดบัตรของคุณ" : "รับบัตรใบใหม่"}</h2>
+              <h2 className="font-display text-2xl sm:text-3xl font-semibold mb-4">{tab === "login" ? "บัตรสมาชิก" : "เปิดบัตรใหม่"}</h2>
               <div role="tablist" onKeyDown={(e) => { if (e.key === "ArrowRight" || e.key === "ArrowLeft") { const next = tab === "login" ? "register" : "login"; setTab(next); document.getElementById(`tab-${next}`)?.focus(); } }} aria-label="เลือกการเข้าใช้" className="pill-switch flex gap-1 p-1 mb-5">
-                <button role="tab" id="tab-login" aria-selected={tab === "login"} tabIndex={tab === "login" ? 0 : -1} aria-controls="panel-auth" className="tab" onClick={() => setTab("login")} data-testid="tab-login">เข้าสู่ระบบ</button>
-                <button role="tab" id="tab-register" aria-selected={tab === "register"} tabIndex={tab === "register" ? 0 : -1} aria-controls="panel-auth" className="tab" onClick={() => setTab("register")} data-testid="tab-register">สมัครสมาชิก</button>
+                <button role="tab" id="tab-login" aria-selected={tab === "login"} tabIndex={tab === "login" ? 0 : -1} aria-controls="panel-auth" className="tab" onClick={() => setTab("login")} data-testid="tab-login">เข้าใช้</button>
+                <button role="tab" id="tab-register" aria-selected={tab === "register"} tabIndex={tab === "register" ? 0 : -1} aria-controls="panel-auth" className="tab" onClick={() => setTab("register")} data-testid="tab-register">สมัคร</button>
               </div>
               <div id="panel-auth" role="tabpanel" aria-labelledby={`tab-${tab}`} className="panel auth-panel auth-form-panel p-5 sm:p-7">
                 {tab === "login" ? <LoginForm /> : <RegisterForm />}

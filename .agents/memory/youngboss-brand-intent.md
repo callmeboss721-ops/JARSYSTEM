@@ -27,3 +27,14 @@ explained.
 
 **How to apply:** Confirm storage choice and treatment of existing member data
 before replacing the database. Do not silently migrate or discard old balances.
+
+For customer-facing UI, the user prefers modern minimal layouts, short Thai
+copy, fast loading, and artwork placed only where it has a clear purpose. Avoid
+repeating promotional text or using fixed sample balances/QR codes as live card
+content. Optimize images for their rendered size and defer below-the-fold art.
+
+**Why:** The user explicitly asked to remove clutter, improve load speed and
+image ratios, and avoid placing artwork arbitrarily.
+
+**How to apply:** Keep dynamic member data in the live card UI; use printed card
+mockups only as clearly labeled previews, and keep the main landing flow brief.

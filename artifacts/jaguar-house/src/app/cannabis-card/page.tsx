@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useGetCannabisMemberCard, getGetCannabisMemberCardQueryKey, type CannabisCard } from "@workspace/api-client-react";
 import { MemberShell } from "@/components/brand/member-shell";
 import { MemberCardCarousel } from "@/components/brand/member-card-carousel";
-import { CollectingTrack, SharedMemberCard } from "@/components/brand/loyalty-card";
+import { MemberCardFaces, MemberStatusPanel, type MemberCardSide } from "@/components/brand/member-card-experience";
 import { ErrorState, SignedOutState, EmptyState, LoadingState } from "@/components/brand/ui";
 import { api, errorText } from "@/components/brand/loyalty-api";
 
@@ -14,6 +14,7 @@ const CONFETTI_COLORS = ["#e5c04a", "#f6e09a", "#2fd98a", "#c4cad6", "#b8901f"];
 
 export default function CannabisCardPage() {
   const [visible, setVisible] = useState(true);
+  const [cardSide, setCardSide] = useState<MemberCardSide>("front");
   const [popKey, setPopKey] = useState(0);
   const [celebrate, setCelebrate] = useState(false);
   const [confettiKey, setConfettiKey] = useState(0);
@@ -36,7 +37,6 @@ export default function CannabisCardPage() {
     },
   });
   const card = cardQuery.data as CannabisCard | undefined;
-  const stampCount = Math.min(Math.max(card?.balance ?? 0, 0), 10);
   const unauthenticated = (cardQuery.error as { status?: number } | null)?.status === 401;
   const qr = useQuery<{ qr: string }>({
     queryKey: ["/api/loyalty/qr", card?.member_code],
@@ -76,39 +76,40 @@ export default function CannabisCardPage() {
       : cardQuery.isError || !card ? <div className="max-w-md mx-auto"><ErrorState message={errorText(cardQuery.error)} onRetry={() => void cardQuery.refetch()} retrying={cardQuery.isFetching} /></div>
       : <div className="cannabis-wrap">
         <header className="cannabis-heading rise">
-          <div className="member-heading-top"><div><p className="eyebrow">MEMBERS CLUB · DIGITAL PASS</p><h1>{card.display_name || "บัตรสมาชิกพลังใบ"}</h1><p>พี่เสือพลังใบ ซุปเปอร์ฮีโร่ของคนไทย</p></div><img src="/brand/jaguar-spk-wordmark-final.webp" alt="ตรา JAGUAR SPK" width={1200} height={536} /></div>
+          <div className="member-heading-top"><div><h1>{card.display_name || "บัตรกัญชา"}</h1><p className="member-tier">สมาชิกกัญชา</p></div></div>
         </header>
         {confettiKey > 0 && <CannabisConfetti key={confettiKey} />}
-        {celebrate && <div role="status" className="cannabis-ready cannabis-ready--celebrate">ครบ 10 แสตมป์ — แลกฟรี 1 กรัมได้ที่เคาน์เตอร์</div>}
+        {celebrate && <div role="status" className="cannabis-ready cannabis-ready--celebrate">ครบ 10 · แลกฟรี 1 กรัมที่เคาน์เตอร์</div>}
         <MemberCardCarousel active="cannabis">
-          <SharedMemberCard
-            key={popKey}
+          <MemberCardFaces
             kind="cannabis"
             memberCode={card.member_code}
             balance={card.balance}
-            className={popKey ? "card-pop" : ""}
-            qr={{
-              value: qr.data?.qr,
-              loading: qr.isLoading,
-              error: qr.isError ? errorText(qr.error) : undefined,
-              retry: () => { void qr.refetch(); },
-              retrying: qr.isFetching,
-            }}
+            popKey={popKey}
+            side={cardSide}
+            onSideChange={setCardSide}
           />
         </MemberCardCarousel>
-        <section className="cannabis-stamps panel" aria-labelledby="cannabis-stamps-title" data-testid="cannabis-stamps">
-          <CollectingTrack balance={card.balance} kind="cannabis" titleId="cannabis-stamps-title" />
-          <p className="cannabis-stamps__note">สะสมครบ 10 แสตมป์ รับฟรี 1 กรัม</p>
-          <div className="cannabis-reward"><span>01</span><p>ซื้อทุก 1 กรัม รับ 1 แสตมป์</p><b>10 แสตมป์ = ฟรี 1 กรัม</b></div>
-        </section>
-        {card.balance >= 10 && !celebrate && <div className="cannabis-ready" role="status">แสตมป์ครบแล้ว — แจ้งพนักงานเพื่อแลกฟรี 1 กรัม</div>}
+        <MemberStatusPanel
+          kind="cannabis"
+          memberCode={card.member_code}
+          balance={card.balance}
+          qr={{
+            value: qr.data?.qr,
+            loading: qr.isLoading,
+            error: qr.isError ? errorText(qr.error) : undefined,
+            retry: () => { void qr.refetch(); },
+            retrying: qr.isFetching,
+          }}
+          onShowCard={() => setCardSide("front")}
+        />
         <div className="cannabis-stats">
-          <article><span>แสตมป์สะสมตลอดชีพ</span><strong>{card.lifetime_earned}</strong><small>แสตมป์</small></article>
-          <article><span>แสตมป์ที่ใช้แลก</span><strong>{card.lifetime_redeemed}</strong><small>ดวงทั้งหมด</small></article>
+          <article><span>สะสมรวม</span><strong>{card.lifetime_earned}</strong><small>แต้ม</small></article>
+          <article><span>แลกแล้ว</span><strong>{card.lifetime_redeemed}</strong><small>แต้ม</small></article>
         </div>
         <section className="cannabis-history panel" aria-labelledby="cannabis-history-title">
-          <div className="flex items-end justify-between gap-3"><div><p className="eyebrow">Stamp ledger</p><h2 id="cannabis-history-title">รายการล่าสุด</h2></div><span className="cannabis-count">{card.recent_transactions.length} รายการ</span></div>
-          {!card.recent_transactions.length ? <EmptyState title="ยังไม่มีรายการสะสม" body="เมื่อซื้อสินค้าที่ร้าน รายการแสตมป์จะปรากฏที่นี่" />
+          <div className="flex items-end justify-between gap-3"><h2 id="cannabis-history-title">รายการล่าสุด</h2></div>
+          {!card.recent_transactions.length ? <EmptyState title="ยังไม่มีรายการสะสม" />
             : <ul>{card.recent_transactions.map((tx) => <li key={tx.id}>
               <span className={`cannabis-delta ${tx.delta < 0 ? "is-out" : ""}`}>{tx.delta > 0 ? `+${tx.delta}` : tx.delta}</span>
               <span className="cannabis-transaction-copy"><strong>{tx.reason}</strong><small>{new Date(tx.created_at).toLocaleString("th-TH")}{tx.grams_purchased > 0 ? ` · ซื้อ ${tx.grams_purchased} กรัม` : ""}</small></span>

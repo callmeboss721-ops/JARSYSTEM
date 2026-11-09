@@ -2541,6 +2541,1201 @@ input.input, textarea.input, select.input { font-size: 16px; }
   }
 }
 
+/* Matching physical member-card faces and live dashboard status. */
+.club-pass {
+  --club-neon: #00ff9d;
+  --club-gold: #d4af37;
+  width: min(100%,390px);
+  margin: 0 auto;
+}
+.club-pass--cannabis {
+  --club-neon: #8dff00;
+  --club-gold: #e5c04a;
+}
+.club-pass__switch {
+  display: flex;
+  width: fit-content;
+  gap: 3px;
+  margin: 0 auto 8px;
+  padding: 3px;
+  border: 1px solid color-mix(in srgb,var(--club-gold) 30%,transparent);
+  border-radius: 999px;
+  background: rgba(5,8,6,.88);
+}
+.club-pass__switch button {
+  min-width: 82px;
+  min-height: 32px;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #b9bdb3;
+  font: 600 11px/1 var(--font-sans);
+  cursor: pointer;
+  transition: color .18s ease, background .18s ease, box-shadow .18s ease;
+}
+.club-pass__switch button[aria-pressed="true"] {
+  background: linear-gradient(110deg,color-mix(in srgb,var(--club-neon) 13%,transparent),color-mix(in srgb,var(--club-gold) 14%,transparent));
+  color: #f0dfa0;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb,var(--club-gold) 32%,transparent), 0 0 16px -10px var(--club-neon);
+}
+.club-pass__switch button:focus-visible,
+.member-dashboard-status__cta:focus-visible,
+.member-dashboard-status__qr-error button:focus-visible {
+  outline: 2px solid var(--club-neon);
+  outline-offset: 2px;
+}
+.club-pass__front,
+.club-pass__stamp-face {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  width: min(100%,349px);
+  max-height: 220px;
+  aspect-ratio: 1.586;
+  margin: 0 auto;
+  overflow: hidden;
+  contain: layout paint;
+  border: 1px solid color-mix(in srgb,var(--club-gold) 72%,var(--club-neon));
+  border-radius: 16px;
+  background: linear-gradient(145deg,#121712,#070a08);
+  box-shadow: 0 12px 28px rgba(0,0,0,.48),0 0 22px -15px var(--club-neon),inset 0 1px 0 rgba(255,255,255,.1);
+  animation: club-face-in .22s cubic-bezier(.22,1,.36,1) both;
+}
+.club-pass__front-art {
+  z-index: 0;
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+.club-pass__front-frame {
+  position: absolute;
+  z-index: 1;
+  inset: 5px;
+  border: 1px solid color-mix(in srgb,var(--club-gold) 28%,transparent);
+  border-radius: 12px;
+  box-shadow: inset 0 0 16px rgba(0,0,0,.12),0 0 15px -12px var(--club-neon);
+  pointer-events: none;
+}
+.club-pass__stamp-face {
+  display: grid;
+  grid-template-rows: auto minmax(0,1fr) auto;
+  gap: 6px;
+  padding: 10px 12px 8px;
+  background:
+    radial-gradient(ellipse at 0 100%,color-mix(in srgb,var(--club-neon) 13%,transparent),transparent 42%),
+    radial-gradient(ellipse at 100% 0,color-mix(in srgb,var(--club-gold) 12%,transparent),transparent 38%),
+    linear-gradient(145deg,#111611 0%,#080b09 64%,#050706 100%);
+}
+.club-pass__stamp-face::before {
+  position: absolute;
+  z-index: -1;
+  inset: 7px;
+  border: 1px solid color-mix(in srgb,var(--club-neon) 24%,transparent);
+  border-radius: 11px;
+  content: "";
+  pointer-events: none;
+}
+.club-pass__stamp-head {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2px;
+}
+.club-pass__stamp-head > div {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.club-pass__stamp-head > div > span {
+  color: #c4c8ba;
+  font: 700 7px/1 var(--font-mono);
+  letter-spacing: .14em;
+}
+.club-pass__stamp-head > div > strong {
+  color: var(--club-gold);
+  font: 800 17px/.9 var(--font-display);
+}
+.club-pass__stamp-head > div > strong small {
+  margin-left: 2px;
+  color: #d5d3c8;
+  font: 600 8px/1 var(--font-mono);
+}
+.club-pass__stamp-head > img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+.club-pass__stamp-grid {
+  display: grid;
+  grid-template-columns: repeat(5,minmax(0,1fr));
+  align-content: center;
+  gap: 5px 7px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.club-pass__stamp {
+  display: grid;
+  aspect-ratio: 1;
+  min-width: 0;
+  align-content: center;
+  justify-items: center;
+  border: 1px solid color-mix(in srgb,var(--club-gold) 82%,#fff);
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 26%,rgba(229,192,74,.12),rgba(3,6,4,.93) 72%);
+  color: rgba(229,192,74,.45);
+  box-shadow: inset 0 1px 6px rgba(0,0,0,.76),0 0 8px -6px var(--club-gold);
+  transition: border-color .18s ease,background .18s ease,box-shadow .18s ease,transform .18s ease;
+}
+.club-pass__stamp img {
+  display: block;
+  width: clamp(21px,7vw,28px);
+  height: clamp(21px,7vw,28px);
+  object-fit: contain;
+  filter: drop-shadow(0 0 5px color-mix(in srgb,var(--club-neon) 35%,transparent));
+}
+.club-pass__stamp[data-filled="true"]:not([data-reward="true"]) {
+  border-color: color-mix(in srgb,var(--club-neon) 70%,var(--club-gold));
+  background: radial-gradient(circle at 36% 28%,color-mix(in srgb,var(--club-neon) 22%,transparent),rgba(6,27,12,.95) 74%);
+  box-shadow: 0 0 13px -8px var(--club-neon),inset 0 1px 5px rgba(0,0,0,.58);
+}
+.club-pass--kratom .club-pass__stamp[data-filled="true"]:not([data-reward="true"]) {
+  border-color: rgba(229,192,74,.86);
+  background: radial-gradient(circle at 36% 28%,rgba(229,192,74,.21),rgba(8,31,18,.94) 74%);
+  box-shadow: 0 0 13px -8px var(--club-gold),inset 0 1px 5px rgba(0,0,0,.58);
+}
+.club-pass__stamp-number {
+  color: rgba(235,222,179,.66);
+  font: 700 10px/1 var(--font-mono);
+}
+.club-pass__stamp[data-reward="true"] {
+  border-color: color-mix(in srgb,var(--club-neon) 76%,var(--club-gold));
+  background: radial-gradient(circle at 36% 25%,color-mix(in srgb,var(--club-neon) 14%,transparent),rgba(5,18,8,.95) 72%);
+  color: var(--club-neon);
+  opacity: .76;
+}
+.club-pass__stamp[data-reward="true"][data-ready="true"] {
+  opacity: 1;
+  box-shadow: 0 0 16px -5px var(--club-neon),inset 0 0 10px color-mix(in srgb,var(--club-neon) 16%,transparent);
+}
+.club-pass__stamp[data-reward="true"] > strong {
+  font: 900 clamp(8px,2.5vw,10px)/1 var(--font-mono);
+  letter-spacing: -.04em;
+}
+.club-pass__stamp[data-reward="true"] > small {
+  margin-top: 2px;
+  font: 700 6px/1 var(--font-sans);
+}
+.club-pass__stamp[data-pop="true"] { animation: club-stamp-pop .34s cubic-bezier(.22,1,.36,1) both; }
+.club-pass__stamp-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 2px 0;
+  border-top: 1px solid color-mix(in srgb,var(--club-gold) 24%,transparent);
+  color: #b8bcb1;
+  font: 600 7px/1 var(--font-mono);
+  letter-spacing: .035em;
+}
+.club-pass__stamp-foot span:last-child { color: var(--club-gold); }
+.member-dashboard-status {
+  --club-neon: #00ff9d;
+  --club-gold: #d4af37;
+  display: grid;
+  grid-template-columns: minmax(0,1fr) 72px;
+  align-items: center;
+  gap: 10px;
+  width: min(100%,390px);
+  margin: 10px auto 0;
+  padding: 12px;
+  border: 1px solid rgba(212,175,55,.23);
+  border-radius: 15px;
+  background:
+    radial-gradient(ellipse at 0 100%,rgba(0,255,157,.07),transparent 50%),
+    linear-gradient(145deg,rgba(19,25,20,.97),rgba(7,10,8,.98));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035),0 8px 20px rgba(0,0,0,.18);
+}
+.member-dashboard-status--cannabis {
+  --club-neon: #8dff00;
+  --club-gold: #e5c04a;
+  border-color: rgba(141,255,0,.22);
+}
+.member-dashboard-status__main {
+  display: grid;
+  min-width: 0;
+  gap: 7px;
+}
+.member-dashboard-status__main > header {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.member-dashboard-status__eyebrow {
+  color: #a9b1a5;
+  font: 700 7px/1 var(--font-mono);
+  letter-spacing: .14em;
+}
+.member-dashboard-status__main h2 {
+  overflow: hidden;
+  margin: 4px 0 0;
+  color: #f1ead6;
+  font: 600 13px/1.2 var(--font-sans);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.member-dashboard-status__main h2 strong {
+  color: var(--club-neon);
+  font: 700 12px/1 var(--font-mono);
+}
+.member-dashboard-status__chip {
+  flex: 0 0 auto;
+  padding: 4px 7px;
+  border: 1px solid color-mix(in srgb,var(--club-neon) 36%,transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb,var(--club-neon) 7%,transparent);
+  color: #c8e2b4;
+  font: 700 7px/1 var(--font-sans);
+  white-space: nowrap;
+}
+.member-dashboard-status__chip[data-ready="true"] {
+  border-color: color-mix(in srgb,var(--club-gold) 60%,transparent);
+  background: color-mix(in srgb,var(--club-gold) 11%,transparent);
+  color: #ecd985;
+}
+.member-dashboard-status__points {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+.member-dashboard-status__points > span:first-child {
+  color: #afb6aa;
+  font-size: 9px;
+}
+.member-dashboard-status__points > strong {
+  color: var(--club-gold);
+  font: 800 20px/.95 var(--font-display);
+}
+.member-dashboard-status__points > strong small {
+  margin-left: 2px;
+  color: #b8bcb1;
+  font: 600 8px/1 var(--font-mono);
+}
+.member-dashboard-status__remaining {
+  margin-left: auto;
+  color: #d4d2c5;
+  font-size: 8px;
+}
+.member-dashboard-status__bar {
+  height: 5px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 999px;
+  background: rgba(0,0,0,.65);
+}
+.member-dashboard-status__bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg,var(--club-gold),var(--club-neon));
+  box-shadow: 0 0 10px color-mix(in srgb,var(--club-neon) 42%,transparent);
+  transition: width .3s ease;
+}
+.member-dashboard-status__extra,
+.member-dashboard-status__redeem-note {
+  color: #afb8aa;
+  font-size: 8px;
+  line-height: 1.2;
+}
+.member-dashboard-status__extra { margin-top: -3px; }
+.member-dashboard-status__redeem-note { color: #d9cb8f; }
+.member-dashboard-status__cta {
+  display: flex;
+  width: 100%;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 1px;
+  padding: 7px 9px;
+  border: 1px solid color-mix(in srgb,var(--club-gold) 68%,transparent);
+  border-radius: 9px;
+  background: linear-gradient(110deg,#d2aa3a,#f0d875);
+  color: #171409;
+  font: 800 10px/1.15 var(--font-sans);
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 4px 13px -9px var(--club-gold);
+}
+.member-dashboard-status--cannabis .member-dashboard-status__cta {
+  border-color: rgba(141,255,0,.44);
+  background: linear-gradient(110deg,#8dff00,#c4ff62);
+  color: #11190a;
+}
+.member-dashboard-status__cta:disabled {
+  border-color: rgba(220,216,190,.18);
+  background: rgba(255,255,255,.04);
+  color: #b8b8aa;
+  box-shadow: none;
+  cursor: default;
+}
+.member-dashboard-status__qr {
+  display: grid;
+  width: 72px;
+  min-height: 80px;
+  align-content: center;
+  justify-items: center;
+  gap: 3px;
+  padding: 4px;
+  border: 1px solid color-mix(in srgb,var(--club-gold) 45%,transparent);
+  border-radius: 9px;
+  background: #f3f1e5;
+  color: #25301f;
+}
+.member-dashboard-status__qr > svg,
+.member-dashboard-status__qr-loading,
+.member-dashboard-status__qr-error {
+  display: grid;
+  width: 62px;
+  height: 62px;
+  align-content: center;
+  justify-items: center;
+  background: #fff;
+}
+.member-dashboard-status__qr > svg { display: block; }
+.member-dashboard-status__qr > small {
+  color: #25301f;
+  font: 700 6px/1 var(--font-sans);
+}
+.member-dashboard-status__qr-loading {
+  border: 2px solid rgba(35,57,29,.16);
+  border-top-color: #4a8b18;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+.member-dashboard-status__qr-error {
+  gap: 4px;
+  font: 700 7px/1.15 var(--font-sans);
+  text-align: center;
+}
+.member-dashboard-status__qr-error button {
+  border: 1px solid rgba(35,57,29,.3);
+  border-radius: 5px;
+  padding: 4px;
+  background: #f4efd9;
+  color: #1c281b;
+  font: 700 7px/1 var(--font-sans);
+}
+@keyframes club-face-in {
+  from { opacity: .82; transform: translateY(2px) scale(.996); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes club-stamp-pop {
+  0% { opacity: .65; transform: scale(.82); }
+  75% { opacity: 1; transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+@media (max-width: 380px) {
+  .club-pass__stamp-face { padding-inline: 9px; }
+  .club-pass__stamp-grid { gap: 4px 5px; }
+  .member-dashboard-status { grid-template-columns: minmax(0,1fr) 66px; gap: 7px; padding: 10px; }
+  .member-dashboard-status__qr { width: 66px; }
+  .member-dashboard-status__qr > svg,
+  .member-dashboard-status__qr-loading,
+  .member-dashboard-status__qr-error { width: 56px; height: 56px; }
+  .member-dashboard-status__main h2 { font-size: 12px; }
+  .member-dashboard-status__main h2 strong { font-size: 11px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .club-pass__front,
+  .club-pass__stamp-face,
+  .club-pass__stamp[data-pop="true"],
+  .member-dashboard-status__qr-loading { animation: none; }
+  .club-pass__switch button,
+  .club-pass__stamp,
+  .member-dashboard-status__bar > span { transition: none; }
+}
+
+/* Supplied Jaguar / botanical artwork buttons with concise live labels. */
+.brand-button {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  min-height: 52px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0 10px 0 24%;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: #f3e9c3;
+  font: 800 12px/1.15 var(--font-sans);
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform .16s ease,filter .16s ease;
+}
+.brand-button > img {
+  z-index: 0;
+  object-fit: fill;
+  pointer-events: none;
+  transition: filter .16s ease;
+}
+.brand-button__label {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  min-height: 32px;
+  align-content: center;
+  justify-items: center;
+  padding: 3px 6px;
+  border-radius: 7px;
+  background: linear-gradient(90deg,rgba(3,8,5,.18),rgba(3,8,5,.48),rgba(3,8,5,.18));
+  color: #fff4cb;
+  text-shadow: 0 1px 3px rgba(0,0,0,.94),0 0 8px rgba(0,0,0,.9);
+}
+.brand-button--btn-leaf-cannabis .brand-button__label,
+.member-dashboard-status--cannabis .brand-button__label {
+  color: #f4ffd8;
+}
+.brand-button--btn-crown .brand-button__label {
+  color: #fff0b5;
+}
+.brand-button:focus-visible {
+  outline: 2px solid #e5c04a;
+  outline-offset: 2px;
+  filter: drop-shadow(0 0 8px rgba(229,192,74,.5));
+}
+.brand-button:not(:disabled):hover {
+  transform: translateY(-1px);
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,.28));
+}
+.brand-button:not(:disabled):active { transform: scale(.98); }
+.brand-button:disabled {
+  color: #c8c5b8;
+  cursor: not-allowed;
+  filter: saturate(.58);
+}
+.brand-button:disabled .brand-button__label {
+  background: rgba(4,7,5,.58);
+  color: #d3d0c4;
+}
+.landing-feature .landing-ctas {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 7px;
+}
+.landing-feature .landing-ctas .brand-button {
+  min-height: 48px;
+  padding-left: 26%;
+  font-size: 10px;
+}
+.jaguar-home--landing .landing-brand__logo {
+  display: block;
+  flex: 0 0 52px;
+  width: 52px;
+  height: 52px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: 0 0 15px -8px rgba(141,255,0,.5);
+}
+.jaguar-home--landing .landing-brand__logo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.member-dashboard-status .brand-button {
+  min-height: 42px;
+  padding-inline: 18%;
+  border-radius: 8px;
+  font-size: 10px;
+}
+.member-dashboard-status .brand-button__label {
+  min-height: 28px;
+  padding-inline: 3px;
+}
+@media (max-width: 360px) {
+  .brand-button { min-height: 48px; font-size: 11px; }
+  .landing-feature .landing-ctas .brand-button { min-height: 44px; padding-left: 23%; font-size: 9px; }
+  .member-dashboard-status .brand-button { padding-inline: 13%; font-size: 9px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .brand-button,
+  .brand-button > img { transition: none; }
+  .brand-button:not(:disabled):hover,
+  .brand-button:not(:disabled):active { transform: none; }
+}
+
+/* Cannabis loyalty pass: live front QR and a compact 5×2 stamp back. */
+.cannabis-pass {
+  --cannabis-neon: #8dff00;
+  --cannabis-gold: #e5c04a;
+  width: min(100%, 390px);
+  margin: 9px auto 0;
+}
+.cannabis-pass__switch {
+  display: flex;
+  width: fit-content;
+  gap: 3px;
+  margin: 0 auto 8px;
+  padding: 3px;
+  border: 1px solid rgba(229,192,74,.24);
+  border-radius: 999px;
+  background: rgba(4,8,6,.78);
+}
+.cannabis-pass__switch button {
+  min-width: 76px;
+  min-height: 31px;
+  padding: 5px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #a9b1a7;
+  font: 600 11px/1 var(--font-sans);
+  cursor: pointer;
+  transition: color .18s ease, background .18s ease, box-shadow .18s ease;
+}
+.cannabis-pass__switch button[aria-pressed="true"] {
+  background: linear-gradient(110deg,rgba(141,255,0,.17),rgba(229,192,74,.12));
+  color: #f1df9c;
+  box-shadow: inset 0 0 0 1px rgba(229,192,74,.26), 0 0 14px -9px rgba(141,255,0,.8);
+}
+.cannabis-pass__switch button:focus-visible,
+.cannabis-pass__redeem button:focus-visible,
+.cannabis-pass__qr-error button:focus-visible {
+  outline: 2px solid var(--cannabis-neon);
+  outline-offset: 2px;
+}
+.cannabis-pass__card {
+  position: relative;
+  isolation: isolate;
+  width: min(100%, 349px);
+  max-height: 220px;
+  aspect-ratio: 1.586;
+  margin: 0 auto;
+  overflow: hidden;
+  contain: layout paint;
+  border: 1px solid rgba(229,192,74,.58);
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse at 4% 92%,rgba(141,255,0,.13),transparent 42%),
+    radial-gradient(ellipse at 92% 8%,rgba(229,192,74,.12),transparent 40%),
+    linear-gradient(145deg,#121711 0%,#090d0a 56%,#050706 100%);
+  box-shadow: 0 12px 28px rgba(0,0,0,.48), 0 0 22px -15px rgba(141,255,0,.8), inset 0 1px 0 rgba(255,255,255,.08);
+  transition: border-color .22s ease, box-shadow .22s ease;
+}
+.cannabis-pass__card--back {
+  border-color: rgba(141,255,0,.55);
+  background:
+    radial-gradient(ellipse at 100% 100%,rgba(141,255,0,.13),transparent 44%),
+    radial-gradient(ellipse at 0 0,rgba(229,192,74,.1),transparent 38%),
+    linear-gradient(145deg,#101610 0%,#080b09 62%,#050706 100%);
+}
+.cannabis-pass__card::before {
+  position: absolute;
+  z-index: -1;
+  inset: 9px;
+  border: 1px solid rgba(141,255,0,.18);
+  border-radius: 10px;
+  background:
+    linear-gradient(var(--cannabis-neon),var(--cannabis-neon)) left top / 25px 1px no-repeat,
+    linear-gradient(var(--cannabis-neon),var(--cannabis-neon)) left top / 1px 17px no-repeat,
+    linear-gradient(var(--cannabis-gold),var(--cannabis-gold)) right top / 25px 1px no-repeat,
+    linear-gradient(var(--cannabis-gold),var(--cannabis-gold)) right top / 1px 17px no-repeat,
+    linear-gradient(var(--cannabis-gold),var(--cannabis-gold)) left bottom / 25px 1px no-repeat,
+    linear-gradient(var(--cannabis-gold),var(--cannabis-gold)) left bottom / 1px 17px no-repeat,
+    linear-gradient(var(--cannabis-neon),var(--cannabis-neon)) right bottom / 25px 1px no-repeat,
+    linear-gradient(var(--cannabis-neon),var(--cannabis-neon)) right bottom / 1px 17px no-repeat;
+  content: "";
+  opacity: .78;
+  pointer-events: none;
+}
+.cannabis-pass__front,
+.cannabis-pass__back {
+  position: relative;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  padding: 12px 14px 10px;
+  animation: cannabis-pass-in .24s cubic-bezier(.22,1,.36,1) both;
+}
+.cannabis-pass__front {
+  grid-template-rows: auto auto auto 1fr;
+  gap: 3px;
+}
+.cannabis-pass__brand,
+.cannabis-pass__brand-label,
+.cannabis-pass__details,
+.cannabis-pass__back-head,
+.cannabis-pass__back-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+}
+.cannabis-pass__brand-label {
+  justify-content: flex-start;
+  gap: 5px;
+  color: #d8e7cc;
+  font: 700 8px/1.1 var(--font-mono);
+  letter-spacing: .055em;
+}
+.cannabis-pass__brand-label .brand-icon { color: var(--cannabis-neon); }
+.cannabis-pass__state {
+  flex: 0 0 auto;
+  padding: 4px 7px;
+  border: 1px solid rgba(141,255,0,.34);
+  border-radius: 999px;
+  background: rgba(141,255,0,.06);
+  color: #c5ee8b;
+  font: 700 7px/1 var(--font-mono);
+  letter-spacing: .06em;
+}
+.cannabis-pass__card[data-ready="true"] .cannabis-pass__state {
+  border-color: rgba(229,192,74,.6);
+  background: rgba(229,192,74,.1);
+  color: #f3d978;
+}
+.cannabis-pass__wordmark {
+  display: grid;
+  width: fit-content;
+  margin: 1px 0 0 18px;
+  transform: skewX(-8deg);
+  line-height: .86;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,.8));
+}
+.cannabis-pass__wordmark > span {
+  background: linear-gradient(180deg,#d5ff76 0%,#8dff00 44%,#328b08 100%);
+  background-clip: text;
+  color: transparent;
+  font: 900 clamp(27px,8vw,34px)/.9 var(--font-display);
+  letter-spacing: -.055em;
+  -webkit-background-clip: text;
+}
+.cannabis-pass__wordmark > strong {
+  margin-left: 17px;
+  background: linear-gradient(180deg,#fff2b5 0%,#e5c04a 56%,#a87512 100%);
+  background-clip: text;
+  color: transparent;
+  font: 800 clamp(17px,5vw,22px)/1 var(--font-display);
+  letter-spacing: .13em;
+  -webkit-background-clip: text;
+}
+.cannabis-pass__offer {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 8px;
+  margin: 1px 0 0 19px;
+  padding: 4px 9px;
+  border: 1px solid rgba(229,192,74,.36);
+  border-radius: 999px;
+  background: rgba(5,8,6,.62);
+  color: #f0db92;
+  font: 700 8px/1 var(--font-sans);
+}
+.cannabis-pass__offer small {
+  color: #b7c7a9;
+  font: 700 6px/1 var(--font-mono);
+  letter-spacing: .1em;
+}
+.cannabis-pass__details {
+  align-items: flex-end;
+  gap: 8px;
+  margin-top: auto;
+}
+.cannabis-pass__member {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+.cannabis-pass__micro-label {
+  color: #aeb9aa;
+  font: 700 7px/1.1 var(--font-mono);
+  letter-spacing: .08em;
+}
+.cannabis-pass__score {
+  color: #e8d488;
+  font: 700 8px/1 var(--font-mono);
+}
+.cannabis-pass__score small {
+  color: #aeb9aa;
+  font: 600 7px/1 var(--font-sans);
+}
+.cannabis-pass__member[data-pop="true"],
+.cannabis-pass__stamp[data-pop="true"] {
+  animation: cannabis-stamp-pop .34s cubic-bezier(.22,1,.36,1) both;
+}
+.cannabis-pass__member > strong {
+  max-width: 205px;
+  overflow: hidden;
+  color: var(--cannabis-neon);
+  font: 700 clamp(11px,3.5vw,14px)/1.15 var(--font-mono);
+  letter-spacing: .025em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow: 0 0 10px rgba(141,255,0,.27);
+}
+.cannabis-pass__location {
+  overflow: hidden;
+  color: #c2c5b9;
+  font: 7px/1.15 var(--font-sans);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cannabis-pass__qr-wrap {
+  display: grid;
+  flex: 0 0 66px;
+  justify-items: center;
+  gap: 2px;
+  padding: 3px 3px 2px;
+  border: 1px solid rgba(229,192,74,.58);
+  border-radius: 8px;
+  background: #f5f4e9;
+  color: #182012;
+}
+.cannabis-pass__qr {
+  display: block;
+  width: 56px;
+  height: 56px;
+  background: #fff;
+}
+.cannabis-pass__qr-wrap > small {
+  color: #26311e;
+  font: 700 6px/1 var(--font-sans);
+}
+.cannabis-pass__qr-loading,
+.cannabis-pass__qr-error {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  align-content: center;
+  justify-items: center;
+  gap: 4px;
+  border-radius: 4px;
+  background: #e6e8dc;
+  color: #26311e;
+  font: 700 7px/1.2 var(--font-sans);
+  text-align: center;
+}
+.cannabis-pass__qr-loading {
+  border: 2px solid rgba(27,63,26,.16);
+  border-top-color: #408d0b;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+.cannabis-pass__qr-error button {
+  border: 1px solid rgba(38,49,30,.35);
+  border-radius: 5px;
+  padding: 3px 5px;
+  background: #f6f3e4;
+  color: #26311e;
+  font: 700 7px/1 var(--font-sans);
+}
+.cannabis-pass__back {
+  grid-template-rows: auto 1fr auto;
+  gap: 7px;
+  padding: 11px 13px 9px;
+}
+.cannabis-pass__back-head {
+  min-height: 20px;
+}
+.cannabis-pass__back-head > div {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  min-width: 0;
+}
+.cannabis-pass__back-head > div > span {
+  color: #c3d0b9;
+  font: 700 7px/1 var(--font-mono);
+  letter-spacing: .15em;
+}
+.cannabis-pass__back-head > div > strong {
+  color: #e8d28a;
+  font: 600 8px/1 var(--font-sans);
+}
+.cannabis-pass__back-head > .brand-icon { color: var(--cannabis-neon); }
+.cannabis-pass__stamps {
+  display: grid;
+  grid-template-columns: repeat(5,minmax(0,1fr));
+  align-content: center;
+  gap: 5px 7px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cannabis-pass__stamp {
+  display: grid;
+  aspect-ratio: 1;
+  min-width: 0;
+  align-content: center;
+  justify-items: center;
+  border: 1px solid rgba(229,192,74,.62);
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 30%,rgba(229,192,74,.08),rgba(3,6,4,.88) 68%);
+  color: rgba(229,192,74,.4);
+  box-shadow: inset 0 1px 5px rgba(0,0,0,.6), 0 1px 4px rgba(229,192,74,.07);
+}
+.cannabis-pass__stamp[data-filled="true"]:not([data-reward="true"]) {
+  border-color: rgba(141,255,0,.78);
+  background: radial-gradient(circle at 35% 27%,rgba(141,255,0,.2),rgba(11,40,14,.94) 72%);
+  color: var(--cannabis-neon);
+  box-shadow: 0 0 11px -7px var(--cannabis-neon), inset 0 1px 5px rgba(0,0,0,.48);
+}
+.cannabis-pass__stamp[data-reward="true"] {
+  border-color: rgba(141,255,0,.65);
+  background: radial-gradient(circle at 35% 25%,rgba(141,255,0,.15),rgba(7,19,9,.92) 72%);
+  color: var(--cannabis-neon);
+  opacity: .8;
+}
+.cannabis-pass__stamp[data-reward="true"][data-ready="true"] {
+  opacity: 1;
+  box-shadow: 0 0 16px -5px var(--cannabis-neon), inset 0 0 10px rgba(141,255,0,.13);
+}
+.cannabis-pass__stamp-number {
+  color: rgba(241,224,163,.69);
+  font: 700 10px/1 var(--font-mono);
+}
+.cannabis-pass__stamp[data-reward="true"] > strong {
+  font: 900 clamp(8px,2.4vw,10px)/1 var(--font-mono);
+  letter-spacing: -.04em;
+}
+.cannabis-pass__stamp[data-reward="true"] > small {
+  margin-top: 2px;
+  font: 700 6px/1 var(--font-sans);
+}
+.cannabis-pass__back-foot {
+  padding-top: 4px;
+  border-top: 1px solid rgba(229,192,74,.18);
+  color: #aab6a2;
+  font: 600 7px/1 var(--font-mono);
+  letter-spacing: .04em;
+}
+.cannabis-pass__back-foot > span:last-child { color: #e6cb71; }
+.cannabis-pass__redeem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: min(100%,349px);
+  margin: 9px auto 0;
+  padding: 9px 10px;
+  border: 1px solid rgba(141,255,0,.34);
+  border-radius: 12px;
+  background: linear-gradient(110deg,rgba(141,255,0,.08),rgba(229,192,74,.06));
+}
+.cannabis-pass__redeem > div {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+.cannabis-pass__redeem > div > strong {
+  color: #e8d488;
+  font: 700 11px/1.1 var(--font-sans);
+}
+.cannabis-pass__redeem > div > span {
+  color: #abb6a7;
+  font-size: 9px;
+  line-height: 1.2;
+}
+.cannabis-pass__redeem > button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 1px solid rgba(141,255,0,.5);
+  border-radius: 9px;
+  background: linear-gradient(135deg,#86ef00,#509d00);
+  color: #11190b;
+  font: 800 10px/1 var(--font-sans);
+  cursor: pointer;
+  box-shadow: 0 3px 12px -8px rgba(141,255,0,.8);
+}
+.cannabis-pass__redeem > button:active { transform: scale(.97); }
+.cannabis-pass__redeem .brand-icon { color: inherit; }
+@keyframes cannabis-pass-in {
+  from { opacity: .78; transform: translateY(3px) scale(.995); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes cannabis-stamp-pop {
+  0% { opacity: .7; transform: scale(.84); }
+  75% { opacity: 1; transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+@media (max-width: 380px) {
+  .cannabis-pass__front { padding: 10px 11px 9px; }
+  .cannabis-pass__back { padding-inline: 10px; gap: 5px; }
+  .cannabis-pass__stamps { gap: 4px 5px; }
+  .cannabis-pass__brand-label { font-size: 7px; }
+  .cannabis-pass__offer { gap: 6px; padding-inline: 7px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cannabis-pass__front,
+  .cannabis-pass__back,
+  .cannabis-pass__qr-loading,
+  .cannabis-pass__member[data-pop="true"],
+  .cannabis-pass__stamp[data-pop="true"] { animation: none; }
+  .cannabis-pass__switch button,
+  .cannabis-pass__card { transition: none; }
+}
+
+/* Compact customer UI: fewer captions, real club previews, light assets. */
+.jaguar-home--landing {
+  padding-bottom: calc(98px + env(safe-area-inset-bottom));
+}
+.jaguar-home--landing .landing-brand__logo {
+  flex: 0 0 78px;
+  width: 78px;
+  height: auto;
+}
+.jaguar-home--landing .landing-brand__logo img {
+  filter: none;
+}
+.jaguar-home--landing .landing-brand__copy small {
+  font-size: 7px;
+  letter-spacing: .06em;
+}
+.landing-feature {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  padding: 14px 0 16px;
+}
+.landing-feature__copy { padding: 0; }
+.landing-eyebrow,
+.landing-subcopy,
+.landing-local-note { display: none !important; }
+.landing-feature h1 {
+  margin: 0;
+  font-size: clamp(26px, 7.5vw, 32px);
+  line-height: 1.22;
+  letter-spacing: -.035em;
+}
+.landing-feature h1 span { font-size: .8em; }
+.landing-feature .landing-ctas {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 8px;
+  margin-top: 11px;
+}
+.landing-feature .btn { min-height: 44px; }
+.landing-members-club {
+  gap: 0;
+  padding: 5px;
+  border-radius: 19px;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.landing-members-club__topline,
+.landing-members-club__footer { display: none; }
+.landing-members-club__art {
+  width: min(100%, 338px);
+  border: 0;
+  border-radius: 50%;
+  box-shadow: 0 10px 24px rgba(0,0,0,.28);
+}
+.landing-members-club__art::after { display: none; }
+.landing-club-previews {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  margin: 1px 0 12px;
+}
+.landing-club-preview {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 5px;
+  border: 1px solid rgba(229,192,74,.16);
+  border-radius: 12px;
+  background: rgba(255,255,255,.025);
+  color: #e7dfc9;
+  text-align: center;
+  text-decoration: none;
+  transition: border-color .16s ease, background-color .16s ease;
+}
+.landing-club-preview:hover,
+.landing-club-preview:focus-visible {
+  border-color: rgba(229,192,74,.5);
+  background: rgba(229,192,74,.06);
+}
+.landing-club-preview:focus-visible {
+  outline: 2px solid #e5c04a;
+  outline-offset: 2px;
+}
+.landing-club-preview img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1.586;
+  border-radius: 8px;
+  object-fit: cover;
+}
+.landing-club-preview span {
+  font-size: 10px;
+  line-height: 1.2;
+}
+.landing-menu-preview {
+  margin: 0 0 12px;
+  border-top: 1px solid rgba(219,211,183,.12);
+  color: #d9d4c4;
+}
+.landing-menu-preview summary {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 11px;
+  list-style: none;
+}
+.landing-menu-preview summary::-webkit-details-marker { display: none; }
+.landing-menu-preview summary::after {
+  content: "+";
+  margin-left: auto;
+  color: #d8bd73;
+  font: 16px/1 var(--font-mono);
+}
+.landing-menu-preview[open] summary::after { content: "−"; }
+.landing-menu-preview img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: 12px;
+  border: 1px solid rgba(216,189,115,.15);
+  border-radius: 10px;
+}
+.jaguar-home--landing .landing-bottom-nav {
+  position: fixed;
+  z-index: 30;
+  right: auto;
+  bottom: calc(8px + env(safe-area-inset-bottom));
+  left: 50%;
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  width: min(calc(100vw - 24px),408px);
+  margin: 0;
+  padding: 5px;
+  transform: translateX(-50%);
+  border: 1px solid rgba(229,192,74,.18);
+  border-radius: 16px;
+  background: rgba(8,12,9,.9);
+  box-shadow: 0 10px 25px rgba(0,0,0,.42);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.jaguar-home--landing .landing-bottom-nav a {
+  min-height: 44px;
+  padding: 5px 2px;
+  font-size: 9px;
+}
+.brand-showcase__campaign {
+  filter: none;
+}
+.brand-showcase__campaign,
+.login-reference-root .brand-showcase__campaign {
+  width: min(calc(100vw - 70px),320px);
+}
+.member-pass-card__inner {
+  background:
+    radial-gradient(ellipse at 88% 4%,color-mix(in srgb,var(--pass-accent) 9%,transparent),transparent 42%),
+    linear-gradient(145deg,rgba(18,26,20,.94),rgba(7,11,9,.97));
+}
+.member-pass-card__identity {
+  width: auto;
+  min-height: 0;
+  gap: 8px;
+  padding: 0;
+  border-radius: 0;
+  background: none !important;
+}
+.member-pass-card__brand-mark {
+  display: block;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+.member-pass-card__status {
+  width: auto;
+  min-height: 22px;
+  padding: 4px 8px;
+  border: 1px solid color-mix(in srgb,var(--pass-accent) 34%,transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb,var(--pass-accent) 8%,rgba(5,8,6,.9));
+  color: #d9e6d7;
+  font: 700 7px/1 var(--font-mono);
+  letter-spacing: .04em;
+}
+.member-pass-card__status.is-ready {
+  border-color: rgba(229,192,74,.46);
+  background: rgba(229,192,74,.1);
+  color: #f3dc91;
+}
+.card-member-heading { margin-bottom: 4px; }
+.card-member-heading .eyebrow { display: none; }
+.member-tier {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+.card-bento-grid { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; }
+.card-bento-stat { padding: 10px; }
+.card-bento-stat p { font-size: 10px; }
+.card-bento-stat strong { font-size: 19px; }
+.collecting-track__heading {
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 8px;
+}
+.collecting-track__heading p { font-size: 8px; letter-spacing: .02em; }
+.collecting-track__heading h2 { font-size: 23px; letter-spacing: -.03em; }
+.member-progress-panel { padding: 12px; }
+.member-progress-actions { gap: 8px; padding-top: 8px; }
+.member-progress-actions p { max-width: none; font-size: 10px; }
+.member-progress-actions .btn { min-height: 40px; padding-inline: 9px; font-size: 11px; }
+.cannabis-heading { margin-bottom: 8px; padding-bottom: 8px; }
+.cannabis-heading h1 { margin: 0; font-size: 20px; }
+.cannabis-heading .member-tier { font-size: 10px; }
+.cannabis-stamps.panel { margin-top: 9px; padding: 12px; }
+.cannabis-rule { margin: 7px 0 0; color: #d8d5c9; font-size: 10px; }
+.cannabis-ready { margin-top: 9px; padding: 9px 11px; font-size: 12px; }
+.cannabis-stats { gap: 7px; margin-top: 9px; }
+.cannabis-stats article { padding: 10px; }
+.cannabis-history { margin-top: 10px; padding: 13px; }
+.cannabis-history h2 { margin: 0; font-size: 16px; }
+@media (max-width: 390px) {
+  .jaguar-home--landing .landing-brand__logo { flex-basis: 72px; width: 72px; }
+  .landing-club-previews { gap: 6px; }
+  .landing-club-preview { padding: 4px; }
+  .member-pass-card__brand-mark { width: 30px; height: 30px; }
+  .member-progress-actions { flex-direction: row; align-items: center; }
+  .member-progress-actions .btn { width: auto; }
+}
+@media (max-width: 360px) {
+  .landing-feature .landing-ctas { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .landing-feature .btn { min-width: 0; padding-inline: 5px; font-size: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-club-preview { transition: none; }
+}
+
 /* SPK brand art, local landmark artwork, and club-specific foliage plaques. */
 .jaguar-home--landing .landing-brand__logo {
   display: block;

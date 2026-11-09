@@ -4,7 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { BrandIcon } from "./brand-icon";
-import { LoadingSpinner } from "./ui";
+import { BrandButton } from "./brand-button";
 import { api, cleanCode, codePattern, errorText, json, phonePattern } from "./loyalty-api";
 import { clearMemberCache } from "./api-utils";
 
@@ -35,8 +35,7 @@ export function LoginForm() {
         <input id="login-code" className="input uppercase" value={code} autoComplete="off" autoCapitalize="characters" autoCorrect="off" spellCheck={false} maxLength={8} placeholder="รหัสสมาชิก" inputMode="text" onChange={(e) => { setCode(cleanCode(e.target.value)); setErr(null); setServerErr(null); }} aria-invalid={!!err} aria-describedby={err ? "login-code-err" : undefined} />
         {err && <p id="login-code-err" className="field-error" role="alert">{err}</p>}
       </div>
-      <p className="flex gap-2 text-[13px] text-[var(--silver)] bg-[rgba(196,202,214,.04)] border border-[var(--line-2)] rounded-xl p-3"><BrandIcon name="security" tone="gold" className="shrink-0 mt-0.5" />รหัสสมาชิกใช้เปิดบัตรของคุณ เก็บไว้เป็นส่วนตัว</p>
-      <button type="submit" className="btn btn-neon w-full" disabled={pending}>{pending && <LoadingSpinner className="loading-spinner--button" />}{pending ? "กำลังเปิดบัตร..." : "เข้าใช้งาน"} {!pending && <BrandIcon name="continue" tone="inherit" />}</button>
+      <BrandButton type="submit" asset="btn-jaguar" label={pending ? "กำลังเข้าใช้…" : "เข้าใช้งาน"} disabled={pending} testId="login-submit" />
     </form>
   );
 }
@@ -75,11 +74,11 @@ export function RegisterForm() {
       </div>
       <div className="field">
         <label className="auth-field-label" htmlFor="reg-code">ตั้งรหัสสมาชิก</label>
-        <input id="reg-code" className="input uppercase" autoComplete="off" autoCapitalize="characters" autoCorrect="off" spellCheck={false} inputMode="text" maxLength={8} placeholder="6–8 ตัวอักษร" value={code} onChange={(e) => setCode(cleanCode(e.target.value))} aria-invalid={!!errs.code} aria-describedby={errs.code ? "reg-code-err" : "reg-code-hint"} />
-        {errs.code ? <p id="reg-code-err" className="field-error" role="alert">{errs.code}</p> : <p id="reg-code-hint" className="field-hint">ใช้ตัวอักษรอังกฤษ ตัวเลข และขีดกลางตรงกลางได้</p>}
+        <input id="reg-code" className="input uppercase" autoComplete="off" autoCapitalize="characters" autoCorrect="off" spellCheck={false} inputMode="text" maxLength={8} placeholder="6–8 ตัวอักษร" value={code} onChange={(e) => setCode(cleanCode(e.target.value))} aria-invalid={!!errs.code} aria-describedby={errs.code ? "reg-code-err" : undefined} />
+        {errs.code && <p id="reg-code-err" className="field-error" role="alert">{errs.code}</p>}
       </div>
       {server && <div className="auth-error-banner" role="alert" aria-live="assertive"><BrandIcon name="error" tone="danger" /><div><strong>ยังสมัครสมาชิกไม่ได้</strong><p>{server}</p></div></div>}
-      <button type="submit" className="btn btn-gold w-full" disabled={pending}>{pending && <LoadingSpinner className="loading-spinner--button" />}{pending ? "กำลังออกบัตร..." : "สมัคร & เปิดบัตร"} {!pending && <BrandIcon name="continue" tone="inherit" />}</button>
+      <BrandButton type="submit" asset="btn-crown" label={pending ? "กำลังสมัคร…" : "เปิดบัตร"} disabled={pending} testId="register-submit" />
     </form>
   );
 }
