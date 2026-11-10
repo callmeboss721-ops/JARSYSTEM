@@ -5570,12 +5570,17 @@ body {
 }
 .jaguar-home--landing .landing-feature {
   display: grid;
-  grid-template-columns: minmax(260px, .82fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
   align-items: center;
   gap: clamp(32px, 7vw, 100px);
   padding: clamp(42px, 7vw, 88px) 0 clamp(34px, 5vw, 62px);
 }
-.jaguar-home--landing .landing-feature__copy { padding: 0; }
+.jaguar-home--landing .landing-feature__copy {
+  width: min(100%, 760px);
+  padding: 0;
+  text-align: center;
+}
 .jaguar-home--landing .landing-feature h1 {
   margin: 0;
   font-size: clamp(36px, 5vw, 68px);
@@ -5592,8 +5597,9 @@ body {
 .jaguar-home--landing .landing-feature .landing-ctas {
   grid-template-columns: minmax(0, 1fr);
   gap: 11px;
-  max-width: 290px;
-  margin-top: 28px;
+  max-width: 440px;
+  margin: 28px auto 0;
+  justify-content: center;
 }
 .jaguar-home--landing .landing-feature .landing-ctas .brand-button {
   min-height: 58px;
@@ -5605,39 +5611,6 @@ body {
 .jaguar-home--landing .landing-feature .landing-ctas .brand-button:hover {
   transform: translateY(-3px);
   filter: brightness(1.08);
-}
-.jaguar-home--landing .landing-members-club {
-  justify-self: center;
-  width: min(100%, 520px);
-  padding: clamp(12px, 2vw, 20px);
-  border-radius: 22px 7px 22px 7px;
-  background:
-    linear-gradient(145deg, rgba(16,25,18,.94), rgba(6,10,8,.92)) padding-box,
-    linear-gradient(138deg, rgba(229,199,103,.7), rgba(229,199,103,.16) 36%, rgba(98,197,141,.54) 74%, rgba(229,199,103,.4)) border-box;
-  box-shadow: 0 28px 64px -42px rgba(0,0,0,.95), 0 0 30px -22px rgba(98,197,141,.36);
-  transition: transform .45s cubic-bezier(.2,.8,.2,1), box-shadow .45s ease;
-}
-.jaguar-home--landing .landing-members-club:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 34px 72px -42px rgba(0,0,0,.96), 0 0 36px -22px rgba(98,197,141,.46);
-}
-.jaguar-home--landing .landing-members-club__art {
-  width: min(100%, 390px);
-  height: auto;
-  aspect-ratio: 1792 / 2400;
-  overflow: visible;
-  border: 0;
-  border-radius: 5px;
-  background: #080b09;
-  box-shadow: 0 12px 28px -18px rgba(0,0,0,.8);
-}
-.jaguar-home--landing .landing-members-club__art img {
-  position: static;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 1792 / 2400;
-  object-fit: contain;
-  border-radius: 4px;
 }
 .jaguar-home--landing .landing-club-previews {
   display: grid;
@@ -5655,6 +5628,14 @@ body {
   background: linear-gradient(150deg, rgba(255,255,255,.045), rgba(255,255,255,.012) 66%);
   box-shadow: 0 15px 35px -27px rgba(0,0,0,.8);
   transition: transform .32s cubic-bezier(.2,.8,.2,1), border-color .32s ease, background-color .32s ease;
+}
+.jaguar-home--landing .landing-club-preview--text-only {
+  align-self: start;
+  display: flex;
+  min-height: 56px;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
 }
 .jaguar-home--landing .landing-club-preview:hover {
   transform: translateY(-4px);
@@ -5674,6 +5655,7 @@ body {
   color: #eee7d3;
   font-size: 12px;
 }
+.jaguar-home--landing .landing-club-preview--text-only .landing-club-preview__caption { min-height: 0; }
 .jaguar-home--landing .landing-member-guide {
   width: min(100%, 900px);
   margin: 0 auto 30px;
@@ -5754,8 +5736,6 @@ body {
     padding-left: 22%;
     font-size: 11px;
   }
-  .jaguar-home--landing .landing-members-club { width: min(100%, 420px); }
-  .jaguar-home--landing .landing-members-club__art { width: 100%; }
   .jaguar-home--landing .landing-club-previews { gap: 9px; margin-bottom: 24px; }
   .jaguar-home--landing .landing-club-preview { padding: 6px; }
   .jaguar-home--landing .landing-club-preview__caption { font-size: 11px; }
@@ -5771,7 +5751,6 @@ body {
   .jaguar-home--landing .landing-club-preview {
     animation: none !important;
   }
-  .jaguar-home--landing .landing-members-club,
   .jaguar-home--landing .landing-club-preview,
   .jaguar-home--landing .landing-header__actions a,
   .jaguar-home--landing .landing-feature .landing-ctas .brand-button {

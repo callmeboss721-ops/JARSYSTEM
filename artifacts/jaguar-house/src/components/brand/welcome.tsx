@@ -51,27 +51,13 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
                 <BrandButton href="/login" asset="btn-leaf" label="เข้าใช้งาน" testId="link-member-login" />
               </div>
             </div>
-            <figure className="landing-campaign landing-campaign--hero landing-members-club">
-              <div className="landing-members-club__art">
-                <Image
-                  src="/brand/jaguar-member-onboarding-guide.jpg"
-                  alt="คู่มือแนะนำการสมัครและใช้งานบัตรสมาชิก JAGUAR SPK"
-                  width={1792}
-                  height={2400}
-                  priority
-                  sizes="(max-width: 440px) 84vw, 430px"
-                />
-              </div>
-            </figure>
           </section>
 
           <section className="landing-club-previews" aria-label="บัตรสมาชิก">
-            <Link href="/card" className="landing-club-preview" aria-label="ดูบัตรสมาชิกกระท่อม">
-              <Image src="/brand/kratom-club-preview.webp" alt="ลายบัตรสมาชิกกระท่อม" width={768} height={484} priority sizes="(max-width: 440px) 44vw, 200px" />
+            <Link href="/card" className="landing-club-preview landing-club-preview--text-only" aria-label="ดูบัตรสมาชิกกระท่อม">
               <span className="landing-club-preview__caption"><RankEmblem name="nature-green" size={18} /><span>กระท่อม</span></span>
             </Link>
-            <Link href="/card/cannabis" className="landing-club-preview" aria-label="ดูบัตรสมาชิกกัญชา">
-              <Image src="/brand/cannabis-club-preview.webp" alt="ลายบัตรสมาชิกกัญชา" width={768} height={484} sizes="(max-width: 440px) 44vw, 200px" />
+            <Link href="/card/cannabis" className="landing-club-preview landing-club-preview--text-only" aria-label="ดูบัตรสมาชิกกัญชา">
               <span className="landing-club-preview__caption"><RankEmblem name="organic-premium" size={18} /><span>กัญชา</span></span>
             </Link>
           </section>
@@ -81,6 +67,7 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
               alt="โปรโมชัน JAGUAR SPK: น้ำกระท่อมเริ่มต้น 50 บาท และกัญชาเกรดพรีเมียม 10 บาทต่อกรัม"
               width={2752}
               height={1536}
+              priority
               sizes="(max-width: 540px) calc(100vw - 32px), 540px"
             />
           </figure>
