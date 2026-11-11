@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import Image from "next/image";
-import { api, type MemberCardData } from "./loyalty-api";
+import { api } from "./loyalty-api";
 import { BrandIcon } from "./brand-icon";
 import { SamutPrakanArt } from "./samut-prakan-art";
 import { LoginForm, RegisterForm } from "./auth-forms";
@@ -13,7 +13,7 @@ import { RankEmblem } from "./rank-emblem";
 
 export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
   const [tab, setTab] = useState<"login" | "register">(initialTab ?? "login");
-  const session = useQuery<MemberCardData>({ queryKey: ["/api/loyalty/card"], queryFn: () => api("/api/loyalty/card"), enabled: initialTab !== undefined, retry: false, refetchOnWindowFocus: false });
+  const session = useQuery<{ authenticated: boolean }>({ queryKey: ["/api/loyalty/session"], queryFn: () => api("/api/loyalty/session"), enabled: initialTab !== undefined, retry: false, refetchOnWindowFocus: false });
 
   if (initialTab === undefined) {
     return (
@@ -143,10 +143,9 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
               sizes="(max-width: 760px) 82vw, 400px"
             />
           </div>
-          {session.isSuccess && session.data ? (
+          {session.isSuccess && session.data?.authenticated ? (
               <div className="panel auth-panel p-7 space-y-5" data-testid="panel-session">
               <h2 className="font-display text-2xl font-semibold">เข้าสู่ระบบแล้ว</h2>
-              <p className="text-[var(--muted)] text-sm">@{session.data.member_code}</p>
               <BrandButton href="/card" asset="btn-jaguar" label="เปิดบัตรสมาชิก" testId="link-open-card" />
             </div>
           ) : (

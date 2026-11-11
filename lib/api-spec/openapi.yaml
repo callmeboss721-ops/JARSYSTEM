@@ -52,12 +52,35 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Success" }
+  /loyalty/session:
+    get:
+      operationId: getMemberSession
+      responses:
+        "200":
+          description: Whether a valid member session exists
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MemberSessionStatus" }
   /loyalty/card:
     get:
       operationId: getMemberCard
       responses:
         "200":
           description: Current member card
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MemberCard" }
+  /loyalty/nickname:
+    patch:
+      operationId: updateMemberNickname
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/MemberNicknameInput" }
+      responses:
+        "200":
+          description: Member nickname updated
           content:
             application/json:
               schema: { $ref: "#/components/schemas/MemberCard" }
@@ -402,6 +425,20 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/OwnerSecurityState" }
+  /loyalty/owner/features/cannabis-points:
+    patch:
+      operationId: updateCannabisPointsFeature
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CannabisPointsFeatureInput" }
+      responses:
+        "200":
+          description: Cannabis point earning setting updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CannabisPointsFeatureState" }
   /loyalty/owner/pins:
     post:
       operationId: changeOwnerPins
@@ -605,15 +642,28 @@ components:
         ok: { type: boolean }
     MemberInput:
       type: object
-      required: [phone, member_code]
+      required: [phone, member_code, nickname]
       properties:
         phone: { type: string, minLength: 9, maxLength: 20 }
         member_code: { type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$" }
+        nickname: { type: string, minLength: 2, maxLength: 20 }
     MemberLogin:
       type: object
-      required: [member_code]
+      description: Login by member code, phone, or nickname; legacy member_code requests remain supported.
       properties:
         member_code: { type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$" }
+        method: { type: string, enum: [phone, member_code, nickname] }
+        identifier: { type: string, minLength: 1, maxLength: 64 }
+    MemberNicknameInput:
+      type: object
+      required: [nickname]
+      properties:
+        nickname: { type: string, minLength: 2, maxLength: 20 }
+    MemberSessionStatus:
+      type: object
+      required: [authenticated]
+      properties:
+        authenticated: { type: boolean }
     PinLogin:
       type: object
       required: [pin]
@@ -621,25 +671,33 @@ components:
         pin: { type: string, pattern: "^[0-9]{4,12}$" }
     MemberCard:
       type: object
-      required: [id, member_code, display_name, is_demo, status, balance, lifetime_earned, lifetime_redeemed]
+      required: [id, member_code, display_name, nickname, phone_masked, is_demo, status, balance, lifetime_earned, lifetime_redeemed, kratom_remainder_baht, cannabis_balance, cannabis_remainder_grams]
       properties:
         id: { type: string }
         member_code: { type: string }
         display_name: { type: string }
+        nickname: { type: ["string", "null"], minLength: 2, maxLength: 20 }
+        phone_masked: { type: ["string", "null"], maxLength: 24 }
         is_demo: { type: boolean }
         status: { type: string }
         balance: { type: integer }
         lifetime_earned: { type: integer }
         lifetime_redeemed: { type: integer }
+        kratom_remainder_baht: { type: integer, minimum: 0, maximum: 99 }
+        cannabis_balance: { type: integer, minimum: 0 }
+        cannabis_remainder_grams: { type: integer, minimum: 0, maximum: 99 }
     CannabisCard:
       type: object
-      required: [member_code, display_name, balance, lifetime_earned, lifetime_redeemed, recent_transactions]
+      required: [member_code, display_name, nickname, phone_masked, balance, lifetime_earned, lifetime_redeemed, grams_remainder, recent_transactions]
       properties:
         member_code: { type: string }
         display_name: { type: string }
+        nickname: { type: ["string", "null"], minLength: 2, maxLength: 20 }
+        phone_masked: { type: ["string", "null"], maxLength: 24 }
         balance: { type: integer, minimum: 0 }
         lifetime_earned: { type: integer, minimum: 0 }
         lifetime_redeemed: { type: integer, minimum: 0 }
+        grams_remainder: { type: integer, minimum: 0, maximum: 99 }
         recent_transactions:
           type: array
           maxItems: 5
@@ -670,11 +728,13 @@ components:
         reward_id: { type: string, format: uuid }
     Redemption:
       type: object
-      required: [id, member_id, member_code, reward_id, reward_name, points_spent, status, created_at]
+      required: [id, member_id, member_code, member_nickname, phone_last4, reward_id, reward_name, points_spent, status, created_at]
       properties:
         id: { type: string }
         member_id: { type: string }
         member_code: { type: string }
+        member_nickname: { type: ["string", "null"], minLength: 2, maxLength: 20 }
+        phone_last4: { type: ["string", "null"], pattern: "^[0-9]{4}$" }
         reward_id: { type: string }
         reward_name: { type: string }
         points_spent: { type: integer }
@@ -682,11 +742,12 @@ components:
         created_at: { type: string }
     MemberAccountInput:
       type: object
-      required: [name, member_code, phone]
+      required: [name, member_code, phone, nickname]
       properties:
         name: { type: string, minLength: 1, maxLength: 100 }
         member_code: { type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$" }
         phone: { type: string, minLength: 9, maxLength: 20 }
+        nickname: { type: string, minLength: 2, maxLength: 20 }
     SaleInput:
       type: object
       required: [bottle_count, formula, request_id]
@@ -748,15 +809,27 @@ components:
         storage: { type: string }
     StaffSecurityState:
       type: object
-      required: [default_pin]
+      required: [default_pin, cannabis_points_enabled]
       properties:
         default_pin: { type: boolean }
+        cannabis_points_enabled: { type: boolean }
     OwnerSecurityState:
       type: object
-      required: [staff_default_pin, owner_default_pin]
+      required: [staff_default_pin, owner_default_pin, cannabis_points_enabled]
       properties:
         staff_default_pin: { type: boolean }
         owner_default_pin: { type: boolean }
+        cannabis_points_enabled: { type: boolean }
+    CannabisPointsFeatureInput:
+      type: object
+      required: [enabled]
+      properties:
+        enabled: { type: boolean }
+    CannabisPointsFeatureState:
+      type: object
+      required: [cannabis_points_enabled]
+      properties:
+        cannabis_points_enabled: { type: boolean }
     StaffPinInput:
       type: object
       required: [current_pin, new_pin]

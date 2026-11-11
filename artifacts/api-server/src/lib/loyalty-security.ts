@@ -5,9 +5,10 @@ import type { Request, Response, NextFunction } from "express";
 import { LoyaltyError } from "./loyalty-errors";
 
 type Session = { role: "member" | "staff" | "owner"; sub: string; exp: number; nonce: string };
-const windows = new Map<string, { count: number; expires: number }>();
 const deriveKey = promisify(scrypt);
 const COOKIE = { member: "jaguar_member", staff: "jaguar_staff", owner: "jaguar_owner" };
+const loginLockMs = 15 * 60_000;
+let limitCleanupTick = 0;
 
 function secret(): string {
   const value = process.env.SESSION_SECRET;
@@ -129,40 +130,90 @@ export async function ownerSetPins(pins: Partial<Record<StaffRole, string>>): Pr
     throw new LoyaltyError(503, "บันทึก PIN ไม่สำเร็จ กรุณาลองใหม่");
   } finally { client.release(); }
 }
-export function rateLimit(key: string, max: number, periodMs: number): void {
-  const now = Date.now();
-  if (windows.size > 10_000) {
-    for (const [k, v] of windows) if (v.expires <= now) windows.delete(k);
-    if (windows.size > 10_000) throw new LoyaltyError(429, "ระบบมีคำขอจำนวนมาก กรุณารอสักครู่");
+type LimitRow = { attempts: number; locked: boolean };
+async function updatePersistentLimit(key: string, max: number, periodMs: number, lockMs: number): Promise<LimitRow> {
+  const keyHash = privateKey(`limit:${key}`);
+  const { rows } = await pool.query<LimitRow>(`
+    insert into jaguar_security_limits(key_hash,attempts,window_started_at,locked_until,updated_at)
+      values($1,1,now(),null,now())
+    on conflict(key_hash) do update set
+      attempts = case
+        when jaguar_security_limits.locked_until > now() then jaguar_security_limits.attempts
+        when jaguar_security_limits.window_started_at <= now() - ($2::int * interval '1 millisecond') then 1
+        else jaguar_security_limits.attempts + 1
+      end,
+      window_started_at = case
+        when jaguar_security_limits.locked_until > now() then jaguar_security_limits.window_started_at
+        when jaguar_security_limits.window_started_at <= now() - ($2::int * interval '1 millisecond') then now()
+        else jaguar_security_limits.window_started_at
+      end,
+      locked_until = case
+        when jaguar_security_limits.locked_until > now() then jaguar_security_limits.locked_until
+        when jaguar_security_limits.window_started_at <= now() - ($2::int * interval '1 millisecond') then null
+        when jaguar_security_limits.attempts + 1 > $3 and $4 > 0
+          then now() + ($4::int * interval '1 millisecond')
+        else null
+      end,
+      updated_at = now()
+    returning attempts, (locked_until > now()) as locked
+  `, [keyHash, periodMs, max, lockMs]);
+  limitCleanupTick++;
+  if (limitCleanupTick % 100 === 0) {
+    await pool.query("delete from jaguar_security_limits where updated_at < now() - interval '2 days'");
   }
-  let entry = windows.get(key);
-  if (!entry || entry.expires <= now) {
-    entry = { count: 0, expires: now + periodMs };
-    windows.set(key, entry);
-  }
-  entry.count++;
-  if (entry.count > max) throw new LoyaltyError(429, "ทำรายการบ่อยเกินไป กรุณารอแล้วลองใหม่");
+  return rows[0];
+}
+
+async function isPersistentLimitLocked(key: string): Promise<boolean> {
+  const keyHash = privateKey(`limit:${key}`);
+  const { rows } = await pool.query<{ locked: boolean }>(
+    "select locked_until > now() as locked from jaguar_security_limits where key_hash=$1",
+    [keyHash],
+  );
+  return rows[0]?.locked ?? false;
+}
+
+export async function rateLimit(key: string, max: number, periodMs: number, lockMs = 0): Promise<void> {
+  const result = await updatePersistentLimit(key, max, periodMs, lockMs);
+  if (result.locked || result.attempts > max) throw new LoyaltyError(429, "ทำรายการบ่อยเกินไป กรุณารอแล้วลองใหม่");
+}
+
+export async function assertRateLimitAvailable(key: string, message = "ทำรายการบ่อยเกินไป กรุณารอแล้วลองใหม่"): Promise<void> {
+  if (await isPersistentLimitLocked(key)) throw new LoyaltyError(429, message);
+}
+
+export async function recordFailedAttempt(key: string, max = 5, periodMs = loginLockMs): Promise<void> {
+  await updatePersistentLimit(key, max, periodMs, loginLockMs);
+}
+
+export async function resetFailedAttempts(key: string): Promise<void> {
+  const keyHash = privateKey(`limit:${key}`);
+  await pool.query("delete from jaguar_security_limits where key_hash=$1", [keyHash]);
 }
 
 export function privateKey(value: string): string {
   return createHmac("sha256", secret()).update(value).digest("hex");
 }
 
-export function loyaltyGuard(req: Request, res: Response, next: NextFunction): void {
-  res.setHeader("Cache-Control", "no-store, private");
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  if (!["GET", "HEAD", "OPTIONS"].includes(req.method)) {
-    const hasBody = Number(req.get("content-length") ?? "0") > 0 || Boolean(req.get("transfer-encoding"));
-    if (hasBody && !req.is("application/json")) throw new LoyaltyError(415, "ต้องส่งข้อมูลแบบ JSON");
-    const origin = req.get("origin");
-    const host = req.get("host");
-    if (origin) {
-      try {
-        if (new URL(origin).host !== host) throw new Error("origin mismatch");
-      } catch { throw new LoyaltyError(403, "ไม่อนุญาตคำขอจากเว็บไซต์อื่น"); }
+export async function loyaltyGuard(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    res.setHeader("Cache-Control", "no-store, private");
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    if (!["GET", "HEAD", "OPTIONS"].includes(req.method)) {
+      const hasBody = Number(req.get("content-length") ?? "0") > 0 || Boolean(req.get("transfer-encoding"));
+      if (hasBody && !req.is("application/json")) throw new LoyaltyError(415, "ต้องส่งข้อมูลแบบ JSON");
+      const origin = req.get("origin");
+      const host = req.get("host");
+      if (origin) {
+        try {
+          if (new URL(origin).host !== host) throw new Error("origin mismatch");
+        } catch { throw new LoyaltyError(403, "ไม่อนุญาตคำขอจากเว็บไซต์อื่น"); }
+      }
+      if (req.get("sec-fetch-site") === "cross-site") throw new LoyaltyError(403, "ไม่อนุญาตคำขอจากเว็บไซต์อื่น");
     }
-    if (req.get("sec-fetch-site") === "cross-site") throw new LoyaltyError(403, "ไม่อนุญาตคำขอจากเว็บไซต์อื่น");
+    await rateLimit(`all:${privateKey(req.ip ?? req.socket.remoteAddress ?? "unknown")}`, 180, 60_000);
+    next();
+  } catch (error) {
+    next(error);
   }
-  rateLimit(`all:${privateKey(req.ip ?? req.socket.remoteAddress ?? "unknown")}`, 180, 60_000);
-  next();
 }

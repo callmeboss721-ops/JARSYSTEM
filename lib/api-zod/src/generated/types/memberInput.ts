@@ -14,4 +14,9 @@ export interface MemberInput {
   phone: string;
   /** @pattern ^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$ */
   member_code: string;
+  /**
+     * @minLength 2
+     * @maxLength 20
+     */
+  nickname: string;
 }

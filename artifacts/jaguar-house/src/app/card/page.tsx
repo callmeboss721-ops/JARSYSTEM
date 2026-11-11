@@ -3,23 +3,29 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getGetMemberCardQueryKey, useGetMemberCard, useUpdateMemberNickname } from "@workspace/api-client-react";
 import { MemberShell } from "@/components/brand/member-shell";
 import { MemberCardCarousel } from "@/components/brand/member-card-carousel";
 import { STAMPS } from "@/components/brand/loyalty-card";
 import { MemberCardFaces, MemberStatusPanel } from "@/components/brand/member-card-experience";
 import { MemberRankLabel, RankEmblem } from "@/components/brand/rank-emblem";
 import { EmptyState, ErrorState, LoadingState, SignedOutState } from "@/components/brand/ui";
-import { api, errorText, type MemberCardData, type Sale, formulaLabels } from "@/components/brand/loyalty-api";
+import { api, errorText, type Sale, formulaLabels } from "@/components/brand/loyalty-api";
 
 export default function CardPage() {
   const qc = useQueryClient();
+  const cardKey = getGetMemberCardQueryKey();
   const [visible, setVisible] = useState(true);
+  const [nickname, setNickname] = useState("");
+  const [nicknameEditing, setNicknameEditing] = useState(false);
+  const [nicknameMessage, setNicknameMessage] = useState("");
   useEffect(() => {
     const on = () => setVisible(document.visibilityState === "visible");
     on(); document.addEventListener("visibilitychange", on);
     return () => document.removeEventListener("visibilitychange", on);
   }, []);
-  const card = useQuery<MemberCardData>({ queryKey: ["/api/loyalty/card"], queryFn: () => api("/api/loyalty/card"), refetchInterval: visible ? 2000 : false, refetchIntervalInBackground: false, refetchOnWindowFocus: true, refetchOnMount: true, staleTime: 0, retry: false });
+  const card = useGetMemberCard({ query: { queryKey: cardKey, refetchInterval: visible ? 2000 : false, refetchIntervalInBackground: false, refetchOnWindowFocus: true, refetchOnMount: true, staleTime: 0, retry: false } });
+  const updateNickname = useUpdateMemberNickname();
   const sales = useQuery<Sale[]>({ queryKey: ["/api/loyalty/sales"], queryFn: () => api("/api/loyalty/sales"), enabled: card.isSuccess, refetchInterval: visible ? 5000 : false, refetchIntervalInBackground: false, refetchOnWindowFocus: false });
   const code = card.data?.member_code;
   // The opaque staff-scan token is stable across reloads; keep one account-scoped fetch.
@@ -47,6 +53,18 @@ export default function CardPage() {
     } else if (!reduced && "vibrate" in navigator) navigator.vibrate?.(30);
   }, [code, balance, earned, qc]);
   useEffect(() => { if (balance !== undefined && balance < STAMPS) setCelebrate(false); }, [balance]);
+  useEffect(() => { if (card.data) setNickname(card.data.nickname ?? ""); }, [card.data?.nickname]);
+  const saveNickname = async () => {
+    const value = nickname.trim();
+    if (value.length < 2 || value.length > 20) { setNicknameMessage("ชื่อเล่นต้องมี 2–20 ตัวอักษร"); return; }
+    setNicknameMessage("");
+    try {
+      const updated = await updateNickname.mutateAsync({ data: { nickname: value } });
+      qc.setQueryData(cardKey, updated);
+      setNicknameEditing(false);
+      setNicknameMessage("บันทึกชื่อเล่นแล้ว");
+    } catch (error) { setNicknameMessage(errorText(error)); }
+  };
 
   return <MemberShell signedIn={card.isSuccess}>
     {card.isLoading ? <div className="max-w-xl mx-auto"><LoadingState label="กำลังโหลดบัตรสมาชิก" /></div>
@@ -57,7 +75,8 @@ export default function CardPage() {
         <header className="card-member-heading rise">
           <div className="member-heading-top">
             <div>
-              <h1 className="font-display text-xl sm:text-2xl font-semibold">{card.data.display_name || "บัตรสมาชิก"}</h1>
+              <h1 className="font-display text-xl sm:text-2xl font-semibold">{card.data.nickname || card.data.display_name || "บัตรสมาชิก"}</h1>
+              <p className="mt-1 text-xs text-[var(--muted)]">{card.data.display_name} · {card.data.member_code}{card.data.phone_masked ? ` · ${card.data.phone_masked}` : ""}</p>
               <MemberRankLabel earned={card.data.lifetime_earned} />
             </div>
           </div>
@@ -91,6 +110,33 @@ export default function CardPage() {
           <div className="panel card-bento-stat"><RankEmblem name="diamond-member" size={22} className="card-bento-stat__emblem" /><p>สะสมรวม</p><strong>{card.data.lifetime_earned}</strong><small>แต้ม</small></div>
           <div className="panel card-bento-stat"><RankEmblem name="ultimate-legend" size={22} className="card-bento-stat__emblem" /><p>แลกแล้ว</p><strong>{card.data.lifetime_redeemed}</strong><small>แต้ม</small></div>
         </div>
+        <section className="grid gap-3 sm:grid-cols-2" aria-label="ยอดสะสมแยกตามประเภท">
+          <article className="panel p-4 border-[rgba(0,255,157,.28)]">
+            <p className="eyebrow">KRATOM · ยอดซื้อสะสม</p>
+            <div className="mt-2 flex items-end justify-between gap-2"><strong className="font-display text-3xl text-[var(--green)]">{card.data.balance}<small className="ml-1 text-sm font-sans text-[var(--text)]">แต้ม</small></strong><span className="text-xs text-[var(--muted)]">เศษ ฿{card.data.kratom_remainder_baht}/100</span></div>
+            <p className="mt-2 text-xs text-[var(--muted)]">ยอดเศษยังทบต่อ · คำนวณแต้มโดยระบบร้าน</p>
+          </article>
+          <article className="panel p-4 border-[rgba(229,192,74,.27)]">
+            <p className="eyebrow">CANNABIS · ยอดซื้อสะสม</p>
+            <div className="mt-2 flex items-end justify-between gap-2"><strong className="font-display text-3xl text-[var(--gold-2)]">{card.data.cannabis_balance}<small className="ml-1 text-sm font-sans text-[var(--text)]">แต้ม</small></strong><span className="text-xs text-[var(--muted)]">เศษ {card.data.cannabis_remainder_grams} g / 100</span></div>
+            <p className="mt-2 text-xs text-[var(--muted)]">บัตรแยก · แต้มและเศษคงเหลือไม่ปะปนกัน</p>
+            <Link href="/cannabis-card" className="mt-3 inline-flex min-h-10 items-center text-sm text-[var(--green)] underline-offset-4 hover:underline" data-testid="link-cannabis-card">เปิดบัตรกัญชา</Link>
+          </article>
+        </section>
+        <section className="panel p-4" aria-labelledby="nickname-title">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div><h2 id="nickname-title" className="font-display font-semibold">ชื่อเล่นบนบัตร</h2><p className="text-xs text-[var(--muted)]">ใช้ชื่อที่คุณสะดวกให้พนักงานเรียก</p></div>
+            {!nicknameEditing && <button type="button" className="btn btn-ghost !min-h-10 !px-4 text-sm" data-testid="button-edit-nickname" onClick={() => setNicknameEditing(true)}>แก้ไข</button>}
+          </div>
+          {nicknameEditing && <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+            <label className="sr-only" htmlFor="member-nickname">ชื่อเล่นสมาชิก</label>
+            <input id="member-nickname" data-testid="input-member-nickname" className="input !min-h-11 flex-1" maxLength={20} value={nickname} onChange={(e) => setNickname(e.target.value)} aria-describedby="nickname-help" />
+            <button type="button" data-testid="button-save-nickname" className="btn btn-neon !min-h-11" onClick={() => void saveNickname()} disabled={updateNickname.isPending}>{updateNickname.isPending ? "กำลังบันทึก…" : "บันทึกชื่อ"}</button>
+            <button type="button" className="btn btn-ghost !min-h-11" onClick={() => { setNickname(card.data?.nickname ?? ""); setNicknameEditing(false); }}>ยกเลิก</button>
+          </div>}
+          <p id="nickname-help" className="mt-2 text-xs text-[var(--muted)]">2–20 ตัวอักษร · แก้ไขได้ทุกเมื่อ</p>
+          {nicknameMessage && <p role="status" className={`mt-2 text-sm ${nicknameMessage.includes("แล้ว") ? "text-[var(--green)]" : "field-error"}`}>{nicknameMessage}</p>}
+        </section>
         <Link href="/" className="btn btn-ghost w-full sm:w-auto">กลับหน้าแรกร้าน</Link>
       </div>
       <aside className="space-y-5">
@@ -101,7 +147,7 @@ export default function CardPage() {
           : !sales.data?.length ? <EmptyState title="ยังไม่มีรายการซื้อ" />
           : <ul className="divide-y divide-[var(--line)] list-none p-0 m-0">{sales.data.slice(0,5).map(s => <li key={s.id} className="py-3 flex gap-3 items-center">
             <div className="min-w-0 flex-1"><p className="text-sm font-medium">{formulaLabels[s.formula] || s.formula} · {s.bottle_count} ขวด</p><p className="text-xs text-[var(--muted)]">{new Date(s.created_at).toLocaleString("th-TH")}</p></div>
-            <div className="text-right shrink-0"><p className="font-mono">฿{s.amount_baht.toLocaleString("th-TH")}</p><p className={`text-xs ${s.points_awarded ? "text-[var(--emerald-2)]" : "text-[var(--muted)]"}`}>{s.points_awarded ? `+${s.points_awarded} แต้ม` : "บิลนี้ไม่ครบ 3 ขวด"}</p></div>
+            <div className="text-right shrink-0"><p className="font-mono">฿{s.amount_baht.toLocaleString("th-TH")}</p><p className={`text-xs ${s.points_awarded ? "text-[var(--emerald-2)]" : "text-[var(--muted)]"}`}>{s.points_awarded ? `+${s.points_awarded} แต้ม` : "ยอดเศษทบต่อโดยระบบ"}</p></div>
           </li>)}</ul>}
         </section>
       </aside>

@@ -428,7 +428,29 @@ body { overflow-x: hidden; }
 }
 
 /* ===== Dark Luxury Fintech layer ===== */
-:root { --bg:#040605; --glass:rgba(255,255,255,.05); --glass-line:rgba(229,192,74,.22); --green:#2fd98a; }
+:root {
+  --bg:#050505;
+  --panel:#0b0d0c;
+  --panel-2:#111412;
+  --glass:rgba(255,255,255,.045);
+  --glass-line:rgba(0,255,157,.19);
+  --green:#00FF9D;
+  --neon:#00FF9D;
+  --neon-dim:rgba(0,255,157,.12);
+  --gold:#e5c04a;
+  --gold-2:#f0d78a;
+  --emerald:#00a96a;
+  --emerald-2:#00FF9D;
+  --lime:#8af2c1;
+  --cyan:#00FF9D;
+  --text:#f0f1ec;
+  --muted:#a9b1ab;
+  --silver:#c9d0ca;
+  --line:rgba(219,231,223,.12);
+  --line-2:rgba(219,231,223,.22);
+  --control-line:rgba(219,231,223,.3);
+  --danger:#ff8578;
+}
 body {
   background:
     radial-gradient(640px 460px at 100% 0%, rgba(229,192,74,.16), transparent 62%),
@@ -580,6 +602,41 @@ body {
   .bank-transfers li { gap: 8px; }
   .bank-transfer-amount { font-size: 12px; }
 }
+
+/* Counter-ready Jaguar system: near-black glass, signal green and warm metal. */
+.btn-neon, .btn-primary, .btn-redeem {
+  background: linear-gradient(110deg, #00d984, #00FF9D 62%, #b8ffd9);
+  color: #06130d;
+  border-color: rgba(183,255,219,.55);
+  box-shadow: 0 1px 0 rgba(255,255,255,.3) inset, 0 10px 24px -18px rgba(0,255,157,.7);
+}
+.btn-neon:hover:not(:disabled), .btn-primary:hover:not(:disabled), .btn-redeem:hover:not(:disabled) { filter: brightness(1.07); }
+.btn-gold { color:#17120a; }
+.input:focus { border-color:var(--green); box-shadow:0 0 0 3px rgba(0,255,157,.16); }
+.tab[aria-selected='true'], .pill-switch .tab[aria-selected='true'] {
+  background:linear-gradient(145deg,rgba(0,255,157,.13),rgba(229,192,74,.07));
+  border-color:rgba(0,255,157,.35);
+  color:var(--green);
+}
+.progress-fill { background:linear-gradient(90deg,var(--green),var(--gold)); }
+.stamp[data-filled='true'] { border-color:rgba(0,255,157,.76); color:var(--green); }
+.member-card { background:linear-gradient(135deg,rgba(240,215,138,.92),rgba(196,202,214,.16) 32%,rgba(0,255,157,.38) 68%,rgba(229,192,74,.75)); }
+.member-card-inner { background:radial-gradient(520px 260px at 100% 0%,rgba(229,192,74,.13),transparent 60%),radial-gradient(420px 260px at 0% 100%,rgba(0,255,157,.11),transparent 60%),linear-gradient(160deg,#111713,#050706 64%); }
+.eyebrow { color:#b9c7bd; }
+.panel,.auth-panel { border-color:var(--glass-line); }
+.card-bento-stat--primary { border-color:rgba(0,255,157,.42)!important; }
+.staff-topline,.member-header { border-color:var(--glass-line); }
+.staff-workspace nav[aria-label="พื้นที่พนักงาน"] .tab[aria-pressed="true"] { border-color:rgba(0,255,157,.35); color:var(--green); }
+.owner-menu-tab { min-height:60px; }
+.counter-feature-disabled {
+  border:1px solid rgba(229,192,74,.33);
+  border-radius:14px;
+  background:linear-gradient(120deg,rgba(229,192,74,.08),rgba(255,255,255,.02));
+  color:#e8dcae;
+}
+.owner-feature-switch { display:flex; align-items:center; justify-content:space-between; gap:18px; }
+.owner-feature-switch input { width:48px; height:28px; accent-color:var(--green); cursor:pointer; }
+.owner-feature-status { color:var(--muted); font-size:12px; }
 
 /* Homepage — a local editorial frame for the original campaign artwork. */
 .jaguar-home--landing {

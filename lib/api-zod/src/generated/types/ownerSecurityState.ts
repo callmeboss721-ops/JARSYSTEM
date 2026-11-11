@@ -9,4 +9,5 @@
 export interface OwnerSecurityState {
   staff_default_pin: boolean;
   owner_default_pin: boolean;
+  cannabis_points_enabled: boolean;
 }

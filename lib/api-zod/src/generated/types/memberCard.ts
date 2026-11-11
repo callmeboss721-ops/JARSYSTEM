@@ -10,9 +10,32 @@ export interface MemberCard {
   id: string;
   member_code: string;
   display_name: string;
+  /**
+     * @minLength 2
+     * @maxLength 20
+     * @nullable
+     */
+  nickname: string | null;
+  /**
+     * @maxLength 24
+     * @nullable
+     */
+  phone_masked: string | null;
   is_demo: boolean;
   status: string;
   balance: number;
   lifetime_earned: number;
   lifetime_redeemed: number;
+  /**
+     * @minimum 0
+     * @maximum 99
+     */
+  kratom_remainder_baht: number;
+  /** @minimum 0 */
+  cannabis_balance: number;
+  /**
+     * @minimum 0
+     * @maximum 99
+     */
+  cannabis_remainder_grams: number;
 }

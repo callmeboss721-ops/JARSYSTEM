@@ -17,41 +17,89 @@ export const registerMemberBodyPhoneMin = 9;
 export const registerMemberBodyPhoneMax = 20;
 
 export const registerMemberBodyMemberCodeRegExp = new RegExp('^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$');
+export const registerMemberBodyNicknameMin = 2;
+export const registerMemberBodyNicknameMax = 20;
+
 
 
 export const RegisterMemberBody = zod.object({
   "phone": zod.string().min(registerMemberBodyPhoneMin).max(registerMemberBodyPhoneMax),
-  "member_code": zod.string().regex(registerMemberBodyMemberCodeRegExp)
+  "member_code": zod.string().regex(registerMemberBodyMemberCodeRegExp),
+  "nickname": zod.string().min(registerMemberBodyNicknameMin).max(registerMemberBodyNicknameMax)
 })
+
+export const registerMemberResponseNicknameMin = 2;
+export const registerMemberResponseNicknameMax = 20;
+
+export const registerMemberResponsePhoneMaskedMax = 24;
+
+export const registerMemberResponseKratomRemainderBahtMin = 0;
+export const registerMemberResponseKratomRemainderBahtMax = 99;
+
+export const registerMemberResponseCannabisBalanceMin = 0;
+
+export const registerMemberResponseCannabisRemainderGramsMin = 0;
+export const registerMemberResponseCannabisRemainderGramsMax = 99;
+
+
 
 export const RegisterMemberResponse = zod.object({
   "id": zod.string(),
   "member_code": zod.string(),
   "display_name": zod.string(),
+  "nickname": zod.string().min(registerMemberResponseNicknameMin).max(registerMemberResponseNicknameMax).nullable(),
+  "phone_masked": zod.string().max(registerMemberResponsePhoneMaskedMax).nullable(),
   "is_demo": zod.boolean(),
   "status": zod.string(),
   "balance": zod.int(),
   "lifetime_earned": zod.int(),
-  "lifetime_redeemed": zod.int()
+  "lifetime_redeemed": zod.int(),
+  "kratom_remainder_baht": zod.int().min(registerMemberResponseKratomRemainderBahtMin).max(registerMemberResponseKratomRemainderBahtMax),
+  "cannabis_balance": zod.int().min(registerMemberResponseCannabisBalanceMin),
+  "cannabis_remainder_grams": zod.int().min(registerMemberResponseCannabisRemainderGramsMin).max(registerMemberResponseCannabisRemainderGramsMax)
 })
 
 
 export const loginMemberBodyMemberCodeRegExp = new RegExp('^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$');
+export const loginMemberBodyIdentifierMax = 64;
+
 
 
 export const LoginMemberBody = zod.object({
-  "member_code": zod.string().regex(loginMemberBodyMemberCodeRegExp)
-})
+  "member_code": zod.string().regex(loginMemberBodyMemberCodeRegExp).optional(),
+  "method": zod.enum(['phone', 'member_code', 'nickname']).optional(),
+  "identifier": zod.string().min(1).max(loginMemberBodyIdentifierMax).optional()
+}).describe('Login by member code, phone, or nickname; legacy member_code requests remain supported.')
+
+export const loginMemberResponseNicknameMin = 2;
+export const loginMemberResponseNicknameMax = 20;
+
+export const loginMemberResponsePhoneMaskedMax = 24;
+
+export const loginMemberResponseKratomRemainderBahtMin = 0;
+export const loginMemberResponseKratomRemainderBahtMax = 99;
+
+export const loginMemberResponseCannabisBalanceMin = 0;
+
+export const loginMemberResponseCannabisRemainderGramsMin = 0;
+export const loginMemberResponseCannabisRemainderGramsMax = 99;
+
+
 
 export const LoginMemberResponse = zod.object({
   "id": zod.string(),
   "member_code": zod.string(),
   "display_name": zod.string(),
+  "nickname": zod.string().min(loginMemberResponseNicknameMin).max(loginMemberResponseNicknameMax).nullable(),
+  "phone_masked": zod.string().max(loginMemberResponsePhoneMaskedMax).nullable(),
   "is_demo": zod.boolean(),
   "status": zod.string(),
   "balance": zod.int(),
   "lifetime_earned": zod.int(),
-  "lifetime_redeemed": zod.int()
+  "lifetime_redeemed": zod.int(),
+  "kratom_remainder_baht": zod.int().min(loginMemberResponseKratomRemainderBahtMin).max(loginMemberResponseKratomRemainderBahtMax),
+  "cannabis_balance": zod.int().min(loginMemberResponseCannabisBalanceMin),
+  "cannabis_remainder_grams": zod.int().min(loginMemberResponseCannabisRemainderGramsMin).max(loginMemberResponseCannabisRemainderGramsMax)
 })
 
 
@@ -60,23 +108,97 @@ export const LogoutMemberResponse = zod.object({
 })
 
 
+export const GetMemberSessionResponse = zod.object({
+  "authenticated": zod.boolean()
+})
+
+
+export const getMemberCardResponseNicknameMin = 2;
+export const getMemberCardResponseNicknameMax = 20;
+
+export const getMemberCardResponsePhoneMaskedMax = 24;
+
+export const getMemberCardResponseKratomRemainderBahtMin = 0;
+export const getMemberCardResponseKratomRemainderBahtMax = 99;
+
+export const getMemberCardResponseCannabisBalanceMin = 0;
+
+export const getMemberCardResponseCannabisRemainderGramsMin = 0;
+export const getMemberCardResponseCannabisRemainderGramsMax = 99;
+
+
+
 export const GetMemberCardResponse = zod.object({
   "id": zod.string(),
   "member_code": zod.string(),
   "display_name": zod.string(),
+  "nickname": zod.string().min(getMemberCardResponseNicknameMin).max(getMemberCardResponseNicknameMax).nullable(),
+  "phone_masked": zod.string().max(getMemberCardResponsePhoneMaskedMax).nullable(),
   "is_demo": zod.boolean(),
   "status": zod.string(),
   "balance": zod.int(),
   "lifetime_earned": zod.int(),
-  "lifetime_redeemed": zod.int()
+  "lifetime_redeemed": zod.int(),
+  "kratom_remainder_baht": zod.int().min(getMemberCardResponseKratomRemainderBahtMin).max(getMemberCardResponseKratomRemainderBahtMax),
+  "cannabis_balance": zod.int().min(getMemberCardResponseCannabisBalanceMin),
+  "cannabis_remainder_grams": zod.int().min(getMemberCardResponseCannabisRemainderGramsMin).max(getMemberCardResponseCannabisRemainderGramsMax)
 })
 
+
+export const updateMemberNicknameBodyNicknameMin = 2;
+export const updateMemberNicknameBodyNicknameMax = 20;
+
+
+
+export const UpdateMemberNicknameBody = zod.object({
+  "nickname": zod.string().min(updateMemberNicknameBodyNicknameMin).max(updateMemberNicknameBodyNicknameMax)
+})
+
+export const updateMemberNicknameResponseNicknameMin = 2;
+export const updateMemberNicknameResponseNicknameMax = 20;
+
+export const updateMemberNicknameResponsePhoneMaskedMax = 24;
+
+export const updateMemberNicknameResponseKratomRemainderBahtMin = 0;
+export const updateMemberNicknameResponseKratomRemainderBahtMax = 99;
+
+export const updateMemberNicknameResponseCannabisBalanceMin = 0;
+
+export const updateMemberNicknameResponseCannabisRemainderGramsMin = 0;
+export const updateMemberNicknameResponseCannabisRemainderGramsMax = 99;
+
+
+
+export const UpdateMemberNicknameResponse = zod.object({
+  "id": zod.string(),
+  "member_code": zod.string(),
+  "display_name": zod.string(),
+  "nickname": zod.string().min(updateMemberNicknameResponseNicknameMin).max(updateMemberNicknameResponseNicknameMax).nullable(),
+  "phone_masked": zod.string().max(updateMemberNicknameResponsePhoneMaskedMax).nullable(),
+  "is_demo": zod.boolean(),
+  "status": zod.string(),
+  "balance": zod.int(),
+  "lifetime_earned": zod.int(),
+  "lifetime_redeemed": zod.int(),
+  "kratom_remainder_baht": zod.int().min(updateMemberNicknameResponseKratomRemainderBahtMin).max(updateMemberNicknameResponseKratomRemainderBahtMax),
+  "cannabis_balance": zod.int().min(updateMemberNicknameResponseCannabisBalanceMin),
+  "cannabis_remainder_grams": zod.int().min(updateMemberNicknameResponseCannabisRemainderGramsMin).max(updateMemberNicknameResponseCannabisRemainderGramsMax)
+})
+
+
+export const getCannabisMemberCardResponseNicknameMin = 2;
+export const getCannabisMemberCardResponseNicknameMax = 20;
+
+export const getCannabisMemberCardResponsePhoneMaskedMax = 24;
 
 export const getCannabisMemberCardResponseBalanceMin = 0;
 
 export const getCannabisMemberCardResponseLifetimeEarnedMin = 0;
 
 export const getCannabisMemberCardResponseLifetimeRedeemedMin = 0;
+
+export const getCannabisMemberCardResponseGramsRemainderMin = 0;
+export const getCannabisMemberCardResponseGramsRemainderMax = 99;
 
 export const getCannabisMemberCardResponseRecentTransactionsItemGramsPurchasedMin = 0;
 export const getCannabisMemberCardResponseRecentTransactionsItemGramsPurchasedMax = 999;
@@ -88,9 +210,12 @@ export const getCannabisMemberCardResponseRecentTransactionsMax = 5;
 export const GetCannabisMemberCardResponse = zod.object({
   "member_code": zod.string(),
   "display_name": zod.string(),
+  "nickname": zod.string().min(getCannabisMemberCardResponseNicknameMin).max(getCannabisMemberCardResponseNicknameMax).nullable(),
+  "phone_masked": zod.string().max(getCannabisMemberCardResponsePhoneMaskedMax).nullable(),
   "balance": zod.int().min(getCannabisMemberCardResponseBalanceMin),
   "lifetime_earned": zod.int().min(getCannabisMemberCardResponseLifetimeEarnedMin),
   "lifetime_redeemed": zod.int().min(getCannabisMemberCardResponseLifetimeRedeemedMin),
+  "grams_remainder": zod.int().min(getCannabisMemberCardResponseGramsRemainderMin).max(getCannabisMemberCardResponseGramsRemainderMax),
   "recent_transactions": zod.array(zod.object({
   "id": zod.uuid(),
   "delta": zod.int(),
@@ -112,10 +237,18 @@ export const ListRewardsResponseItem = zod.object({
 export const ListRewardsResponse = zod.array(ListRewardsResponseItem)
 
 
+export const listMemberRedemptionsResponseMemberNicknameMin = 2;
+export const listMemberRedemptionsResponseMemberNicknameMax = 20;
+
+export const listMemberRedemptionsResponsePhoneLast4RegExp = new RegExp('^[0-9]{4}$');
+
+
 export const ListMemberRedemptionsResponseItem = zod.object({
   "id": zod.string(),
   "member_id": zod.string(),
   "member_code": zod.string(),
+  "member_nickname": zod.string().min(listMemberRedemptionsResponseMemberNicknameMin).max(listMemberRedemptionsResponseMemberNicknameMax).nullable(),
+  "phone_last4": zod.string().regex(listMemberRedemptionsResponsePhoneLast4RegExp).nullable(),
   "reward_id": zod.string(),
   "reward_name": zod.string(),
   "points_spent": zod.int(),
@@ -129,10 +262,18 @@ export const RequestRedemptionBody = zod.object({
   "reward_id": zod.uuid()
 })
 
+export const requestRedemptionResponseMemberNicknameMin = 2;
+export const requestRedemptionResponseMemberNicknameMax = 20;
+
+export const requestRedemptionResponsePhoneLast4RegExp = new RegExp('^[0-9]{4}$');
+
+
 export const RequestRedemptionResponse = zod.object({
   "id": zod.string(),
   "member_id": zod.string(),
   "member_code": zod.string(),
+  "member_nickname": zod.string().min(requestRedemptionResponseMemberNicknameMin).max(requestRedemptionResponseMemberNicknameMax).nullable(),
+  "phone_last4": zod.string().regex(requestRedemptionResponsePhoneLast4RegExp).nullable(),
   "reward_id": zod.string(),
   "reward_name": zod.string(),
   "points_spent": zod.int(),
@@ -193,7 +334,8 @@ export const LogoutStaffResponse = zod.object({
 
 
 export const GetStaffSecurityResponse = zod.object({
-  "default_pin": zod.boolean()
+  "default_pin": zod.boolean(),
+  "cannabis_points_enabled": zod.boolean()
 })
 
 
@@ -220,15 +362,35 @@ export const FindMemberQueryParams = zod.object({
   "qr_token": zod.coerce.string().regex(findMemberQueryQrTokenRegExp).optional()
 })
 
+export const findMemberResponseNicknameMin = 2;
+export const findMemberResponseNicknameMax = 20;
+
+export const findMemberResponsePhoneMaskedMax = 24;
+
+export const findMemberResponseKratomRemainderBahtMin = 0;
+export const findMemberResponseKratomRemainderBahtMax = 99;
+
+export const findMemberResponseCannabisBalanceMin = 0;
+
+export const findMemberResponseCannabisRemainderGramsMin = 0;
+export const findMemberResponseCannabisRemainderGramsMax = 99;
+
+
+
 export const FindMemberResponse = zod.object({
   "id": zod.string(),
   "member_code": zod.string(),
   "display_name": zod.string(),
+  "nickname": zod.string().min(findMemberResponseNicknameMin).max(findMemberResponseNicknameMax).nullable(),
+  "phone_masked": zod.string().max(findMemberResponsePhoneMaskedMax).nullable(),
   "is_demo": zod.boolean(),
   "status": zod.string(),
   "balance": zod.int(),
   "lifetime_earned": zod.int(),
-  "lifetime_redeemed": zod.int()
+  "lifetime_redeemed": zod.int(),
+  "kratom_remainder_baht": zod.int().min(findMemberResponseKratomRemainderBahtMin).max(findMemberResponseKratomRemainderBahtMax),
+  "cannabis_balance": zod.int().min(findMemberResponseCannabisBalanceMin),
+  "cannabis_remainder_grams": zod.int().min(findMemberResponseCannabisRemainderGramsMin).max(findMemberResponseCannabisRemainderGramsMax)
 })
 
 
@@ -241,11 +403,19 @@ export const GetStaffCannabisCardQueryParams = zod.object({
   "qr_token": zod.coerce.string().regex(getStaffCannabisCardQueryQrTokenRegExp).optional()
 })
 
+export const getStaffCannabisCardResponseNicknameMin = 2;
+export const getStaffCannabisCardResponseNicknameMax = 20;
+
+export const getStaffCannabisCardResponsePhoneMaskedMax = 24;
+
 export const getStaffCannabisCardResponseBalanceMin = 0;
 
 export const getStaffCannabisCardResponseLifetimeEarnedMin = 0;
 
 export const getStaffCannabisCardResponseLifetimeRedeemedMin = 0;
+
+export const getStaffCannabisCardResponseGramsRemainderMin = 0;
+export const getStaffCannabisCardResponseGramsRemainderMax = 99;
 
 export const getStaffCannabisCardResponseRecentTransactionsItemGramsPurchasedMin = 0;
 export const getStaffCannabisCardResponseRecentTransactionsItemGramsPurchasedMax = 999;
@@ -257,9 +427,12 @@ export const getStaffCannabisCardResponseRecentTransactionsMax = 5;
 export const GetStaffCannabisCardResponse = zod.object({
   "member_code": zod.string(),
   "display_name": zod.string(),
+  "nickname": zod.string().min(getStaffCannabisCardResponseNicknameMin).max(getStaffCannabisCardResponseNicknameMax).nullable(),
+  "phone_masked": zod.string().max(getStaffCannabisCardResponsePhoneMaskedMax).nullable(),
   "balance": zod.int().min(getStaffCannabisCardResponseBalanceMin),
   "lifetime_earned": zod.int().min(getStaffCannabisCardResponseLifetimeEarnedMin),
   "lifetime_redeemed": zod.int().min(getStaffCannabisCardResponseLifetimeRedeemedMin),
+  "grams_remainder": zod.int().min(getStaffCannabisCardResponseGramsRemainderMin).max(getStaffCannabisCardResponseGramsRemainderMax),
   "recent_transactions": zod.array(zod.object({
   "id": zod.uuid(),
   "delta": zod.int(),
@@ -278,15 +451,35 @@ export const ListStaffMembersQueryParams = zod.object({
   "q": zod.coerce.string().max(listStaffMembersQueryQMax).optional()
 })
 
+export const listStaffMembersResponseNicknameMin = 2;
+export const listStaffMembersResponseNicknameMax = 20;
+
+export const listStaffMembersResponsePhoneMaskedMax = 24;
+
+export const listStaffMembersResponseKratomRemainderBahtMin = 0;
+export const listStaffMembersResponseKratomRemainderBahtMax = 99;
+
+export const listStaffMembersResponseCannabisBalanceMin = 0;
+
+export const listStaffMembersResponseCannabisRemainderGramsMin = 0;
+export const listStaffMembersResponseCannabisRemainderGramsMax = 99;
+
+
+
 export const ListStaffMembersResponseItem = zod.object({
   "id": zod.string(),
   "member_code": zod.string(),
   "display_name": zod.string(),
+  "nickname": zod.string().min(listStaffMembersResponseNicknameMin).max(listStaffMembersResponseNicknameMax).nullable(),
+  "phone_masked": zod.string().max(listStaffMembersResponsePhoneMaskedMax).nullable(),
   "is_demo": zod.boolean(),
   "status": zod.string(),
   "balance": zod.int(),
   "lifetime_earned": zod.int(),
-  "lifetime_redeemed": zod.int()
+  "lifetime_redeemed": zod.int(),
+  "kratom_remainder_baht": zod.int().min(listStaffMembersResponseKratomRemainderBahtMin).max(listStaffMembersResponseKratomRemainderBahtMax),
+  "cannabis_balance": zod.int().min(listStaffMembersResponseCannabisBalanceMin),
+  "cannabis_remainder_grams": zod.int().min(listStaffMembersResponseCannabisRemainderGramsMin).max(listStaffMembersResponseCannabisRemainderGramsMax)
 })
 export const ListStaffMembersResponse = zod.array(ListStaffMembersResponseItem)
 
@@ -297,23 +490,47 @@ export const createStaffMemberBodyMemberCodeRegExp = new RegExp('^[A-Za-z0-9][A-
 export const createStaffMemberBodyPhoneMin = 9;
 export const createStaffMemberBodyPhoneMax = 20;
 
+export const createStaffMemberBodyNicknameMin = 2;
+export const createStaffMemberBodyNicknameMax = 20;
+
 
 
 export const CreateStaffMemberBody = zod.object({
   "name": zod.string().min(1).max(createStaffMemberBodyNameMax),
   "member_code": zod.string().regex(createStaffMemberBodyMemberCodeRegExp),
-  "phone": zod.string().min(createStaffMemberBodyPhoneMin).max(createStaffMemberBodyPhoneMax)
+  "phone": zod.string().min(createStaffMemberBodyPhoneMin).max(createStaffMemberBodyPhoneMax),
+  "nickname": zod.string().min(createStaffMemberBodyNicknameMin).max(createStaffMemberBodyNicknameMax)
 })
+
+export const createStaffMemberResponseNicknameMin = 2;
+export const createStaffMemberResponseNicknameMax = 20;
+
+export const createStaffMemberResponsePhoneMaskedMax = 24;
+
+export const createStaffMemberResponseKratomRemainderBahtMin = 0;
+export const createStaffMemberResponseKratomRemainderBahtMax = 99;
+
+export const createStaffMemberResponseCannabisBalanceMin = 0;
+
+export const createStaffMemberResponseCannabisRemainderGramsMin = 0;
+export const createStaffMemberResponseCannabisRemainderGramsMax = 99;
+
+
 
 export const CreateStaffMemberResponse = zod.object({
   "id": zod.string(),
   "member_code": zod.string(),
   "display_name": zod.string(),
+  "nickname": zod.string().min(createStaffMemberResponseNicknameMin).max(createStaffMemberResponseNicknameMax).nullable(),
+  "phone_masked": zod.string().max(createStaffMemberResponsePhoneMaskedMax).nullable(),
   "is_demo": zod.boolean(),
   "status": zod.string(),
   "balance": zod.int(),
   "lifetime_earned": zod.int(),
-  "lifetime_redeemed": zod.int()
+  "lifetime_redeemed": zod.int(),
+  "kratom_remainder_baht": zod.int().min(createStaffMemberResponseKratomRemainderBahtMin).max(createStaffMemberResponseKratomRemainderBahtMax),
+  "cannabis_balance": zod.int().min(createStaffMemberResponseCannabisBalanceMin),
+  "cannabis_remainder_grams": zod.int().min(createStaffMemberResponseCannabisRemainderGramsMin).max(createStaffMemberResponseCannabisRemainderGramsMax)
 })
 
 
@@ -331,15 +548,35 @@ export const RecordStaffSaleBody = zod.object({
   "request_id": zod.uuid()
 })
 
+export const recordStaffSaleResponseNicknameMin = 2;
+export const recordStaffSaleResponseNicknameMax = 20;
+
+export const recordStaffSaleResponsePhoneMaskedMax = 24;
+
+export const recordStaffSaleResponseKratomRemainderBahtMin = 0;
+export const recordStaffSaleResponseKratomRemainderBahtMax = 99;
+
+export const recordStaffSaleResponseCannabisBalanceMin = 0;
+
+export const recordStaffSaleResponseCannabisRemainderGramsMin = 0;
+export const recordStaffSaleResponseCannabisRemainderGramsMax = 99;
+
+
+
 export const RecordStaffSaleResponse = zod.object({
   "id": zod.string(),
   "member_code": zod.string(),
   "display_name": zod.string(),
+  "nickname": zod.string().min(recordStaffSaleResponseNicknameMin).max(recordStaffSaleResponseNicknameMax).nullable(),
+  "phone_masked": zod.string().max(recordStaffSaleResponsePhoneMaskedMax).nullable(),
   "is_demo": zod.boolean(),
   "status": zod.string(),
   "balance": zod.int(),
   "lifetime_earned": zod.int(),
-  "lifetime_redeemed": zod.int()
+  "lifetime_redeemed": zod.int(),
+  "kratom_remainder_baht": zod.int().min(recordStaffSaleResponseKratomRemainderBahtMin).max(recordStaffSaleResponseKratomRemainderBahtMax),
+  "cannabis_balance": zod.int().min(recordStaffSaleResponseCannabisBalanceMin),
+  "cannabis_remainder_grams": zod.int().min(recordStaffSaleResponseCannabisRemainderGramsMin).max(recordStaffSaleResponseCannabisRemainderGramsMax)
 })
 
 
@@ -354,11 +591,19 @@ export const AddCannabisStampsBody = zod.object({
   "request_id": zod.uuid()
 })
 
+export const addCannabisStampsResponseNicknameMin = 2;
+export const addCannabisStampsResponseNicknameMax = 20;
+
+export const addCannabisStampsResponsePhoneMaskedMax = 24;
+
 export const addCannabisStampsResponseBalanceMin = 0;
 
 export const addCannabisStampsResponseLifetimeEarnedMin = 0;
 
 export const addCannabisStampsResponseLifetimeRedeemedMin = 0;
+
+export const addCannabisStampsResponseGramsRemainderMin = 0;
+export const addCannabisStampsResponseGramsRemainderMax = 99;
 
 export const addCannabisStampsResponseRecentTransactionsItemGramsPurchasedMin = 0;
 export const addCannabisStampsResponseRecentTransactionsItemGramsPurchasedMax = 999;
@@ -370,9 +615,12 @@ export const addCannabisStampsResponseRecentTransactionsMax = 5;
 export const AddCannabisStampsResponse = zod.object({
   "member_code": zod.string(),
   "display_name": zod.string(),
+  "nickname": zod.string().min(addCannabisStampsResponseNicknameMin).max(addCannabisStampsResponseNicknameMax).nullable(),
+  "phone_masked": zod.string().max(addCannabisStampsResponsePhoneMaskedMax).nullable(),
   "balance": zod.int().min(addCannabisStampsResponseBalanceMin),
   "lifetime_earned": zod.int().min(addCannabisStampsResponseLifetimeEarnedMin),
   "lifetime_redeemed": zod.int().min(addCannabisStampsResponseLifetimeRedeemedMin),
+  "grams_remainder": zod.int().min(addCannabisStampsResponseGramsRemainderMin).max(addCannabisStampsResponseGramsRemainderMax),
   "recent_transactions": zod.array(zod.object({
   "id": zod.uuid(),
   "delta": zod.int(),
@@ -391,11 +639,19 @@ export const RedeemCannabisAtCounterBody = zod.object({
   "request_id": zod.uuid()
 })
 
+export const redeemCannabisAtCounterResponseNicknameMin = 2;
+export const redeemCannabisAtCounterResponseNicknameMax = 20;
+
+export const redeemCannabisAtCounterResponsePhoneMaskedMax = 24;
+
 export const redeemCannabisAtCounterResponseBalanceMin = 0;
 
 export const redeemCannabisAtCounterResponseLifetimeEarnedMin = 0;
 
 export const redeemCannabisAtCounterResponseLifetimeRedeemedMin = 0;
+
+export const redeemCannabisAtCounterResponseGramsRemainderMin = 0;
+export const redeemCannabisAtCounterResponseGramsRemainderMax = 99;
 
 export const redeemCannabisAtCounterResponseRecentTransactionsItemGramsPurchasedMin = 0;
 export const redeemCannabisAtCounterResponseRecentTransactionsItemGramsPurchasedMax = 999;
@@ -407,9 +663,12 @@ export const redeemCannabisAtCounterResponseRecentTransactionsMax = 5;
 export const RedeemCannabisAtCounterResponse = zod.object({
   "member_code": zod.string(),
   "display_name": zod.string(),
+  "nickname": zod.string().min(redeemCannabisAtCounterResponseNicknameMin).max(redeemCannabisAtCounterResponseNicknameMax).nullable(),
+  "phone_masked": zod.string().max(redeemCannabisAtCounterResponsePhoneMaskedMax).nullable(),
   "balance": zod.int().min(redeemCannabisAtCounterResponseBalanceMin),
   "lifetime_earned": zod.int().min(redeemCannabisAtCounterResponseLifetimeEarnedMin),
   "lifetime_redeemed": zod.int().min(redeemCannabisAtCounterResponseLifetimeRedeemedMin),
+  "grams_remainder": zod.int().min(redeemCannabisAtCounterResponseGramsRemainderMin).max(redeemCannabisAtCounterResponseGramsRemainderMax),
   "recent_transactions": zod.array(zod.object({
   "id": zod.uuid(),
   "delta": zod.int(),
@@ -428,15 +687,35 @@ export const RedeemAtCounterBody = zod.object({
   "request_id": zod.uuid()
 })
 
+export const redeemAtCounterResponseOneNicknameMin = 2;
+export const redeemAtCounterResponseOneNicknameMax = 20;
+
+export const redeemAtCounterResponseOnePhoneMaskedMax = 24;
+
+export const redeemAtCounterResponseOneKratomRemainderBahtMin = 0;
+export const redeemAtCounterResponseOneKratomRemainderBahtMax = 99;
+
+export const redeemAtCounterResponseOneCannabisBalanceMin = 0;
+
+export const redeemAtCounterResponseOneCannabisRemainderGramsMin = 0;
+export const redeemAtCounterResponseOneCannabisRemainderGramsMax = 99;
+
+
+
 export const RedeemAtCounterResponse = zod.object({
   "id": zod.string(),
   "member_code": zod.string(),
   "display_name": zod.string(),
+  "nickname": zod.string().min(redeemAtCounterResponseOneNicknameMin).max(redeemAtCounterResponseOneNicknameMax).nullable(),
+  "phone_masked": zod.string().max(redeemAtCounterResponseOnePhoneMaskedMax).nullable(),
   "is_demo": zod.boolean(),
   "status": zod.string(),
   "balance": zod.int(),
   "lifetime_earned": zod.int(),
-  "lifetime_redeemed": zod.int()
+  "lifetime_redeemed": zod.int(),
+  "kratom_remainder_baht": zod.int().min(redeemAtCounterResponseOneKratomRemainderBahtMin).max(redeemAtCounterResponseOneKratomRemainderBahtMax),
+  "cannabis_balance": zod.int().min(redeemAtCounterResponseOneCannabisBalanceMin),
+  "cannabis_remainder_grams": zod.int().min(redeemAtCounterResponseOneCannabisRemainderGramsMin).max(redeemAtCounterResponseOneCannabisRemainderGramsMax)
 }).and(zod.object({
   "redemption_id": zod.uuid()
 }))
@@ -556,10 +835,18 @@ export const RecordStaffBankTransferResponse = zod.object({
 })
 
 
+export const listPendingRedemptionsResponseMemberNicknameMin = 2;
+export const listPendingRedemptionsResponseMemberNicknameMax = 20;
+
+export const listPendingRedemptionsResponsePhoneLast4RegExp = new RegExp('^[0-9]{4}$');
+
+
 export const ListPendingRedemptionsResponseItem = zod.object({
   "id": zod.string(),
   "member_id": zod.string(),
   "member_code": zod.string(),
+  "member_nickname": zod.string().min(listPendingRedemptionsResponseMemberNicknameMin).max(listPendingRedemptionsResponseMemberNicknameMax).nullable(),
+  "phone_last4": zod.string().regex(listPendingRedemptionsResponsePhoneLast4RegExp).nullable(),
   "reward_id": zod.string(),
   "reward_name": zod.string(),
   "points_spent": zod.int(),
@@ -573,10 +860,18 @@ export const ConfirmRedemptionParams = zod.object({
   "id": zod.uuid()
 })
 
+export const confirmRedemptionResponseMemberNicknameMin = 2;
+export const confirmRedemptionResponseMemberNicknameMax = 20;
+
+export const confirmRedemptionResponsePhoneLast4RegExp = new RegExp('^[0-9]{4}$');
+
+
 export const ConfirmRedemptionResponse = zod.object({
   "id": zod.string(),
   "member_id": zod.string(),
   "member_code": zod.string(),
+  "member_nickname": zod.string().min(confirmRedemptionResponseMemberNicknameMin).max(confirmRedemptionResponseMemberNicknameMax).nullable(),
+  "phone_last4": zod.string().regex(confirmRedemptionResponsePhoneLast4RegExp).nullable(),
   "reward_id": zod.string(),
   "reward_name": zod.string(),
   "points_spent": zod.int(),
@@ -604,7 +899,17 @@ export const LogoutOwnerResponse = zod.object({
 
 export const GetOwnerSecurityResponse = zod.object({
   "staff_default_pin": zod.boolean(),
-  "owner_default_pin": zod.boolean()
+  "owner_default_pin": zod.boolean(),
+  "cannabis_points_enabled": zod.boolean()
+})
+
+
+export const UpdateCannabisPointsFeatureBody = zod.object({
+  "enabled": zod.boolean()
+})
+
+export const UpdateCannabisPointsFeatureResponse = zod.object({
+  "cannabis_points_enabled": zod.boolean()
 })
 
 
@@ -854,15 +1159,35 @@ export const ListOwnerMembersQueryParams = zod.object({
   "q": zod.coerce.string().max(listOwnerMembersQueryQMax).optional()
 })
 
+export const listOwnerMembersResponseNicknameMin = 2;
+export const listOwnerMembersResponseNicknameMax = 20;
+
+export const listOwnerMembersResponsePhoneMaskedMax = 24;
+
+export const listOwnerMembersResponseKratomRemainderBahtMin = 0;
+export const listOwnerMembersResponseKratomRemainderBahtMax = 99;
+
+export const listOwnerMembersResponseCannabisBalanceMin = 0;
+
+export const listOwnerMembersResponseCannabisRemainderGramsMin = 0;
+export const listOwnerMembersResponseCannabisRemainderGramsMax = 99;
+
+
+
 export const ListOwnerMembersResponseItem = zod.object({
   "id": zod.string(),
   "member_code": zod.string(),
   "display_name": zod.string(),
+  "nickname": zod.string().min(listOwnerMembersResponseNicknameMin).max(listOwnerMembersResponseNicknameMax).nullable(),
+  "phone_masked": zod.string().max(listOwnerMembersResponsePhoneMaskedMax).nullable(),
   "is_demo": zod.boolean(),
   "status": zod.string(),
   "balance": zod.int(),
   "lifetime_earned": zod.int(),
-  "lifetime_redeemed": zod.int()
+  "lifetime_redeemed": zod.int(),
+  "kratom_remainder_baht": zod.int().min(listOwnerMembersResponseKratomRemainderBahtMin).max(listOwnerMembersResponseKratomRemainderBahtMax),
+  "cannabis_balance": zod.int().min(listOwnerMembersResponseCannabisBalanceMin),
+  "cannabis_remainder_grams": zod.int().min(listOwnerMembersResponseCannabisRemainderGramsMin).max(listOwnerMembersResponseCannabisRemainderGramsMax)
 })
 export const ListOwnerMembersResponse = zod.array(ListOwnerMembersResponseItem)
 
@@ -873,23 +1198,47 @@ export const createOwnerMemberBodyMemberCodeRegExp = new RegExp('^[A-Za-z0-9][A-
 export const createOwnerMemberBodyPhoneMin = 9;
 export const createOwnerMemberBodyPhoneMax = 20;
 
+export const createOwnerMemberBodyNicknameMin = 2;
+export const createOwnerMemberBodyNicknameMax = 20;
+
 
 
 export const CreateOwnerMemberBody = zod.object({
   "name": zod.string().min(1).max(createOwnerMemberBodyNameMax),
   "member_code": zod.string().regex(createOwnerMemberBodyMemberCodeRegExp),
-  "phone": zod.string().min(createOwnerMemberBodyPhoneMin).max(createOwnerMemberBodyPhoneMax)
+  "phone": zod.string().min(createOwnerMemberBodyPhoneMin).max(createOwnerMemberBodyPhoneMax),
+  "nickname": zod.string().min(createOwnerMemberBodyNicknameMin).max(createOwnerMemberBodyNicknameMax)
 })
+
+export const createOwnerMemberResponseNicknameMin = 2;
+export const createOwnerMemberResponseNicknameMax = 20;
+
+export const createOwnerMemberResponsePhoneMaskedMax = 24;
+
+export const createOwnerMemberResponseKratomRemainderBahtMin = 0;
+export const createOwnerMemberResponseKratomRemainderBahtMax = 99;
+
+export const createOwnerMemberResponseCannabisBalanceMin = 0;
+
+export const createOwnerMemberResponseCannabisRemainderGramsMin = 0;
+export const createOwnerMemberResponseCannabisRemainderGramsMax = 99;
+
+
 
 export const CreateOwnerMemberResponse = zod.object({
   "id": zod.string(),
   "member_code": zod.string(),
   "display_name": zod.string(),
+  "nickname": zod.string().min(createOwnerMemberResponseNicknameMin).max(createOwnerMemberResponseNicknameMax).nullable(),
+  "phone_masked": zod.string().max(createOwnerMemberResponsePhoneMaskedMax).nullable(),
   "is_demo": zod.boolean(),
   "status": zod.string(),
   "balance": zod.int(),
   "lifetime_earned": zod.int(),
-  "lifetime_redeemed": zod.int()
+  "lifetime_redeemed": zod.int(),
+  "kratom_remainder_baht": zod.int().min(createOwnerMemberResponseKratomRemainderBahtMin).max(createOwnerMemberResponseKratomRemainderBahtMax),
+  "cannabis_balance": zod.int().min(createOwnerMemberResponseCannabisBalanceMin),
+  "cannabis_remainder_grams": zod.int().min(createOwnerMemberResponseCannabisRemainderGramsMin).max(createOwnerMemberResponseCannabisRemainderGramsMax)
 })
 
 
@@ -956,10 +1305,18 @@ export const UpdateOwnerRewardResponse = zod.object({
 })
 
 
+export const listOwnerPendingResponseMemberNicknameMin = 2;
+export const listOwnerPendingResponseMemberNicknameMax = 20;
+
+export const listOwnerPendingResponsePhoneLast4RegExp = new RegExp('^[0-9]{4}$');
+
+
 export const ListOwnerPendingResponseItem = zod.object({
   "id": zod.string(),
   "member_id": zod.string(),
   "member_code": zod.string(),
+  "member_nickname": zod.string().min(listOwnerPendingResponseMemberNicknameMin).max(listOwnerPendingResponseMemberNicknameMax).nullable(),
+  "phone_last4": zod.string().regex(listOwnerPendingResponsePhoneLast4RegExp).nullable(),
   "reward_id": zod.string(),
   "reward_name": zod.string(),
   "points_spent": zod.int(),
@@ -973,10 +1330,18 @@ export const ConfirmOwnerRedemptionParams = zod.object({
   "id": zod.uuid()
 })
 
+export const confirmOwnerRedemptionResponseMemberNicknameMin = 2;
+export const confirmOwnerRedemptionResponseMemberNicknameMax = 20;
+
+export const confirmOwnerRedemptionResponsePhoneLast4RegExp = new RegExp('^[0-9]{4}$');
+
+
 export const ConfirmOwnerRedemptionResponse = zod.object({
   "id": zod.string(),
   "member_id": zod.string(),
   "member_code": zod.string(),
+  "member_nickname": zod.string().min(confirmOwnerRedemptionResponseMemberNicknameMin).max(confirmOwnerRedemptionResponseMemberNicknameMax).nullable(),
+  "phone_last4": zod.string().regex(confirmOwnerRedemptionResponsePhoneLast4RegExp).nullable(),
   "reward_id": zod.string(),
   "reward_name": zod.string(),
   "points_spent": zod.int(),

@@ -30,6 +30,8 @@ import type {
   BankAccountUpdateInput,
   BankTransferInput,
   CannabisCard,
+  CannabisPointsFeatureInput,
+  CannabisPointsFeatureState,
   CannabisRedeemInput,
   CannabisStampInput,
   CounterRedemption,
@@ -44,7 +46,9 @@ import type {
   MemberCard,
   MemberInput,
   MemberLogin,
+  MemberNicknameInput,
   MemberQr,
+  MemberSessionStatus,
   OwnerBanking,
   OwnerPinInput,
   OwnerSecurityState,
@@ -418,6 +422,101 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       return useMutation(getLogoutMemberMutationOptions(options), queryClient);
     }
 
+export const getGetMemberSessionUrl = () => {
+
+
+
+
+  return `/api/loyalty/session`
+}
+
+export const getMemberSession = async ( options?: Parameters<typeof customFetch>[1]): Promise<MemberSessionStatus> => {
+
+  return customFetch<MemberSessionStatus>(getGetMemberSessionUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetMemberSessionQueryKey = () => {
+    return [
+    `/api/loyalty/session`
+    ] as const;
+    }
+
+
+export const getGetMemberSessionQueryOptions = <TData = Awaited<ReturnType<typeof getMemberSession>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMemberSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetMemberSessionQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMemberSession>>> = ({ signal }) => getMemberSession({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMemberSession>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetMemberSessionQueryResult = NonNullable<Awaited<ReturnType<typeof getMemberSession>>>
+export type GetMemberSessionQueryError = ErrorType<unknown>
+
+
+export function useGetMemberSession<TData = Awaited<ReturnType<typeof getMemberSession>>, TError = ErrorType<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMemberSession>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMemberSession>>,
+          TError,
+          Awaited<ReturnType<typeof getMemberSession>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetMemberSession<TData = Awaited<ReturnType<typeof getMemberSession>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMemberSession>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMemberSession>>,
+          TError,
+          Awaited<ReturnType<typeof getMemberSession>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetMemberSession<TData = Awaited<ReturnType<typeof getMemberSession>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMemberSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetMemberSession<TData = Awaited<ReturnType<typeof getMemberSession>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMemberSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetMemberSessionQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
 export const getGetMemberCardUrl = () => {
 
 
@@ -512,6 +611,88 @@ export function useGetMemberCard<TData = Awaited<ReturnType<typeof getMemberCard
 
 
 
+
+export const getUpdateMemberNicknameUrl = () => {
+
+
+
+
+  return `/api/loyalty/nickname`
+}
+
+export const updateMemberNickname = async (memberNicknameInput: MemberNicknameInput, options?: Parameters<typeof customFetch>[1]): Promise<MemberCard> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<MemberCard>(getUpdateMemberNicknameUrl(),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(memberNicknameInput)
+  }
+);}
+
+
+
+
+
+export const getUpdateMemberNicknameMutationKey = () => ['updateMemberNickname'] as const;
+
+export const getUpdateMemberNicknameMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateMemberNickname>>, TError,UpdateMemberNicknameMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateMemberNickname>>, TError,UpdateMemberNicknameMutationVariables, TContext> => {
+
+const mutationKey = getUpdateMemberNicknameMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateMemberNickname>>, UpdateMemberNicknameMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  updateMemberNickname(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateMemberNicknameMutationResult = NonNullable<Awaited<ReturnType<typeof updateMemberNickname>>>
+    export type UpdateMemberNicknameMutationBody = BodyType<MemberNicknameInput>
+    export type UpdateMemberNicknameMutationError = ErrorType<unknown>
+    export type UpdateMemberNicknameMutationVariables = {data: BodyType<MemberNicknameInput>}
+
+    export const useUpdateMemberNickname = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateMemberNickname>>, TError,UpdateMemberNicknameMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateMemberNickname>>,
+        TError,
+        UpdateMemberNicknameMutationVariables,
+        TContext
+      > => {
+      return useMutation(getUpdateMemberNicknameMutationOptions(options), queryClient);
+    }
 
 export const getGetCannabisMemberCardUrl = () => {
 
@@ -2982,6 +3163,88 @@ export function useGetOwnerSecurity<TData = Awaited<ReturnType<typeof getOwnerSe
 
 
 
+
+export const getUpdateCannabisPointsFeatureUrl = () => {
+
+
+
+
+  return `/api/loyalty/owner/features/cannabis-points`
+}
+
+export const updateCannabisPointsFeature = async (cannabisPointsFeatureInput: CannabisPointsFeatureInput, options?: Parameters<typeof customFetch>[1]): Promise<CannabisPointsFeatureState> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<CannabisPointsFeatureState>(getUpdateCannabisPointsFeatureUrl(),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(cannabisPointsFeatureInput)
+  }
+);}
+
+
+
+
+
+export const getUpdateCannabisPointsFeatureMutationKey = () => ['updateCannabisPointsFeature'] as const;
+
+export const getUpdateCannabisPointsFeatureMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCannabisPointsFeature>>, TError,UpdateCannabisPointsFeatureMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateCannabisPointsFeature>>, TError,UpdateCannabisPointsFeatureMutationVariables, TContext> => {
+
+const mutationKey = getUpdateCannabisPointsFeatureMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateCannabisPointsFeature>>, UpdateCannabisPointsFeatureMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  updateCannabisPointsFeature(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateCannabisPointsFeatureMutationResult = NonNullable<Awaited<ReturnType<typeof updateCannabisPointsFeature>>>
+    export type UpdateCannabisPointsFeatureMutationBody = BodyType<CannabisPointsFeatureInput>
+    export type UpdateCannabisPointsFeatureMutationError = ErrorType<unknown>
+    export type UpdateCannabisPointsFeatureMutationVariables = {data: BodyType<CannabisPointsFeatureInput>}
+
+    export const useUpdateCannabisPointsFeature = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCannabisPointsFeature>>, TError,UpdateCannabisPointsFeatureMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateCannabisPointsFeature>>,
+        TError,
+        UpdateCannabisPointsFeatureMutationVariables,
+        TContext
+      > => {
+      return useMutation(getUpdateCannabisPointsFeatureMutationOptions(options), queryClient);
+    }
 
 export const getChangeOwnerPinsUrl = () => {
 

@@ -5,8 +5,18 @@
  * Jaguar Kratom loyalty API
  * OpenAPI spec version: 1.0.0
  */
+import type { MemberLoginMethod } from './memberLoginMethod';
 
+/**
+ * Login by member code, phone, or nickname; legacy member_code requests remain supported.
+ */
 export interface MemberLogin {
   /** @pattern ^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$ */
-  member_code: string;
+  member_code?: string;
+  method?: MemberLoginMethod;
+  /**
+     * @minLength 1
+     * @maxLength 64
+     */
+  identifier?: string;
 }

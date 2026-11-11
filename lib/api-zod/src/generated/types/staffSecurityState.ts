@@ -8,4 +8,5 @@
 
 export interface StaffSecurityState {
   default_pin: boolean;
+  cannabis_points_enabled: boolean;
 }

@@ -10,6 +10,17 @@ export interface Redemption {
   id: string;
   member_id: string;
   member_code: string;
+  /**
+     * @minLength 2
+     * @maxLength 20
+     * @nullable
+     */
+  member_nickname: string | null;
+  /**
+     * @nullable
+     * @pattern ^[0-9]{4}$
+     */
+  phone_last4: string | null;
   reward_id: string;
   reward_name: string;
   points_spent: number;

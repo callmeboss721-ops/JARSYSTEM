@@ -20,9 +20,10 @@ export const cannabisTransactions = pgTable("jaguar_cannabis_transactions", {
   delta: integer("delta").notNull(),
   gramsPurchased: integer("grams_purchased").notNull().default(0),
   reason: text("reason").notNull(),
+  pointsPolicy: text("points_policy").notNull().default("legacy-gram-v1"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
-  check("jaguar_cannabis_transaction_delta", sql`${t.delta} <> 0 and ((${t.delta} > 0 and ${t.gramsPurchased} = ${t.delta}) or (${t.delta} < 0 and ${t.gramsPurchased} = 0))`),
+  check("jaguar_cannabis_transaction_delta_v2", sql`(${t.delta} >= 0 and ${t.gramsPurchased} > 0) or (${t.delta} < 0 and ${t.gramsPurchased} = 0)`),
   check("jaguar_cannabis_grams_range", sql`${t.gramsPurchased} between 0 and 999`),
   index("jaguar_cannabis_transaction_member_time").on(t.memberId, t.createdAt),
 ]);

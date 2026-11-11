@@ -5,6 +5,7 @@ export const loyaltyMembers = pgTable("jaguar_members", {
   id: uuid("id").primaryKey().defaultRandom(),
   memberCode: text("member_code").notNull().unique(),
   displayName: text("display_name").notNull().default("สมาชิก"),
+  nickname: text("nickname"),
   phoneE164: text("phone_e164").unique(),
   qrTokenHash: text("qr_token_hash").unique(),
   isDemo: boolean("is_demo").notNull().default(false),
@@ -12,17 +13,26 @@ export const loyaltyMembers = pgTable("jaguar_members", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
   check("jaguar_member_code_compact", sql`${t.memberCode} ~ '^[A-Z0-9][A-Z0-9-]{4,6}[A-Z0-9]$'`),
+  check("jaguar_member_nickname_shape", sql`${t.nickname} is null or (
+    ${t.nickname} = btrim(${t.nickname}) and char_length(${t.nickname}) between 2 and 20
+    and ${t.nickname} !~ '^[0-9]+$'
+    and ${t.nickname} !~ '^\\+?([0-9][0-9 ()-]{7,18})$'
+  )`),
+  uniqueIndex("jaguar_member_nickname_normalized_unique").on(sql`lower(btrim(${t.nickname}))`).where(sql`${t.nickname} is not null`),
 ]);
 
 export const loyaltyBalances = pgTable("jaguar_point_balances", {
   memberId: uuid("member_id").primaryKey().references(() => loyaltyMembers.id),
   balance: integer("balance").notNull().default(0),
   cannabisBalance: integer("cannabis_balance"),
+  kratomAmountRemainder: integer("kratom_amount_remainder").notNull().default(0),
+  cannabisGramsRemainder: integer("cannabis_grams_remainder").notNull().default(0),
   lifetimeEarned: integer("lifetime_earned").notNull().default(0),
   lifetimeRedeemed: integer("lifetime_redeemed").notNull().default(0),
 }, (t) => [
   check("jaguar_balances_nonnegative", sql`${t.balance} >= 0 and ${t.lifetimeEarned} >= 0 and ${t.lifetimeRedeemed} >= 0`),
   check("jaguar_cannabis_point_balance_nonnegative", sql`${t.cannabisBalance} is null or ${t.cannabisBalance} >= 0`),
+  check("jaguar_point_remainders_range", sql`${t.kratomAmountRemainder} between 0 and 99 and ${t.cannabisGramsRemainder} between 0 and 99`),
 ]);
 
 export const loyaltyRewards = pgTable("jaguar_rewards", {
@@ -65,6 +75,7 @@ export const loyaltySales = pgTable("jaguar_sales", {
   amountBaht: integer("amount_baht").notNull(),
   formula: text("formula").notNull(),
   pointsAwarded: integer("points_awarded").notNull(),
+  pointsPolicy: text("points_policy").notNull().default("legacy-bottle-v1"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
   check("jaguar_sale_amount", sql`${t.amountBaht} between 1 and 100000000`),
@@ -86,3 +97,26 @@ export const loyaltySettings = pgTable("jaguar_settings", {
   key: text("key").primaryKey(),
   value: text("value").notNull(),
 });
+
+export const loyaltySecurityLimits = pgTable("jaguar_security_limits", {
+  keyHash: text("key_hash").primaryKey(),
+  attempts: integer("attempts").notNull().default(0),
+  windowStartedAt: timestamp("window_started_at", { withTimezone: true }).notNull().defaultNow(),
+  lockedUntil: timestamp("locked_until", { withTimezone: true }),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  check("jaguar_security_limit_attempts_nonnegative", sql`${t.attempts} >= 0`),
+  index("jaguar_security_limit_updated").on(t.updatedAt),
+]);
+
+export const loyaltyPolicySnapshots = pgTable("jaguar_points_policy_snapshots", {
+  memberId: uuid("member_id").primaryKey().references(() => loyaltyMembers.id),
+  policyVersion: text("policy_version").notNull(),
+  oldKratomBalance: integer("old_kratom_balance").notNull(),
+  oldKratomLifetimeEarned: integer("old_kratom_lifetime_earned").notNull(),
+  oldKratomLifetimeRedeemed: integer("old_kratom_lifetime_redeemed").notNull(),
+  oldCannabisBalance: integer("old_cannabis_balance").notNull(),
+  oldCannabisLifetimeEarned: integer("old_cannabis_lifetime_earned").notNull(),
+  oldCannabisLifetimeRedeemed: integer("old_cannabis_lifetime_redeemed").notNull(),
+  migratedAt: timestamp("migrated_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [index("jaguar_points_snapshot_policy").on(t.policyVersion, t.migratedAt)]);

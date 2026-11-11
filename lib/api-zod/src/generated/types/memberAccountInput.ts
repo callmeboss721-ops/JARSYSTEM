@@ -19,4 +19,9 @@ export interface MemberAccountInput {
      * @maxLength 20
      */
   phone: string;
+  /**
+     * @minLength 2
+     * @maxLength 20
+     */
+  nickname: string;
 }

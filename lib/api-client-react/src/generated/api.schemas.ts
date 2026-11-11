@@ -21,11 +21,46 @@ export interface MemberInput {
   phone: string;
   /** @pattern ^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$ */
   member_code: string;
+  /**
+     * @minLength 2
+     * @maxLength 20
+     */
+  nickname: string;
 }
 
+export type MemberLoginMethod = typeof MemberLoginMethod[keyof typeof MemberLoginMethod];
+
+
+export const MemberLoginMethod = {
+  phone: 'phone',
+  member_code: 'member_code',
+  nickname: 'nickname',
+} as const;
+
+/**
+ * Login by member code, phone, or nickname; legacy member_code requests remain supported.
+ */
 export interface MemberLogin {
   /** @pattern ^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$ */
-  member_code: string;
+  member_code?: string;
+  method?: MemberLoginMethod;
+  /**
+     * @minLength 1
+     * @maxLength 64
+     */
+  identifier?: string;
+}
+
+export interface MemberNicknameInput {
+  /**
+     * @minLength 2
+     * @maxLength 20
+     */
+  nickname: string;
+}
+
+export interface MemberSessionStatus {
+  authenticated: boolean;
 }
 
 export interface PinLogin {
@@ -37,11 +72,34 @@ export interface MemberCard {
   id: string;
   member_code: string;
   display_name: string;
+  /**
+     * @minLength 2
+     * @maxLength 20
+     * @nullable
+     */
+  nickname: string | null;
+  /**
+     * @maxLength 24
+     * @nullable
+     */
+  phone_masked: string | null;
   is_demo: boolean;
   status: string;
   balance: number;
   lifetime_earned: number;
   lifetime_redeemed: number;
+  /**
+     * @minimum 0
+     * @maximum 99
+     */
+  kratom_remainder_baht: number;
+  /** @minimum 0 */
+  cannabis_balance: number;
+  /**
+     * @minimum 0
+     * @maximum 99
+     */
+  cannabis_remainder_grams: number;
 }
 
 export interface CannabisTransaction {
@@ -59,12 +117,28 @@ export interface CannabisTransaction {
 export interface CannabisCard {
   member_code: string;
   display_name: string;
+  /**
+     * @minLength 2
+     * @maxLength 20
+     * @nullable
+     */
+  nickname: string | null;
+  /**
+     * @maxLength 24
+     * @nullable
+     */
+  phone_masked: string | null;
   /** @minimum 0 */
   balance: number;
   /** @minimum 0 */
   lifetime_earned: number;
   /** @minimum 0 */
   lifetime_redeemed: number;
+  /**
+     * @minimum 0
+     * @maximum 99
+     */
+  grams_remainder: number;
   /** @maxItems 5 */
   recent_transactions: CannabisTransaction[];
 }
@@ -87,6 +161,17 @@ export interface Redemption {
   id: string;
   member_id: string;
   member_code: string;
+  /**
+     * @minLength 2
+     * @maxLength 20
+     * @nullable
+     */
+  member_nickname: string | null;
+  /**
+     * @nullable
+     * @pattern ^[0-9]{4}$
+     */
+  phone_last4: string | null;
   reward_id: string;
   reward_name: string;
   points_spent: number;
@@ -107,6 +192,11 @@ export interface MemberAccountInput {
      * @maxLength 20
      */
   phone: string;
+  /**
+     * @minLength 2
+     * @maxLength 20
+     */
+  nickname: string;
 }
 
 export type Formula = typeof Formula[keyof typeof Formula];
@@ -180,11 +270,21 @@ export interface LoyaltyHealth {
 
 export interface StaffSecurityState {
   default_pin: boolean;
+  cannabis_points_enabled: boolean;
 }
 
 export interface OwnerSecurityState {
   staff_default_pin: boolean;
   owner_default_pin: boolean;
+  cannabis_points_enabled: boolean;
+}
+
+export interface CannabisPointsFeatureInput {
+  enabled: boolean;
+}
+
+export interface CannabisPointsFeatureState {
+  cannabis_points_enabled: boolean;
 }
 
 export interface StaffPinInput {

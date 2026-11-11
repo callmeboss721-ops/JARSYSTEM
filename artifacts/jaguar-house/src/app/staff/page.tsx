@@ -10,7 +10,7 @@ import { PinPad } from "@/components/brand/pin-pad";
 import { StaffBanking } from "@/components/brand/banking";
 import { STAMPS } from "@/components/brand/loyalty-card";
 import { STAFF, api, bundlePrice, cleanCode, clearScope, codePattern, errorText, formulaLabels, isBottleCount, json, statusOf, type Formula, type MemberCardData, type RedemptionData } from "@/components/brand/loyalty-api";
-import { getGetCannabisMemberCardQueryKey, getGetStaffCannabisCardQueryKey, useGetStaffCannabisCard, useAddCannabisStamps, useRedeemCannabisAtCounter } from "@workspace/api-client-react";
+import { getGetCannabisMemberCardQueryKey, getGetStaffCannabisCardQueryKey, getGetStaffSecurityQueryKey, useGetStaffSecurity, useGetStaffCannabisCard, useAddCannabisStamps, useRedeemCannabisAtCounter } from "@workspace/api-client-react";
 
 type Tab = "counter" | "members" | "open" | "banking" | "settings";
 const TABS: [Tab, string, BrandIconName][] = [["counter", "ขาย / แลก", "lightning"], ["members", "สมาชิก", "members"], ["open", "เปิดบัญชี", "add"], ["banking", "บัญชี / โอน", "banking"], ["settings", "ตั้งค่า PIN", "security"]];
@@ -30,7 +30,7 @@ export default function StaffPage() {
   const [bottleCountErr, setBottleCountErr] = useState("");
   const [formula, setFormula] = useState<Formula>("red");
   const [redeemId, setRedeemId] = useState<string | null>(null);
-  const [name, setName] = useState(""), [code, setCode] = useState(""), [phone, setPhone] = useState("");
+  const [name, setName] = useState(""), [code, setCode] = useState(""), [phone, setPhone] = useState(""), [nickname, setNickname] = useState("");
   const [oldPin, setOldPin] = useState(""), [newPin, setNewPin] = useState("");
   const [search, setSearch] = useState(""), [query, setQuery] = useState("");
   const [scanError, setScanError] = useState(""), [scanning, setScanning] = useState(false);
@@ -44,7 +44,8 @@ export default function StaffPage() {
   const controls = useRef<{ stop: () => void } | null>(null);
   const cannabisStampRequest = useRef<{ signature: string; id: string } | null>(null);
 
-  const security = useQuery<{ default_pin: boolean }>({ queryKey: [`${STAFF}/security`], queryFn: () => api(`${STAFF}/security`), enabled: auth === true });
+  const staffSecurityKey = getGetStaffSecurityQueryKey();
+  const security = useGetStaffSecurity({ query: { queryKey: staffSecurityKey, enabled: auth === true, retry: false } });
   const queue = useQuery<RedemptionData[]>({ queryKey: [`${STAFF}/redemptions`], queryFn: () => api(`${STAFF}/redemptions`), enabled: auth === true, refetchInterval: 12000 });
   const members = useQuery<MemberCardData[]>({ queryKey: [`${STAFF}/members`, query], queryFn: () => api(`${STAFF}/members?q=${encodeURIComponent(query)}`), enabled: auth === true && tab === "members" });
   const visibleMembers = (members.data ?? []).filter((m) => !m.is_demo);
@@ -102,6 +103,10 @@ export default function StaffPage() {
   const recordCannabis = async (e: FormEvent) => {
     e.preventDefault();
     if (!cannabisCard) return;
+    if (security.data?.cannabis_points_enabled !== true) {
+      setErr("การสะสมแต้มกัญชายังปิดอยู่ เจ้าของร้านต้องเปิดใช้ก่อน");
+      return;
+    }
     if (!/^\d+$/.test(grams.trim()) || !Number.isSafeInteger(Number(grams)) || Number(grams) < 1 || Number(grams) > 999) {
       setGramsError("กรอกจำนวนกรัมเป็นจำนวนเต็ม 1–999"); return;
     }
@@ -115,7 +120,7 @@ export default function StaffPage() {
       await addCannabisStamps.mutateAsync({ data: { member_code: cannabisCard.member_code, grams: Number(grams), request_id: request.id } });
       cannabisStampRequest.current = null;
       setGrams("");
-      setMsg(`บันทึกซื้อ ${Number(grams)} กรัม · เพิ่ม ${Number(grams)} แต้ม`);
+      setMsg(`บันทึกซื้อ ${Number(grams)} กรัมแล้ว · ยอดแต้มและเศษสะสมคำนวณโดยระบบ`);
       await Promise.all([
         qc.invalidateQueries({ queryKey: getGetCannabisMemberCardQueryKey() }),
         qc.invalidateQueries({ queryKey: getGetStaffCannabisCardQueryKey(cannabisParams) }),
@@ -156,7 +161,6 @@ export default function StaffPage() {
     setBottleCountErr(""); setBusy(true); setErr("");
     const bottles = Number(bottleCount);
     const price = bundlePrice(bottles);
-    const awarded = Math.floor(bottles / 3);
     const signature = JSON.stringify([member.member_code, bottles, formula]);
     const request = saleRequest.current?.signature === signature ? saleRequest.current : { signature, id: crypto.randomUUID() };
     saleRequest.current = request;
@@ -165,9 +169,7 @@ export default function StaffPage() {
       saleRequest.current = null;
       setMember(updated);
       setBottleCount("");
-      setMsg(awarded
-        ? `บันทึก ${bottles} ขวด · ฿${price.toLocaleString("th-TH")} · +${awarded} แต้ม`
-        : `บันทึก ${bottles} ขวด · ฿${price.toLocaleString("th-TH")} · แต้มเริ่มเมื่อครบ 3 ขวดในบิลเดียว`);
+      setMsg(`บันทึก ${bottles} ขวด · ฿${price.toLocaleString("th-TH")} · ยอดแต้มคำนวณและปรับโดยระบบ`);
       void qc.invalidateQueries({ queryKey: [`${STAFF}/members`] });
     } catch (e) { setErr(errorText(e)); } finally { setBusy(false); }
   };
@@ -185,10 +187,11 @@ export default function StaffPage() {
   const create = async (e: FormEvent) => {
     e.preventDefault();
     if (!codePattern.test(code)) { setErr("รหัสสมาชิกต้องมี 6–8 ตัว"); return; }
+    if (nickname.trim().length < 2 || nickname.trim().length > 20) { setErr("ชื่อเล่นต้องมี 2–20 ตัวอักษร"); return; }
     setBusy(true); setErr("");
     try {
-      const added = await api<MemberCardData>(`${STAFF}/members`, json("POST", { name, member_code: code, phone }));
-      setMsg(`เปิดบัญชี ${added.member_code} แล้ว`); setName(""); setCode(""); setPhone("");
+      const added = await api<MemberCardData>(`${STAFF}/members`, json("POST", { name, member_code: code, phone, nickname: nickname.trim() }));
+      setMsg(`เปิดบัญชี ${added.member_code} แล้ว`); setName(""); setCode(""); setPhone(""); setNickname("");
       void qc.invalidateQueries({ queryKey: [`${STAFF}/members`] });
     } catch (e) { setErr(errorText(e)); } finally { setBusy(false); }
   };
@@ -235,8 +238,9 @@ export default function StaffPage() {
         {tab === "counter" && <div className="space-y-4">
           <div className="pill-switch grid grid-cols-2 p-1 gap-1 max-w-md" aria-label="เลือกประเภทบัตร">
             <button type="button" className="tab" aria-pressed={counterMode === "kratom"} onClick={() => { setCounterMode("kratom"); setErr(""); setMsg(""); }}>กระท่อม · ขวด</button>
-            <button type="button" className="tab" aria-pressed={counterMode === "cannabis"} onClick={() => { setCounterMode("cannabis"); setErr(""); setMsg(""); setCannabisRedeemId(null); }}>กัญชา · กรัม</button>
+            <button type="button" className="tab" aria-pressed={counterMode === "cannabis"} data-testid="staff-mode-cannabis" onClick={() => { setCounterMode("cannabis"); setErr(""); setMsg(""); setCannabisRedeemId(null); }}>กัญชา · กรัม</button>
           </div>
+          {counterMode === "cannabis" && security.data?.cannabis_points_enabled !== true && <p className="counter-feature-disabled p-3 text-sm" role="status" data-testid="staff-cannabis-disabled">ปิดการสะสมแต้มกัญชาอยู่ · ยังแลกรางวัลได้ แต่บันทึกยอดซื้อถูกปิดไว้จนกว่าเจ้าของร้านจะเปิดใช้</p>}
           {counterMode === "kratom" && <div className="grid gap-5 lg:grid-cols-2 items-start">
           <section className="panel p-5 sm:p-6">
             <p className="eyebrow">Sale record</p><h2 className="font-display text-xl font-semibold mb-4">บันทึกยอดขาย / แลกรางวัล</h2>
@@ -265,7 +269,7 @@ export default function StaffPage() {
                   <input id="bottle-count" className="input" type="text" inputMode="numeric" autoComplete="off" maxLength={12} required value={bottleCount}
                     onChange={(e) => { const value = e.target.value; setBottleCount(value); setBottleCountErr(value && !isBottleCount(value) ? "กรอกจำนวนขวดเป็นจำนวนเต็ม 1–999" : ""); }}
                     aria-invalid={!!bottleCountErr} aria-describedby={bottleCountErr ? "bottle-count-error" : "bottle-count-rule"} />
-                  {bottleCountErr ? <p id="bottle-count-error" role="alert" className="field-error">{bottleCountErr}</p> : <p id="bottle-count-rule" className="text-xs text-[var(--muted)]">ครบทุก 3 ขวดต่อบิล = 1 แต้ม · เศษไม่ทบข้ามบิล</p>}
+                  {bottleCountErr ? <p id="bottle-count-error" role="alert" className="field-error">{bottleCountErr}</p> : <p id="bottle-count-rule" className="text-xs text-[var(--muted)]">บันทึกยอดขายตามบิล · แต้มและยอดเศษสะสมคำนวณโดยระบบร้าน</p>}
                 </div>
                 <fieldset>
                   <legend className="text-sm mb-2 text-[var(--silver)]">เลือกสูตร</legend>
@@ -275,7 +279,7 @@ export default function StaffPage() {
                 </fieldset>
                 <div className="flex items-center justify-between gap-2 rounded-xl border border-[var(--glass-line)] bg-black/30 px-3 py-2 text-sm">
                   <span className="text-xs text-[var(--muted)]">ราคาพิเศษอัตโนมัติ</span>
-                  <span className="font-semibold tabular-nums text-[var(--gold-2)]">{isBottleCount(bottleCount) ? `฿${bundlePrice(Number(bottleCount)).toLocaleString("th-TH")} · +${Math.floor(Number(bottleCount) / 3)} แต้ม` : "—"}</span>
+                   <span className="font-semibold tabular-nums text-[var(--gold-2)]">{isBottleCount(bottleCount) ? `฿${bundlePrice(Number(bottleCount)).toLocaleString("th-TH")}` : "—"}</span>
                 </div>
                 <button className="btn btn-neon w-full" disabled={busy}>บันทึกยอดซื้อและแต้ม</button>
               </form>
@@ -284,7 +288,7 @@ export default function StaffPage() {
           <section className="panel p-5 sm:p-6">
             <h2 className="font-display text-xl font-semibold">รายการแลกรอส่งมอบ</h2>
             {queue.isLoading ? <div className="mt-4"><LoadingState label="กำลังโหลดรายการแลกรางวัล" compact /></div> : queue.isError ? <ErrorState message={errorText(queue.error)} onRetry={() => void queue.refetch()} retrying={queue.isFetching} /> : !queue.data?.length ? <div className="mt-4"><EmptyState title="ไม่มีรายการรอยืนยัน" /></div>
-            : <ul className="list-none p-0 mt-4 space-y-3">{queue.data.map((r) => <li key={r.id} className="rounded-xl border border-[var(--line-2)] p-4"><p className="font-semibold">{r.reward_name}</p><p className="text-sm text-[var(--muted)]">{r.member_code} · {r.points_spent} แต้ม</p><button className="btn btn-gold w-full mt-3" disabled={busy} onClick={async () => { setBusy(true); try { await api(`${STAFF}/redemptions/${encodeURIComponent(r.id)}/confirm`, json("POST", {})); setMsg("ยืนยันการส่งมอบรางวัลแล้ว"); await queue.refetch(); } catch (e) { setErr(errorText(e)); } finally { setBusy(false); } }}>ยืนยันส่งมอบ</button></li>)}</ul>}
+            : <ul className="list-none p-0 mt-4 space-y-3">{queue.data.map((r) => <li key={r.id} className="rounded-xl border border-[var(--line-2)] p-4"><p className="font-semibold">{r.reward_name}</p><p className="text-sm text-[var(--muted)]">{r.member_nickname || r.member_code} · {r.phone_last4 ? `ลงท้าย ${r.phone_last4} · ` : ""}{r.points_spent} แต้ม</p><button className="btn btn-gold w-full mt-3" disabled={busy} onClick={async () => { setBusy(true); try { await api(`${STAFF}/redemptions/${encodeURIComponent(r.id)}/confirm`, json("POST", {})); setMsg("ยืนยันการส่งมอบรางวัลแล้ว"); await queue.refetch(); } catch (e) { setErr(errorText(e)); } finally { setBusy(false); } }}>ยืนยันส่งมอบ</button></li>)}</ul>}
           </section>
           </div>}
           {counterMode === "cannabis" && <div className="grid gap-5 lg:grid-cols-2 items-start">
@@ -307,9 +311,9 @@ export default function StaffPage() {
                   ? <button type="button" className="btn btn-gold w-full mt-4" disabled={redeemCannabis.isPending || addCannabisStamps.isPending} onClick={() => { setCannabisRedeemId(crypto.randomUUID()); setErr(""); setMsg(""); }}>แลกฟรี 1 กรัม · ใช้ 10 แต้ม</button>
                   : <div role="alertdialog" aria-labelledby="cannabis-redeem-q" className="gold-alert mt-4 space-y-3"><p id="cannabis-redeem-q">ยืนยันส่งมอบฟรี 1 กรัมให้ {cannabisCard.member_code}? ระบบจะหัก 10 แต้ม</p><div className="grid grid-cols-2 gap-2"><button type="button" className="btn btn-ghost" disabled={redeemCannabis.isPending} onClick={() => setCannabisRedeemId(null)}>ยกเลิก</button><button type="button" className="btn btn-gold" disabled={redeemCannabis.isPending} onClick={() => void confirmCannabisRedeem()}>{redeemCannabis.isPending ? "กำลังบันทึก…" : "ยืนยันแลก"}</button></div></div>)}
                 <form onSubmit={recordCannabis} className="space-y-3 mt-4" noValidate>
-                  <div className="field"><label htmlFor="cannabis-grams">จำนวนกรัมที่ซื้อ</label><input id="cannabis-grams" className="input" type="text" inputMode="numeric" autoComplete="off" maxLength={3} value={grams} onChange={(e) => { setGrams(e.target.value); setGramsError(e.target.value && (!/^\d+$/.test(e.target.value) || Number(e.target.value) < 1 || Number(e.target.value) > 999) ? "กรอกจำนวนกรัมเป็นจำนวนเต็ม 1–999" : ""); }} aria-invalid={!!gramsError} aria-describedby={gramsError ? "cannabis-grams-error" : "cannabis-grams-rule"} /></div>
-                  {gramsError ? <p id="cannabis-grams-error" role="alert" className="field-error">{gramsError}</p> : <p id="cannabis-grams-rule" className="text-xs text-[var(--muted)]">ทุก 1 กรัมที่ซื้อ = 1 แต้ม · จำนวนเต็มเท่านั้น</p>}
-                  <button className="btn btn-neon w-full" disabled={addCannabisStamps.isPending || redeemCannabis.isPending}>{addCannabisStamps.isPending ? "กำลังบันทึก…" : "บันทึกกรัมและประทับแต้ม"}</button>
+                   <div className="field"><label htmlFor="cannabis-grams">จำนวนกรัมที่ซื้อ</label><input id="cannabis-grams" className="input" type="text" inputMode="numeric" autoComplete="off" maxLength={3} value={grams} onChange={(e) => { setGrams(e.target.value); setGramsError(e.target.value && (!/^\d+$/.test(e.target.value) || Number(e.target.value) < 1 || Number(e.target.value) > 999) ? "กรอกจำนวนกรัมเป็นจำนวนเต็ม 1–999" : ""); }} aria-invalid={!!gramsError} aria-describedby={gramsError ? "cannabis-grams-error" : "cannabis-grams-rule"} /></div>
+                   {gramsError ? <p id="cannabis-grams-error" role="alert" className="field-error">{gramsError}</p> : <p id="cannabis-grams-rule" className="text-xs text-[var(--muted)]">แต้มสะสมทุก 100 กรัมตามยอดรวม · เศษกรัมทบต่อโดยระบบ</p>}
+                   <button className="btn btn-neon w-full" data-testid="staff-record-cannabis-purchase" disabled={security.data?.cannabis_points_enabled !== true || addCannabisStamps.isPending || redeemCannabis.isPending}>{addCannabisStamps.isPending ? "กำลังบันทึก…" : "บันทึกยอดซื้อ"}</button>
                 </form>
               </div>}
             </section>
@@ -332,7 +336,7 @@ export default function StaffPage() {
           : members.isError ? <ErrorState message={errorText(members.error)} onRetry={() => void members.refetch()} retrying={members.isFetching} />
           : !visibleMembers.length ? <div className="mt-4"><EmptyState title={query ? "ไม่พบสมาชิก" : "ยังไม่มีสมาชิก"} /></div>
           : <ul className="divide-y divide-[var(--line)] list-none p-0 mt-4">{visibleMembers.map((m) => <li className="py-3 flex gap-3 items-center" key={m.id}>
-            <div className="min-w-0 flex-1"><p className="break-words">{m.display_name || "สมาชิก"}</p><p className="font-mono text-sm text-[var(--gold-2)]">{m.member_code}</p>
+              <div className="min-w-0 flex-1"><p className="break-words">{m.nickname || m.display_name || "สมาชิก"}</p><p className="font-mono text-sm text-[var(--gold-2)]">{m.member_code}{m.phone_masked ? ` · ${m.phone_masked}` : ""}</p>
                <div className="flex flex-wrap gap-2 mt-1">{m.balance >= STAMPS && <span className="ready-badge">แลกได้</span>}</div></div>
             <p className={`font-mono text-xl shrink-0 ${m.balance >= STAMPS ? "text-[var(--gold-2)]" : ""}`}>{m.balance}</p>
             <button type="button" className="btn btn-ghost !min-h-11 !px-3 text-sm shrink-0" onClick={() => { setTab("counter"); setLookup(m.member_code); void find(m.member_code); }}>เปิด</button>
@@ -340,7 +344,7 @@ export default function StaffPage() {
         </section>}
 
         {tab === "open" && <section className="panel p-5 sm:p-6 max-w-xl"><p className="eyebrow">New member</p><h2 className="font-display text-xl font-semibold mb-4">เปิดบัญชีสมาชิก</h2>
-          <form onSubmit={create} className="space-y-4"><Field id="name" label="ชื่อลูกค้า" value={name} set={setName} /><Field id="code" label="รหัสสมาชิก 6–8 ตัว" value={code} set={(v) => setCode(cleanCode(v))} /><Field id="phone" label="เบอร์มือถือ" value={phone} set={setPhone} inputMode="tel" /><button className="btn btn-neon w-full" disabled={busy}>สร้างบัญชี</button></form></section>}
+          <form onSubmit={create} className="space-y-4"><Field id="name" label="ชื่อจริง" value={name} set={setName} /><Field id="nickname" label="ชื่อเล่น" value={nickname} set={setNickname} /><Field id="code" label="รหัสสมาชิก 6–8 ตัว" value={code} set={(v) => setCode(cleanCode(v))} /><Field id="phone" label="เบอร์มือถือ" value={phone} set={setPhone} inputMode="tel" /><button className="btn btn-neon w-full" disabled={busy}>สร้างบัญชี</button></form></section>}
 
         {tab === "settings" && <section className="panel p-5 sm:p-6 max-w-md"><p className="eyebrow">Security</p><h2 className="font-display text-xl font-semibold mb-2">เปลี่ยน PIN พนักงาน</h2><p className="text-sm text-[var(--muted)] mb-4">หลังบันทึก ระบบจะออกจากระบบพนักงานบนอุปกรณ์นี้</p>
           <form onSubmit={changePin} className="space-y-4">

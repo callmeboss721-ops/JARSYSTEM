@@ -84,7 +84,7 @@ export function LoyaltyProgress({ balance }: { balance: number }) {
       <CollectingTrack balance={balance} kind="kratom" titleId="member-progress-title" />
       {balance > STAMPS && <p className="member-progress-extra" data-testid="text-extra-points">แต้มสะสมทั้งหมด {balance} แต้ม</p>}
       <div className="member-progress-actions">
-        <p>{ready ? "ครบ 10 · ฟรี 1 ขวด" : `3 ขวด/บิล = 1 แต้ม · เหลือ ${remaining} แต้ม`}</p>
+        <p>{ready ? "ครบ 10 · ฟรี 1 ขวด" : `ทุก ฿100 สะสม = 1 แต้ม · เหลือ ${remaining} แต้ม`}</p>
         <Link href="/redeem" className="btn btn-redeem">{ready ? "แลกของแถมเลย" : `อีก ${remaining} แต้ม`} <BrandIcon name="redeem" tone="inherit" /></Link>
       </div>
     </section>

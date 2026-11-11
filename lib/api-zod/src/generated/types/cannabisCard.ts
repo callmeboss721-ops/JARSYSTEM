@@ -10,12 +10,28 @@ import type { CannabisTransaction } from './cannabisTransaction';
 export interface CannabisCard {
   member_code: string;
   display_name: string;
+  /**
+     * @minLength 2
+     * @maxLength 20
+     * @nullable
+     */
+  nickname: string | null;
+  /**
+     * @maxLength 24
+     * @nullable
+     */
+  phone_masked: string | null;
   /** @minimum 0 */
   balance: number;
   /** @minimum 0 */
   lifetime_earned: number;
   /** @minimum 0 */
   lifetime_redeemed: number;
+  /**
+     * @minimum 0
+     * @maximum 99
+     */
+  grams_remainder: number;
   /** @maxItems 5 */
   recent_transactions: CannabisTransaction[];
 }

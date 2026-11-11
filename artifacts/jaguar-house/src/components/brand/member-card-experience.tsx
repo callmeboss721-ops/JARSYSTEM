@@ -20,7 +20,7 @@ const CLUBS: Record<MemberClub, { title: string; image: string; stampIcon: strin
     image: "/brand/card-kratom-full.jpg",
     stampIcon: "/brand/mark-jaguar.svg",
     alt: "บัตรสะสมแต้ม JAGUAR KRATOM ลายเสือจากัวร์",
-    rule: "3 ขวด/บิล = 1 แต้ม",
+    rule: "ครบ ฿100 สะสม = 1 แต้ม",
     reward: "ฟรี 1 ขวด",
   },
   cannabis: {
@@ -28,7 +28,7 @@ const CLUBS: Record<MemberClub, { title: string; image: string; stampIcon: strin
     image: "/brand/card-cannabis-full.jpg",
     stampIcon: "/brand/mark-leaf.svg",
     alt: "บัตรสะสมแต้ม JAGUAR CANNABIS ลายใบกัญชา",
-    rule: "ซื้อ 1 g = 1 แต้ม",
+    rule: "ครบ 100 g สะสม = 1 แต้ม",
     reward: "ฟรี 1 g",
   },
 };

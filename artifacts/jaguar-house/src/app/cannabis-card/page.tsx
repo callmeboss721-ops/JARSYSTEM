@@ -103,6 +103,7 @@ export default function CannabisCardPage() {
         <div className="cannabis-stats">
           <article><RankEmblem name="organic-premium" size={22} className="cannabis-stats__emblem" /><span>สะสมรวม</span><strong>{card.lifetime_earned}</strong><small>แต้ม</small></article>
           <article><RankEmblem name="ultimate-legend" size={22} className="cannabis-stats__emblem" /><span>แลกแล้ว</span><strong>{card.lifetime_redeemed}</strong><small>แต้ม</small></article>
+          <article><RankEmblem name="diamond-member" size={22} className="cannabis-stats__emblem" /><span>เศษกรัมทบต่อ</span><strong>{card.grams_remainder}</strong><small>จาก 100 g</small></article>
         </div>
         <section className="cannabis-history panel" aria-labelledby="cannabis-history-title">
           <div className="flex items-end justify-between gap-3"><h2 id="cannabis-history-title">รายการล่าสุด</h2></div>
@@ -110,7 +111,7 @@ export default function CannabisCardPage() {
             : <ul>{card.recent_transactions.map((tx) => <li key={tx.id}>
               <span className={`cannabis-delta ${tx.delta < 0 ? "is-out" : ""}`}>{tx.delta > 0 ? `+${tx.delta}` : tx.delta}</span>
               <span className="cannabis-transaction-copy"><strong>{tx.reason}</strong><small>{new Date(tx.created_at).toLocaleString("th-TH")}{tx.grams_purchased > 0 ? ` · ซื้อ ${tx.grams_purchased} กรัม` : ""}</small></span>
-              <span className="cannabis-unit">แสตมป์</span>
+              <span className="cannabis-unit">แต้ม</span>
             </li>)}</ul>}
         </section>
       </div>}
