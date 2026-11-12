@@ -1,0 +1,19 @@
+kind = "design-system"
+previewPath = "/jaguar-spk-design-system/"
+title = "JAGUAR SPK Design System"
+description = "A reusable dark-luxury design system extracted from Jaguar Kratom House for JAGUAR SPK DRINK, including Thai-first typography, brand assets, tokens, and shared membership UI."
+version = "1.0.0"
+id = "artifacts/jaguar-spk-design-system"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/jaguar-spk-design-system/" ]
+localPort = 19593
+
+[services.development]
+run = "pnpm --filter @workspace/jaguar-spk-design-system run dev"
+
+[services.env]
+PORT = "19593"
+BASE_PATH = "/jaguar-spk-design-system/"
