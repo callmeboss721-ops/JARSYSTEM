@@ -120,7 +120,7 @@ export default function CardPage() {
             <p className="eyebrow">CANNABIS · ยอดซื้อสะสม</p>
             <div className="mt-2 flex items-end justify-between gap-2"><strong className="font-display text-3xl text-[var(--gold-2)]">{card.data.cannabis_balance}<small className="ml-1 text-sm font-sans text-[var(--text)]">แต้ม</small></strong><span className="text-xs text-[var(--muted)]">เศษ {card.data.cannabis_remainder_grams} g / 100</span></div>
             <p className="mt-2 text-xs text-[var(--muted)]">บัตรแยก · แต้มและเศษคงเหลือไม่ปะปนกัน</p>
-            <Link href="/cannabis-card" className="mt-3 inline-flex min-h-10 items-center text-sm text-[var(--green)] underline-offset-4 hover:underline" data-testid="link-cannabis-card">เปิดบัตรกัญชา</Link>
+            <Link href="/card/cannabis" className="mt-3 inline-flex min-h-10 items-center text-sm text-[var(--green)] underline-offset-4 hover:underline" data-testid="link-cannabis-card">เปิดบัตรกัญชา</Link>
           </article>
         </section>
         <section className="panel p-4" aria-labelledby="nickname-title">
