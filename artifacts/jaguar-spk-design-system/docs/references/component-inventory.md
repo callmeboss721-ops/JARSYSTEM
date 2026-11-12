@@ -21,19 +21,19 @@ than claiming a separate upstream component package.
 | 3 | Brand button | `components/brand-button.md` | Landing, login, and member action art; 3 direct consumers | retained button artwork | 1 | implemented |
 | 4 | Membership cards | `components/membership-cards.md` | Two shared card implementations; both club routes | QRCode, brand button/icon, retained card artwork | 1 | implemented |
 | 5 | Rank emblems | `components/rank-emblems.md` | Ten supplied tier marks; 4 direct source consumers | retained rank artwork | 1 | implemented |
-| 6 | Member card carousel | `components/member-card-carousel.md` | Used across 2 source files; dual-club presentation | membership cards | 2 | pending |
-| 7 | PIN pad | `components/pin-pad.md` | Used in staff and owner access | native buttons, controlled input callback | 2 | pending |
-| 8 | Feedback and states | `components/feedback-states.md` | Used across 6 source files; loading, empty, error, modal | brand icon, Jaguar mark | 2 | pending |
-| 9 | Samut Prakan artwork | `components/samut-prakan-art.md` | Used across 2 source files; shared ambient city illustration | inline SVG | 2 | pending |
-| 10 | Public poster | `components/public-poster.md` | Used in one product page; responsive shop artwork | supplied image assets | 2 | pending |
-| 11 | Form controls | `components/form-controls.md` | Input, Label, Textarea primitives used in app pages | Radix label where applicable | 3 | pending |
-| 12 | Primary button | `components/primary-button.md` | Shared shadcn Button implementation used in app UI | class-variance-authority, Radix Slot | 3 | pending |
-| 13 | Separator | `components/separator.md` | Used across 4 source files | Radix Separator | 3 | pending |
-| 14 | Tooltip | `components/tooltip.md` | Used across 2 source files | Radix Tooltip | 3 | pending |
-| 15 | Toggle | `components/toggle.md` | Used by a shared app control | Radix Toggle, class-variance-authority | 4 | pending |
-| 16 | Dialog and sheet | `components/dialog-sheet.md` | Dialog and Sheet used in staff/owner flows | Radix Dialog, Vaul | 4 | pending |
-| 17 | Toast feedback | `components/toast-feedback.md` | Toast and Toaster used by shared app actions | Radix Toast, Sonner | 4 | pending |
-| 18 | Skeleton | `components/skeleton.md` | Used in loading surfaces | CSS animation | 4 | pending |
+| 6 | Member card carousel | `components/member-card-carousel.md` | Dual-club tabs, horizontal swipe, keyboard selection | React touch handlers and native links | 2 | implemented |
+| 7 | PIN pad | `components/pin-pad.md` | Staff/owner PIN entry, clear/backspace, green/gold modes | native buttons, controlled input callback | 2 | implemented |
+| 8 | Feedback and states | `components/feedback-states.md` | Loading, empty, error, signed-out and modal states | brand icon/mark and React | 2 | implemented |
+| 9 | Samut Prakan artwork | `components/samut-prakan-art.md` | Customer canvas with bridge, skyline, and water lines | inline SVG | 2 | implemented |
+| 10 | Public poster | `components/public-poster.md` | QR signup print poster | `qrcode.react` and browser print API | 2 | implemented |
+| 11 | Form controls | `components/form-controls.md` | Input, Label, Textarea; mobile text and focus states | Radix Label, source `cn` | 3 | implemented |
+| 12 | Primary button | `components/primary-button.md` | Six variants, four sizes, and optional Slot child | CVA, Radix Slot | 3 | implemented |
+| 13 | Separator | `components/separator.md` | Field, item, button-group, and sidebar | Radix Separator | 3 | implemented |
+| 14 | Tooltip | `components/tooltip.md` | Provider and sidebar tooltips | Radix Tooltip | 3 | implemented |
+| 15 | Toggle | `components/toggle.md` | Toggle-group styling and shared state control | Radix Toggle, CVA | 4 | implemented |
+| 16 | Dialog and sheet | `components/dialog-sheet.md` | Command dialog and responsive sidebar sheet | Radix Dialog, CVA | 4 | implemented |
+| 17 | Toast feedback | `components/toast-feedback.md` | App Toaster, swipe-close, action and live announcements | Radix Toast, source hook | 4 | implemented |
+| 18 | Skeleton | `components/skeleton.md` | Sidebar loading placeholder and card/list states | CSS pulse | 4 | implemented |
 
 ## Build order
 
@@ -44,7 +44,6 @@ than claiming a separate upstream component package.
 - Chunk 3 — Form controls, Primary button, Separator, Tooltip.
 - Chunk 4 — Toggle, Dialog and sheet, Toast feedback, Skeleton.
 
-The pilot is the only chunk implemented before review. Later chunks remain
-pending until the user approves the pilot. UI composition names in the source
-map is declared above as application-owned, not silently copied into this
-product-agnostic component library.
+The user approved the pilot and all four implementation chunks are now included.
+UI compositions tied to routes, sessions, API calls, or staff/owner workflows
+remain application-owned and are not copied into this reusable library.

@@ -7,9 +7,22 @@ function lazyPage(load: () => Promise<ComponentType>) {
 
 const BrandButtonDemo = lazyPage(() => import("./demos/brand-button").then(({ BrandButtonDemo }) => BrandButtonDemo));
 const BrandIconDemo = lazyPage(() => import("./demos/brand-icon").then(({ BrandIconDemo }) => BrandIconDemo));
+const DialogSheetDemo = lazyPage(() => import("./demos/dialog-sheet").then(({ DialogSheetDemo }) => DialogSheetDemo));
+const FeedbackStatesDemo = lazyPage(() => import("./demos/feedback-states").then(({ FeedbackStatesDemo }) => FeedbackStatesDemo));
+const FormControlsDemo = lazyPage(() => import("./demos/form-controls").then(({ FormControlsDemo }) => FormControlsDemo));
 const JaguarMarkDemo = lazyPage(() => import("./demos/jaguar-mark").then(({ JaguarMarkDemo }) => JaguarMarkDemo));
+const MemberCardCarouselDemo = lazyPage(() => import("./demos/member-card-carousel").then(({ MemberCardCarouselDemo }) => MemberCardCarouselDemo));
 const MembershipCardsDemo = lazyPage(() => import("./demos/membership-cards").then(({ MembershipCardsDemo }) => MembershipCardsDemo));
+const PinPadDemo = lazyPage(() => import("./demos/pin-pad").then(({ PinPadDemo }) => PinPadDemo));
+const PrimaryButtonDemo = lazyPage(() => import("./demos/primary-button").then(({ PrimaryButtonDemo }) => PrimaryButtonDemo));
+const PublicPosterDemo = lazyPage(() => import("./demos/public-poster").then(({ PublicPosterDemo }) => PublicPosterDemo));
 const RankEmblemsDemo = lazyPage(() => import("./demos/rank-emblems").then(({ RankEmblemsDemo }) => RankEmblemsDemo));
+const SamutPrakanArtDemo = lazyPage(() => import("./demos/samut-prakan-art").then(({ SamutPrakanArtDemo }) => SamutPrakanArtDemo));
+const SeparatorDemo = lazyPage(() => import("./demos/separator").then(({ SeparatorDemo }) => SeparatorDemo));
+const SkeletonDemo = lazyPage(() => import("./demos/skeleton").then(({ SkeletonDemo }) => SkeletonDemo));
+const ToastFeedbackDemo = lazyPage(() => import("./demos/toast-feedback").then(({ ToastFeedbackDemo }) => ToastFeedbackDemo));
+const ToggleDemo = lazyPage(() => import("./demos/toggle").then(({ ToggleDemo }) => ToggleDemo));
+const TooltipDemo = lazyPage(() => import("./demos/tooltip").then(({ TooltipDemo }) => TooltipDemo));
 
 export type PreviewEntry = {
   id: string;
@@ -38,6 +51,7 @@ export const NAV_GROUPS: NavGroup[] = [
     entries: [
       { id: "brand-mark", name: "ตรา JAGUAR", description: "เครื่องหมายต้นฉบับและการแสดงผลที่ไม่ครอป", Page: JaguarMarkDemo },
       { id: "brand-ranks", name: "ตราระดับสมาชิก", description: "ชุดตราสมาชิก 10 ระดับจากภาพร้าน", Page: RankEmblemsDemo },
+      { id: "brand-city-art", name: "ภาพสมุทรปราการ", description: "ภาพเส้นสะพาน ปากน้ำ และแนวเมือง", Page: SamutPrakanArtDemo },
     ],
   },
   {
@@ -57,11 +71,31 @@ export const NAV_GROUPS: NavGroup[] = [
     entries: [{ id: "brand-button", name: "ปุ่มภาพแบรนด์", description: "ปุ่ม JAGUAR SPK พร้อมสถานะและโฟกัส", Page: BrandButtonDemo }],
   },
   {
+    name: "ตัวควบคุม",
+    entries: [
+      { id: "primary-button", name: "ปุ่มพื้นฐาน", description: "ปุ่มหลายรูปแบบ ขนาด และการประกอบลิงก์", Page: PrimaryButtonDemo },
+      { id: "form-controls", name: "ช่องกรอกข้อมูล", description: "Input, Label และ Textarea สำหรับฟอร์ม", Page: FormControlsDemo },
+      { id: "separator", name: "เส้นแบ่ง", description: "เส้นแบ่งแนวนอนและแนวตั้ง พร้อมความหมาย", Page: SeparatorDemo },
+      { id: "tooltip", name: "คำอธิบายสั้น", description: "Tooltip รองรับเมาส์ โฟกัส และคีย์บอร์ด", Page: TooltipDemo },
+      { id: "toggle", name: "สวิตช์กดได้", description: "ปุ่มสลับสถานะที่รองรับคีย์บอร์ดและ disabled", Page: ToggleDemo },
+      { id: "dialog-sheet", name: "Dialog และ Sheet", description: "หน้าต่างยืนยันและแผงสไลด์หลายทิศทาง", Page: DialogSheetDemo },
+      { id: "toast-feedback", name: "Toast แจ้งเตือน", description: "ข้อความสำเร็จ ผิดพลาด ปัดปิด และ action", Page: ToastFeedbackDemo },
+      { id: "skeleton", name: "Skeleton โหลดข้อมูล", description: "โครงร่างบัตรและรายการระหว่างโหลด", Page: SkeletonDemo },
+    ],
+  },
+  {
     name: "คอมโพเนนต์",
     entries: [
       { id: "brand-icons", name: "ไอคอน glass", description: "ไอคอนเส้นที่ใช้สีตามความหมาย", Page: BrandIconDemo },
       { id: "membership-cards", name: "บัตรและแต้ม", description: "บัตรสองคลับ แสตมป์ และ QR", Page: MembershipCardsDemo },
+      { id: "member-card-carousel", name: "สลับบัตรสมาชิก", description: "แท็บสองคลับ ปัด และคีย์บอร์ด", Page: MemberCardCarouselDemo },
+      { id: "pin-pad", name: "แป้น PIN", description: "กรอก ลบ และล้าง PIN แบบควบคุมค่า", Page: PinPadDemo },
+      { id: "feedback-states", name: "สถานะและหน้าต่าง", description: "โหลด ว่าง ผิดพลาด ออกจากระบบ และ modal", Page: FeedbackStatesDemo },
     ],
+  },
+  {
+    name: "เนื้อหา",
+    entries: [{ id: "public-poster", name: "ป้าย QR สมัครสมาชิก", description: "QR สมัครสมาชิกและรูปแบบพิมพ์", Page: PublicPosterDemo }],
   },
 ];
 

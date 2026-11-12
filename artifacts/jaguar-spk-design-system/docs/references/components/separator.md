@@ -4,5 +4,7 @@
 - Public export: `Separator`.
 - Behavior: preserve Radix orientation, decorative semantics, and accessible
   separation.
-- Dependencies: Radix Separator and source `cn` utility. Source consumer count:
-  4 files. Chunk 3; pending.
+- Consumers: field, item, button-group, and sidebar primitives.
+- Preview: horizontal decorative and vertical semantic separators.
+- Dependencies: Radix Separator and source `cn` utility.
+- Chunk 3; implemented.
