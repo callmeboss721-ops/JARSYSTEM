@@ -13,7 +13,8 @@ if (process.env.NODE_ENV === "production") throw new Error("Development test onl
 const require = createRequire(new URL("../lib/db/package.json", import.meta.url));
 const { Pool } = require("pg");
 const db = new Pool({ connectionString: process.env.DATABASE_URL, max: 2 });
-const base = process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : "http://localhost:80";
+const base = process.env.LOYALTY_TEST_BASE ||
+  (process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : "http://localhost:80");
 const memberJar = new Map();
 const staffJar = new Map();
 const ownerJar = new Map();

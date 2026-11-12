@@ -2,6 +2,7 @@
 - [YOUNGBOSS brand intent](youngboss-brand-intent.md) — Premium customer/staff UI; original supplied logo imagery takes precedence over an invented minimalist seal.
 - [Supabase connection boundaries](supabase-connection-boundaries.md) — Connector host configuration is independent of Supabase environment variables; verify each separately.
 - [Drizzle check diffs](drizzle-check-constraint-diffs.md) — A successful schema push may retain an old CHECK expression under an unchanged constraint name; verify the live definition.
-- [JAGUAR points policy](jaguar-points-policy.md) — Each complete set of three bottles on one bill earns a point; remaining bottles do not carry over.
+- [JAGUAR points policy](jaguar-points-policy.md) — Kratom earns per cumulative ฿100; cannabis per cumulative 100 g, with separate carry-over balances.
 - [Design reference extraction fallback](design-reference-extraction.md) — if browser capture is blocked, use the installed component package and skip repeated browser installs.
 - [Banking operations](banking-operations.md) — owner configures today's account; staff records transfer in/out; limits are warnings, not blockers.
+- [Member login policy](member-login-rules.md) — any one of phone, member code, or nickname grants access; no OTP was explicitly chosen.
