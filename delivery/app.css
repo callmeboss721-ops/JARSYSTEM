@@ -1,0 +1,137 @@
+/* ============================================================
+   JAGUAR SPK Delivery — Shared Premium Theme (app.css)
+   Built on design-system/tokens.css (Design System v3, owner approved)
+   Load AFTER each page's inline <style> so these rules win.
+   Reusable: link this file from any JAGUAR SPK delivery page.
+   ============================================================ */
+@import url("../design-system/tokens.css");
+
+/* ---- remap legacy delivery vars to design tokens ---- */
+:root{
+  --bg:#050505;
+  --card:#0D140F;
+  --green:#00FF9D;
+  --green-dark:#00FF9D;
+  --text:#F9F6E7;
+  --text2:rgba(249,246,231,.70);
+  --line:rgba(249,246,231,.10);
+  --danger:#FF5A5A;
+  --warn:#FFC24B;
+  --gold:#D4AF37;
+}
+
+/* ---- base ---- */
+body{
+  background:
+    radial-gradient(1100px 480px at 50% -12%, rgba(0,255,157,.07), transparent 60%),
+    radial-gradient(900px 420px at 100% 110%, rgba(212,175,55,.05), transparent 55%),
+    var(--bg);
+  color:var(--text);
+}
+
+/* ---- header ---- */
+header{
+  background:rgba(13,20,15,.92);
+  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--gold-line);
+  color:var(--text);
+}
+header small{ color:var(--text-2); }
+header a{ color:var(--text-2); }
+
+/* ---- cards ---- */
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--r-lg);
+  box-shadow:0 8px 24px rgba(0,0,0,.35);
+}
+.item{ background:var(--surface-2); border:1px solid var(--line); border-radius:var(--r-md); }
+.item .thumb{ color:#050505; font-weight:800; }
+.item:active{ transform:scale(.98); }
+.stat{ background:var(--surface-2); border:1px solid var(--line); border-radius:var(--r-md); }
+.stat b{ color:var(--gold-2); }
+.stat.gold b{ color:var(--neon); }
+
+/* ---- chips ---- */
+.chip{ background:var(--surface-2); border:1px solid var(--line); color:var(--text-2); }
+.chip.on{ background:var(--neon-soft); color:var(--neon); border-color:var(--neon-line); }
+
+/* ---- buttons (gold CTA per design system) ---- */
+.btn{
+  background:linear-gradient(135deg,#F4D47C,#E5C04A);
+  color:#050505;
+  border-radius:var(--r-md);
+  box-shadow:0 4px 18px rgba(212,175,55,.25);
+}
+.btn:disabled{ background:var(--surface-3); color:var(--text-3); box-shadow:none; cursor:not-allowed; }
+.btn.sec{ background:transparent; color:var(--neon); border:1px solid var(--neon-line); box-shadow:none; }
+.btn.gray{ background:var(--surface-2); color:var(--text-2); border:1px solid var(--line); box-shadow:none; }
+.btn.warn{ background:var(--danger); color:#fff; box-shadow:none; }
+.qty button{ background:var(--surface-2); border:1px solid var(--line); color:var(--text); }
+.qty button:active{ background:var(--neon); color:#050505; }
+
+/* ---- forms ---- */
+input,textarea{ background:var(--surface-2); border:1px solid var(--line); color:var(--text); }
+input::placeholder,textarea::placeholder{ color:var(--text-3); }
+input:focus,textarea:focus{ outline:2px solid var(--neon); border-color:var(--neon); }
+.pay-opt{ background:var(--surface-2); border:1px solid var(--line); }
+.pay-opt.on{ background:var(--neon-soft); border-color:var(--neon-line); }
+.err{ color:var(--danger); font-size:13px; margin-top:6px; display:none; }
+
+/* ---- bottom bar / sheet / toast ---- */
+#cart-bar{
+  background:rgba(13,20,15,.95);
+  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:blur(10px);
+  border-top:1px solid var(--gold-line);
+}
+#cart-bar .sum b{ color:var(--gold-2); }
+.sheet{ background:rgba(5,5,5,.70); }
+.sheet .inner{ background:var(--surface); border-top:1px solid var(--line); border-radius:var(--r-lg) var(--r-lg) 0 0; }
+#toast{ background:var(--surface-3); color:var(--text); border:1px solid var(--line); }
+
+/* ---- text accents ---- */
+.muted{ color:var(--text-2); }
+.price{ color:var(--gold-2); }
+.code{ color:var(--gold-2); }
+#cust-bar a{ color:var(--neon); }
+.pin-ok{ color:var(--neon); }
+#rider-line{ color:var(--neon); }
+a.map{ color:var(--neon); }
+.sec-title{ color:var(--text-3); }
+.total-row.big{ border-top:1px solid var(--line); }
+
+/* ---- order steps / route ---- */
+.step{ color:var(--text-2); }
+.step.on{ color:var(--text); }
+.step.on .dot{ background:var(--neon); border-color:var(--neon); }
+#route-card{ background:var(--neon-soft); border:1px solid var(--neon-line); }
+.route-step b{ background:var(--neon); color:#050505; }
+.route-step .dist{ color:var(--neon); }
+
+/* ---- badges (dark translucent) ---- */
+.badge{ background:rgba(249,246,231,.08); color:var(--text-2); }
+.badge.new{ background:rgba(255,194,75,.15); color:var(--warn); }
+.badge.confirmed{ background:rgba(0,255,157,.12); color:var(--neon); }
+.badge.pickup{ background:rgba(118,87,255,.20); color:#B9A6FF; }
+.badge.delivering{ background:rgba(0,240,255,.12); color:#00F0FF; }
+.badge.done{ background:rgba(0,255,157,.18); color:var(--neon); }
+.badge.cancelled{ background:rgba(255,90,90,.15); color:var(--danger); }
+
+/* ---- table ---- */
+table{ background:var(--card); }
+th{ background:var(--gold-soft); color:var(--gold-2); }
+td{ border-top:1px solid var(--line); }
+
+/* ---- misc ---- */
+#map{ border:1px solid var(--line); }
+.tl{ color:var(--text-2); }
+.loc-note{ color:var(--text-2); }
+
+/* ---- motion ---- */
+.btn,.chip,.item{ transition:transform .15s var(--ease), box-shadow .15s var(--ease), background .15s var(--ease); }
+@media (prefers-reduced-motion:reduce){
+  .btn,.chip,.item{ transition:none; }
+}
