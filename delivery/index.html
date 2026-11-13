@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>JAGUAR SPK Delivery</title>
+<style>
+  :root{
+    --green:#06C755; --green-dark:#049c42; --bg:#F5F6F8; --card:#FFFFFF;
+    --text:#111827; --text2:#6B7280; --line:#E5E7EB; --danger:#EF4444; --gold:#B8860B;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:"Sarabun","Noto Sans Thai",system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+  header{position:sticky;top:0;z-index:20;background:var(--green);color:#fff;padding:14px 16px;font-weight:700;font-size:18px;display:flex;justify-content:space-between;align-items:center}
+  header small{display:block;font-weight:400;font-size:12px;opacity:.9}
+  main{padding:12px 12px 96px;max-width:520px;margin:0 auto}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+  .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px}
+  .chip{flex:0 0 auto;padding:8px 14px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:14px;cursor:pointer}
+  .chip.on{background:var(--green);color:#fff;border-color:var(--green)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
+  .item .thumb{height:64px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;color:#fff}
+  .item h3{font-size:15px}
+  .item .row{display:flex;justify-content:space-between;align-items:center}
+  .price{color:var(--green-dark);font-weight:700}
+  .qty{display:flex;align-items:center;gap:8px}
+  .qty button{width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:#fff;font-size:16px;cursor:pointer}
+  .qty button:active{background:var(--green);color:#fff}
+  #cust-bar{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text2);margin-bottom:10px}
+  #cust-bar a{color:var(--green-dark);cursor:pointer;text-decoration:none;font-weight:700}
+  #cart-bar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:1px solid var(--line);padding:10px 14px;display:flex;gap:10px;align-items:center;justify-content:space-between;max-width:520px;margin:0 auto}
+  #cart-bar .sum{font-size:13px;color:var(--text2)}
+  #cart-bar .sum b{display:block;font-size:17px;color:var(--text)}
+  .btn{display:block;width:100%;padding:13px;border:0;border-radius:12px;background:var(--green);color:#fff;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit}
+  .btn:disabled{background:#C7CBD1;cursor:not-allowed}
+  .btn.sec{background:#fff;color:var(--green-dark);border:1px solid var(--green)}
+  .btn.warn{background:var(--danger)}
+  .sheet{position:fixed;inset:0;z-index:40;display:none;flex-direction:column;justify-content:flex-end;background:rgba(0,0,0,.45)}
+  .sheet.open{display:flex}
+  .sheet .inner{background:#fff;border-radius:16px 16px 0 0;padding:16px;max-height:88vh;overflow-y:auto;max-width:520px;width:100%;margin:0 auto}
+  .sheet h2{font-size:17px;margin-bottom:12px}
+  .sheet .close{float:right;background:none;border:0;font-size:20px;cursor:pointer;color:var(--text2)}
+  label{display:block;font-size:13px;color:var(--text2);margin:10px 0 4px}
+  input,textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;font-size:15px;font-family:inherit;background:#FAFAFA}
+  input:focus,textarea:focus{outline:2px solid var(--green);border-color:var(--green)}
+  .pin-row{display:flex;gap:8px;align-items:center;margin-top:6px}
+  .pin-row .btn{width:auto;padding:10px 14px;font-size:14px}
+  .pin-ok{font-size:13px;color:var(--green-dark);font-weight:700}
+  .pay-opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;cursor:pointer}
+  .pay-opt.on{border-color:var(--green);background:#F0FBF4}
+  .pay-opt input{width:auto;margin-top:3px}
+  #qr-box{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 0}
+  #qr-box img,#qr-box canvas{width:220px;height:220px}
+  .muted{font-size:13px;color:var(--text2)}
+  .total-row{display:flex;justify-content:space-between;padding:4px 0;font-size:14px}
+  .total-row.big{font-size:17px;font-weight:700;border-top:1px solid var(--line);margin-top:6px;padding-top:10px}
+  .steps{display:flex;flex-direction:column;gap:0;margin:8px 0}
+  .step{display:flex;gap:10px;align-items:flex-start;padding:6px 0;color:var(--text2);font-size:14px}
+  .step .dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:0 0 auto;margin-top:2px}
+  .step.on{color:var(--text);font-weight:700}
+  .step.on .dot{background:var(--green);border-color:var(--green)}
+  #toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:60;max-width:90vw;text-align:center}
+  #toast.show{opacity:1}
+  .err{color:var(--danger);font-size:13px;margin-top:6px;display:none}
+  @media (min-width:768px){ .grid{grid-template-columns:repeat(3,1fr)} }
+</style>
+</head>
+<body>
+<header>
+  <div>JAGUAR SPK Delivery<small>สั่งเดลิเวอรีจากร้านโดยตรง</small></div>
+</header>
+<main>
+  <div id="cust-bar"><span id="cust-hello">ยังไม่ได้ลงทะเบียน</span><a id="cust-edit">ลงทะเบียน / แก้ข้อมูล</a></div>
+  <div class="chips" id="cat-chips"></div>
+  <div class="grid" id="menu-grid"></div>
+  <p class="muted" style="margin-top:14px">ระบบปิดสำหรับลูกค้าร้านเท่านั้น ออเดอร์จะถูกส่งเข้าทีมไรเดอร์ประจำร้านทุก 20 นาที</p>
+</main>
+
+<div id="cart-bar">
+  <div class="sum">ตะกร้า: <span id="cart-count">0</span> ชิ้น<b id="cart-total">0.00 บาท</b></div>
+  <button class="btn" style="width:auto;padding:12px 22px" id="btn-cart">ดูรายการ</button>
+</div>
+
+<!-- ลงทะเบียน -->
+<div class="sheet" id="sh-register"><div class="inner">
+  <button class="close" data-close="sh-register">✕</button>
+  <h2>ลงทะเบียนสมาชิก</h2>
+  <label>ชื่อ-นามสกุล</label><input id="f-name" placeholder="เช่น สมชาย ใจดี" />
+  <label>เบอร์โทรศัพท์</label><input id="f-phone" type="tel" inputmode="numeric" placeholder="08xxxxxxxx" maxlength="10" />
+  <label>ที่อยู่จัดส่ง</label><textarea id="f-addr" rows="3" placeholder="บ้านเลขที่ ซอย ถนน แขวง/ตำบล เขต/อำเภอ จังหวัด รหัสไปรษณีย์"></textarea>
+  <label>ตำแหน่งจัดส่ง (แผนที่)</label>
+  <div class="pin-row">
+    <button class="btn sec" id="btn-pin">ปักหมุดตำแหน่งปัจจุบัน</button>
+    <span class="pin-ok" id="pin-status"></span>
+  </div>
+  <div class="err" id="reg-err"></div>
+  <button class="btn" id="btn-save-reg" style="margin-top:14px">บันทึกข้อมูล</button>
+</div></div>
+
+<!-- ตะกร้า / ชำระเงิน -->
+<div class="sheet" id="sh-cart"><div class="inner">
+  <button class="close" data-close="sh-cart">✕</button>
+  <h2>รายการสั่งซื้อ</h2>
+  <div id="cart-list"></div>
+  <div id="pay-section">
+    <h2 style="margin-top:16px">ข้อมูลจัดส่ง</h2>
+    <div class="card" style="margin-bottom:10px">
+      <div id="ship-summary" class="muted">ยังไม่ได้ลงทะเบียน</div>
+    </div>
+    <h2>วิธีชำระเงิน</h2>
+    <label class="pay-opt" id="opt-pp">
+      <input type="radio" name="pay" value="promptpay" checked />
+      <span><b>สแกน PromptPay</b><br /><span class="muted">ชำระผ่าน QR แล้วกดยืนยันคำสั่งซื้อ</span></span>
+    </label>
+    <label class="pay-opt" id="opt-bank">
+      <input type="radio" name="pay" value="bank" />
+      <span><b>โอนเข้าบัญชีธนาคาร</b><br /><span class="muted" id="bank-info">กำลังโหลดข้อมูลบัญชี...</span></span>
+    </label>
+    <div id="qr-box" style="display:none"><div id="qr-target"></div><div class="muted" id="pp-hint"></div></div>
+    <div class="total-row"><span>ค่าสินค้า</span><span id="sum-items">0.00 บาท</span></div>
+    <div class="total-row"><span>ค่าจัดส่ง</span><span id="sum-fee">0.00 บาท</span></div>
+    <div class="total-row big"><span>ยอดรวม</span><span id="sum-grand">0.00 บาท</span></div>
+    <div class="err" id="pay-err"></div>
+    <button class="btn" id="btn-order" style="margin-top:10px">ยืนยันคำสั่งซื้อ</button>
+  </div>
+</div></div>
+
+<!-- ติดตามสถานะ -->
+<div class="sheet" id="sh-track"><div class="inner">
+  <button class="close" data-close="sh-track">✕</button>
+  <h2 id="track-code"></h2>
+  <div class="steps" id="track-steps"></div>
+  <div class="muted" id="track-note"></div>
+</div></div>
+
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script>
+'use strict';
+var SUPABASE_URL = 'https://sfoenreulwqulfofotcp.supabase.co';
+var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmb2VucmV1bHdxdWxmb2ZvdGNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNjAyNzAsImV4cCI6MjA5NTczNjI3MH0.iiCs7j6ol3-6lqUWROeLgIGkqUYuOyXokR0UFX6D7nI';
+var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+var MENU = [], SETTINGS = {}, cart = {}, pinPos = null, lastOrderCode = null;
+var STATUS_STEPS = [
+  ['new', 'รับคำสั่งซื้อแล้ว (รอยืนยันการชำระเงิน)'],
+  ['confirmed', 'ยืนยันการชำระเงิน / ร้านกำลังจัดของ'],
+  ['pickup', 'ไรเดอร์รับออเดอร์แล้ว'],
+  ['delivering', 'กำลังจัดส่ง'],
+  ['done', 'จัดส่งสำเร็จ']
+];
+
+function $(id){ return document.getElementById(id); }
+function toast(msg){
+  var t = $('toast'); t.textContent = msg; t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2600);
+}
+function baht(n){ return Number(n).toFixed(2) + ' บาท'; }
+function esc(s){ var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+
+/* ---------- PromptPay payload (EMVCo, CRC16-CCITT) ---------- */
+function crc16(s){
+  var crc = 0xFFFF;
+  for (var i = 0; i < s.length; i++){
+    crc ^= s.charCodeAt(i) << 8;
+    for (var j = 0; j < 8; j++){
+      crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) & 0xFFFF : (crc << 1) & 0xFFFF;
+    }
+  }
+  return crc.toString(16).toUpperCase().padStart(4, '0');
+}
+function tlv(id, val){ return id + String(val.length).padStart(2, '0') + val; }
+function promptpayPayload(target, amount){
+  var t = String(target).replace(/[^0-9]/g, '');
+  if (t.length === 10 && t.charAt(0) === '0') t = '66' + t.slice(1);
+  var merchant = tlv('00', 'A000000677010111') + tlv('01', t);
+  var p = tlv('00', '01') + tlv('01', '12') + tlv('29', merchant) + tlv('53', '764');
+  if (amount) p += tlv('54', Number(amount).toFixed(2));
+  p += tlv('58', 'TH');
+  p += '6304';
+  return p + crc16(p);
+}
+
+/* ---------- load ---------- */
+async function loadAll(){
+  var r1 = await sb.from('dt_menu_items').select('*').eq('active', true).order('sort');
+  if (r1.error) { toast('โหลดเมนูไม่สำเร็จ: ' + r1.error.message); return; }
+  MENU = r1.data || [];
+  var r2 = await sb.from('dt_settings').select('key,value');
+  if (!r2.error) {
+    (r2.data || []).forEach(function(row){ SETTINGS[row.key] = row.value; });
+  }
+  renderCats(); renderMenu(); renderBank(); restoreCustomer();
+}
+
+function renderCats(){
+  var cats = ['ทั้งหมด'];
+  MENU.forEach(function(m){ if (cats.indexOf(m.category) < 0) cats.push(m.category); });
+  $('cat-chips').innerHTML = cats.map(function(c, i){
+    return '<div class="chip' + (i === 0 ? ' on' : '') + '" data-cat="' + esc(c) + '">' + esc(c) + '</div>';
+  }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('.chip'), function(el){
+    el.onclick = function(){
+      Array.prototype.forEach.call(document.querySelectorAll('.chip'), function(x){ x.classList.remove('on'); });
+      el.classList.add('on');
+      renderMenu(el.getAttribute('data-cat'));
+    };
+  });
+}
+function renderMenu(cat){
+  var list = MENU.filter(function(m){ return !cat || cat === 'ทั้งหมด' || m.category === cat; });
+  var colors = ['#06C755','#B8860B','#0EA5E9','#8B5CF6','#EF4444','#F59E0B'];
+  $('menu-grid').innerHTML = list.map(function(m, i){
+    var q = cart[m.id] || 0;
+    return '<div class="item">' +
+      '<div class="thumb" style="background:' + colors[i % colors.length] + '">' + esc(m.category.charAt(0)) + '</div>' +
+      '<h3>' + esc(m.name) + '</h3>' +
+      '<div class="row"><span class="price">' + baht(m.price) + '</span>' +
+      '<span class="qty"><button data-dec="' + m.id + '">−</button><span>' + q + '</span><button data-inc="' + m.id + '">+</button></span></div>' +
+      '</div>';
+  }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('[data-inc]'), function(b){
+    b.onclick = function(){ changeQty(b.getAttribute('data-inc'), 1); };
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-dec]'), function(b){
+    b.onclick = function(){ changeQty(b.getAttribute('data-dec'), -1); };
+  });
+}
+function changeQty(id, d){
+  var q = (cart[id] || 0) + d;
+  if (q <= 0) delete cart[id]; else cart[id] = q;
+  localStorage.setItem('spk_cart', JSON.stringify(cart));
+  var on = document.querySelector('.chip.on');
+  renderMenu(on ? on.getAttribute('data-cat') : null);
+  renderCartBar();
+}
+function cartItems(){
+  return Object.keys(cart).map(function(id){
+    var m = MENU.filter(function(x){ return String(x.id) === String(id); })[0];
+    return m ? { id: m.id, name: m.name, price: m.price, qty: cart[id] } : null;
+  }).filter(Boolean);
+}
+function cartTotal(){ return cartItems().reduce(function(s, it){ return s + it.price * it.qty; }, 0); }
+function renderCartBar(){
+  var items = cartItems();
+  $('cart-count').textContent = items.reduce(function(s, it){ return s + it.qty; }, 0);
+  $('cart-total').textContent = baht(cartTotal());
+}
+function renderBank(){
+  var b = SETTINGS.bank_name ? (SETTINGS.bank_name + ' ' + SETTINGS.bank_account_number + ' (' + SETTINGS.bank_account_name + ')') : 'ร้านยังไม่ได้ระบุบัญชี กรุณาเลือก PromptPay';
+  $('bank-info').textContent = b;
+}
+
+/* ---------- customer ---------- */
+function restoreCustomer(){
+  var c = null;
+  try { c = JSON.parse(localStorage.getItem('spk_customer') || 'null'); } catch (e) {}
+  if (c && c.name) $('cust-hello').textContent = 'สวัสดี คุณ' + c.name;
+  if (c) { $('f-name').value = c.name || ''; $('f-phone').value = c.phone || ''; $('f-addr').value = c.address || ''; if (c.lat) setPin(c.lat, c.lng, true); }
+}
+function setPin(lat, lng, silent){
+  pinPos = { lat: lat, lng: lng };
+  $('pin-status').textContent = 'ปักหมุดแล้ว: ' + lat.toFixed(5) + ', ' + lng.toFixed(5);
+  if (!silent) toast('ปักหมุดตำแหน่งเรียบร้อย');
+}
+$('btn-pin').onclick = function(){
+  if (!navigator.geolocation) { toast('เบราว์เซอร์ไม่รองรับการปักหมุด'); return; }
+  toast('กำลังค้นหาตำแหน่ง...');
+  navigator.geolocation.getCurrentPosition(
+    function(pos){ setPin(pos.coords.latitude, pos.coords.longitude); },
+    function(){ toast('ปักหมุดไม่สำเร็จ กรุณาอนุญาตการเข้าถึงตำแหน่ง'); },
+    { enableHighAccuracy: true, timeout: 12000 }
+  );
+};
+$('cust-edit').onclick = function(){ openSheet('sh-register'); };
+$('btn-save-reg').onclick = async function(){
+  var name = $('f-name').value.trim(), phone = $('f-phone').value.replace(/[^0-9]/g, ''), addr = $('f-addr').value.trim();
+  var err = $('reg-err'); err.style.display = 'none';
+  if (!name || phone.length !== 10 || !addr) { err.textContent = 'กรุณากรอกชื่อ เบอร์โทร 10 หลัก และที่อยู่ให้ครบ'; err.style.display = 'block'; return; }
+  if (!pinPos) { err.textContent = 'กรุณาปักหมุดตำแหน่งจัดส่ง'; err.style.display = 'block'; return; }
+  var btn = this; btn.disabled = true;
+  var r = await sb.from('dt_customers').select('id').eq('phone', phone).maybeSingle();
+  var row = { name: name, phone: phone, address: addr, lat: pinPos.lat, lng: pinPos.lng };
+  var res;
+  if (r.data) res = await sb.from('dt_customers').update(row).eq('id', r.data.id).select().single();
+  else res = await sb.from('dt_customers').insert(row).select().single();
+  btn.disabled = false;
+  if (res.error) { err.textContent = 'บันทึกไม่สำเร็จ: ' + res.error.message; err.style.display = 'block'; return; }
+  localStorage.setItem('spk_customer', JSON.stringify(res.data));
+  $('cust-hello').textContent = 'สวัสดี คุณ' + name;
+  closeSheet('sh-register'); toast('บันทึกข้อมูลเรียบร้อย');
+};
+
+/* ---------- sheets ---------- */
+function openSheet(id){ $(id).classList.add('open'); }
+function closeSheet(id){ $(id).classList.remove('open'); }
+Array.prototype.forEach.call(document.querySelectorAll('[data-close]'), function(b){
+  b.onclick = function(){ closeSheet(b.getAttribute('data-close')); };
+});
+
+/* ---------- cart sheet + payment ---------- */
+$('btn-cart').onclick = function(){
+  var items = cartItems();
+  if (!items.length) { toast('ยังไม่มีสินค้าในตะกร้า'); return; }
+  renderCartList(); renderPaySummary(); openSheet('sh-cart');
+};
+function renderCartList(){
+  $('cart-list').innerHTML = cartItems().map(function(it){
+    return '<div class="total-row"><span>' + esc(it.name) + ' × ' + it.qty + '</span><span>' + baht(it.price * it.qty) + '</span></div>';
+  }).join('') || '<p class="muted">ไม่มีรายการ</p>';
+}
+function renderPaySummary(){
+  var c = null;
+  try { c = JSON.parse(localStorage.getItem('spk_customer') || 'null'); } catch (e) {}
+  $('ship-summary').innerHTML = c
+    ? '<b>' + esc(c.name) + '</b> ' + esc(c.phone) + '<br />' + esc(c.address) + '<br /><span class="muted">หมุด: ' + Number(c.lat).toFixed(5) + ', ' + Number(c.lng).toFixed(5) + '</span>'
+    : 'ยังไม่ได้ลงทะเบียน';
+  var fee = Number(SETTINGS.delivery_fee || 0);
+  $('sum-items').textContent = baht(cartTotal());
+  $('sum-fee').textContent = baht(fee);
+  $('sum-grand').textContent = baht(cartTotal() + fee);
+  var pp = SETTINGS.promptpay_id;
+  $('pp-hint').textContent = pp ? 'พร้อมเพย์: ' + pp : 'ร้านยังไม่ได้ตั้งค่าพร้อมเพย์';
+  if (pp) {
+    var payload = promptpayPayload(pp, cartTotal() + fee);
+    var box = $('qr-target'); box.innerHTML = '';
+    if (window.QRCode && QRCode.toCanvas) {
+      QRCode.toCanvas(function(cv){ box.appendChild(cv); }, payload, { width: 220 }, function(e){ if (e) box.textContent = payload; });
+    } else {
+      box.textContent = payload;
+    }
+    $('qr-box').style.display = 'flex';
+  }
+}
+Array.prototype.forEach.call(document.querySelectorAll('input[name=pay]'), function(r){
+  r.onchange = function(){
+    $('opt-pp').classList.toggle('on', r.value === 'promptpay' && r.checked);
+    $('opt-bank').classList.toggle('on', r.value === 'bank' && r.checked);
+  };
+});
+$('btn-order').onclick = async function(){
+  var err = $('pay-err'); err.style.display = 'none';
+  var c = null;
+  try { c = JSON.parse(localStorage.getItem('spk_customer') || 'null'); } catch (e) {}
+  if (!c) { err.textContent = 'กรุณาลงทะเบียนก่อนสั่งซื้อ'; err.style.display = 'block'; openSheet('sh-register'); return; }
+  var items = cartItems();
+  if (!items.length) { err.textContent = 'ตะกร้าว่าง'; err.style.display = 'block'; return; }
+  var method = (document.querySelector('input[name=pay]:checked') || {}).value || 'promptpay';
+  var btn = this; btn.disabled = true;
+  var fee = Number(SETTINGS.delivery_fee || 0);
+  var code = 'SPK' + new Date().toISOString().slice(2, 10).replace(/-/g, '') + String(Math.floor(100 + Math.random() * 900));
+  var row = {
+    order_code: code, customer_id: c.id, customer_name: c.name, customer_phone: c.phone,
+    address: c.address, lat: c.lat, lng: c.lng,
+    items: items, items_total: cartTotal(), delivery_fee: fee, total: cartTotal() + fee,
+    payment_method: method, payment_status: 'waiting_confirm', order_status: 'new', sent_to_telegram: false
+  };
+  var res = await sb.from('dt_orders').insert(row).select().single();
+  btn.disabled = false;
+  if (res.error) { err.textContent = 'สั่งซื้อไม่สำเร็จ: ' + res.error.message; err.style.display = 'block'; return; }
+  cart = {}; localStorage.setItem('spk_cart', '{}');
+  renderCartBar();
+  var on = document.querySelector('.chip.on');
+  renderMenu(on ? on.getAttribute('data-cat') : null);
+  closeSheet('sh-cart');
+  lastOrderCode = code;
+  showTrack(code);
+  toast('สั่งซื้อสำเร็จ รหัส ' + code);
+};
+
+/* ---------- track ---------- */
+function showTrack(code){
+  $('track-code').textContent = 'รหัสคำสั่งซื้อ: ' + code;
+  renderSteps('new');
+  openSheet('sh-track');
+  pollTrack(code);
+}
+function renderSteps(status){
+  var order = ['new', 'confirmed', 'pickup', 'delivering', 'done'];
+  var idx = order.indexOf(status);
+  $('track-steps').innerHTML = STATUS_STEPS.map(function(s, i){
+    return '<div class="step' + (i <= idx ? ' on' : '') + '"><span class="dot"></span><span>' + esc(s[1]) + '</span></div>';
+  }).join('');
+  $('track-note').textContent = status === 'new'
+    ? 'ออเดอร์จะถูกส่งเข้าทีมไรเดอร์ประจำร้านโดยอัตโนมัติทุก 20 นาที'
+    : 'สถานะอัปเดตโดยทีมไรเดอร์ประจำร้าน';
+}
+var pollTimer = null;
+function pollTrack(code){
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(async function(){
+    if (!$('sh-track').classList.contains('open')) { clearInterval(pollTimer); return; }
+    var r = await sb.from('dt_orders').select('order_status').eq('order_code', code).maybeSingle();
+    if (r.data) renderSteps(r.data.order_status);
+  }, 10000);
+}
+
+/* ---------- init ---------- */
+try { cart = JSON.parse(localStorage.getItem('spk_cart') || '{}') || {}; } catch (e) { cart = {}; }
+loadAll().then(renderCartBar);
+</script>
+</body>
+</html>
