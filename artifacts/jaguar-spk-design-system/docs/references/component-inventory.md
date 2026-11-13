@@ -26,7 +26,7 @@ independently; the package does not claim an upstream component dependency.
 | 1 | Brand icon | `components/brand-icon.md` | Shared glass/Lucide semantic map; 9 direct source consumers | `@thesvg/ui-react`, `lucide-react` | 1 | implemented |
 | 2 | Jaguar mark | `components/jaguar-mark.md` | Original uncropped logo; 7 direct source consumers | retained Jaguar logo assets | 1 | implemented |
 | 3 | Brand button | `components/brand-button.md` | Landing, login, and member action art; 3 direct consumers | retained button artwork | 1 | implemented |
-| 4 | Membership cards | `components/membership-cards.md` | Two shared card implementations; both club routes | QRCode, brand button/icon, retained card artwork | 1 | implemented |
+| 4 | Membership cards | `components/membership-cards.md` | Two shared card implementations; both club routes; enlarged QR dialog | QRCode, Lucide, brand button/icon, retained card artwork | 1 | implemented |
 | 5 | Rank emblems | `components/rank-emblems.md` | Ten supplied tier marks; 4 direct source consumers | retained rank artwork | 1 | implemented |
 | 6 | Member card carousel | `components/member-card-carousel.md` | Dual-club tabs, horizontal swipe, keyboard selection | React touch handlers and native links | 2 | implemented |
 | 7 | PIN pad | `components/pin-pad.md` | Staff/owner PIN entry, clear/backspace, green/gold modes | native buttons, controlled input callback | 2 | implemented |

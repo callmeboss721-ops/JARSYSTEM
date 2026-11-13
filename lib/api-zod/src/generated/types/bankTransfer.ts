@@ -16,4 +16,5 @@ export interface BankTransfer {
   note: string;
   recorded_by: BankTransferRecordedBy;
   created_at: Date;
+  corrected?: boolean;
 }

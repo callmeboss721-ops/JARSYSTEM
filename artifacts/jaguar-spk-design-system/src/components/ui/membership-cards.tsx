@@ -1,5 +1,6 @@
 import { QRCodeSVG } from "qrcode.react";
-import type { ReactNode } from "react";
+import { useId, useRef, type ReactNode } from "react";
+import { Maximize2, X } from "lucide-react";
 import { BrandButton } from "./brand-button";
 import { BrandIcon } from "./brand-icon";
 
@@ -275,6 +276,8 @@ export function MemberStatusPanel({
   const filled = Math.min(Math.max(balance, 0), STAMPS);
   const remaining = Math.max(STAMPS - filled, 0);
   const ready = balance >= STAMPS;
+  const qrDialog = useRef<HTMLDialogElement>(null);
+  const qrTitleId = useId();
   return (
     <section className="ds-glass member-dashboard-status" aria-label="สถานะสมาชิก" data-testid={dataTestId}>
       <div className="member-dashboard-status__main">
@@ -296,6 +299,47 @@ export function MemberStatusPanel({
           : qr.error || !qr.value ? <div className="member-dashboard-status__qr-error"><span role="alert">QR ไม่พร้อม</span><button type="button" onClick={qr.retry} disabled={qr.retrying}>{qr.retrying ? "รอ…" : "ลองใหม่"}</button></div>
             : <QRCodeSVG value={qr.value} size={62} level="M" aria-label={`QR สมาชิก ${memberCode}`} />}
         <small>สแกนที่ร้าน</small>
+        {!qr.loading && !qr.error && qr.value && (
+          <>
+            <button
+              type="button"
+              className="member-dashboard-status__qr-expand"
+              aria-haspopup="dialog"
+              aria-label={`ขยาย QR สมาชิก ${memberCode}`}
+              onClick={() => qrDialog.current?.showModal()}
+            >
+              <Maximize2 size={14} aria-hidden="true" />
+              <span>ขยาย</span>
+            </button>
+            <dialog ref={qrDialog} className="member-qr-dialog" aria-labelledby={qrTitleId}>
+              <div className="member-qr-dialog__surface">
+                <header className="member-qr-dialog__header">
+                  <div>
+                    <p id={qrTitleId}>QR สมาชิก</p>
+                    <span>@{memberCode}</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="member-qr-dialog__close"
+                    aria-label="ปิด QR"
+                    onClick={() => qrDialog.current?.close()}
+                  >
+                    <X size={19} aria-hidden="true" />
+                  </button>
+                </header>
+                <QRCodeSVG
+                  value={qr.value}
+                  size={280}
+                  level="H"
+                  includeMargin
+                  className="member-qr-dialog__code"
+                  aria-label={`QR สมาชิก ${memberCode} สำหรับให้พนักงานสแกน`}
+                />
+                <p>แสดง QR นี้ให้พนักงานสแกน</p>
+              </div>
+            </dialog>
+          </>
+        )}
       </div>
     </section>
   );

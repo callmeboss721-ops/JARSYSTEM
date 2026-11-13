@@ -6,7 +6,7 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { createRequire } from "node:module";
-import { calculateCarryPoints } from "../artifacts/api-server/src/lib/points-policy.ts";
+import { calculateCarryPoints, calculateCumulativePointDelta } from "../artifacts/api-server/src/lib/points-policy.ts";
 
 if (process.env.NODE_ENV === "production") throw new Error("Development test only");
 
@@ -14,7 +14,8 @@ const require = createRequire(new URL("../lib/db/package.json", import.meta.url)
 const { Pool } = require("pg");
 const db = new Pool({ connectionString: process.env.DATABASE_URL, max: 2 });
 const base = process.env.LOYALTY_TEST_BASE ||
-  (process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : "http://localhost:80");
+  `http://127.0.0.1:${process.env.LOYALTY_TEST_PORT || "8080"}`;
+const testIp = `2001:db8:${randomUUID().replaceAll("-", "").slice(0, 4)}:${randomUUID().replaceAll("-", "").slice(0, 4)}::1`;
 const memberJar = new Map();
 const staffJar = new Map();
 const ownerJar = new Map();
@@ -22,6 +23,8 @@ const memberCode = `T${randomUUID().replaceAll("-", "").slice(0, 5)}`.toUpperCas
 const phone = `08${String(Math.floor(Math.random() * 100000000)).padStart(8, "0")}`;
 const nickname = `M${randomUUID().replaceAll("-", "").slice(0, 10)}`;
 const unknownLoginCode = `Z${randomUUID().replaceAll("-", "").slice(0, 5)}`.toUpperCase();
+const unknownLoginPhone = `07${String(Number.parseInt(randomUUID().replaceAll("-", "").slice(0, 8), 16) % 100_000_000).padStart(8, "0")}`;
+const unknownLoginNickname = `U${randomUUID().replaceAll("-", "").slice(0, 10)}`;
 const testStartedAt = new Date();
 let memberId;
 let createdMemberId;
@@ -38,7 +41,7 @@ const originalCannabisFeature = (await db.query("select value from jaguar_settin
 async function request(path, { method = "GET", body, jar = memberJar, status = 200 } = {}) {
   const response = await fetch(`${base}/api/loyalty${path}`, {
     method,
-    headers: { "Content-Type": "application/json", Cookie: [...jar].map(([key, value]) => `${key}=${value}`).join("; ") },
+    headers: { "Content-Type": "application/json", "X-Forwarded-For": testIp, Cookie: [...jar].map(([key, value]) => `${key}=${value}`).join("; ") },
     body: body === undefined ? undefined : JSON.stringify(body),
     signal: AbortSignal.timeout(12000),
   });
@@ -58,6 +61,30 @@ try {
   assert.deepEqual(calculateCarryPoints(0, 100), { points: 1, remainder: 0 });
   assert.deepEqual(calculateCarryPoints(60, 50), { points: 1, remainder: 10 });
   assert.deepEqual(calculateCarryPoints(90, 10), { points: 1, remainder: 0 });
+  assert.equal(calculateCumulativePointDelta(180, 210), 1, "correction to 210 baht changes earned sales points by +1");
+  assert.equal(calculateCumulativePointDelta(210, 180), -1, "correction down to 180 baht changes earned sales points by -1");
+  assert.equal(calculateCumulativePointDelta(60, 110), 1, "correction uses cumulative grams across the 100g threshold");
+  assert.equal(calculateCumulativePointDelta(110, 95), -1, "correction below the 100-point threshold removes one earned point");
+  assert.throws(() => calculateCumulativePointDelta(-1, 100), RangeError);
+  for (let cycle = 0; cycle < 50; cycle++) {
+    const previousKratomBaht = cycle * 79 + ((cycle * 37) % 100);
+    const nextKratomBaht = Math.max(0, previousKratomBaht + ((cycle * 73) % 201) - 100);
+    const kratomDelta = calculateCumulativePointDelta(previousKratomBaht, nextKratomBaht);
+    assert.equal(kratomDelta, Math.floor(nextKratomBaht / 100) - Math.floor(previousKratomBaht / 100), `kratom correction simulation ${cycle + 1}`);
+    const kratomAdded = (cycle * 31) % 333;
+    const kratomCarry = calculateCarryPoints(previousKratomBaht % 100, kratomAdded);
+    assert.equal(kratomCarry.points, Math.floor(((previousKratomBaht % 100) + kratomAdded) / 100), `kratom carry simulation ${cycle + 1}`);
+    assert.equal(kratomCarry.remainder, ((previousKratomBaht % 100) + kratomAdded) % 100);
+
+    const previousCannabisGrams = cycle * 83 + ((cycle * 41) % 100);
+    const nextCannabisGrams = Math.max(0, previousCannabisGrams + ((cycle * 67) % 201) - 100);
+    const cannabisDelta = calculateCumulativePointDelta(previousCannabisGrams, nextCannabisGrams);
+    assert.equal(cannabisDelta, Math.floor(nextCannabisGrams / 100) - Math.floor(previousCannabisGrams / 100), `cannabis correction simulation ${cycle + 1}`);
+    const cannabisAdded = (cycle * 43) % 333;
+    const cannabisCarry = calculateCarryPoints(previousCannabisGrams % 100, cannabisAdded);
+    assert.equal(cannabisCarry.points, Math.floor(((previousCannabisGrams % 100) + cannabisAdded) / 100), `cannabis carry simulation ${cycle + 1}`);
+    assert.equal(cannabisCarry.remainder, ((previousCannabisGrams % 100) + cannabisAdded) % 100);
+  }
   const health = await request("/health");
   assert.equal(health.storage, "postgresql");
 
@@ -98,8 +125,8 @@ try {
   assert.equal(card.kratom_remainder_baht, 0);
 
   const failedByCode = await request("/login", { method: "POST", body: { method: "member_code", identifier: unknownLoginCode }, status: 401 });
-  const failedByPhone = await request("/login", { method: "POST", body: { method: "phone", identifier: "0811111111" }, status: 401 });
-  const failedByNickname = await request("/login", { method: "POST", body: { method: "nickname", identifier: "UnknownPerson" }, status: 401 });
+  const failedByPhone = await request("/login", { method: "POST", body: { method: "phone", identifier: unknownLoginPhone }, status: 401 });
+  const failedByNickname = await request("/login", { method: "POST", body: { method: "nickname", identifier: unknownLoginNickname }, status: 401 });
   assert.equal(failedByCode.error, failedByPhone.error);
   assert.equal(failedByPhone.error, failedByNickname.error);
   for (let attempt = 0; attempt < 5; attempt++) {
@@ -248,6 +275,38 @@ try {
   assert.equal(updated.balance, 19);
   assert.equal(updated.lifetime_earned, 39);
   assert.equal(updated.lifetime_redeemed, 20);
+
+  const balanceBeforeCorrection = updated.balance;
+  const kratomSalesForCorrection = await request("/staff/member-sales?code=" + memberCode, { jar: staffJar });
+  const editableSale = kratomSalesForCorrection.find((sale) => sale.editable);
+  assert.ok(editableSale, "staff can list today's editable kratom sales");
+  const correctedSale = await request(`/staff/sales/${editableSale.id}`, {
+    method: "PATCH", jar: staffJar,
+    body: { bottle_count: editableSale.bottle_count, formula: editableSale.formula, reason: "ทดสอบตรวจสอบยอดขาย" },
+  });
+  assert.equal(correctedSale.member.balance, balanceBeforeCorrection);
+  assert.equal(correctedSale.sales.find((sale) => sale.id === editableSale.id).corrected, true);
+
+  const cannabisForCorrection = await request("/staff/cannabis-card?code=" + memberCode, { jar: staffJar });
+  const editableCannabis = cannabisForCorrection.recent_transactions.find((transaction) => transaction.editable && transaction.grams_purchased > 0);
+  assert.ok(editableCannabis, "staff can list today's editable cannabis purchase");
+  const correctedCannabis = await request(`/staff/cannabis-transactions/${editableCannabis.id}`, {
+    method: "PATCH", jar: staffJar,
+    body: { grams: editableCannabis.grams_purchased, reason: "ทดสอบตรวจสอบยอดกรัม" },
+  });
+  assert.equal(correctedCannabis.balance, cannabisForCorrection.balance);
+  assert.equal(correctedCannabis.recent_transactions.find((transaction) => transaction.id === editableCannabis.id).corrected, true);
+
+  const redemptionHistory = await request("/staff/redemptions/recent", { jar: staffJar });
+  const redemptionForCorrection = redemptionHistory.find((redemption) => redemption.id === pending.id);
+  assert.ok(redemptionForCorrection, "staff can list today's redemptions");
+  const correctedRedemption = await request(`/staff/redemptions/${pending.id}`, {
+    method: "PATCH", jar: staffJar,
+    body: { reward_id: redemptionForCorrection.reward_id, reason: "ทดสอบตรวจสอบรายการแลก" },
+  });
+  assert.equal(correctedRedemption.points_spent, redemptionForCorrection.points_spent);
+  assert.equal(correctedRedemption.corrected, true);
+
   await request(`/owner/rewards/${rewardId}`, { method: "PATCH", jar: ownerJar, body: { is_active: false } });
   assert.ok(!(await request("/rewards")).some((reward) => reward.id === rewardId));
 
@@ -265,13 +324,14 @@ try {
   await request("/staff/login", { method: "POST", jar: newStaff, body: { pin: pinStaff } });
   const newOwner = new Map();
   await request("/owner/login", { method: "POST", jar: newOwner, body: { pin: pinOwner } });
-  console.log("PASS: 3 login methods; nickname uniqueness; generic errors and PostgreSQL lock; masked phone; separate kratom/cannabis balances; 100-baht/100-gram carry-over; owner feature flag; idempotency, rewards, staff/owner sessions and PIN rotation.");
+   console.log("PASS: 50 kratom/cannabis accumulation and correction simulations; 3 login methods; nickname uniqueness; generic errors and PostgreSQL lock; masked phone; separate balances; owner feature flag; idempotency, rewards, staff/owner sessions and PIN rotation.");
   } else {
-    console.log("PASS: 3 login methods; nickname uniqueness; generic errors and PostgreSQL lock; masked phone; point carry-over calculations (฿100 and 100 g).");
+    console.log("PASS: 50 kratom/cannabis accumulation and correction simulations; 3 login methods; nickname uniqueness; generic errors and PostgreSQL lock; masked phone; point carry-over calculations (฿100 and 100 g).");
     console.log("SKIP: staff/owner end-to-end scenarios; existing PIN configuration was preserved and not read or modified.");
   }
 } finally {
   for (const id of [memberId, createdMemberId].filter(Boolean)) {
+    await db.query("delete from jaguar_transaction_corrections where member_id=$1", [id]);
     await db.query("delete from jaguar_sales where member_id=$1", [id]);
     await db.query("delete from jaguar_cannabis_transactions where member_id=$1", [id]);
     await db.query("delete from jaguar_cannabis_balances where member_id=$1", [id]);

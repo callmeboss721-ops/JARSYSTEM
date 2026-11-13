@@ -31,6 +31,7 @@ type BankTransfer = {
   note: string;
   recorded_by: Role;
   created_at: string;
+  corrected: boolean;
 };
 type BankToday = {
   business_date: string;
@@ -164,10 +165,13 @@ async function loadToday(client: PoolClient, maxTransfers = 50): Promise<BankTod
     note: string;
     recorded_by: Role;
     created_at: string;
-  }>(`select id,direction,amount_satang::text,note,recorded_by,created_at
-      from jaguar_bank_transfers
-      where business_date=$1 and ($2::uuid is null or account_id=$2)
-      order by created_at desc,id desc limit $3`,
+    corrected: boolean;
+  }>(`select t.id,t.direction,t.amount_satang::text,t.note,t.recorded_by,t.created_at,
+        exists(select 1 from jaguar_transaction_corrections c
+          where c.entity_type='bank_transfer' and c.entity_id=t.id) as corrected
+      from jaguar_bank_transfers t
+      where t.business_date=$1 and ($2::uuid is null or t.account_id=$2)
+      order by t.created_at desc,t.id desc limit $3`,
   [businessDate, account?.id ?? null, maxTransfers])).rows.map((row) => ({
     id: row.id,
     direction: row.direction,
@@ -175,6 +179,7 @@ async function loadToday(client: PoolClient, maxTransfers = 50): Promise<BankTod
     note: row.note,
     recorded_by: row.recorded_by,
     created_at: new Date(row.created_at).toISOString(),
+    corrected: row.corrected,
   }));
   const dailyLimit = account?.daily_limit ?? null;
   const remainingLimit = dailyLimit === null ? null : Number((dailyLimit - receivedTotal).toFixed(2));
@@ -386,6 +391,76 @@ export async function recordBankTransfer(input: {
     await client.query("rollback").catch(() => undefined);
     if (error instanceof LoyaltyError) throw error;
     logStoreFailure("bank_transfer_record", error);
+  } finally {
+    client.release();
+  }
+}
+
+export async function correctStaffBankTransfer(
+  id: string,
+  input: { direction: Direction; amount: string; note?: string; reason: string },
+) {
+  const amountSatang = satang(input.amount);
+  const note = (input.note ?? "").trim();
+  const reason = input.reason.normalize("NFC").trim();
+  if (note.length > 160) fail(400, "หมายเหตุยาวเกินไป");
+  if (Array.from(reason).length < 3 || Array.from(reason).length > 200 || /[\u0000-\u001f\u007f]/.test(reason)) {
+    fail(400, "ระบุเหตุผลการแก้ไข 3–200 ตัวอักษร");
+  }
+
+  const client = await pool.connect();
+  try {
+    await startTransaction(client);
+    const date = await todayDate(client);
+    await lockBusinessDate(client, date);
+    const transfer = (await client.query<{
+      id: string;
+      account_id: string;
+      business_date: string;
+      direction: Direction;
+      amount_satang: string;
+      note: string;
+      is_today: boolean;
+    }>(
+      `select id,account_id,business_date,direction,amount_satang::text,note,
+        (business_date=$2) as is_today
+       from jaguar_bank_transfers where id=$1 for update`,
+      [id, date],
+    )).rows[0];
+    if (!transfer) fail(404, "ไม่พบรายการโอนที่ต้องการแก้ไข");
+    if (!transfer.is_today) fail(409, "แก้ไขได้เฉพาะรายการโอนของวันนี้");
+
+    const before = {
+      direction: transfer.direction,
+      amount: baht(transfer.amount_satang),
+      note: transfer.note,
+    };
+    const after = {
+      direction: input.direction,
+      amount: baht(amountSatang),
+      note,
+    };
+    await client.query(
+      `update jaguar_bank_transfers set direction=$2,amount_satang=$3,note=$4
+       where id=$1`,
+      [id, input.direction, String(amountSatang), note],
+    );
+    await client.query(
+      `insert into jaguar_transaction_corrections
+        (entity_type,entity_id,reason,before_data,after_data,corrected_by)
+       values('bank_transfer',$1,$2,$3::jsonb,$4::jsonb,'staff')`,
+      [id, reason, JSON.stringify(before), JSON.stringify(after)],
+    );
+    const today = await loadToday(client, 30);
+    await client.query("commit");
+    logger.info({ operation: "staff_bank_transfer_corrected", transferId: id }, "Bank transfer corrected");
+    return { today };
+  } catch (error) {
+    await client.query("rollback").catch(() => undefined);
+    if (error instanceof LoyaltyError) throw error;
+    const code = typeof error === "object" && error !== null && "code" in error ? String(error.code) : "";
+    logger.error({ operation: "staff_bank_transfer_correction", databaseCode: /^[A-Z0-9]{5}$/.test(code) ? code : undefined }, "Bank transfer correction failed");
+    throw new LoyaltyError(503, "บันทึกการแก้ไขรายการโอนไม่ได้ กรุณาลองใหม่");
   } finally {
     client.release();
   }

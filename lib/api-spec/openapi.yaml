@@ -292,6 +292,41 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/MemberCard" }
+  /loyalty/staff/member-sales:
+    get:
+      operationId: listStaffSales
+      parameters:
+        - in: query
+          name: code
+          required: true
+          schema: { type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$" }
+      responses:
+        "200":
+          description: Today's sale records for the selected member
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/StaffSale" }
+  /loyalty/staff/sales/{id}:
+    patch:
+      operationId: correctStaffSale
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/StaffSaleCorrectionInput" }
+      responses:
+        "200":
+          description: Corrected sale and recomputed member points
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/StaffSaleCorrectionResult" }
   /loyalty/staff/cannabis-stamp:
     post:
       operationId: addCannabisStamps
@@ -303,6 +338,25 @@ paths:
       responses:
         "200":
           description: One stamp per purchased gram, idempotent by request_id
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CannabisCard" }
+  /loyalty/staff/cannabis-transactions/{id}:
+    patch:
+      operationId: correctStaffCannabisTransaction
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CannabisSaleCorrectionInput" }
+      responses:
+        "200":
+          description: Corrected cannabis purchase and recomputed carried points
           content:
             application/json:
               schema: { $ref: "#/components/schemas/CannabisCard" }
@@ -368,6 +422,25 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/StaffBanking" }
+  /loyalty/staff/banking/transfers/{id}:
+    patch:
+      operationId: correctStaffBankTransfer
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/BankTransferCorrectionInput" }
+      responses:
+        "200":
+          description: Corrected today's transfer and refreshed ledger totals
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/StaffBanking" }
   /loyalty/staff/redemptions:
     get:
       operationId: listPendingRedemptions
@@ -379,6 +452,36 @@ paths:
               schema:
                 type: array
                 items: { $ref: "#/components/schemas/Redemption" }
+  /loyalty/staff/redemptions/recent:
+    get:
+      operationId: listRecentStaffRedemptions
+      responses:
+        "200":
+          description: Today's recent pending and confirmed redemptions
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Redemption" }
+  /loyalty/staff/redemptions/{id}:
+    patch:
+      operationId: correctStaffRedemption
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/StaffRedemptionCorrectionInput" }
+      responses:
+        "200":
+          description: Corrected reward record and adjusted points when already confirmed
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Redemption" }
   /loyalty/staff/redemptions/{id}/confirm:
     post:
       operationId: confirmRedemption
@@ -711,6 +814,8 @@ components:
         grams_purchased: { type: integer, minimum: 0, maximum: 999 }
         reason: { type: string }
         created_at: { type: string }
+        editable: { type: boolean }
+        corrected: { type: boolean }
     Reward:
       type: object
       required: [id, name, description, points_cost, is_active, is_demo]
@@ -740,6 +845,7 @@ components:
         points_spent: { type: integer }
         status: { type: string }
         created_at: { type: string }
+        corrected: { type: boolean }
     MemberAccountInput:
       type: object
       required: [name, member_code, phone, nickname]
@@ -796,6 +902,46 @@ components:
         amount_baht: { type: integer }
         points_awarded: { type: integer }
         created_at: { type: string }
+    StaffSale:
+      type: object
+      required: [id, formula, bottle_count, amount_baht, points_awarded, created_at, editable, corrected]
+      properties:
+        id: { type: string, format: uuid }
+        formula: { $ref: "#/components/schemas/Formula" }
+        bottle_count: { type: integer, minimum: 1, maximum: 999 }
+        amount_baht: { type: integer, minimum: 1 }
+        points_awarded: { type: integer, minimum: 0 }
+        created_at: { type: string }
+        editable: { type: boolean }
+        corrected: { type: boolean }
+    StaffSaleCorrectionInput:
+      type: object
+      required: [bottle_count, formula, reason]
+      properties:
+        bottle_count: { type: integer, minimum: 1, maximum: 999 }
+        formula: { $ref: "#/components/schemas/Formula" }
+        reason: { type: string, minLength: 3, maxLength: 200 }
+    StaffSaleCorrectionResult:
+      type: object
+      required: [member, sales]
+      properties:
+        member: { $ref: "#/components/schemas/MemberCard" }
+        sales:
+          type: array
+          maxItems: 30
+          items: { $ref: "#/components/schemas/StaffSale" }
+    CannabisSaleCorrectionInput:
+      type: object
+      required: [grams, reason]
+      properties:
+        grams: { type: integer, minimum: 1, maximum: 999 }
+        reason: { type: string, minLength: 3, maxLength: 200 }
+    StaffRedemptionCorrectionInput:
+      type: object
+      required: [reward_id, reason]
+      properties:
+        reward_id: { type: string, format: uuid }
+        reason: { type: string, minLength: 3, maxLength: 200 }
     MemberQr:
       type: object
       required: [qr]
@@ -909,6 +1055,15 @@ components:
         note: { type: string }
         recorded_by: { type: string, enum: [staff, owner] }
         created_at: { type: string, format: date-time }
+        corrected: { type: boolean }
+    BankTransferCorrectionInput:
+      type: object
+      required: [direction, amount, reason]
+      properties:
+        direction: { type: string, enum: [in, out] }
+        amount: { type: string, minLength: 1, maxLength: 12, pattern: "^[0-9]+(\\.[0-9]{1,2})?$" }
+        note: { type: string, maxLength: 160 }
+        reason: { type: string, minLength: 3, maxLength: 200 }
     BankToday:
       type: object
       required: [business_date, account, received_total, sent_total, daily_limit, remaining_limit, over_limit, transfers]

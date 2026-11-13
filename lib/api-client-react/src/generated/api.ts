@@ -28,11 +28,13 @@ import type {
   BankAccount,
   BankAccountInput,
   BankAccountUpdateInput,
+  BankTransferCorrectionInput,
   BankTransferInput,
   CannabisCard,
   CannabisPointsFeatureInput,
   CannabisPointsFeatureState,
   CannabisRedeemInput,
+  CannabisSaleCorrectionInput,
   CannabisStampInput,
   CounterRedemption,
   CounterRedemptionInput,
@@ -41,6 +43,7 @@ import type {
   HealthStatus,
   ListOwnerMembersParams,
   ListStaffMembersParams,
+  ListStaffSalesParams,
   LoyaltyHealth,
   MemberAccountInput,
   MemberCard,
@@ -64,6 +67,10 @@ import type {
   SaleInput,
   StaffBanking,
   StaffPinInput,
+  StaffRedemptionCorrectionInput,
+  StaffSale,
+  StaffSaleCorrectionInput,
+  StaffSaleCorrectionResult,
   StaffSecurityState,
   Success
 } from './api.schemas';
@@ -2238,6 +2245,191 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       return useMutation(getRecordStaffSaleMutationOptions(options), queryClient);
     }
 
+export const getListStaffSalesUrl = (params: ListStaffSalesParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/loyalty/staff/member-sales?${stringifiedParams}` : `/api/loyalty/staff/member-sales`
+}
+
+export const listStaffSales = async (params: ListStaffSalesParams, options?: Parameters<typeof customFetch>[1]): Promise<StaffSale[]> => {
+
+  return customFetch<StaffSale[]>(getListStaffSalesUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListStaffSalesQueryKey = (params?: ListStaffSalesParams,) => {
+    return [
+    `/api/loyalty/staff/member-sales`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getListStaffSalesQueryOptions = <TData = Awaited<ReturnType<typeof listStaffSales>>, TError = ErrorType<unknown>>(params: ListStaffSalesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listStaffSales>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListStaffSalesQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listStaffSales>>> = ({ signal }) => listStaffSales(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listStaffSales>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListStaffSalesQueryResult = NonNullable<Awaited<ReturnType<typeof listStaffSales>>>
+export type ListStaffSalesQueryError = ErrorType<unknown>
+
+
+export function useListStaffSales<TData = Awaited<ReturnType<typeof listStaffSales>>, TError = ErrorType<unknown>>(
+ params: ListStaffSalesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listStaffSales>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listStaffSales>>,
+          TError,
+          Awaited<ReturnType<typeof listStaffSales>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListStaffSales<TData = Awaited<ReturnType<typeof listStaffSales>>, TError = ErrorType<unknown>>(
+ params: ListStaffSalesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listStaffSales>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listStaffSales>>,
+          TError,
+          Awaited<ReturnType<typeof listStaffSales>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListStaffSales<TData = Awaited<ReturnType<typeof listStaffSales>>, TError = ErrorType<unknown>>(
+ params: ListStaffSalesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listStaffSales>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useListStaffSales<TData = Awaited<ReturnType<typeof listStaffSales>>, TError = ErrorType<unknown>>(
+ params: ListStaffSalesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listStaffSales>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListStaffSalesQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCorrectStaffSaleUrl = (id: string,) => {
+
+
+
+
+  return `/api/loyalty/staff/sales/${id}`
+}
+
+export const correctStaffSale = async (id: string,
+    staffSaleCorrectionInput: StaffSaleCorrectionInput, options?: Parameters<typeof customFetch>[1]): Promise<StaffSaleCorrectionResult> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<StaffSaleCorrectionResult>(getCorrectStaffSaleUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(staffSaleCorrectionInput)
+  }
+);}
+
+
+
+
+
+export const getCorrectStaffSaleMutationKey = () => ['correctStaffSale'] as const;
+
+export const getCorrectStaffSaleMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof correctStaffSale>>, TError,CorrectStaffSaleMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof correctStaffSale>>, TError,CorrectStaffSaleMutationVariables, TContext> => {
+
+const mutationKey = getCorrectStaffSaleMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof correctStaffSale>>, CorrectStaffSaleMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  correctStaffSale(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CorrectStaffSaleMutationResult = NonNullable<Awaited<ReturnType<typeof correctStaffSale>>>
+    export type CorrectStaffSaleMutationBody = BodyType<StaffSaleCorrectionInput>
+    export type CorrectStaffSaleMutationError = ErrorType<unknown>
+    export type CorrectStaffSaleMutationVariables = {id: string;data: BodyType<StaffSaleCorrectionInput>}
+
+    export const useCorrectStaffSale = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof correctStaffSale>>, TError,CorrectStaffSaleMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof correctStaffSale>>,
+        TError,
+        CorrectStaffSaleMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCorrectStaffSaleMutationOptions(options), queryClient);
+    }
+
 export const getAddCannabisStampsUrl = () => {
 
 
@@ -2318,6 +2510,89 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
         TContext
       > => {
       return useMutation(getAddCannabisStampsMutationOptions(options), queryClient);
+    }
+
+export const getCorrectStaffCannabisTransactionUrl = (id: string,) => {
+
+
+
+
+  return `/api/loyalty/staff/cannabis-transactions/${id}`
+}
+
+export const correctStaffCannabisTransaction = async (id: string,
+    cannabisSaleCorrectionInput: CannabisSaleCorrectionInput, options?: Parameters<typeof customFetch>[1]): Promise<CannabisCard> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<CannabisCard>(getCorrectStaffCannabisTransactionUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(cannabisSaleCorrectionInput)
+  }
+);}
+
+
+
+
+
+export const getCorrectStaffCannabisTransactionMutationKey = () => ['correctStaffCannabisTransaction'] as const;
+
+export const getCorrectStaffCannabisTransactionMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof correctStaffCannabisTransaction>>, TError,CorrectStaffCannabisTransactionMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof correctStaffCannabisTransaction>>, TError,CorrectStaffCannabisTransactionMutationVariables, TContext> => {
+
+const mutationKey = getCorrectStaffCannabisTransactionMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof correctStaffCannabisTransaction>>, CorrectStaffCannabisTransactionMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  correctStaffCannabisTransaction(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CorrectStaffCannabisTransactionMutationResult = NonNullable<Awaited<ReturnType<typeof correctStaffCannabisTransaction>>>
+    export type CorrectStaffCannabisTransactionMutationBody = BodyType<CannabisSaleCorrectionInput>
+    export type CorrectStaffCannabisTransactionMutationError = ErrorType<unknown>
+    export type CorrectStaffCannabisTransactionMutationVariables = {id: string;data: BodyType<CannabisSaleCorrectionInput>}
+
+    export const useCorrectStaffCannabisTransaction = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof correctStaffCannabisTransaction>>, TError,CorrectStaffCannabisTransactionMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof correctStaffCannabisTransaction>>,
+        TError,
+        CorrectStaffCannabisTransactionMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCorrectStaffCannabisTransactionMutationOptions(options), queryClient);
     }
 
 export const getRedeemCannabisAtCounterUrl = () => {
@@ -2756,6 +3031,89 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       return useMutation(getRecordStaffBankTransferMutationOptions(options), queryClient);
     }
 
+export const getCorrectStaffBankTransferUrl = (id: string,) => {
+
+
+
+
+  return `/api/loyalty/staff/banking/transfers/${id}`
+}
+
+export const correctStaffBankTransfer = async (id: string,
+    bankTransferCorrectionInput: BankTransferCorrectionInput, options?: Parameters<typeof customFetch>[1]): Promise<StaffBanking> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<StaffBanking>(getCorrectStaffBankTransferUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(bankTransferCorrectionInput)
+  }
+);}
+
+
+
+
+
+export const getCorrectStaffBankTransferMutationKey = () => ['correctStaffBankTransfer'] as const;
+
+export const getCorrectStaffBankTransferMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof correctStaffBankTransfer>>, TError,CorrectStaffBankTransferMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof correctStaffBankTransfer>>, TError,CorrectStaffBankTransferMutationVariables, TContext> => {
+
+const mutationKey = getCorrectStaffBankTransferMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof correctStaffBankTransfer>>, CorrectStaffBankTransferMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  correctStaffBankTransfer(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CorrectStaffBankTransferMutationResult = NonNullable<Awaited<ReturnType<typeof correctStaffBankTransfer>>>
+    export type CorrectStaffBankTransferMutationBody = BodyType<BankTransferCorrectionInput>
+    export type CorrectStaffBankTransferMutationError = ErrorType<unknown>
+    export type CorrectStaffBankTransferMutationVariables = {id: string;data: BodyType<BankTransferCorrectionInput>}
+
+    export const useCorrectStaffBankTransfer = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof correctStaffBankTransfer>>, TError,CorrectStaffBankTransferMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof correctStaffBankTransfer>>,
+        TError,
+        CorrectStaffBankTransferMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCorrectStaffBankTransferMutationOptions(options), queryClient);
+    }
+
 export const getListPendingRedemptionsUrl = () => {
 
 
@@ -2850,6 +3208,184 @@ export function useListPendingRedemptions<TData = Awaited<ReturnType<typeof list
 
 
 
+
+export const getListRecentStaffRedemptionsUrl = () => {
+
+
+
+
+  return `/api/loyalty/staff/redemptions/recent`
+}
+
+export const listRecentStaffRedemptions = async ( options?: Parameters<typeof customFetch>[1]): Promise<Redemption[]> => {
+
+  return customFetch<Redemption[]>(getListRecentStaffRedemptionsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListRecentStaffRedemptionsQueryKey = () => {
+    return [
+    `/api/loyalty/staff/redemptions/recent`
+    ] as const;
+    }
+
+
+export const getListRecentStaffRedemptionsQueryOptions = <TData = Awaited<ReturnType<typeof listRecentStaffRedemptions>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listRecentStaffRedemptions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListRecentStaffRedemptionsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listRecentStaffRedemptions>>> = ({ signal }) => listRecentStaffRedemptions({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listRecentStaffRedemptions>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListRecentStaffRedemptionsQueryResult = NonNullable<Awaited<ReturnType<typeof listRecentStaffRedemptions>>>
+export type ListRecentStaffRedemptionsQueryError = ErrorType<unknown>
+
+
+export function useListRecentStaffRedemptions<TData = Awaited<ReturnType<typeof listRecentStaffRedemptions>>, TError = ErrorType<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listRecentStaffRedemptions>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listRecentStaffRedemptions>>,
+          TError,
+          Awaited<ReturnType<typeof listRecentStaffRedemptions>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListRecentStaffRedemptions<TData = Awaited<ReturnType<typeof listRecentStaffRedemptions>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listRecentStaffRedemptions>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listRecentStaffRedemptions>>,
+          TError,
+          Awaited<ReturnType<typeof listRecentStaffRedemptions>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListRecentStaffRedemptions<TData = Awaited<ReturnType<typeof listRecentStaffRedemptions>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listRecentStaffRedemptions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useListRecentStaffRedemptions<TData = Awaited<ReturnType<typeof listRecentStaffRedemptions>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listRecentStaffRedemptions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListRecentStaffRedemptionsQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCorrectStaffRedemptionUrl = (id: string,) => {
+
+
+
+
+  return `/api/loyalty/staff/redemptions/${id}`
+}
+
+export const correctStaffRedemption = async (id: string,
+    staffRedemptionCorrectionInput: StaffRedemptionCorrectionInput, options?: Parameters<typeof customFetch>[1]): Promise<Redemption> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<Redemption>(getCorrectStaffRedemptionUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(staffRedemptionCorrectionInput)
+  }
+);}
+
+
+
+
+
+export const getCorrectStaffRedemptionMutationKey = () => ['correctStaffRedemption'] as const;
+
+export const getCorrectStaffRedemptionMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof correctStaffRedemption>>, TError,CorrectStaffRedemptionMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof correctStaffRedemption>>, TError,CorrectStaffRedemptionMutationVariables, TContext> => {
+
+const mutationKey = getCorrectStaffRedemptionMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof correctStaffRedemption>>, CorrectStaffRedemptionMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  correctStaffRedemption(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CorrectStaffRedemptionMutationResult = NonNullable<Awaited<ReturnType<typeof correctStaffRedemption>>>
+    export type CorrectStaffRedemptionMutationBody = BodyType<StaffRedemptionCorrectionInput>
+    export type CorrectStaffRedemptionMutationError = ErrorType<unknown>
+    export type CorrectStaffRedemptionMutationVariables = {id: string;data: BodyType<StaffRedemptionCorrectionInput>}
+
+    export const useCorrectStaffRedemption = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof correctStaffRedemption>>, TError,CorrectStaffRedemptionMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof correctStaffRedemption>>,
+        TError,
+        CorrectStaffRedemptionMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCorrectStaffRedemptionMutationOptions(options), queryClient);
+    }
 
 export const getConfirmRedemptionUrl = (id: string,) => {
 

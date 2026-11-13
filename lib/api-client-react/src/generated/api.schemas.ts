@@ -112,6 +112,8 @@ export interface CannabisTransaction {
   grams_purchased: number;
   reason: string;
   created_at: string;
+  editable?: boolean;
+  corrected?: boolean;
 }
 
 export interface CannabisCard {
@@ -177,6 +179,7 @@ export interface Redemption {
   points_spent: number;
   status: string;
   created_at: string;
+  corrected?: boolean;
 }
 
 export interface MemberAccountInput {
@@ -256,6 +259,65 @@ export interface Sale {
   amount_baht: number;
   points_awarded: number;
   created_at: string;
+}
+
+export interface StaffSale {
+  id: string;
+  formula: Formula;
+  /**
+     * @minimum 1
+     * @maximum 999
+     */
+  bottle_count: number;
+  /** @minimum 1 */
+  amount_baht: number;
+  /** @minimum 0 */
+  points_awarded: number;
+  created_at: string;
+  editable: boolean;
+  corrected: boolean;
+}
+
+export interface StaffSaleCorrectionInput {
+  /**
+     * @minimum 1
+     * @maximum 999
+     */
+  bottle_count: number;
+  formula: Formula;
+  /**
+     * @minLength 3
+     * @maxLength 200
+     */
+  reason: string;
+}
+
+export interface StaffSaleCorrectionResult {
+  member: MemberCard;
+  /** @maxItems 30 */
+  sales: StaffSale[];
+}
+
+export interface CannabisSaleCorrectionInput {
+  /**
+     * @minimum 1
+     * @maximum 999
+     */
+  grams: number;
+  /**
+     * @minLength 3
+     * @maxLength 200
+     */
+  reason: string;
+}
+
+export interface StaffRedemptionCorrectionInput {
+  reward_id: string;
+  /**
+     * @minLength 3
+     * @maxLength 200
+     */
+  reason: string;
 }
 
 export interface MemberQr {
@@ -386,6 +448,32 @@ export interface BankTransfer {
   note: string;
   recorded_by: BankTransferRecordedBy;
   created_at: string;
+  corrected?: boolean;
+}
+
+export type BankTransferCorrectionInputDirection = typeof BankTransferCorrectionInputDirection[keyof typeof BankTransferCorrectionInputDirection];
+
+
+export const BankTransferCorrectionInputDirection = {
+  in: 'in',
+  out: 'out',
+} as const;
+
+export interface BankTransferCorrectionInput {
+  direction: BankTransferCorrectionInputDirection;
+  /**
+     * @minLength 1
+     * @maxLength 12
+     * @pattern ^[0-9]+(\.[0-9]{1,2})?$
+     */
+  amount: string;
+  /** @maxLength 160 */
+  note?: string;
+  /**
+     * @minLength 3
+     * @maxLength 200
+     */
+  reason: string;
 }
 
 export interface BankToday {
@@ -489,6 +577,13 @@ export type ListStaffMembersParams = {
  * @maxLength 64
  */
 q?: string;
+};
+
+export type ListStaffSalesParams = {
+/**
+ * @pattern ^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$
+ */
+code: string;
 };
 
 export type ListOwnerMembersParams = {

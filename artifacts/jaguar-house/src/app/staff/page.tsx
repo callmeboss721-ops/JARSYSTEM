@@ -11,6 +11,17 @@ import { StaffBanking } from "@/components/brand/banking";
 import { STAMPS } from "@/components/brand/loyalty-card";
 import { STAFF, api, bundlePrice, cleanCode, clearScope, codePattern, errorText, formulaLabels, isBottleCount, json, statusOf, type Formula, type MemberCardData, type RedemptionData } from "@/components/brand/loyalty-api";
 import { getGetCannabisMemberCardQueryKey, getGetStaffCannabisCardQueryKey, getGetStaffSecurityQueryKey, useGetStaffSecurity, useGetStaffCannabisCard, useAddCannabisStamps, useRedeemCannabisAtCounter } from "@workspace/api-client-react";
+import {
+  getListRecentStaffRedemptionsQueryKey,
+  getListStaffRewardsQueryKey,
+  getListStaffSalesQueryKey,
+  useCorrectStaffCannabisTransaction,
+  useCorrectStaffRedemption,
+  useCorrectStaffSale,
+  useListRecentStaffRedemptions,
+  useListStaffRewards,
+  useListStaffSales,
+} from "@workspace/api-client-react";
 
 type Tab = "counter" | "members" | "open" | "banking" | "settings";
 const TABS: [Tab, string, BrandIconName][] = [["counter", "ขาย / แลก", "lightning"], ["members", "สมาชิก", "members"], ["open", "เปิดบัญชี", "add"], ["banking", "บัญชี / โอน", "banking"], ["settings", "ตั้งค่า PIN", "security"]];
@@ -40,14 +51,33 @@ export default function StaffPage() {
   const [grams, setGrams] = useState("");
   const [gramsError, setGramsError] = useState("");
   const [cannabisRedeemId, setCannabisRedeemId] = useState<string | null>(null);
+  const [editingSale, setEditingSale] = useState<{ id: string; bottle_count: string; formula: Formula; reason: string } | null>(null);
+  const [editingCannabis, setEditingCannabis] = useState<{ id: string; grams: string; reason: string } | null>(null);
+  const [editingRedemption, setEditingRedemption] = useState<{ id: string; reward_id: string; reason: string } | null>(null);
   const video = useRef<HTMLVideoElement>(null);
   const controls = useRef<{ stop: () => void } | null>(null);
   const cannabisStampRequest = useRef<{ signature: string; id: string } | null>(null);
+  const scanResult = useRef<(text: string) => void>(() => undefined);
 
   const staffSecurityKey = getGetStaffSecurityQueryKey();
   const security = useGetStaffSecurity({ query: { queryKey: staffSecurityKey, enabled: auth === true, retry: false } });
   const queue = useQuery<RedemptionData[]>({ queryKey: [`${STAFF}/redemptions`], queryFn: () => api(`${STAFF}/redemptions`), enabled: auth === true, refetchInterval: 12000 });
+  const recentRedemptions = useListRecentStaffRedemptions({
+    query: { queryKey: getListRecentStaffRedemptionsQueryKey(), enabled: auth === true && tab === "counter", retry: false, refetchInterval: 15000 },
+  });
+  const staffRewards = useListStaffRewards({
+    query: { queryKey: getListStaffRewardsQueryKey(), enabled: auth === true && tab === "counter", retry: false },
+  });
   const members = useQuery<MemberCardData[]>({ queryKey: [`${STAFF}/members`, query], queryFn: () => api(`${STAFF}/members?q=${encodeURIComponent(query)}`), enabled: auth === true && tab === "members" });
+  const salesParams = { code: member?.member_code ?? "" };
+  const sales = useListStaffSales(salesParams, {
+    query: {
+      queryKey: getListStaffSalesQueryKey(salesParams),
+      enabled: auth === true && tab === "counter" && counterMode === "kratom" && Boolean(member),
+      retry: false,
+      refetchInterval: 15000,
+    },
+  });
   const visibleMembers = (members.data ?? []).filter((m) => !m.is_demo);
   const cannabisParams = cannabisLookup.startsWith("JAGUAR1:")
     ? { qr_token: cannabisLookup }
@@ -59,6 +89,9 @@ export default function StaffPage() {
   const cannabisCard = cannabisCardQuery.data;
   const addCannabisStamps = useAddCannabisStamps();
   const redeemCannabis = useRedeemCannabisAtCounter();
+  const correctSale = useCorrectStaffSale();
+  const correctCannabis = useCorrectStaffCannabisTransaction();
+  const correctRedemption = useCorrectStaffRedemption();
 
   useEffect(() => {
     void api(`${STAFF}/security`).then(() => setAuth(true)).catch((e) => {
@@ -71,7 +104,7 @@ export default function StaffPage() {
     return () => controls.current?.stop();
   }, []);
 
-  const signOutLocal = () => { setAuth(false); setMember(null); clearScope(qc, "staff"); };
+  const signOutLocal = () => { setAuth(false); setMember(null); setScanning(false); clearScope(qc, "staff"); };
   const login = async (e: FormEvent) => {
     e.preventDefault();
     if (!/^\d{4,12}$/.test(pin)) { setErr("PIN พนักงานเป็นตัวเลข 4–12 หลัก"); return; }
@@ -96,6 +129,19 @@ export default function StaffPage() {
       setMember(result);
     } catch (e) { setErr(errorText(e)); }
   };
+  useEffect(() => {
+    scanResult.current = (text) => {
+      if (counterMode === "cannabis") {
+        setCannabisSearch(text);
+        setCannabisLookup(text);
+        setErr("");
+        setMsg("");
+      } else {
+        setLookup(text);
+        void find(text);
+      }
+    };
+  }, [counterMode, find]);
   const lookupCannabis = (e: FormEvent) => {
     e.preventDefault();
     setErr(""); setMsg(""); setCannabisRedeemId(null); setCannabisLookup(cannabisSearch.trim());
@@ -140,20 +186,55 @@ export default function StaffPage() {
       ]);
     } catch (e) { setErr(`${errorText(e)} · ลองยืนยันอีกครั้งได้อย่างปลอดภัย`); }
   };
-  const startCamera = async () => {
-    setScanError(""); setScanning(true);
-    try {
-      const { BrowserMultiFormatReader } = await import("@zxing/browser");
-      const reader = new BrowserMultiFormatReader();
-      controls.current = await reader.decodeFromVideoDevice(undefined, video.current!, (result) => {
-        if (result) {
-          const text = result.getText(); controls.current?.stop(); setScanning(false);
-          if (counterMode === "cannabis") { setCannabisSearch(text); setCannabisLookup(text); setErr(""); setMsg(""); }
-          else { setLookup(text); void find(text); }
+  useEffect(() => {
+    if (!scanning || tab !== "counter" || auth !== true) return;
+    let cancelled = false;
+    let handled = false;
+    const videoElement = video.current;
+    if (!videoElement) {
+      setScanError("ยังเปิดหน้ากล้องไม่สำเร็จ กรุณาลองอีกครั้ง");
+      setScanning(false);
+      return;
+    }
+    const start = async () => {
+      try {
+        const { BrowserMultiFormatReader } = await import("@zxing/browser");
+        if (cancelled) return;
+        const reader = new BrowserMultiFormatReader();
+        const scanner = await reader.decodeFromConstraints(
+          { video: { facingMode: { ideal: "environment" } }, audio: false },
+          videoElement,
+          (result) => {
+            if (!result || handled || cancelled) return;
+            handled = true;
+            controls.current?.stop();
+            controls.current = null;
+            setScanning(false);
+            scanResult.current(result.getText());
+          },
+        );
+        if (cancelled) {
+          scanner.stop();
+          return;
         }
-      });
-    } catch { setScanning(false); setScanError("เปิดกล้องไม่ได้หรือไม่ได้รับอนุญาต กรุณาค้นหาด้วยรหัสสมาชิก"); }
-  };
+        controls.current = scanner;
+      } catch {
+        if (!cancelled) {
+          controls.current?.stop();
+          controls.current = null;
+          setScanning(false);
+          setScanError("เปิดกล้องไม่ได้หรือไม่ได้รับอนุญาต กรุณาค้นหาด้วยรหัสสมาชิก");
+        }
+      }
+    };
+    void start();
+    return () => {
+      cancelled = true;
+      controls.current?.stop();
+      controls.current = null;
+    };
+  }, [scanning, tab, auth]);
+  const startCamera = () => { setScanError(""); setScanning((current) => !current); };
   const record = async (e: FormEvent) => {
     e.preventDefault();
     if (!member) return;
@@ -183,6 +264,69 @@ export default function StaffPage() {
       setRedeemId(null); setMsg("แลกรับฟรี 1 ขวดเรียบร้อย หัก 10 แต้มแล้ว");
       void qc.invalidateQueries({ queryKey: [`${STAFF}/members`] });
     } catch (e) { setErr(`${errorText(e)} · กดยืนยันอีกครั้งได้อย่างปลอดภัย ระบบจะไม่หักซ้ำ`); } finally { setBusy(false); }
+  };
+  const saveSaleCorrection = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!editingSale || !member) return;
+    if (!isBottleCount(editingSale.bottle_count) || editingSale.reason.trim().length < 3) {
+      setErr("ตรวจจำนวนขวดและระบุเหตุผลการแก้ไขอย่างน้อย 3 ตัวอักษร");
+      return;
+    }
+    setBusy(true); setErr(""); setMsg("");
+    try {
+      const updated = await correctSale.mutateAsync({
+        id: editingSale.id,
+        data: { bottle_count: Number(editingSale.bottle_count), formula: editingSale.formula, reason: editingSale.reason.trim() },
+      });
+      setMember(updated.member as MemberCardData);
+      setEditingSale(null);
+      setMsg("แก้ไขรายการซื้อแล้ว · ระบบคำนวณแต้มและเศษสะสมใหม่");
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: getListStaffSalesQueryKey(salesParams) }),
+        qc.invalidateQueries({ queryKey: [`${STAFF}/members`] }),
+      ]);
+    } catch (e) { setErr(errorText(e)); }
+    finally { setBusy(false); }
+  };
+  const saveCannabisCorrection = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!editingCannabis || !/^\d{1,3}$/.test(editingCannabis.grams) || Number(editingCannabis.grams) < 1 || Number(editingCannabis.grams) > 999 || editingCannabis.reason.trim().length < 3) {
+      setErr("ตรวจจำนวนกรัมและระบุเหตุผลการแก้ไขอย่างน้อย 3 ตัวอักษร");
+      return;
+    }
+    setErr(""); setMsg("");
+    try {
+      await correctCannabis.mutateAsync({
+        id: editingCannabis.id,
+        data: { grams: Number(editingCannabis.grams), reason: editingCannabis.reason.trim() },
+      });
+      setEditingCannabis(null);
+      setMsg("แก้ไขรายการซื้อกัญชาแล้ว · ระบบคำนวณแต้มและเศษสะสมใหม่");
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: getGetStaffCannabisCardQueryKey(cannabisParams) }),
+        qc.invalidateQueries({ queryKey: getGetCannabisMemberCardQueryKey() }),
+      ]);
+    } catch (e) { setErr(errorText(e)); }
+  };
+  const saveRedemptionCorrection = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!editingRedemption || !editingRedemption.reward_id || editingRedemption.reason.trim().length < 3) {
+      setErr("เลือกรางวัลและระบุเหตุผลการแก้ไขอย่างน้อย 3 ตัวอักษร");
+      return;
+    }
+    setErr(""); setMsg("");
+    try {
+      await correctRedemption.mutateAsync({
+        id: editingRedemption.id,
+        data: { reward_id: editingRedemption.reward_id, reason: editingRedemption.reason.trim() },
+      });
+      setEditingRedemption(null);
+      setMsg("แก้ไขรายการแลกรางวัลแล้ว · ปรับแต้มให้ตรงกับรางวัลที่เลือก");
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: getListRecentStaffRedemptionsQueryKey() }),
+        qc.invalidateQueries({ queryKey: [`${STAFF}/redemptions`] }),
+      ]);
+    } catch (e) { setErr(errorText(e)); }
   };
   const create = async (e: FormEvent) => {
     e.preventDefault();
@@ -232,7 +376,7 @@ export default function StaffPage() {
         {msg && <p role="status" className="rounded-xl border border-[rgba(47,217,138,.35)] bg-[rgba(47,217,138,.08)] p-3 text-sm text-[var(--emerald-2)]">{msg}</p>}
         {err && <p role="alert" className="field-error">{err}</p>}
         <nav className="pill-switch grid grid-cols-2 min-[480px]:grid-cols-3 lg:grid-cols-5 p-1 gap-1 !rounded-[22px]" aria-label="พื้นที่พนักงาน">
-          {TABS.map(([id, label, icon]) => <button key={id} type="button" className="tab !px-2 !rounded-[18px] flex items-center justify-center gap-2" aria-pressed={tab === id} onClick={() => { setTab(id); setErr(""); }}><BrandIcon name={icon} size={18} tone={tab === id ? "gold" : "neutral"} />{label}</button>)}
+          {TABS.map(([id, label, icon]) => <button key={id} type="button" className="tab !px-2 !rounded-[18px] flex items-center justify-center gap-2" aria-pressed={tab === id} onClick={() => { setTab(id); setScanning(false); setErr(""); }}><BrandIcon name={icon} size={18} tone={tab === id ? "gold" : "neutral"} />{label}</button>)}
         </nav>
 
         {tab === "counter" && <div className="space-y-4">
@@ -248,7 +392,7 @@ export default function StaffPage() {
               <div className="field flex-1"><label htmlFor="lookup">รหัสสมาชิก</label><input id="lookup" className="input uppercase" value={lookup} onChange={(e) => setLookup(e.target.value)} autoComplete="off" /></div>
               <button className="btn btn-ghost">ค้นหา</button>
             </form>
-            <button type="button" className="btn btn-ghost w-full mt-2" onClick={startCamera}>เปิดกล้องสแกน QR</button>
+            <button type="button" className="btn btn-ghost w-full mt-2" onClick={startCamera}>{scanning ? "ปิดกล้องสแกน QR" : "เปิดกล้องสแกน QR"}</button>
             {scanning && <><video ref={video} className="w-full rounded-xl aspect-video bg-black mt-3" aria-label="ภาพจากกล้องสำหรับสแกน" /><button type="button" className="btn btn-ghost w-full mt-2" onClick={() => { controls.current?.stop(); setScanning(false); }}>ปิดกล้อง</button></>}
             {scanError && <p role="alert" className="field-error">{scanError}</p>}
             {member && <div className="mt-5">
@@ -283,12 +427,64 @@ export default function StaffPage() {
                 </div>
                 <button className="btn btn-neon w-full" disabled={busy}>บันทึกยอดซื้อและแต้ม</button>
               </form>
+              <section className="staff-correction-list mt-5" aria-label="รายการซื้อวันนี้">
+                <div className="flex items-center justify-between gap-2"><h3>รายการซื้อวันนี้</h3><span>{sales.data?.length ?? 0}</span></div>
+                {sales.isLoading ? <div className="mt-3"><LoadingState label="กำลังโหลดรายการซื้อ" compact /></div>
+                  : sales.isError ? <div className="mt-3"><ErrorState message={errorText(sales.error)} onRetry={() => void sales.refetch()} retrying={sales.isFetching} /></div>
+                    : !sales.data?.length ? <div className="mt-3"><EmptyState title="วันนี้ยังไม่มีรายการซื้อ" /></div>
+                      : <ul className="staff-correction-list__items">{sales.data.map((sale) => (
+                        <li key={sale.id}>
+                          <div className="staff-correction-list__summary">
+                            <div><strong>{sale.bottle_count} ขวด · ฿{sale.amount_baht.toLocaleString("th-TH")}</strong><p>{formulaLabels[sale.formula]} · +{sale.points_awarded} แต้ม · {new Date(sale.created_at).toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" })}</p></div>
+                            <div className="staff-correction-list__actions">
+                              {sale.corrected && <span className="staff-correction-list__badge">แก้แล้ว</span>}
+                              {sale.editable && <button type="button" className="btn btn-ghost !min-h-11 !px-3 text-sm" onClick={() => setEditingSale({ id: sale.id, bottle_count: String(sale.bottle_count), formula: sale.formula, reason: "" })}>แก้ไข</button>}
+                            </div>
+                          </div>
+                          {editingSale?.id === sale.id && <form className="staff-correction-form" onSubmit={saveSaleCorrection}>
+                            <div className="staff-correction-form__fields">
+                              <div className="field"><label htmlFor={`sale-count-${sale.id}`}>จำนวนขวด</label><input id={`sale-count-${sale.id}`} className="input" inputMode="numeric" value={editingSale.bottle_count} onChange={(e) => setEditingSale({ ...editingSale, bottle_count: e.target.value.replace(/\D/g, "").slice(0, 3) })} /></div>
+                              <div className="field"><label htmlFor={`sale-formula-${sale.id}`}>สูตร</label><select id={`sale-formula-${sale.id}`} className="input" value={editingSale.formula} onChange={(e) => setEditingSale({ ...editingSale, formula: e.target.value as Formula })}><option value="red">แดง · Original</option><option value="silver">ฟ้า · Refresh</option><option value="gold">ทอง · Premium</option></select></div>
+                            </div>
+                            <div className="field"><label htmlFor={`sale-reason-${sale.id}`}>เหตุผลการแก้ไข</label><input id={`sale-reason-${sale.id}`} className="input" maxLength={200} value={editingSale.reason} onChange={(e) => setEditingSale({ ...editingSale, reason: e.target.value })} required /></div>
+                            <div className="grid grid-cols-2 gap-2"><button type="button" className="btn btn-ghost" onClick={() => setEditingSale(null)}>ยกเลิก</button><button className="btn btn-neon" disabled={correctSale.isPending || busy}>{correctSale.isPending ? "กำลังแก้ไข…" : "บันทึกรายการ"}</button></div>
+                          </form>}
+                        </li>
+                      ))}</ul>}
+              </section>
             </div>}
           </section>
           <section className="panel p-5 sm:p-6">
             <h2 className="font-display text-xl font-semibold">รายการแลกรอส่งมอบ</h2>
             {queue.isLoading ? <div className="mt-4"><LoadingState label="กำลังโหลดรายการแลกรางวัล" compact /></div> : queue.isError ? <ErrorState message={errorText(queue.error)} onRetry={() => void queue.refetch()} retrying={queue.isFetching} /> : !queue.data?.length ? <div className="mt-4"><EmptyState title="ไม่มีรายการรอยืนยัน" /></div>
             : <ul className="list-none p-0 mt-4 space-y-3">{queue.data.map((r) => <li key={r.id} className="rounded-xl border border-[var(--line-2)] p-4"><p className="font-semibold">{r.reward_name}</p><p className="text-sm text-[var(--muted)]">{r.member_nickname || r.member_code} · {r.phone_last4 ? `ลงท้าย ${r.phone_last4} · ` : ""}{r.points_spent} แต้ม</p><button className="btn btn-gold w-full mt-3" disabled={busy} onClick={async () => { setBusy(true); try { await api(`${STAFF}/redemptions/${encodeURIComponent(r.id)}/confirm`, json("POST", {})); setMsg("ยืนยันการส่งมอบรางวัลแล้ว"); await queue.refetch(); } catch (e) { setErr(errorText(e)); } finally { setBusy(false); } }}>ยืนยันส่งมอบ</button></li>)}</ul>}
+            <section className="staff-correction-list mt-6" aria-label="รายการแลกรางวัลวันนี้">
+              <div className="flex items-center justify-between gap-2"><h3>รายการแลกรางวัลวันนี้</h3><span>{recentRedemptions.data?.length ?? 0}</span></div>
+              {recentRedemptions.isLoading ? <div className="mt-3"><LoadingState label="กำลังโหลดรายการแลกล่าสุด" compact /></div>
+                : recentRedemptions.isError ? <div className="mt-3"><ErrorState message={errorText(recentRedemptions.error)} onRetry={() => void recentRedemptions.refetch()} retrying={recentRedemptions.isFetching} /></div>
+                  : !recentRedemptions.data?.length ? <div className="mt-3"><EmptyState title="วันนี้ยังไม่มีรายการแลก" /></div>
+                    : <ul className="staff-correction-list__items">{recentRedemptions.data.map((redemption) => (
+                      <li key={redemption.id}>
+                        <div className="staff-correction-list__summary">
+                          <div><strong>{redemption.reward_name}</strong><p>{redemption.member_nickname || redemption.member_code} · {redemption.phone_last4 ? `ลงท้าย ${redemption.phone_last4} · ` : ""}{redemption.points_spent} แต้ม · {redemption.status === "pending" ? "รอยืนยัน" : "ยืนยันแล้ว"}</p></div>
+                          <div className="staff-correction-list__actions">
+                            {redemption.corrected && <span className="staff-correction-list__badge">แก้แล้ว</span>}
+                            <button type="button" className="btn btn-ghost !min-h-11 !px-3 text-sm" onClick={() => setEditingRedemption({ id: redemption.id, reward_id: redemption.reward_id, reason: "" })}>แก้ไข</button>
+                          </div>
+                        </div>
+                        {editingRedemption?.id === redemption.id && <form className="staff-correction-form" onSubmit={saveRedemptionCorrection}>
+                          {staffRewards.isLoading && <LoadingState label="กำลังโหลดรางวัล" compact />}
+                          {staffRewards.isError && <ErrorState message={errorText(staffRewards.error)} onRetry={() => void staffRewards.refetch()} retrying={staffRewards.isFetching} />}
+                          <div className="field"><label htmlFor={`redemption-reward-${redemption.id}`}>รางวัลที่ถูกต้อง</label><select id={`redemption-reward-${redemption.id}`} className="input" value={editingRedemption.reward_id} onChange={(e) => setEditingRedemption({ ...editingRedemption, reward_id: e.target.value })}>
+                            {!staffRewards.data?.some((reward) => reward.id === editingRedemption.reward_id) && <option value={editingRedemption.reward_id}>{redemption.reward_name} · ปิดใช้งาน</option>}
+                            {staffRewards.data?.map((reward) => <option key={reward.id} value={reward.id}>{reward.name} · {reward.points_cost} แต้ม</option>)}
+                          </select></div>
+                          <div className="field"><label htmlFor={`redemption-reason-${redemption.id}`}>เหตุผลการแก้ไข</label><input id={`redemption-reason-${redemption.id}`} className="input" maxLength={200} value={editingRedemption.reason} onChange={(e) => setEditingRedemption({ ...editingRedemption, reason: e.target.value })} required /></div>
+                          <div className="grid grid-cols-2 gap-2"><button type="button" className="btn btn-ghost" onClick={() => setEditingRedemption(null)}>ยกเลิก</button><button className="btn btn-neon" disabled={correctRedemption.isPending || staffRewards.isLoading || staffRewards.isError || !staffRewards.data?.length}>{correctRedemption.isPending ? "กำลังแก้ไข…" : "บันทึกรายการ"}</button></div>
+                        </form>}
+                      </li>
+                    ))}</ul>}
+            </section>
           </section>
           </div>}
           {counterMode === "cannabis" && <div className="grid gap-5 lg:grid-cols-2 items-start">
@@ -298,7 +494,7 @@ export default function StaffPage() {
                 <div className="field flex-1"><label htmlFor="cannabis-lookup">รหัสสมาชิกหรือ QR</label><input id="cannabis-lookup" className="input uppercase" value={cannabisSearch} onChange={(e) => setCannabisSearch(e.target.value)} autoComplete="off" /></div>
                 <button className="btn btn-ghost" disabled={cannabisCardQuery.isFetching}>ค้นหา</button>
               </form>
-              <button type="button" className="btn btn-ghost w-full mt-2" onClick={startCamera}>เปิดกล้องสแกน QR</button>
+              <button type="button" className="btn btn-ghost w-full mt-2" onClick={startCamera}>{scanning ? "ปิดกล้องสแกน QR" : "เปิดกล้องสแกน QR"}</button>
               {scanning && <><video ref={video} className="w-full rounded-xl aspect-video bg-black mt-3" aria-label="ภาพจากกล้องสำหรับสแกน" /><button type="button" className="btn btn-ghost w-full mt-2" onClick={() => { controls.current?.stop(); setScanning(false); }}>ปิดกล้อง</button></>}
               {scanError && <p role="alert" className="field-error">{scanError}</p>}
               {cannabisCardQuery.isLoading && cannabisLookup && <div className="mt-4"><LoadingState label="กำลังค้นหาบัตรกัญชา" compact /></div>}
@@ -321,7 +517,16 @@ export default function StaffPage() {
               <p className="eyebrow">Separate ledger</p><h2 className="font-display text-xl font-semibold">รายการแต้มกัญชาล่าสุด</h2>
               {!cannabisCard ? <div className="mt-4"><EmptyState title="ยังไม่ได้เลือกสมาชิก" body="รายการแต้มจะแสดงเมื่อค้นหาบัตร" /></div>
                 : !cannabisCard.recent_transactions.length ? <div className="mt-4"><EmptyState title="ยังไม่มีรายการแต้ม" /></div>
-                : <ul className="list-none p-0 mt-3 divide-y divide-[var(--line)]">{cannabisCard.recent_transactions.map((tx) => <li key={tx.id} className="py-3 flex items-center gap-3"><span className={`cannabis-delta ${tx.delta < 0 ? "is-out" : ""}`}>{tx.delta > 0 ? `+${tx.delta}` : tx.delta}</span><div className="min-w-0 flex-1"><p className="text-sm break-words">{tx.reason}</p><p className="text-xs text-[var(--muted)]">{new Date(tx.created_at).toLocaleString("th-TH")} {tx.grams_purchased > 0 ? `· ${tx.grams_purchased} กรัม` : ""}</p></div></li>)}</ul>}
+                : <ul className="list-none p-0 mt-3 divide-y divide-[var(--line)]">{cannabisCard.recent_transactions.map((tx) => <li key={tx.id} className="py-3">
+                  <div className="flex items-center gap-3"><span className={`cannabis-delta ${tx.delta < 0 ? "is-out" : ""}`}>{tx.delta > 0 ? `+${tx.delta}` : tx.delta}</span><div className="min-w-0 flex-1"><p className="text-sm break-words">{tx.reason}</p><p className="text-xs text-[var(--muted)]">{new Date(tx.created_at).toLocaleString("th-TH")} {tx.grams_purchased > 0 ? `· ${tx.grams_purchased} กรัม` : ""}</p></div>
+                    <div className="staff-correction-list__actions">{tx.corrected && <span className="staff-correction-list__badge">แก้แล้ว</span>}{tx.editable && <button type="button" className="btn btn-ghost !min-h-11 !px-3 text-sm" onClick={() => setEditingCannabis({ id: tx.id, grams: String(tx.grams_purchased), reason: "" })}>แก้ไข</button>}</div>
+                  </div>
+                  {editingCannabis?.id === tx.id && <form className="staff-correction-form" onSubmit={saveCannabisCorrection}>
+                    <div className="field"><label htmlFor={`cannabis-edit-grams-${tx.id}`}>จำนวนกรัมที่ถูกต้อง</label><input id={`cannabis-edit-grams-${tx.id}`} className="input" inputMode="numeric" maxLength={3} value={editingCannabis.grams} onChange={(e) => setEditingCannabis({ ...editingCannabis, grams: e.target.value.replace(/\D/g, "").slice(0, 3) })} /></div>
+                    <div className="field"><label htmlFor={`cannabis-edit-reason-${tx.id}`}>เหตุผลการแก้ไข</label><input id={`cannabis-edit-reason-${tx.id}`} className="input" maxLength={200} value={editingCannabis.reason} onChange={(e) => setEditingCannabis({ ...editingCannabis, reason: e.target.value })} required /></div>
+                    <div className="grid grid-cols-2 gap-2"><button type="button" className="btn btn-ghost" onClick={() => setEditingCannabis(null)}>ยกเลิก</button><button className="btn btn-neon" disabled={correctCannabis.isPending}>{correctCannabis.isPending ? "กำลังแก้ไข…" : "บันทึกรายการ"}</button></div>
+                  </form>}
+                </li>)}</ul>}
             </section>
           </div>}
         </div>}

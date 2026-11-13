@@ -24,8 +24,9 @@ on it and import its theme and components directly.
   `./tokens` entry. Mobile (Expo) and other platforms import this.
 - `public/favicon.svg` — GENERATED app icon from `tokens.json` + the title.
 - `src/components/ui/` — extracted source component families, exported as
-  `./components/*`. Code-import systems prune unused scaffold families and add
-  only source-backed components approved in the catalog.
+  `./components/*`. The shared membership status panel also provides an
+  accessible enlarged QR dialog. Code-import systems prune unused scaffold
+  families and add only source-backed components approved in the catalog.
 - `src/components/ui/icon-catalog.tsx`, `action-controls.tsx`, and
   `mobile-tab-bar.tsx` — reusable v3 icon, action showcase, and mobile tab
   primitives. The collecting track and rank shield compose existing membership

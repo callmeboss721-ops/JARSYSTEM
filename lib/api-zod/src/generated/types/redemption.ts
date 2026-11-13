@@ -26,4 +26,5 @@ export interface Redemption {
   points_spent: number;
   status: string;
   created_at: string;
+  corrected?: boolean;
 }

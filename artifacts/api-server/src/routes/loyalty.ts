@@ -17,6 +17,10 @@ import {
   GetStaffBankingResponse, RecordStaffBankTransferBody, RecordStaffBankTransferResponse,
   GetOwnerBankingResponse, CreateOwnerBankAccountBody, CreateOwnerBankAccountResponse,
   UpdateOwnerBankAccountBody, UpdateOwnerBankAccountResponse, SelectOwnerBankAccountForTodayResponse,
+  ListStaffSalesQueryParams, ListStaffSalesResponse, CorrectStaffSaleParams, CorrectStaffSaleBody, CorrectStaffSaleResponse,
+  CorrectStaffCannabisTransactionParams, CorrectStaffCannabisTransactionBody, CorrectStaffCannabisTransactionResponse,
+  ListRecentStaffRedemptionsResponse, CorrectStaffRedemptionParams, CorrectStaffRedemptionBody, CorrectStaffRedemptionResponse,
+  CorrectStaffBankTransferParams, CorrectStaffBankTransferBody, CorrectStaffBankTransferResponse,
 } from "@workspace/api-zod";
 import {
   loyaltyStore, listStaffRewards, createReward, setRewardActive, listStaffMembers,
@@ -24,8 +28,12 @@ import {
 } from "../lib/loyalty-store";
 import {
   getStaffBanking, getOwnerBanking, createBankAccount, updateBankAccount,
-  selectBankAccountForToday, recordBankTransfer,
+  selectBankAccountForToday, recordBankTransfer, correctStaffBankTransfer,
 } from "../lib/banking-store";
+import {
+  listStaffSales, correctStaffSale, correctStaffCannabisSale,
+  listRecentStaffRedemptions, correctStaffRedemption,
+} from "../lib/loyalty-corrections";
 import { LoyaltyError } from "../lib/loyalty-errors";
 import {
   clearSession, issueSession, loyaltyGuard, ownerSetPins, privateKey, rateLimit,
@@ -241,7 +249,7 @@ router.get("/staff/cannabis-card", async (req, res) => {
   const member = data.qr_token
     ? await loyaltyStore<MemberCard>("jaguar_resolve_qr", { p_qr_token: data.qr_token.replace(/^JAGUAR1:/, "") })
     : await loyaltyStore<MemberCard>("jaguar_member_login", { p_code: codeValue(data.code!) });
-  sendJson(res, GetStaffCannabisCardResponse, await loyaltyStore("jaguar_cannabis_card", { p_member: member.id }));
+  sendJson(res, GetStaffCannabisCardResponse, await loyaltyStore("jaguar_cannabis_card", { p_member: member.id, p_staff: true }));
 });
 router.get("/staff/members", async (req, res) => {
   const { q = "" } = parse(ListStaffMembersQueryParams, req.query);
@@ -265,6 +273,20 @@ router.post("/staff/stamp", async (req, res) => {
     p_member: member.id, p_bottle_count: bottle_count, p_formula: formula, p_request: request_id,
   }));
 });
+router.get("/staff/member-sales", async (req, res) => {
+  await authLimit(req, "staff-member-sales-read", 120);
+  const { code } = parse(ListStaffSalesQueryParams, req.query);
+  const member = await loyaltyStore<MemberCard>("jaguar_member_login", { p_code: codeValue(code) });
+  sendJson(res, ListStaffSalesResponse, await listStaffSales(member.id));
+});
+router.patch("/staff/sales/:id", async (req, res) => {
+  await authLimit(req, "staff-sale-correction", 30);
+  const { id } = parse(CorrectStaffSaleParams, req.params);
+  const data = parse(CorrectStaffSaleBody, req.body);
+  const result = await correctStaffSale(id, data);
+  const member = await loyaltyStore<MemberCard>("jaguar_card", { p_member: result.member_id });
+  sendJson(res, CorrectStaffSaleResponse, { member, sales: result.sales });
+});
 router.post("/staff/cannabis-stamp", async (req, res) => {
   await authLimit(req, "staff-cannabis-stamp", 60);
   const data = parse(AddCannabisStampsBody, req.body);
@@ -273,6 +295,13 @@ router.post("/staff/cannabis-stamp", async (req, res) => {
   sendJson(res, AddCannabisStampsResponse, await loyaltyStore("jaguar_staff_cannabis_stamp", {
     p_member: member.id, p_grams: data.grams, p_request: data.request_id,
   }));
+});
+router.patch("/staff/cannabis-transactions/:id", async (req, res) => {
+  await authLimit(req, "staff-cannabis-correction", 30);
+  const { id } = parse(CorrectStaffCannabisTransactionParams, req.params);
+  const data = parse(CorrectStaffCannabisTransactionBody, req.body);
+  const memberId = await correctStaffCannabisSale(id, data);
+  sendJson(res, CorrectStaffCannabisTransactionResponse, await loyaltyStore("jaguar_cannabis_card", { p_member: memberId, p_staff: true }));
 });
 router.post("/staff/cannabis-redeem", async (req, res) => {
   await authLimit(req, "staff-cannabis-redeem", 30);
@@ -293,18 +322,37 @@ router.post("/staff/redeem", async (req, res) => {
 router.get("/staff/redemptions", async (_req, res) => sendJson(res, ListPendingRedemptionsResponse,
   await loyaltyStore("jaguar_redemptions", { p_member: null, p_pending_only: true }),
 ));
+router.get("/staff/redemptions/recent", async (req, res) => {
+  await authLimit(req, "staff-redemptions-recent-read", 60);
+  sendJson(res, ListRecentStaffRedemptionsResponse, await listRecentStaffRedemptions());
+});
+router.patch("/staff/redemptions/:id", async (req, res) => {
+  await authLimit(req, "staff-redemption-correction", 30);
+  const { id } = parse(CorrectStaffRedemptionParams, req.params);
+  const data = parse(CorrectStaffRedemptionBody, req.body);
+  sendJson(res, CorrectStaffRedemptionResponse, await correctStaffRedemption(id, data));
+});
 router.post("/staff/redemptions/:id/confirm", async (req, res) => {
   await authLimit(req, "staff-redemption-confirm", 60);
   const { id } = parse(ConfirmRedemptionParams, req.params);
   sendJson(res, ConfirmRedemptionResponse, await loyaltyStore("jaguar_confirm_redemption", { p_redemption: id }));
 });
-router.get("/staff/rewards", async (_req, res) => sendJson(res, ListStaffRewardsResponse, await listStaffRewards()));
+router.get("/staff/rewards", async (req, res) => {
+  await authLimit(req, "staff-rewards-read", 60);
+  sendJson(res, ListStaffRewardsResponse, await listStaffRewards());
+});
 router.get("/staff/banking/today", async (_req, res) =>
   sendJson(res, GetStaffBankingResponse, await getStaffBanking()));
 router.post("/staff/banking/transfers", async (req, res) => {
   await authLimit(req, "staff-bank-transfer", 90);
   const data = parse(RecordStaffBankTransferBody, req.body);
   sendJson(res, RecordStaffBankTransferResponse, await recordBankTransfer(data, "staff"), 201);
+});
+router.patch("/staff/banking/transfers/:id", async (req, res) => {
+  await authLimit(req, "staff-bank-transfer-correction", 30);
+  const { id } = parse(CorrectStaffBankTransferParams, req.params);
+  const data = parse(CorrectStaffBankTransferBody, req.body);
+  sendJson(res, CorrectStaffBankTransferResponse, await correctStaffBankTransfer(id, data));
 });
 
 // Owner suite: separate cookie and access boundary, no staff-session escalation.

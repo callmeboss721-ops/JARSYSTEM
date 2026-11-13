@@ -221,7 +221,9 @@ export const GetCannabisMemberCardResponse = zod.object({
   "delta": zod.int(),
   "grams_purchased": zod.int().min(getCannabisMemberCardResponseRecentTransactionsItemGramsPurchasedMin).max(getCannabisMemberCardResponseRecentTransactionsItemGramsPurchasedMax),
   "reason": zod.string(),
-  "created_at": zod.string()
+  "created_at": zod.string(),
+  "editable": zod.boolean().optional(),
+  "corrected": zod.boolean().optional()
 })).max(getCannabisMemberCardResponseRecentTransactionsMax)
 })
 
@@ -253,7 +255,8 @@ export const ListMemberRedemptionsResponseItem = zod.object({
   "reward_name": zod.string(),
   "points_spent": zod.int(),
   "status": zod.string(),
-  "created_at": zod.string()
+  "created_at": zod.string(),
+  "corrected": zod.boolean().optional()
 })
 export const ListMemberRedemptionsResponse = zod.array(ListMemberRedemptionsResponseItem)
 
@@ -278,7 +281,8 @@ export const RequestRedemptionResponse = zod.object({
   "reward_name": zod.string(),
   "points_spent": zod.int(),
   "status": zod.string(),
-  "created_at": zod.string()
+  "created_at": zod.string(),
+  "corrected": zod.boolean().optional()
 })
 
 
@@ -438,7 +442,9 @@ export const GetStaffCannabisCardResponse = zod.object({
   "delta": zod.int(),
   "grams_purchased": zod.int().min(getStaffCannabisCardResponseRecentTransactionsItemGramsPurchasedMin).max(getStaffCannabisCardResponseRecentTransactionsItemGramsPurchasedMax),
   "reason": zod.string(),
-  "created_at": zod.string()
+  "created_at": zod.string(),
+  "editable": zod.boolean().optional(),
+  "corrected": zod.boolean().optional()
 })).max(getStaffCannabisCardResponseRecentTransactionsMax)
 })
 
@@ -580,6 +586,101 @@ export const RecordStaffSaleResponse = zod.object({
 })
 
 
+export const listStaffSalesQueryCodeRegExp = new RegExp('^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$');
+
+
+export const ListStaffSalesQueryParams = zod.object({
+  "code": zod.coerce.string().regex(listStaffSalesQueryCodeRegExp)
+})
+
+export const listStaffSalesResponseBottleCountMax = 999;
+
+
+export const listStaffSalesResponsePointsAwardedMin = 0;
+
+
+
+export const ListStaffSalesResponseItem = zod.object({
+  "id": zod.uuid(),
+  "formula": zod.enum(['red', 'silver', 'gold']),
+  "bottle_count": zod.int().min(1).max(listStaffSalesResponseBottleCountMax),
+  "amount_baht": zod.int().min(1),
+  "points_awarded": zod.int().min(listStaffSalesResponsePointsAwardedMin),
+  "created_at": zod.string(),
+  "editable": zod.boolean(),
+  "corrected": zod.boolean()
+})
+export const ListStaffSalesResponse = zod.array(ListStaffSalesResponseItem)
+
+
+export const CorrectStaffSaleParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const correctStaffSaleBodyBottleCountMax = 999;
+
+export const correctStaffSaleBodyReasonMin = 3;
+export const correctStaffSaleBodyReasonMax = 200;
+
+
+
+export const CorrectStaffSaleBody = zod.object({
+  "bottle_count": zod.int().min(1).max(correctStaffSaleBodyBottleCountMax),
+  "formula": zod.enum(['red', 'silver', 'gold']),
+  "reason": zod.string().min(correctStaffSaleBodyReasonMin).max(correctStaffSaleBodyReasonMax)
+})
+
+export const correctStaffSaleResponseMemberNicknameMin = 2;
+export const correctStaffSaleResponseMemberNicknameMax = 20;
+
+export const correctStaffSaleResponseMemberPhoneMaskedMax = 24;
+
+export const correctStaffSaleResponseMemberKratomRemainderBahtMin = 0;
+export const correctStaffSaleResponseMemberKratomRemainderBahtMax = 99;
+
+export const correctStaffSaleResponseMemberCannabisBalanceMin = 0;
+
+export const correctStaffSaleResponseMemberCannabisRemainderGramsMin = 0;
+export const correctStaffSaleResponseMemberCannabisRemainderGramsMax = 99;
+
+export const correctStaffSaleResponseSalesItemBottleCountMax = 999;
+
+
+export const correctStaffSaleResponseSalesItemPointsAwardedMin = 0;
+
+export const correctStaffSaleResponseSalesMax = 30;
+
+
+
+export const CorrectStaffSaleResponse = zod.object({
+  "member": zod.object({
+  "id": zod.string(),
+  "member_code": zod.string(),
+  "display_name": zod.string(),
+  "nickname": zod.string().min(correctStaffSaleResponseMemberNicknameMin).max(correctStaffSaleResponseMemberNicknameMax).nullable(),
+  "phone_masked": zod.string().max(correctStaffSaleResponseMemberPhoneMaskedMax).nullable(),
+  "is_demo": zod.boolean(),
+  "status": zod.string(),
+  "balance": zod.int(),
+  "lifetime_earned": zod.int(),
+  "lifetime_redeemed": zod.int(),
+  "kratom_remainder_baht": zod.int().min(correctStaffSaleResponseMemberKratomRemainderBahtMin).max(correctStaffSaleResponseMemberKratomRemainderBahtMax),
+  "cannabis_balance": zod.int().min(correctStaffSaleResponseMemberCannabisBalanceMin),
+  "cannabis_remainder_grams": zod.int().min(correctStaffSaleResponseMemberCannabisRemainderGramsMin).max(correctStaffSaleResponseMemberCannabisRemainderGramsMax)
+}),
+  "sales": zod.array(zod.object({
+  "id": zod.uuid(),
+  "formula": zod.enum(['red', 'silver', 'gold']),
+  "bottle_count": zod.int().min(1).max(correctStaffSaleResponseSalesItemBottleCountMax),
+  "amount_baht": zod.int().min(1),
+  "points_awarded": zod.int().min(correctStaffSaleResponseSalesItemPointsAwardedMin),
+  "created_at": zod.string(),
+  "editable": zod.boolean(),
+  "corrected": zod.boolean()
+})).max(correctStaffSaleResponseSalesMax)
+})
+
+
 export const addCannabisStampsBodyMemberCodeRegExp = new RegExp('^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$');
 export const addCannabisStampsBodyGramsMax = 999;
 
@@ -626,8 +727,68 @@ export const AddCannabisStampsResponse = zod.object({
   "delta": zod.int(),
   "grams_purchased": zod.int().min(addCannabisStampsResponseRecentTransactionsItemGramsPurchasedMin).max(addCannabisStampsResponseRecentTransactionsItemGramsPurchasedMax),
   "reason": zod.string(),
-  "created_at": zod.string()
+  "created_at": zod.string(),
+  "editable": zod.boolean().optional(),
+  "corrected": zod.boolean().optional()
 })).max(addCannabisStampsResponseRecentTransactionsMax)
+})
+
+
+export const CorrectStaffCannabisTransactionParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const correctStaffCannabisTransactionBodyGramsMax = 999;
+
+export const correctStaffCannabisTransactionBodyReasonMin = 3;
+export const correctStaffCannabisTransactionBodyReasonMax = 200;
+
+
+
+export const CorrectStaffCannabisTransactionBody = zod.object({
+  "grams": zod.int().min(1).max(correctStaffCannabisTransactionBodyGramsMax),
+  "reason": zod.string().min(correctStaffCannabisTransactionBodyReasonMin).max(correctStaffCannabisTransactionBodyReasonMax)
+})
+
+export const correctStaffCannabisTransactionResponseNicknameMin = 2;
+export const correctStaffCannabisTransactionResponseNicknameMax = 20;
+
+export const correctStaffCannabisTransactionResponsePhoneMaskedMax = 24;
+
+export const correctStaffCannabisTransactionResponseBalanceMin = 0;
+
+export const correctStaffCannabisTransactionResponseLifetimeEarnedMin = 0;
+
+export const correctStaffCannabisTransactionResponseLifetimeRedeemedMin = 0;
+
+export const correctStaffCannabisTransactionResponseGramsRemainderMin = 0;
+export const correctStaffCannabisTransactionResponseGramsRemainderMax = 99;
+
+export const correctStaffCannabisTransactionResponseRecentTransactionsItemGramsPurchasedMin = 0;
+export const correctStaffCannabisTransactionResponseRecentTransactionsItemGramsPurchasedMax = 999;
+
+export const correctStaffCannabisTransactionResponseRecentTransactionsMax = 5;
+
+
+
+export const CorrectStaffCannabisTransactionResponse = zod.object({
+  "member_code": zod.string(),
+  "display_name": zod.string(),
+  "nickname": zod.string().min(correctStaffCannabisTransactionResponseNicknameMin).max(correctStaffCannabisTransactionResponseNicknameMax).nullable(),
+  "phone_masked": zod.string().max(correctStaffCannabisTransactionResponsePhoneMaskedMax).nullable(),
+  "balance": zod.int().min(correctStaffCannabisTransactionResponseBalanceMin),
+  "lifetime_earned": zod.int().min(correctStaffCannabisTransactionResponseLifetimeEarnedMin),
+  "lifetime_redeemed": zod.int().min(correctStaffCannabisTransactionResponseLifetimeRedeemedMin),
+  "grams_remainder": zod.int().min(correctStaffCannabisTransactionResponseGramsRemainderMin).max(correctStaffCannabisTransactionResponseGramsRemainderMax),
+  "recent_transactions": zod.array(zod.object({
+  "id": zod.uuid(),
+  "delta": zod.int(),
+  "grams_purchased": zod.int().min(correctStaffCannabisTransactionResponseRecentTransactionsItemGramsPurchasedMin).max(correctStaffCannabisTransactionResponseRecentTransactionsItemGramsPurchasedMax),
+  "reason": zod.string(),
+  "created_at": zod.string(),
+  "editable": zod.boolean().optional(),
+  "corrected": zod.boolean().optional()
+})).max(correctStaffCannabisTransactionResponseRecentTransactionsMax)
 })
 
 
@@ -674,7 +835,9 @@ export const RedeemCannabisAtCounterResponse = zod.object({
   "delta": zod.int(),
   "grams_purchased": zod.int().min(redeemCannabisAtCounterResponseRecentTransactionsItemGramsPurchasedMin).max(redeemCannabisAtCounterResponseRecentTransactionsItemGramsPurchasedMax),
   "reason": zod.string(),
-  "created_at": zod.string()
+  "created_at": zod.string(),
+  "editable": zod.boolean().optional(),
+  "corrected": zod.boolean().optional()
 })).max(redeemCannabisAtCounterResponseRecentTransactionsMax)
 })
 
@@ -770,7 +933,8 @@ export const GetStaffBankingResponse = zod.object({
   "amount": zod.number().gt(getStaffBankingResponseTodayTransfersItemAmountExclusiveMin),
   "note": zod.string(),
   "recorded_by": zod.enum(['staff', 'owner']),
-  "created_at": zod.coerce.date()
+  "created_at": zod.coerce.date(),
+  "corrected": zod.boolean().optional()
 })).max(getStaffBankingResponseTodayTransfersMax)
 })
 })
@@ -829,8 +993,76 @@ export const RecordStaffBankTransferResponse = zod.object({
   "amount": zod.number().gt(recordStaffBankTransferResponseTodayTransfersItemAmountExclusiveMin),
   "note": zod.string(),
   "recorded_by": zod.enum(['staff', 'owner']),
-  "created_at": zod.coerce.date()
+  "created_at": zod.coerce.date(),
+  "corrected": zod.boolean().optional()
 })).max(recordStaffBankTransferResponseTodayTransfersMax)
+})
+})
+
+
+export const CorrectStaffBankTransferParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const correctStaffBankTransferBodyAmountMax = 12;
+
+
+export const correctStaffBankTransferBodyAmountRegExp = new RegExp('^[0-9]+(\\.[0-9]{1,2})?$');
+export const correctStaffBankTransferBodyNoteMax = 160;
+
+export const correctStaffBankTransferBodyReasonMin = 3;
+export const correctStaffBankTransferBodyReasonMax = 200;
+
+
+
+export const CorrectStaffBankTransferBody = zod.object({
+  "direction": zod.enum(['in', 'out']),
+  "amount": zod.string().min(1).max(correctStaffBankTransferBodyAmountMax).regex(correctStaffBankTransferBodyAmountRegExp),
+  "note": zod.string().max(correctStaffBankTransferBodyNoteMax).optional(),
+  "reason": zod.string().min(correctStaffBankTransferBodyReasonMin).max(correctStaffBankTransferBodyReasonMax)
+})
+
+export const correctStaffBankTransferResponseTodayAccountOneAccountNumberRegExp = new RegExp('^[0-9]{6,20}$');
+export const correctStaffBankTransferResponseTodayAccountOneDailyLimitMin = 0;
+
+export const correctStaffBankTransferResponseTodayReceivedTotalMin = 0;
+
+export const correctStaffBankTransferResponseTodaySentTotalMin = 0;
+
+export const correctStaffBankTransferResponseTodayDailyLimitOneMin = 0;
+
+export const correctStaffBankTransferResponseTodayTransfersItemAmountExclusiveMin = 0;
+
+export const correctStaffBankTransferResponseTodayTransfersMax = 50;
+
+
+
+export const CorrectStaffBankTransferResponse = zod.object({
+  "today": zod.object({
+  "business_date": zod.string(),
+  "account": zod.union([zod.object({
+  "id": zod.uuid(),
+  "bank_name": zod.string(),
+  "account_number": zod.string().regex(correctStaffBankTransferResponseTodayAccountOneAccountNumberRegExp),
+  "account_holder": zod.string(),
+  "daily_limit": zod.number().min(correctStaffBankTransferResponseTodayAccountOneDailyLimitMin),
+  "is_active": zod.boolean(),
+  "created_at": zod.coerce.date()
+}),zod.null()]),
+  "received_total": zod.number().min(correctStaffBankTransferResponseTodayReceivedTotalMin),
+  "sent_total": zod.number().min(correctStaffBankTransferResponseTodaySentTotalMin),
+  "daily_limit": zod.union([zod.number().min(correctStaffBankTransferResponseTodayDailyLimitOneMin),zod.null()]),
+  "remaining_limit": zod.union([zod.number(),zod.null()]),
+  "over_limit": zod.boolean(),
+  "transfers": zod.array(zod.object({
+  "id": zod.uuid(),
+  "direction": zod.enum(['in', 'out']),
+  "amount": zod.number().gt(correctStaffBankTransferResponseTodayTransfersItemAmountExclusiveMin),
+  "note": zod.string(),
+  "recorded_by": zod.enum(['staff', 'owner']),
+  "created_at": zod.coerce.date(),
+  "corrected": zod.boolean().optional()
+})).max(correctStaffBankTransferResponseTodayTransfersMax)
 })
 })
 
@@ -851,9 +1083,67 @@ export const ListPendingRedemptionsResponseItem = zod.object({
   "reward_name": zod.string(),
   "points_spent": zod.int(),
   "status": zod.string(),
-  "created_at": zod.string()
+  "created_at": zod.string(),
+  "corrected": zod.boolean().optional()
 })
 export const ListPendingRedemptionsResponse = zod.array(ListPendingRedemptionsResponseItem)
+
+
+export const listRecentStaffRedemptionsResponseMemberNicknameMin = 2;
+export const listRecentStaffRedemptionsResponseMemberNicknameMax = 20;
+
+export const listRecentStaffRedemptionsResponsePhoneLast4RegExp = new RegExp('^[0-9]{4}$');
+
+
+export const ListRecentStaffRedemptionsResponseItem = zod.object({
+  "id": zod.string(),
+  "member_id": zod.string(),
+  "member_code": zod.string(),
+  "member_nickname": zod.string().min(listRecentStaffRedemptionsResponseMemberNicknameMin).max(listRecentStaffRedemptionsResponseMemberNicknameMax).nullable(),
+  "phone_last4": zod.string().regex(listRecentStaffRedemptionsResponsePhoneLast4RegExp).nullable(),
+  "reward_id": zod.string(),
+  "reward_name": zod.string(),
+  "points_spent": zod.int(),
+  "status": zod.string(),
+  "created_at": zod.string(),
+  "corrected": zod.boolean().optional()
+})
+export const ListRecentStaffRedemptionsResponse = zod.array(ListRecentStaffRedemptionsResponseItem)
+
+
+export const CorrectStaffRedemptionParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const correctStaffRedemptionBodyReasonMin = 3;
+export const correctStaffRedemptionBodyReasonMax = 200;
+
+
+
+export const CorrectStaffRedemptionBody = zod.object({
+  "reward_id": zod.uuid(),
+  "reason": zod.string().min(correctStaffRedemptionBodyReasonMin).max(correctStaffRedemptionBodyReasonMax)
+})
+
+export const correctStaffRedemptionResponseMemberNicknameMin = 2;
+export const correctStaffRedemptionResponseMemberNicknameMax = 20;
+
+export const correctStaffRedemptionResponsePhoneLast4RegExp = new RegExp('^[0-9]{4}$');
+
+
+export const CorrectStaffRedemptionResponse = zod.object({
+  "id": zod.string(),
+  "member_id": zod.string(),
+  "member_code": zod.string(),
+  "member_nickname": zod.string().min(correctStaffRedemptionResponseMemberNicknameMin).max(correctStaffRedemptionResponseMemberNicknameMax).nullable(),
+  "phone_last4": zod.string().regex(correctStaffRedemptionResponsePhoneLast4RegExp).nullable(),
+  "reward_id": zod.string(),
+  "reward_name": zod.string(),
+  "points_spent": zod.int(),
+  "status": zod.string(),
+  "created_at": zod.string(),
+  "corrected": zod.boolean().optional()
+})
 
 
 export const ConfirmRedemptionParams = zod.object({
@@ -876,7 +1166,8 @@ export const ConfirmRedemptionResponse = zod.object({
   "reward_name": zod.string(),
   "points_spent": zod.int(),
   "status": zod.string(),
-  "created_at": zod.string()
+  "created_at": zod.string(),
+  "corrected": zod.boolean().optional()
 })
 
 
@@ -1001,7 +1292,8 @@ export const GetOwnerBankingResponse = zod.object({
   "amount": zod.number().gt(getOwnerBankingResponseTodayTransfersItemAmountExclusiveMin),
   "note": zod.string(),
   "recorded_by": zod.enum(['staff', 'owner']),
-  "created_at": zod.coerce.date()
+  "created_at": zod.coerce.date(),
+  "corrected": zod.boolean().optional()
 })).max(getOwnerBankingResponseTodayTransfersMax)
 })
 })
@@ -1145,7 +1437,8 @@ export const SelectOwnerBankAccountForTodayResponse = zod.object({
   "amount": zod.number().gt(selectOwnerBankAccountForTodayResponseTodayTransfersItemAmountExclusiveMin),
   "note": zod.string(),
   "recorded_by": zod.enum(['staff', 'owner']),
-  "created_at": zod.coerce.date()
+  "created_at": zod.coerce.date(),
+  "corrected": zod.boolean().optional()
 })).max(selectOwnerBankAccountForTodayResponseTodayTransfersMax)
 })
 })
@@ -1321,7 +1614,8 @@ export const ListOwnerPendingResponseItem = zod.object({
   "reward_name": zod.string(),
   "points_spent": zod.int(),
   "status": zod.string(),
-  "created_at": zod.string()
+  "created_at": zod.string(),
+  "corrected": zod.boolean().optional()
 })
 export const ListOwnerPendingResponse = zod.array(ListOwnerPendingResponseItem)
 
@@ -1346,7 +1640,8 @@ export const ConfirmOwnerRedemptionResponse = zod.object({
   "reward_name": zod.string(),
   "points_spent": zod.int(),
   "status": zod.string(),
-  "created_at": zod.string()
+  "created_at": zod.string(),
+  "corrected": zod.boolean().optional()
 })
 
 

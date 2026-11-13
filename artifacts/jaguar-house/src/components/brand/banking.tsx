@@ -6,6 +6,7 @@ import { ArrowDownLeft, ArrowUpRight, Building2, CircleAlert, LockKeyhole, Plus,
 import {
   getGetOwnerBankingQueryKey,
   getGetStaffBankingQueryKey,
+  useCorrectStaffBankTransfer,
   useCreateOwnerBankAccount,
   useGetOwnerBanking,
   useGetStaffBanking,
@@ -16,6 +17,7 @@ import {
   type BankAccountInput,
   type BankAccountUpdateInput,
   type BankTransferInput,
+  type BankTransferCorrectionInput,
 } from "@workspace/api-client-react";
 import { EmptyState, ErrorState, LoadingState } from "@/components/brand/ui";
 import { errorText } from "@/components/brand/loyalty-api";
@@ -25,9 +27,34 @@ const dateTime = (value: string) => new Date(value).toLocaleString("th-TH", { da
 const numberInput = (value: string) => /^[0-9]+(?:\.[0-9]{1,2})?$/.test(value) && Number(value) > 0 && Number(value) <= 100_000_000;
 const validLimit = (value: string) => /^[0-9]+(?:\.[0-9]{1,2})?$/.test(value) && Number(value) > 0 && Number(value) <= 100_000_000;
 
-function DailyLedger({ today }: { today: { business_date: string; account: BankAccount | null; received_total: number; sent_total: number; daily_limit: number | null; remaining_limit: number | null; over_limit: boolean; transfers: { id: string; direction: "in" | "out"; amount: number; note: string; recorded_by: "staff" | "owner"; created_at: string }[] } }) {
+function DailyLedger({ today, editable = false }: { today: { business_date: string; account: BankAccount | null; received_total: number; sent_total: number; daily_limit: number | null; remaining_limit: number | null; over_limit: boolean; transfers: { id: string; direction: "in" | "out"; amount: number; note: string; recorded_by: "staff" | "owner"; created_at: string; corrected?: boolean }[] }; editable?: boolean }) {
+  const qc = useQueryClient();
+  const correctTransfer = useCorrectStaffBankTransfer();
   const remaining = today.remaining_limit ?? 0;
   const percent = today.daily_limit ? (today.received_total / today.daily_limit) * 100 : 0;
+  const [editing, setEditing] = useState<{ id: string; direction: "in" | "out"; amount: string; note: string; reason: string } | null>(null);
+  const [editError, setEditError] = useState("");
+  const [editMessage, setEditMessage] = useState("");
+  const saveCorrection = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!editing || !numberInput(editing.amount) || editing.reason.trim().length < 3) {
+      setEditError("ตรวจยอดเงินและระบุเหตุผลการแก้ไขอย่างน้อย 3 ตัวอักษร");
+      return;
+    }
+    setEditError(""); setEditMessage("");
+    const data: BankTransferCorrectionInput = {
+      direction: editing.direction,
+      amount: editing.amount.trim(),
+      note: editing.note.trim() || undefined,
+      reason: editing.reason.trim(),
+    };
+    try {
+      await correctTransfer.mutateAsync({ id: editing.id, data });
+      setEditing(null);
+      setEditMessage("ปรับรายการแล้ว · ประวัติการแก้ไขถูกบันทึก");
+      await qc.invalidateQueries({ queryKey: getGetStaffBankingQueryKey() });
+    } catch (cause) { setEditError(errorText(cause)); }
+  };
   return <section className="bank-ledger panel p-4 sm:p-6" aria-labelledby="bank-ledger-title">
     <div className="flex flex-wrap items-start justify-between gap-3">
       <div><p className="eyebrow">Transfer ledger · {today.business_date}</p><h2 id="bank-ledger-title" className="font-display text-xl font-semibold mt-1">รายการโอนวันนี้</h2></div>
@@ -43,13 +70,30 @@ function DailyLedger({ today }: { today: { business_date: string; account: BankA
       <div className="bank-limit-track mt-2" aria-label={`ใช้วงเงินรับเข้า ${Math.round(percent)} เปอร์เซ็นต์`}><span style={{ transform: `scaleX(${Math.min(100, percent) / 100})` }} /></div>
       {today.over_limit && <p className="bank-over-note mt-2"><CircleAlert size={15} aria-hidden="true" /> เกินวงเงินแล้ว · บันทึกรายการที่เกิดขึ้นจริงได้ตามปกติ</p>}
     </div>}
-    {!today.transfers.length ? <div className="mt-4"><EmptyState title="ยังไม่มีรายการโอนวันนี้" body="รายการที่บันทึกแล้วจะแสดงในบัญชีนี้โดยแก้ไขหรือลบไม่ได้" /></div> :
+    {editMessage && <p role="status" className="bank-feedback is-success mt-3">{editMessage}</p>}
+    {editError && <p role="alert" className="field-error mt-3">{editError}</p>}
+    {!today.transfers.length ? <div className="mt-4"><EmptyState title="ยังไม่มีรายการโอนวันนี้" body="รายการที่บันทึกแล้วจะแสดงในบัญชีนี้" /></div> :
       <ol className="bank-transfers mt-4">{today.transfers.map((transfer) => <li key={transfer.id}>
-        <span className={`bank-direction ${transfer.direction === "in" ? "is-in" : "is-out"}`}>{transfer.direction === "in" ? <ArrowDownLeft size={18} aria-hidden="true" /> : <ArrowUpRight size={18} aria-hidden="true" />}</span>
-        <div className="min-w-0 flex-1"><p className="font-semibold">{transfer.direction === "in" ? "เงินเข้า" : "เงินออก"}{transfer.note ? ` · ${transfer.note}` : ""}</p><p className="text-xs text-[var(--muted)]">{dateTime(transfer.created_at)} · {transfer.recorded_by === "staff" ? "พนักงาน" : "เจ้าของร้าน"}</p></div>
-        <strong className={`bank-transfer-amount ${transfer.direction === "in" ? "is-in" : "is-out"}`}>{transfer.direction === "in" ? "+" : "−"}{money(transfer.amount)}</strong>
+        <div className="bank-transfer-row__main">
+          <span className={`bank-direction ${transfer.direction === "in" ? "is-in" : "is-out"}`}>{transfer.direction === "in" ? <ArrowDownLeft size={18} aria-hidden="true" /> : <ArrowUpRight size={18} aria-hidden="true" />}</span>
+          <div className="min-w-0 flex-1"><p className="font-semibold">{transfer.direction === "in" ? "เงินเข้า" : "เงินออก"}{transfer.note ? ` · ${transfer.note}` : ""}</p><p className="text-xs text-[var(--muted)]">{dateTime(transfer.created_at)} · {transfer.recorded_by === "staff" ? "พนักงาน" : "เจ้าของร้าน"}</p></div>
+          <strong className={`bank-transfer-amount ${transfer.direction === "in" ? "is-in" : "is-out"}`}>{transfer.direction === "in" ? "+" : "−"}{money(transfer.amount)}</strong>
+        </div>
+        <div className="bank-transfer-row__actions">{transfer.corrected && <span className="staff-correction-list__badge">แก้แล้ว</span>}{editable && <button type="button" className="btn btn-ghost !min-h-11 !px-3 text-sm" onClick={() => setEditing({ id: transfer.id, direction: transfer.direction, amount: String(transfer.amount), note: transfer.note, reason: "" })}>แก้ไข</button>}</div>
+        {editing?.id === transfer.id && <form className="staff-correction-form" onSubmit={saveCorrection}>
+          <fieldset><legend className="field-label">ประเภทรายการ</legend><div className="bank-direction-select">
+            <button type="button" aria-pressed={editing.direction === "in"} onClick={() => setEditing({ ...editing, direction: "in" })}><ArrowDownLeft size={17} aria-hidden="true" />รับเข้า</button>
+            <button type="button" aria-pressed={editing.direction === "out"} onClick={() => setEditing({ ...editing, direction: "out" })}><ArrowUpRight size={17} aria-hidden="true" />โอนออก</button>
+          </div></fieldset>
+          <div className="staff-correction-form__fields">
+            <div className="field"><label htmlFor={`transfer-amount-${transfer.id}`}>จำนวนเงิน (บาท)</label><input id={`transfer-amount-${transfer.id}`} className="input" inputMode="decimal" value={editing.amount} onChange={(e) => setEditing({ ...editing, amount: e.target.value })} /></div>
+            <div className="field"><label htmlFor={`transfer-note-${transfer.id}`}>หมายเหตุ</label><input id={`transfer-note-${transfer.id}`} className="input" maxLength={160} value={editing.note} onChange={(e) => setEditing({ ...editing, note: e.target.value })} /></div>
+          </div>
+          <div className="field"><label htmlFor={`transfer-reason-${transfer.id}`}>เหตุผลการแก้ไข</label><input id={`transfer-reason-${transfer.id}`} className="input" maxLength={200} value={editing.reason} onChange={(e) => setEditing({ ...editing, reason: e.target.value })} required /></div>
+          <div className="grid grid-cols-2 gap-2"><button type="button" className="btn btn-ghost" onClick={() => setEditing(null)}>ยกเลิก</button><button className="btn btn-neon" disabled={correctTransfer.isPending}>{correctTransfer.isPending ? "กำลังแก้ไข…" : "บันทึกรายการ"}</button></div>
+        </form>}
       </li>)}</ol>}
-    <p className="bank-immutable mt-4"><LockKeyhole size={14} aria-hidden="true" /> บันทึกถาวร · รายการโอนแก้ไขหรือลบไม่ได้</p>
+    <p className="bank-immutable mt-4"><LockKeyhole size={14} aria-hidden="true" /> แก้ไขได้เฉพาะรายการวันนี้ · เก็บประวัติการแก้ไข · ลบไม่ได้</p>
   </section>;
 }
 
@@ -107,7 +151,7 @@ export function StaffBanking() {
         <button className="btn btn-neon w-full" disabled={!today.account || recordTransfer.isPending}>{recordTransfer.isPending ? "กำลังบันทึก…" : direction === "in" ? "บันทึกรับเงิน" : "บันทึกเงินออก"}</button>
       </form>
     </section>
-    <DailyLedger today={today} />
+    <DailyLedger today={today} editable />
   </div>;
 }
 

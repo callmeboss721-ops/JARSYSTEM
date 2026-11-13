@@ -19,7 +19,8 @@
   progress animation key. Kratom and cannabis remain visually distinct while
   sharing card geometry.
 - Behavior: ten progress positions, readiness at ten points, QR loading/error
-  states, accessible progress, and a next action only when eligible.
+  states, a native accessible QR enlargement dialog, accessible progress, and a
+  next action only when eligible.
 - Dependencies: `qrcode.react`, BrandButton, BrandIcon, and retained card art.
 - Direct consumers: `app/card/page.tsx` and
   `app/cannabis-card/page.tsx`; route data and balance logic remain outside

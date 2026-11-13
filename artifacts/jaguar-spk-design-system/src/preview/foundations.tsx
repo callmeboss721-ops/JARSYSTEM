@@ -105,7 +105,7 @@ export function OverviewPage() {
           </article>
           <article className="ds-component-sample ds-glass">
             <span className="ds-type-label">BRAND ACTION</span>
-            <BrandButton asset="btn-jaguar" label="เปิดบัตรสมาชิก" assetBase={`${import.meta.env.BASE_URL}brand/buttons/`} />
+            <BrandButton asset="btn-jaguar" label="เปิดบัตรสมาชิก" />
             <p>ภาพปุ่มจริง · ป้ายสั้น · โฟกัสคีย์บอร์ด</p>
           </article>
           <article className="ds-component-sample ds-glass">

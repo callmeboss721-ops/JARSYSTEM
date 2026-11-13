@@ -16,7 +16,7 @@ type Args = {
   p_method?: "phone" | "member_code" | "nickname"; p_identifier?: string;
   p_member?: string | null; p_reward?: string; p_points?: number; p_request?: string;
   p_redemption?: string; p_pending_only?: boolean; p_amount?: number; p_bottle_count?: number;
-  p_grams?: number; p_formula?: string; p_qr_token?: string; p_enabled?: boolean;
+  p_grams?: number; p_formula?: string; p_qr_token?: string; p_enabled?: boolean; p_staff?: boolean;
 };
 type CannabisCard = {
   member_code: string;
@@ -27,7 +27,10 @@ type CannabisCard = {
   lifetime_earned: number;
   lifetime_redeemed: number;
   grams_remainder: number;
-  recent_transactions: Array<{ id: string; delta: number; grams_purchased: number; reason: string; created_at: string }>;
+  recent_transactions: Array<{
+    id: string; delta: number; grams_purchased: number; reason: string; created_at: string;
+    editable?: boolean; corrected?: boolean;
+  }>;
 };
 const fail = (status: number, message: string): never => { throw new LoyaltyError(status, message); };
 const demoAccessEnabled = false;
@@ -86,7 +89,7 @@ async function card(client: DbClient, id: string, lock = false): Promise<MemberC
   return { ...publicCard, phone_masked: maskPhone(_phone) };
 }
 
-async function cannabisCard(client: DbClient, id: string, lock = false): Promise<CannabisCard> {
+async function cannabisCard(client: DbClient, id: string, lock = false, staffView = false): Promise<CannabisCard> {
   const member = await card(client, id, lock);
   await client.query("insert into jaguar_cannabis_balances(member_id) values($1) on conflict do nothing", [id]);
   const balance = (await client.query(`select coalesce(p.cannabis_balance,c.balance,0)::integer as balance,
@@ -94,8 +97,13 @@ async function cannabisCard(client: DbClient, id: string, lock = false): Promise
     from jaguar_point_balances p join jaguar_cannabis_balances c on c.member_id=p.member_id
     where p.member_id=$1${lock ? " for update of p,c" : ""}`, [id])).rows[0];
   if (!balance) fail(503, "บัตรกัญชายังไม่พร้อมใช้งาน");
-  const recent = (await client.query(`select id,delta,grams_purchased,reason,created_at::text as created_at
-    from jaguar_cannabis_transactions where member_id=$1 order by created_at desc,id desc limit 5`, [id])).rows;
+  const recent = (await client.query(`select t.id,t.delta,t.grams_purchased,t.reason,t.created_at::text as created_at,
+      ($2::boolean and t.grams_purchased>0 and
+        (t.created_at at time zone 'Asia/Bangkok')::date=(now() at time zone 'Asia/Bangkok')::date) as editable,
+      ($2::boolean and exists(select 1 from jaguar_transaction_corrections x
+        where x.entity_type='cannabis_sale' and x.entity_id=t.id)) as corrected
+    from jaguar_cannabis_transactions t where t.member_id=$1
+    order by t.created_at desc,t.id desc limit 5`, [id, staffView])).rows;
   return {
     member_code: member.member_code,
     display_name: member.display_name,
@@ -175,7 +183,7 @@ export async function loyaltyStore<T>(operation: string, args: Args = {}): Promi
         result = { cannabis_points_enabled: args.p_enabled === true };
         break;
       case "jaguar_cannabis_card":
-        result = await cannabisCard(client, args.p_member!);
+        result = await cannabisCard(client, args.p_member!, false, args.p_staff === true);
         break;
       case "jaguar_rewards":
         result = (await client.query("select * from jaguar_rewards where is_active=true and (not is_demo or $1) order by points_cost,name", [demoAccessEnabled])).rows;

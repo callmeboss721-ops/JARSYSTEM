@@ -16,4 +16,6 @@ export interface CannabisTransaction {
   grams_purchased: number;
   reason: string;
   created_at: string;
+  editable?: boolean;
+  corrected?: boolean;
 }
