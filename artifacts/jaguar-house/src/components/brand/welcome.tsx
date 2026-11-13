@@ -10,6 +10,7 @@ import { SamutPrakanArt } from "./samut-prakan-art";
 import { LoginForm, RegisterForm } from "./auth-forms";
 import { BrandButton } from "./brand-button";
 import { RankEmblem } from "./rank-emblem";
+import { LineOaContact } from "./line-oa-contact";
 
 export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
   const [tab, setTab] = useState<"login" | "register">(initialTab ?? "login");
@@ -76,7 +77,8 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
             <Image src="/brand/jaguar-price-board.webp" alt="เมนูสินค้าและราคาหน้าร้าน" width={760} height={760} sizes="(max-width: 440px) 90vw, 440px" />
           </details>
 
-          <footer className="landing-site-footer" aria-label="ไอคอนท้ายหน้า">
+          <footer className="landing-site-footer" aria-label="ติดต่อและลิงก์">
+            <LineOaContact placement="landing" />
             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
               <path fill="currentColor" d="M12 2.3a9.7 9.7 0 0 0-3.07 18.9c.49.09.66-.21.66-.47v-1.68c-2.7.59-3.27-1.14-3.27-1.14-.44-1.12-1.08-1.42-1.08-1.42-.88-.6.07-.59.07-.59.97.07 1.48 1 1.48 1 .86 1.48 2.25 1.05 2.8.8.09-.63.34-1.05.61-1.29-2.15-.24-4.41-1.08-4.41-4.8 0-1.06.38-1.92 1-2.6-.1-.25-.44-1.23.1-2.57 0 0 .82-.26 2.67.99a9.3 9.3 0 0 1 4.86 0c1.85-1.25 2.67-.99 2.67-.99.54 1.34.2 2.32.1 2.57.62.68 1 1.54 1 2.6 0 3.73-2.27 4.55-4.43 4.79.35.3.66.89.66 1.79v2.65c0 .26.18.57.67.47A9.7 9.7 0 0 0 12 2.3Z" />
             </svg>

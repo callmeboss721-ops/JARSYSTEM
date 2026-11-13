@@ -9,6 +9,7 @@ import { MemberCardFaces, MemberStatusPanel } from "@/components/brand/member-ca
 import { MemberRankLabel, RankEmblem } from "@/components/brand/rank-emblem";
 import { ErrorState, SignedOutState, EmptyState, LoadingState } from "@/components/brand/ui";
 import { api, errorText } from "@/components/brand/loyalty-api";
+import { LineOaContact } from "@/components/brand/line-oa-contact";
 
 const CARD_KEY = getGetCannabisMemberCardQueryKey();
 const CONFETTI_COLORS = ["#e5c04a", "#f6e09a", "#2fd98a", "#c4cad6", "#b8901f"];
@@ -114,6 +115,7 @@ export default function CannabisCardPage() {
               <span className="cannabis-unit">แต้ม</span>
             </li>)}</ul>}
         </section>
+        <LineOaContact placement="member" />
       </div>}
   </MemberShell>;
 }
