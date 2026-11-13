@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JAGUAR SPK Delivery — แดชบอร์ดร้าน</title>
+<style>
+  :root{ --green:#06C755; --green-dark:#049c42; --bg:#F5F6F8; --card:#fff; --text:#111827; --text2:#6B7280; --line:#E5E7EB; --danger:#EF4444; --warn:#F59E0B; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Sarabun","Noto Sans Thai",system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+  header{position:sticky;top:0;z-index:20;background:#111827;color:#fff;padding:14px 16px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+  header a{color:#9CA3AF;font-size:13px;cursor:pointer;text-decoration:none}
+  main{padding:14px;max-width:760px;margin:0 auto}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+  .muted{font-size:13px;color:var(--text2)}
+  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}
+  .stat b{display:block;font-size:22px}
+  .stat span{font-size:12px;color:var(--text2)}
+  .stat.gold b{color:var(--green-dark)}
+  .chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px}
+  .chip{flex:0 0 auto;padding:7px 13px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:13px;cursor:pointer;font-weight:700}
+  .chip.on{background:var(--green);color:#fff;border-color:var(--green)}
+  table{width:100%;border-collapse:collapse;font-size:13px;background:#fff;border-radius:12px;overflow:hidden}
+  th{background:#F0FBF4;color:var(--green-dark);text-align:left;padding:9px 10px;font-size:12px}
+  td{padding:9px 10px;border-top:1px solid var(--line);vertical-align:top}
+  .badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;background:#EEF2F7;color:var(--text2)}
+  .badge.new{background:#FEF3C7;color:#92400E}
+  .badge.confirmed{background:#DBEAFE;color:#1E40AF}
+  .badge.pickup{background:#EDE9FE;color:#5B21B6}
+  .badge.delivering{background:#D1FAE5;color:#065F46}
+  .badge.done{background:#F3F4F6;color:#374151}
+  .badge.cancelled{background:#FEE2E2;color:#991B1B}
+  .code{font-weight:700;color:var(--green-dark);white-space:nowrap}
+  .login{max-width:340px;margin:15vh auto;text-align:center}
+  .login input{width:100%;padding:14px;border:1px solid var(--line);border-radius:12px;font-size:22px;text-align:center;letter-spacing:8px;margin:12px 0}
+  .btn{padding:12px;border:0;border-radius:10px;background:var(--green);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;width:100%}
+  .btn:disabled{opacity:.5}
+  #toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:60;max-width:90vw;text-align:center}
+  #toast.show{opacity:1}
+  .tl{font-size:11px;color:var(--text2);margin-top:3px}
+  .sum-row{display:flex;justify-content:space-between;font-size:14px;padding:3px 0}
+  @media (max-width:640px){ .table-wrap{overflow-x:auto} table{min-width:640px} }
+</style>
+</head>
+<body>
+<header><div>JAGUAR SPK · แดชบอร์ดร้าน</div><a id="btn-logout" style="display:none">ออกจากระบบ</a></header>
+<main>
+  <div id="login-view" class="login">
+    <h2>แดชบอร์ดร้าน</h2>
+    <p class="muted">กรอกรหัสผู้ดูแลร้าน</p>
+    <input id="pin" type="password" inputmode="numeric" maxlength="8" placeholder="••••" />
+    <button class="btn" id="btn-login">เข้าสู่ระบบ</button>
+    <p class="muted" id="login-err" style="color:#EF4444;margin-top:8px"></p>
+  </div>
+  <div id="dash-view" style="display:none">
+    <div class="stats" id="stats"></div>
+    <div class="card" style="margin-top:12px">
+      <b>ประวัติออเดอร์</b>
+      <p class="muted" style="margin:2px 0 8px">อัปเดตอัตโนมัติทุก 30 วินาที · แสดงตั้งแต่ลูกค้าสั่ง ชำระเงิน ไรเดอร์รับ จนส่งถึงมือ</p>
+      <div class="chips" id="f-chips"></div>
+      <div class="chips" id="d-chips"></div>
+      <div class="sum-row"><span class="muted" id="sum-note">—</span><b id="sum-total">0.00 บาท</b></div>
+      <div class="sum-row"><span class="muted">ในจำนวนนี้: ค่าสินค้า <span id="sum-items">0</span> · ค่าส่ง <span id="sum-fee">0</span></span></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>รหัส</th><th>ลูกค้า</th><th>รายการ</th><th>ยอด</th><th>สถานะ</th><th>เวลา</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+<div id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+'use strict';
+var SUPABASE_URL = 'https://sfoenreulwqulfofotcp.supabase.co';
+var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmb2VucmV1bHdxdWxmb2ZvdGNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNjAyNzAsImV4cCI6MjA5NTczNjI3MH0.iiCs7j6ol3-6lqUWROeLgIGkqUYuOyXokR0UFX6D7nI';
+var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+var ALL = [], timer = null;
+var fStatus = 'all', fDate = '7';
+var FCHIPS = [
+  ['all', 'ทั้งหมด'], ['new', 'รอยืนยันชำระ'], ['confirmed', 'ยืนยันชำระ/รอไรเดอร์'],
+  ['pickup', 'ไรเดอร์รับแล้ว'], ['delivering', 'กำลังจัดส่ง'], ['done', 'ส่งสำเร็จ'], ['cancelled', 'ยกเลิก']
+];
+var DCHIPS = [['today', 'วันนี้'], ['7', '7 วันล่าสุด'], ['all', 'ทั้งหมด']];
+var STATUS_TH = { new: 'รอยืนยันชำระ', confirmed: 'ยืนยันชำระแล้ว', pickup: 'ไรเดอร์รับแล้ว', delivering: 'กำลังส่ง', done: 'ส่งสำเร็จ', cancelled: 'ยกเลิก' };
+
+function $(id){ return document.getElementById(id); }
+function toast(msg){ var t = $('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(function(){ t.classList.remove('show'); }, 2600); }
+function esc(s){ var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+function baht(n){ return Number(n).toFixed(2) + ' บาท'; }
+function fmt(t){ return t ? new Date(t).toLocaleString('th-TH', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—'; }
+function todayStart(){ var d = new Date(); d.setHours(0, 0, 0, 0); return d.toISOString(); }
+
+async function verifyPin(pin){
+  var r = await sb.from('dt_settings').select('value').eq('key', 'admin_pin').maybeSingle();
+  return r.data && r.data.value === pin;
+}
+$('btn-login').onclick = async function(){
+  var pin = $('pin').value.trim();
+  if (!pin) { $('login-err').textContent = 'กรุณากรอกรหัส'; return; }
+  this.disabled = true;
+  var ok = await verifyPin(pin);
+  this.disabled = false;
+  if (!ok) { $('login-err').textContent = 'รหัสไม่ถูกต้อง'; return; }
+  sessionStorage.setItem('admin_pin', pin);
+  $('login-view').style.display = 'none';
+  $('dash-view').style.display = 'block';
+  $('btn-logout').style.display = 'inline';
+  renderChips();
+  await refresh();
+  timer = setInterval(refresh, 30000);
+};
+$('btn-logout').onclick = function(){ sessionStorage.removeItem('admin_pin'); location.reload(); };
+$('pin').addEventListener('keydown', function(e){ if (e.key === 'Enter') $('btn-login').click(); });
+
+function renderChips(){
+  $('f-chips').innerHTML = FCHIPS.map(function(c){
+    return '<div class="chip' + (fStatus === c[0] ? ' on' : '') + '" data-f="' + c[0] + '">' + c[1] + '</div>';
+  }).join('');
+  $('d-chips').innerHTML = DCHIPS.map(function(c){
+    return '<div class="chip' + (fDate === c[0] ? ' on' : '') + '" data-d="' + c[0] + '">' + c[1] + '</div>';
+  }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('[data-f]'), function(el){
+    el.onclick = function(){ fStatus = el.getAttribute('data-f'); renderChips(); renderTable(); };
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-d]'), function(el){
+    el.onclick = function(){ fDate = el.getAttribute('data-d'); renderChips(); renderTable(); };
+  });
+}
+
+async function refresh(){
+  var r = await sb.from('dt_orders').select('*').order('created_at', { ascending: false }).limit(500);
+  if (r.error) { toast('โหลดไม่สำเร็จ: ' + r.error.message); return; }
+  ALL = r.data || [];
+  renderStats(); renderTable();
+}
+
+function inDateRange(o){
+  if (fDate === 'all') return true;
+  var from = fDate === 'today' ? todayStart() : new Date(Date.now() - 7 * 86400000).toISOString();
+  return o.created_at >= from;
+}
+function filtered(){
+  return ALL.filter(function(o){
+    return inDateRange(o) && (fStatus === 'all' || o.order_status === fStatus);
+  });
+}
+
+function renderStats(){
+  var today = ALL.filter(function(o){ return o.created_at >= todayStart() && o.order_status !== 'cancelled'; });
+  var revenue = today.filter(function(o){ return ['confirmed', 'pickup', 'delivering', 'done'].indexOf(o.order_status) >= 0; })
+    .reduce(function(s, o){ return s + Number(o.total); }, 0);
+  var done = today.filter(function(o){ return o.order_status === 'done'; }).length;
+  var active = today.filter(function(o){ return ['confirmed', 'pickup', 'delivering'].indexOf(o.order_status) >= 0; }).length;
+  var waiting = today.filter(function(o){ return o.order_status === 'new'; }).length;
+  $('stats').innerHTML =
+    '<div class="stat gold"><span>รายได้วันนี้ (ยืนยันชำระแล้ว)</span><b>' + baht(revenue) + '</b></div>' +
+    '<div class="stat"><span>ออเดอร์วันนี้</span><b>' + today.length + '</b></div>' +
+    '<div class="stat"><span>ส่งสำเร็จวันนี้</span><b>' + done + '</b></div>' +
+    '<div class="stat"><span>กำลังดำเนินการ</span><b>' + active + '</b></div>' +
+    '<div class="stat"><span>รอยืนยันการชำระเงิน</span><b>' + waiting + '</b></div>' +
+    '<div class="stat"><span>สถานะระบบ</span><b style="font-size:15px;margin-top:6px">เชื่อมต่อ Supabase ปกติ</b></div>';
+}
+
+function renderTable(){
+  var list = filtered();
+  var itemsSum = list.reduce(function(s, o){ return s + Number(o.items_total); }, 0);
+  var feeSum = list.reduce(function(s, o){ return s + Number(o.delivery_fee || 0); }, 0);
+  var totalSum = list.reduce(function(s, o){ return s + Number(o.total); }, 0);
+  var label = (FCHIPS.filter(function(c){ return c[0] === fStatus; })[0] || [])[1] || 'ทั้งหมด';
+  $('sum-note').textContent = label + ' · ' + list.length + ' ออเดอร์';
+  $('sum-total').textContent = baht(totalSum);
+  $('sum-items').textContent = baht(itemsSum);
+  $('sum-fee').textContent = baht(feeSum);
+  $('rows').innerHTML = list.map(function(o){
+    var items = (o.items || []).map(function(it){ return it.name + ' × ' + it.qty; }).join(', ');
+    var tl =
+      'สั่ง ' + fmt(o.created_at) +
+      ' · ชำระ ' + fmt(o.confirmed_at) +
+      ' · รับ ' + fmt(o.pickup_at) +
+      ' · ส่ง ' + fmt(o.delivering_at) +
+      ' · ถึง ' + fmt(o.done_at);
+    return '<tr>' +
+      '<td class="code">' + esc(o.order_code) + '</td>' +
+      '<td>' + esc(o.customer_name) + '<br /><span class="muted">' + esc(o.customer_phone) + '</span></td>' +
+      '<td>' + esc(items) + '</td>' +
+      '<td>' + baht(o.total) + '<br /><span class="muted">' + esc(o.payment_method === 'bank' ? 'โอนบัญชี' : 'PromptPay') + '</span></td>' +
+      '<td><span class="badge ' + esc(o.order_status) + '">' + esc(STATUS_TH[o.order_status] || o.order_status) + '</span></td>' +
+      '<td><span class="tl">' + esc(tl) + '</span></td>' +
+      '</tr>';
+  }).join('') || '<tr><td colspan="6" class="muted" style="text-align:center;padding:20px">ไม่มีออเดอร์ตามเงื่อนไขที่เลือก</td></tr>';
+}
+</script>
+</body>
+</html>

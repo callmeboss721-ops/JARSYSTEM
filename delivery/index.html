@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>JAGUAR SPK Delivery</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
   :root{
     --green:#06C755; --green-dark:#049c42; --bg:#F5F6F8; --card:#FFFFFF;
@@ -60,6 +61,9 @@
   .step .dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:0 0 auto;margin-top:2px}
   .step.on{color:var(--text);font-weight:700}
   .step.on .dot{background:var(--green);border-color:var(--green)}
+  #map{height:240px;border-radius:12px;border:1px solid var(--line);margin:10px 0}
+  #rider-line{display:none;font-weight:700;color:var(--green-dark);font-size:14px;margin-bottom:4px}
+  .track-row{display:flex;gap:8px;margin-top:4px}
   #toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:60;max-width:90vw;text-align:center}
   #toast.show{opacity:1}
   .err{color:var(--danger);font-size:13px;margin-top:6px;display:none}
@@ -72,9 +76,16 @@
 </header>
 <main>
   <div id="cust-bar"><span id="cust-hello">ยังไม่ได้ลงทะเบียน</span><a id="cust-edit">ลงทะเบียน / แก้ข้อมูล</a></div>
+  <div class="card">
+    <b>ติดตามออเดอร์</b>
+    <div class="track-row">
+      <input id="track-input" placeholder="รหัสออเดอร์ เช่น SPK261113001" style="flex:1" />
+      <button class="btn sec" style="width:auto;padding:10px 16px" id="btn-track-go">ดูสถานะ</button>
+    </div>
+  </div>
   <div class="chips" id="cat-chips"></div>
   <div class="grid" id="menu-grid"></div>
-  <p class="muted" style="margin-top:14px">ระบบปิดสำหรับลูกค้าร้านเท่านั้น ออเดอร์จะถูกส่งเข้าทีมไรเดอร์ประจำร้านทุก 20 นาที</p>
+  <p class="muted" style="margin-top:14px">ระบบปิดสำหรับลูกค้าร้านเท่านั้น ออเดอร์จะถูกส่งเข้าทีมไรเดอร์ประจำร้านทุก 20 นาที เมื่อไรเดอร์ออกจัดส่งคุณจะเห็นตำแหน่งไรเดอร์แบบสดในหน้าติดตาม</p>
 </main>
 
 <div id="cart-bar">
@@ -131,6 +142,8 @@
   <button class="close" data-close="sh-track">✕</button>
   <h2 id="track-code"></h2>
   <div class="steps" id="track-steps"></div>
+  <div id="rider-line"></div>
+  <div id="map"></div>
   <div class="muted" id="track-note"></div>
 </div></div>
 
@@ -138,6 +151,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 'use strict';
 var SUPABASE_URL = 'https://sfoenreulwqulfofotcp.supabase.co';
@@ -145,6 +159,7 @@ var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 var MENU = [], SETTINGS = {}, cart = {}, pinPos = null, lastOrderCode = null;
+var map = null, custMarker = null, riderMarker = null, mapReady = false;
 var STATUS_STEPS = [
   ['new', 'รับคำสั่งซื้อแล้ว (รอยืนยันการชำระเงิน)'],
   ['confirmed', 'ยืนยันการชำระเงิน / ร้านกำลังจัดของ'],
@@ -160,6 +175,13 @@ function toast(msg){
 }
 function baht(n){ return Number(n).toFixed(2) + ' บาท'; }
 function esc(s){ var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+function km(a, b){
+  var R = 6371, dLat = (b.lat - a.lat) * Math.PI / 180, dLng = (b.lng - a.lng) * Math.PI / 180;
+  var s = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(a.lat * Math.PI / 180) * Math.cos(b.lat * Math.PI / 180) *
+    Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  return 2 * R * Math.asin(Math.sqrt(s));
+}
 
 /* ---------- PromptPay payload (EMVCo, CRC16-CCITT) ---------- */
 function crc16(s){
@@ -366,16 +388,26 @@ $('btn-order').onclick = async function(){
   var on = document.querySelector('.chip.on');
   renderMenu(on ? on.getAttribute('data-cat') : null);
   closeSheet('sh-cart');
-  lastOrderCode = code;
-  showTrack(code);
-  toast('สั่งซื้อสำเร็จ รหัส ' + code);
+  lastOrderCode = res.data.order_code;
+  localStorage.setItem('spk_last_order', lastOrderCode);
+  showTrack(lastOrderCode);
+  toast('สั่งซื้อสำเร็จ รหัส ' + lastOrderCode);
 };
 
-/* ---------- track ---------- */
+/* ---------- track + แผนที่ไรเดอร์สด ---------- */
+$('btn-track-go').onclick = function(){
+  var code = $('track-input').value.trim().toUpperCase();
+  if (!code) { toast('กรุณากรอกรหัสออเดอร์'); return; }
+  showTrack(code);
+};
+$('track-input').addEventListener('keydown', function(e){ if (e.key === 'Enter') $('btn-track-go').click(); });
+
 function showTrack(code){
   $('track-code').textContent = 'รหัสคำสั่งซื้อ: ' + code;
-  renderSteps('new');
+  renderSteps('loading');
+  $('track-note').textContent = 'กำลังโหลดสถานะ...';
   openSheet('sh-track');
+  initMap();
   pollTrack(code);
 }
 function renderSteps(status){
@@ -388,18 +420,71 @@ function renderSteps(status){
     ? 'ออเดอร์จะถูกส่งเข้าทีมไรเดอร์ประจำร้านโดยอัตโนมัติทุก 20 นาที'
     : 'สถานะอัปเดตโดยทีมไรเดอร์ประจำร้าน';
 }
+function initMap(){
+  if (mapReady || !window.L) return;
+  map = L.map('map', { zoomControl: false }).setView([13.7563, 100.5018], 14);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
+  var icon = L.icon({
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+    iconSize: [25, 41], iconAnchor: [12, 41]
+  });
+  custMarker = L.marker([13.7563, 100.5018], { icon: icon }).addTo(map);
+  mapReady = true;
+  setTimeout(function(){ if (map) map.invalidateSize(); }, 250);
+}
 var pollTimer = null;
-function pollTrack(code){
+async function pollTrack(code){
   if (pollTimer) clearInterval(pollTimer);
-  pollTimer = setInterval(async function(){
+  async function tick(){
     if (!$('sh-track').classList.contains('open')) { clearInterval(pollTimer); return; }
-    var r = await sb.from('dt_orders').select('order_status').eq('order_code', code).maybeSingle();
-    if (r.data) renderSteps(r.data.order_status);
-  }, 10000);
+    var r = await sb.from('dt_orders').select('*').eq('order_code', code).maybeSingle();
+    if (!r.data) { $('track-note').textContent = 'ไม่พบรหัสออเดอร์นี้ในระบบ'; return; }
+    var o = r.data;
+    renderSteps(o.order_status);
+    if (o.lat && o.lng && mapReady) {
+      custMarker.setLatLng([o.lat, o.lng]);
+      if (!riderMarker) {
+        var rIcon = L.icon({
+          iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+          shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+          iconSize: [25, 41], iconAnchor: [12, 41],
+          className: 'rider-pin'
+        });
+        riderMarker = L.marker([o.lat, o.lng], { icon: rIcon }).addTo(map);
+      }
+      var bounds = L.latLngBounds([[o.lat, o.lng]]);
+      if (o.order_status === 'pickup' || o.order_status === 'delivering') {
+        var rl = await sb.from('dt_rider_location')
+          .select('lat,lng,updated_at')
+          .eq('active_order_code', code)
+          .gte('updated_at', new Date(Date.now() - 10 * 60 * 1000).toISOString())
+          .order('updated_at', { ascending: false }).limit(1);
+        if (rl.data && rl.data.length) {
+          var rp = rl.data[0];
+          riderMarker.setLatLng([rp.lat, rp.lng]);
+          bounds.extend([rp.lat, rp.lng]);
+          var d = km({ lat: o.lat, lng: o.lng }, rp);
+          $('rider-line').style.display = 'block';
+          $('rider-line').textContent = 'ไรเดอร์กำลังเดินทางมาหาคุณ อยู่ห่างประมาณ ' + d.toFixed(1) + ' กม. (อัปเดต ' + new Date(rp.updated_at).toLocaleTimeString('th-TH') + ')';
+        } else {
+          $('rider-line').style.display = 'block';
+          $('rider-line').textContent = 'ไรเดอร์กำลังเตรียมจัดส่ง ตำแหน่งจะแสดงเมื่อไรเดอร์ออกเดินทาง';
+        }
+      } else {
+        $('rider-line').style.display = 'none';
+      }
+      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 16 });
+    }
+  }
+  tick();
+  pollTimer = setInterval(tick, 10000);
 }
 
 /* ---------- init ---------- */
 try { cart = JSON.parse(localStorage.getItem('spk_cart') || '{}') || {}; } catch (e) { cart = {}; }
+var last = localStorage.getItem('spk_last_order');
+if (last) $('track-input').value = last;
 loadAll().then(renderCartBar);
 </script>
 </body>
