@@ -1,0 +1,1033 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JAGUAR SPK Design System v3</title>
+<style>
+  :root{
+    --bg:#050505;
+    --surface:#0D140F;
+    --surface-2:#111A14;
+    --surface-3:#16211A;
+    --neon:#00FF9D;
+    --neon-soft:rgba(0,255,157,.14);
+    --neon-line:rgba(0,255,157,.30);
+    --gold:#D4AF37;
+    --gold-2:#E5C04A;
+    --gold-soft:rgba(212,175,55,.12);
+    --gold-line:rgba(212,175,55,.35);
+    --text:#F9F6E7;
+    --text-2:rgba(249,246,231,.70);
+    --text-3:rgba(249,246,231,.45);
+    --line:rgba(249,246,231,.10);
+    --danger:#FF5A5A;
+    --warn:#FFC24B;
+    --r-lg:20px; --r-md:12px; --r-sm:8px;
+    --tap:44px;
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:"TH Sarabun New","Sarabun","Noto Sans Thai",system-ui,sans-serif;
+    line-height:1.6;overflow-x:hidden;
+  }
+  ::selection{background:var(--neon);color:#04140C}
+  ::-webkit-scrollbar{width:10px}
+  ::-webkit-scrollbar-thumb{background:#1E2B22;border-radius:99px}
+  ::-webkit-scrollbar-track{background:var(--bg)}
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
+
+  /* ---------- Ambient background ---------- */
+  .ambient{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+  .ambient .blob{position:absolute;border-radius:50%;filter:blur(120px);opacity:.35;animation:drift 26s var(--ease) infinite alternate}
+  .blob-1{width:520px;height:520px;background:radial-gradient(circle,#00FF9D33,transparent 65%);top:-160px;left:-120px}
+  .blob-2{width:640px;height:640px;background:radial-gradient(circle,#D4AF3722,transparent 65%);bottom:-220px;right:-160px;animation-delay:-8s}
+  .blob-3{width:420px;height:420px;background:radial-gradient(circle,#00C2A833,transparent 65%);top:38%;left:52%;animation-delay:-16s}
+  @keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(60px,40px) scale(1.12)}}
+  .ambient .grid-lines{
+    position:absolute;inset:0;opacity:.5;
+    background-image:linear-gradient(rgba(0,255,157,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,157,.045) 1px,transparent 1px);
+    background-size:56px 56px;
+    mask-image:radial-gradient(ellipse 90% 60% at 50% 0%,#000 30%,transparent 75%);
+    -webkit-mask-image:radial-gradient(ellipse 90% 60% at 50% 0%,#000 30%,transparent 75%);
+  }
+
+  /* ---------- Top nav ---------- */
+  .topnav{
+    position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:18px;
+    padding:14px clamp(16px,4vw,40px);
+    background:rgba(5,5,5,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.14em;font-size:.9rem}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--neon);box-shadow:0 0 12px var(--neon)}
+  .brand em{font-style:normal;color:var(--gold-2)}
+  .topnav nav{display:flex;gap:4px;margin-left:auto}
+  .topnav nav a{
+    color:var(--text-2);text-decoration:none;font-size:.85rem;padding:8px 14px;border-radius:99px;
+    transition:color .2s,background .2s;
+  }
+  .topnav nav a:hover{color:var(--neon);background:var(--neon-soft)}
+  .topnav nav a:focus-visible{outline:2px solid var(--neon);outline-offset:2px}
+  .ver-pill{font-size:.7rem;color:var(--neon);border:1px solid var(--neon-line);padding:3px 10px;border-radius:99px;letter-spacing:.08em}
+  @media(max-width:720px){.topnav nav{display:none}}
+
+  main{max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,40px) 90px}
+
+  /* ---------- Hero ---------- */
+  .hero{padding:clamp(56px,9vw,110px) 0 60px;text-align:center}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;color:var(--neon);
+    font-size:.75rem;letter-spacing:.3em;text-transform:uppercase;
+    border:1px solid var(--neon-line);border-radius:99px;padding:7px 18px;background:var(--neon-soft);
+  }
+  .hero h1{
+    font-size:clamp(2.4rem,6.5vw,4.4rem);line-height:1.12;margin:26px 0 18px;font-weight:800;letter-spacing:.01em;
+    background:linear-gradient(100deg,#F9F6E7 15%,var(--gold-2) 45%,var(--neon) 78%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero p{color:var(--text-2);max-width:620px;margin:0 auto;font-size:1.05rem}
+  .hero .stats{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:32px}
+  .stat{
+    display:flex;align-items:center;gap:10px;padding:10px 18px;border-radius:14px;
+    background:var(--surface);border:1px solid var(--line);
+  }
+  .stat b{font-size:1.25rem;color:var(--neon)}
+  .stat.gold b{color:var(--gold-2)}
+  .stat span{font-size:.78rem;color:var(--text-3)}
+
+  /* ---------- Sections ---------- */
+  section{margin-top:clamp(64px,9vw,110px);scroll-margin-top:90px}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px;flex-wrap:wrap}
+  .sec-num{font-size:.8rem;color:var(--gold-2);letter-spacing:.2em}
+  h2{font-size:clamp(1.4rem,3vw,1.9rem);font-weight:800}
+  .sub{color:var(--text-2);margin-bottom:26px;max-width:640px}
+  .panel{
+    background:linear-gradient(180deg,var(--surface),rgba(13,20,15,.6));
+    border:1px solid var(--line);border-radius:var(--r-lg);
+    padding:clamp(18px,3vw,28px);
+    box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(249,246,231,.05);
+  }
+  h3{font-size:1rem;color:var(--gold-2);margin:24px 0 14px;font-weight:700;letter-spacing:.02em}
+  h3:first-child{margin-top:0}
+  .caption{font-size:.76rem;color:var(--text-3);margin-top:12px}
+  .grid{display:grid;gap:12px}
+  .cols-4{grid-template-columns:repeat(auto-fill,minmax(168px,1fr))}
+  .cols-5{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+  .row{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+
+  /* reveal on scroll */
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ---------- Tokens ---------- */
+  .swatch{
+    position:relative;border-radius:var(--r-md);height:76px;cursor:pointer;
+    border:1px solid var(--line);display:flex;align-items:flex-end;padding:10px;width:100%;
+    transition:transform .25s var(--ease),box-shadow .25s var(--ease);
+    overflow:hidden;
+  }
+  .swatch:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(0,0,0,.55)}
+  .swatch:focus-visible{outline:2px solid var(--neon);outline-offset:3px}
+  .swatch .copy-hint{position:absolute;top:8px;right:10px;font-size:.62rem;color:var(--text-3);opacity:0;transition:opacity .2s}
+  .swatch:hover .copy-hint{opacity:1}
+  .swatch .swatch-name{font-size:.72rem;color:var(--text);background:rgba(5,5,5,.55);padding:2px 8px;border-radius:6px;backdrop-filter:blur(4px)}
+  .token-cell{display:flex;flex-direction:column;gap:0}
+  .token-meta{display:flex;justify-content:space-between;margin-top:7px;font-size:.7rem;color:var(--text-3)}
+
+  /* ---------- Icons ---------- */
+  .ic{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex:none}
+  .ic-16{width:16px;height:16px}
+  .ic-20{width:20px;height:20px}
+  .ic-default{color:var(--text-2)}
+  .ic-active{color:var(--neon);filter:drop-shadow(0 0 6px rgba(0,255,157,.5))}
+  .ic-disabled{color:rgba(249,246,231,.22)}
+  .ic-error{color:var(--danger)}
+  .st{display:inline-flex;flex-direction:column;align-items:center;gap:5px}
+  .st .cap{font-size:.68rem;color:var(--text-3)}
+  .toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+  .searchbox{
+    display:flex;align-items:center;gap:8px;background:var(--surface-2);
+    border:1px solid var(--line);border-radius:12px;padding:0 14px;min-height:44px;flex:1;min-width:220px;max-width:340px;
+    transition:border-color .2s,box-shadow .2s;
+  }
+  .searchbox:focus-within{border-color:var(--neon-line);box-shadow:0 0 0 3px var(--neon-soft)}
+  .searchbox svg{color:var(--text-3)}
+  .searchbox input{flex:1;background:none;border:none;color:var(--text);font:inherit;font-size:.9rem;outline:none;min-width:0}
+  .searchbox input::placeholder{color:var(--text-3)}
+  .sizeseg{display:inline-flex;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:3px}
+  .sizeseg button{
+    min-width:44px;min-height:36px;border:none;background:transparent;border-radius:8px;
+    color:var(--text-3);font:inherit;font-size:.78rem;cursor:pointer;transition:all .2s;
+  }
+  .sizeseg button:hover{color:var(--text)}
+  .sizeseg button.active{background:var(--neon);color:#04140C;font-weight:700}
+  .sizeseg button:focus-visible{outline:2px solid var(--neon);outline-offset:2px}
+  .count-pill{font-size:.75rem;color:var(--text-3);margin-left:auto}
+  .icell{
+    position:relative;display:flex;flex-direction:column;align-items:center;gap:9px;
+    background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-md);
+    padding:18px 10px 12px;cursor:pointer;text-align:center;font:inherit;
+    transition:transform .25s var(--ease),border-color .25s,box-shadow .25s;
+  }
+  .icell:hover{transform:translateY(-4px);border-color:var(--neon-line);box-shadow:0 12px 30px rgba(0,255,157,.08)}
+  .icell:focus-visible{outline:2px solid var(--neon);outline-offset:3px}
+  .icell .ic{color:var(--text-2);transition:color .2s,filter .2s}
+  .icell:hover .ic{color:var(--neon);filter:drop-shadow(0 0 7px rgba(0,255,157,.55))}
+  .icell .th{font-size:.8rem;color:var(--text-2)}
+  .icell .slug{font-size:.62rem;color:var(--text-3);letter-spacing:.04em}
+  .icell .copied{
+    position:absolute;top:8px;right:8px;font-size:.6rem;color:#04140C;background:var(--neon);
+    padding:2px 8px;border-radius:99px;font-weight:700;opacity:0;transform:scale(.8);transition:all .25s var(--ease);
+  }
+  .icell.copied-now .copied{opacity:1;transform:scale(1)}
+  .empty-note{color:var(--text-3);font-size:.85rem;padding:20px;text-align:center;width:100%}
+
+  /* signature icons */
+  .sig .ic{width:34px;height:34px}
+  .sig-neon{color:var(--neon);filter:drop-shadow(0 0 9px rgba(0,255,157,.45))}
+  .sig-gold{color:var(--gold-2);filter:drop-shadow(0 0 9px rgba(212,175,55,.45))}
+  .sig.sig-neon{border-color:rgba(0,255,157,.22)}
+  .sig.sig-gold{border-color:rgba(212,175,55,.22)}
+  .sig:hover{box-shadow:0 14px 34px rgba(0,0,0,.5)}
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    position:relative;display:inline-flex;align-items:center;justify-content:center;gap:9px;
+    min-height:var(--tap);padding:0 24px;border-radius:12px;border:1px solid transparent;
+    font:inherit;font-size:.95rem;font-weight:700;cursor:pointer;overflow:hidden;
+    transition:transform .15s var(--ease),box-shadow .2s,background .2s,border-color .2s,color .2s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .btn:focus-visible{outline:2px solid var(--neon);outline-offset:3px}
+  .btn .ripple{
+    position:absolute;border-radius:50%;background:rgba(255,255,255,.35);
+    transform:scale(0);animation:ripple .55s ease-out forwards;pointer-events:none;
+  }
+  @keyframes ripple{to{transform:scale(3.2);opacity:0}}
+  .btn-primary{background:linear-gradient(135deg,#00FF9D,#00D984);color:#04140C;box-shadow:0 0 0 1px rgba(0,255,157,.4),0 6px 22px rgba(0,255,157,.28)}
+  .btn-primary:hover{box-shadow:0 0 0 1px rgba(0,255,157,.6),0 10px 30px rgba(0,255,157,.4);transform:translateY(-2px)}
+  .btn-primary:active{transform:translateY(0) scale(.98)}
+  .btn-secondary{background:var(--gold-soft);color:var(--gold-2);border-color:var(--gold-line)}
+  .btn-secondary:hover{background:rgba(212,175,55,.2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,175,55,.18)}
+  .btn-secondary:active{transform:translateY(0) scale(.98)}
+  .btn-ghost{background:transparent;color:var(--text-2);border-color:var(--line)}
+  .btn-ghost:hover{color:var(--text);border-color:var(--neon-line);background:var(--neon-soft)}
+  .btn-danger{background:transparent;color:var(--danger);border-color:rgba(255,90,90,.45)}
+  .btn-danger:hover{background:rgba(255,90,90,.12);border-color:var(--danger)}
+  .btn-danger.solid{background:linear-gradient(135deg,#FF5A5A,#E04848);color:#1A0505}
+  .btn[disabled]{opacity:.35;cursor:not-allowed;transform:none!important;box-shadow:none!important;pointer-events:none}
+  .btn.loading{color:transparent!important;pointer-events:none}
+  .btn.loading .ic{opacity:0}
+  .btn.loading::before{
+    content:"";position:absolute;width:19px;height:19px;border-radius:50%;
+    border:2.5px solid rgba(4,20,12,.35);border-top-color:transparent;
+    animation:spin .7s linear infinite;
+  }
+  .btn-secondary.loading::before,.btn-ghost.loading::before,.btn-danger.loading::before{border-color:rgba(249,246,231,.4);border-top-color:transparent}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .btn-icon{
+    width:var(--tap);height:var(--tap);padding:0;display:inline-flex;align-items:center;justify-content:center;
+    background:var(--surface-2);border:1px solid var(--line);color:var(--text-2);border-radius:12px;cursor:pointer;
+    transition:all .2s var(--ease);
+  }
+  .btn-icon:hover{color:var(--neon);border-color:var(--neon-line);box-shadow:0 0 16px rgba(0,255,157,.15);transform:translateY(-2px)}
+  .btn-icon:active{transform:translateY(0) scale(.94)}
+  .btn-icon:focus-visible{outline:2px solid var(--neon);outline-offset:2px}
+  .btn-icon[disabled]{opacity:.3;pointer-events:none}
+
+  .switch{position:relative;width:54px;height:31px;display:inline-block;flex:none}
+  .switch input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer;z-index:1}
+  .switch .track{position:absolute;inset:0;border-radius:99px;background:var(--surface-3);border:1px solid var(--line);transition:all .25s var(--ease)}
+  .switch .track::after{
+    content:"";position:absolute;top:3px;left:3px;width:23px;height:23px;border-radius:50%;
+    background:var(--text-3);transition:all .25s var(--ease);
+  }
+  .switch input:checked + .track{background:var(--neon-soft);border-color:var(--neon)}
+  .switch input:checked + .track::after{transform:translateX(23px);background:var(--neon);box-shadow:0 0 10px rgba(0,255,157,.6)}
+  .switch input:focus-visible + .track{outline:2px solid var(--neon);outline-offset:3px}
+  .switch input:disabled + .track{opacity:.35;cursor:not-allowed}
+
+  /* dropdown */
+  .dd-wrap{position:relative;display:inline-block}
+  .menu{
+    position:absolute;top:calc(100% + 10px);left:0;min-width:230px;z-index:20;
+    background:rgba(17,26,20,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border:1px solid var(--neon-line);border-radius:14px;padding:7px;
+    box-shadow:0 24px 60px rgba(0,0,0,.65);
+    opacity:0;transform:translateY(-8px) scale(.97);pointer-events:none;
+    transition:opacity .22s var(--ease),transform .22s var(--ease);
+  }
+  .dd-wrap.open .menu{opacity:1;transform:none;pointer-events:auto}
+  .menu-item{
+    display:flex;align-items:center;gap:11px;width:100%;min-height:42px;padding:9px 13px;
+    border:none;background:transparent;color:var(--text-2);font:inherit;font-size:.9rem;
+    cursor:pointer;border-radius:9px;text-align:left;transition:all .15s;
+  }
+  .menu-item:hover{background:var(--neon-soft);color:var(--text)}
+  .menu-item:focus-visible{outline:2px solid var(--neon);outline-offset:-2px}
+  .menu-item.danger{color:var(--danger)}
+  .menu-item.danger:hover{background:rgba(255,90,90,.12);color:var(--danger)}
+  .menu-sep{height:1px;background:var(--line);margin:6px 9px}
+  .chev{transition:transform .25s var(--ease)}
+  .dd-wrap.open .chev{transform:rotate(180deg)}
+
+  /* segmented */
+  .segmented{display:inline-flex;background:var(--surface-2);border:1px solid var(--line);border-radius:99px;padding:4px;gap:2px}
+  .seg{position:relative;min-height:40px;padding:0 22px;border:none;background:transparent;border-radius:99px;color:var(--text-2);font:inherit;font-size:.88rem;cursor:pointer;transition:color .2s}
+  .seg.active{background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#1A1405;font-weight:700;box-shadow:0 4px 14px rgba(212,175,55,.3)}
+  .seg:not(.active):hover{color:var(--text)}
+  .seg:focus-visible{outline:2px solid var(--neon);outline-offset:2px}
+
+  /* ---------- Collecting Track ---------- */
+  .track-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+  @media(max-width:860px){.track-grid{grid-template-columns:1fr}}
+  .track-card{position:relative;overflow:hidden}
+  .track-card::before{
+    content:"";position:absolute;inset:0;opacity:.5;pointer-events:none;
+    background:radial-gradient(420px 160px at 85% -10%,var(--glow,rgba(0,255,157,.08)),transparent 70%);
+  }
+  .t-cannabis{--act:var(--neon);--act-soft:var(--neon-soft);--act-line:var(--neon-line);--glow:rgba(0,255,157,.09)}
+  .t-kratom{--act:var(--gold-2);--act-soft:var(--gold-soft);--act-line:var(--gold-line);--glow:rgba(212,175,55,.09)}
+  .track-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px;flex-wrap:wrap}
+  .track-title{font-weight:800;letter-spacing:.03em;display:flex;align-items:center;gap:9px}
+  .track-title .ic{color:var(--act)}
+  .track-count{text-align:right}
+  .track-count .big{font-size:1.9rem;font-weight:800;color:var(--act);line-height:1;font-variant-numeric:tabular-nums}
+  .track-count .of{font-size:.8rem;color:var(--text-3)}
+  .slots{display:flex;align-items:center}
+  .slot{
+    position:relative;flex:none;width:38px;height:38px;border-radius:11px;
+    border:1.5px dashed var(--line);display:flex;align-items:center;justify-content:center;
+    color:var(--text-3);background:rgba(255,255,255,.02);
+    transition:all .35s var(--ease);
+  }
+  .slot .n{font-size:.7rem;font-variant-numeric:tabular-nums}
+  .slot.next{border:1.5px solid var(--text-2);color:var(--text-2);animation:pulse 2.2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(249,246,231,.12)}50%{box-shadow:0 0 0 5px rgba(249,246,231,0)}}
+  .slot.done{
+    border:1.5px solid var(--act);background:var(--act);color:#04140C;
+    box-shadow:0 0 14px var(--act-soft);animation:pop .4s var(--ease);
+  }
+  @keyframes pop{0%{transform:scale(.7)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+  .slot.done .n{display:none}
+  .slot.done::after{
+    content:"";width:17px;height:17px;
+    background:no-repeat center/contain url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%2304140C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 10 18.5 20 6"/></svg>');
+  }
+  .link{flex:1 1 10px;min-width:7px;height:2px;border-radius:2px;background:var(--line);position:relative;overflow:hidden}
+  .link.on{background:linear-gradient(90deg,var(--act),rgba(249,246,231,.15))}
+  .link.on::after{
+    content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);
+    transform:translateX(-100%);animation:shine 2.6s ease-in-out infinite;
+  }
+  @keyframes shine{60%,100%{transform:translateX(100%)}}
+  .track-foot{display:flex;justify-content:space-between;align-items:center;margin-top:18px;gap:10px;flex-wrap:wrap}
+  .pill{font-size:.76rem;padding:5px 14px;border-radius:99px;border:1px solid var(--line);color:var(--text-2);transition:all .3s}
+  .pill.ready{border-color:var(--act);color:var(--act);background:var(--act-soft);box-shadow:0 0 14px var(--act-soft)}
+  .track-actions{display:flex;gap:8px}
+  .mini-btn{
+    min-height:36px;padding:0 14px;border-radius:9px;border:1px solid var(--act-line);
+    background:transparent;color:var(--act);font:inherit;font-size:.8rem;font-weight:700;cursor:pointer;
+    transition:all .2s;
+  }
+  .mini-btn:hover{background:var(--act-soft)}
+  .mini-btn:focus-visible{outline:2px solid var(--neon);outline-offset:2px}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  @media(max-width:480px){
+    .slot{width:28px;height:28px;border-radius:8px}
+    .slot .n{font-size:.58rem}
+    .slot.done::after{width:13px;height:13px}
+    .link{min-width:4px}
+  }
+
+  /* ---------- Ranks ---------- */
+  .rank-strip{display:flex;gap:10px;overflow-x:auto;padding:6px 2px 14px;scrollbar-width:thin}
+  .rbadge{
+    flex:none;display:flex;flex-direction:column;align-items:center;gap:8px;
+    width:104px;padding:16px 8px 12px;border-radius:16px;cursor:pointer;
+    background:var(--surface-2);border:1px solid var(--line);font:inherit;
+    transition:all .3s var(--ease);
+  }
+  .rbadge:hover{transform:translateY(-4px)}
+  .rbadge.selected{border-color:var(--rc);box-shadow:0 0 0 1px var(--rc),0 12px 34px rgba(0,0,0,.5);background:linear-gradient(180deg,var(--surface-3),var(--surface-2))}
+  .rbadge:focus-visible{outline:2px solid var(--neon);outline-offset:2px}
+  .rbadge .rname{font-size:.74rem;font-weight:700;color:var(--rc)}
+  .rbadge .rlv{font-size:.6rem;color:var(--text-3);letter-spacing:.1em}
+  .rank-detail{
+    display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center;
+    background:linear-gradient(135deg,var(--surface-3),var(--surface));
+    border:1px solid var(--line);border-radius:var(--r-md);padding:24px;margin-top:6px;
+  }
+  @media(max-width:560px){.rank-detail{grid-template-columns:1fr;text-align:center;justify-items:center}}
+  .rank-detail .big-badge{animation:pop .45s var(--ease)}
+  .rank-detail h4{font-size:1.35rem;font-weight:800;margin-bottom:2px}
+  .rank-detail .lv{font-size:.75rem;color:var(--text-3);letter-spacing:.14em;margin-bottom:10px}
+  .rank-detail .desc{color:var(--text-2);font-size:.9rem;max-width:520px}
+  .perks{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .perk{font-size:.72rem;color:var(--text-2);border:1px solid var(--line);padding:4px 12px;border-radius:99px;display:inline-flex;align-items:center;gap:6px}
+  .perk .ic{width:13px;height:13px;color:var(--gold-2)}
+
+  /* ---------- Tab bar demo ---------- */
+  .phone{
+    max-width:375px;margin:0 auto;border:1px solid var(--line);border-radius:34px;
+    background:var(--surface);padding:18px 14px 14px;box-shadow:0 30px 80px rgba(0,0,0,.6);
+  }
+  .phone-screen{min-height:190px;border-radius:18px;border:1px solid var(--line);background:var(--surface-2);padding:18px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;text-align:center}
+  .phone-screen .ic{width:30px;height:30px;color:var(--neon)}
+  .phone-screen .pt{font-weight:800}
+  .phone-screen .pd{font-size:.8rem;color:var(--text-3)}
+  .tabbar{
+    display:flex;align-items:flex-end;gap:4px;margin-top:14px;
+    background:rgba(17,26,20,.9);border:1px solid var(--line);border-radius:20px;padding:8px;
+  }
+  .tab{
+    flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+    min-height:52px;padding:7px 4px;border:none;background:transparent;
+    color:var(--text-3);font:inherit;font-size:.68rem;cursor:pointer;border-radius:12px;
+    transition:all .25s var(--ease);
+  }
+  .tab:hover{color:var(--text-2)}
+  .tab[aria-selected="true"]{color:var(--neon);background:var(--neon-soft)}
+  .tab:focus-visible{outline:2px solid var(--neon);outline-offset:2px}
+  .tab-scan{
+    flex:0 0 58px;height:58px;margin-top:-26px;border-radius:50%;
+    background:linear-gradient(135deg,#00FF9D,#00D984);color:#04140C;border:3px solid var(--bg);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 0 22px rgba(0,255,157,.5);
+    transition:transform .2s var(--ease),box-shadow .2s;
+  }
+  .tab-scan:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 0 30px rgba(0,255,157,.65)}
+  .tab-scan:active{transform:scale(.95)}
+  .tab-scan:focus-visible{outline:2px solid var(--neon);outline-offset:3px}
+  .tab-scan .ic{width:26px;height:26px;stroke-width:2}
+
+  /* ---------- Toast ---------- */
+  .toast-zone{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:100;display:flex;flex-direction:column;gap:8px;align-items:center}
+  .toast{
+    display:flex;align-items:center;gap:9px;background:rgba(17,26,20,.94);
+    border:1px solid var(--neon-line);color:var(--text);font-size:.85rem;
+    padding:11px 20px;border-radius:99px;box-shadow:0 16px 44px rgba(0,0,0,.6);
+    animation:toastIn .35s var(--ease);
+  }
+  .toast .ic{width:17px;height:17px;color:var(--neon)}
+  .toast.out{animation:toastOut .3s var(--ease) forwards}
+  @keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.94)}to{opacity:1;transform:none}}
+  @keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.96)}}
+
+  footer{max-width:1180px;margin:80px auto 0;padding:26px clamp(16px,4vw,40px);border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--text-3);font-size:.78rem}
+  footer a{color:var(--text-2);text-decoration:none}
+  footer a:hover{color:var(--neon)}
+
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important}
+    html{scroll-behavior:auto}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="ambient" aria-hidden="true">
+  <div class="grid-lines"></div>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+
+<header class="topnav">
+  <div class="brand"><span class="dot"></span>JAGUAR <em>SPK</em></div>
+  <span class="ver-pill mono">DS v3.0</span>
+  <nav aria-label="สารบัญ">
+    <a href="#tokens">Tokens</a>
+    <a href="#icons">Icons</a>
+    <a href="#actions">Actions</a>
+    <a href="#track">Track</a>
+    <a href="#ranks">Ranks</a>
+    <a href="#nav">Nav</a>
+  </nav>
+</header>
+
+<main>
+  <div class="hero">
+    <span class="eyebrow"><svg class="ic" style="width:13px;height:13px" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2.5 21.5 12 12 21.5 2.5 12"/></svg> JAGUAR SPK Design System</span>
+    <h1>Icon · Action · Track · Rank</h1>
+    <p>ชุดดีไซน์พรีเมียมสำหรับเว็บ JAGUAR SPK DRINK ทุกคอมโพเนนต์โต้ตอบได้จริง กดได้ ลองได้ทันที ใช้ design tokens ชุดเดียวกันทั้งระบบ</p>
+    <div class="stats">
+      <div class="stat"><b class="mono">47</b><span>ไอคอน theSVG</span></div>
+      <div class="stat gold"><b class="mono">10</b><span>ระดับสมาชิก</span></div>
+      <div class="stat"><b class="mono">10</b><span>ช่องสะสมแต้ม</span></div>
+      <div class="stat gold"><b class="mono">100%</b><span>Interactive</span></div>
+    </div>
+  </div>
+
+  <!-- ================= TOKENS ================= -->
+  <section id="tokens" class="reveal">
+    <div class="sec-head"><span class="sec-num mono">01</span><h2>Design Tokens</h2></div>
+    <p class="sub">แตะการ์ดสีเพื่อคัดลอกค่า HEX ทุกคอมโพเนนต์อ้างอิงชุดนี้เท่านั้น</p>
+    <div class="panel">
+      <div class="grid cols-5" id="tokenGrid"></div>
+    </div>
+  </section>
+
+  <!-- ================= ICONS ================= -->
+  <section id="icons" class="reveal">
+    <div class="sec-head"><span class="sec-num mono">02</span><h2>Icon System</h2></div>
+    <p class="sub">SVG เส้น 24×24 stroke 1.75 จาก theSVG UI Icons (MIT) คลิกไอคอนเพื่อคัดลอกโค้ด SVG พิมพ์ค้นหาได้ทันที</p>
+    <div class="panel">
+      <div class="toolbar">
+        <div class="searchbox">
+          <svg class="ic ic-16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg>
+          <input id="iconSearch" type="search" placeholder="ค้นหาไอคอน เช่น แต้ม, qr, crown" aria-label="ค้นหาไอคอน" />
+        </div>
+        <div class="sizeseg" role="group" aria-label="ขนาดไอคอน">
+          <button data-sz="16" aria-pressed="false">16</button>
+          <button data-sz="20" aria-pressed="false">20</button>
+          <button data-sz="24" class="active" aria-pressed="true">24</button>
+          <button data-sz="32" aria-pressed="false">32</button>
+        </div>
+        <span class="count-pill mono" id="iconCount"></span>
+      </div>
+      <div class="grid cols-5" id="iconGrid" role="list"></div>
+      <h3>สถานะของไอคอน</h3>
+      <div class="row" id="iconStates"></div>
+    </div>
+  </section>
+
+  <!-- ================= SIGNATURE ================= -->
+  <section id="signature" class="reveal">
+    <div class="sec-head"><span class="sec-num mono">03</span><h2>Signature Icons</h2></div>
+    <p class="sub">ชุดไอคอนเล่าเรื่องแบรนด์ ใช้กับจุดเน้นพิเศษ หน้าระดับสมาชิก รางวัลพรีเมียม และแบนเนอร์ คลิกเพื่อคัดลอก</p>
+    <div class="panel">
+      <div class="grid cols-5" id="sigGrid"></div>
+    </div>
+  </section>
+
+  <!-- ================= ACTIONS ================= -->
+  <section id="actions" class="reveal">
+    <div class="sec-head"><span class="sec-num mono">04</span><h2>Action Buttons &amp; Controls</h2></div>
+    <p class="sub">ลำดับความสำคัญ Primary → Secondary → Ghost → Danger ทุกปุ่มกดได้จริง ลองกดเพื่อดูสถานะ loading และ success</p>
+    <div class="panel">
+      <h3>Primary · เขียวนีออน</h3>
+      <div class="row">
+        <button class="btn btn-primary demo-btn">สะสมแต้ม</button>
+        <button class="btn btn-primary demo-btn">แลกรางวัล</button>
+        <button class="btn btn-primary" disabled>disabled</button>
+      </div>
+      <h3>Secondary · ทอง</h3>
+      <div class="row">
+        <button class="btn btn-secondary demo-btn">แลกของรางวัล</button>
+        <button class="btn btn-secondary demo-btn">ดูโปรโมชั่น</button>
+        <button class="btn btn-secondary" disabled>disabled</button>
+      </div>
+      <h3>Ghost และ Danger</h3>
+      <div class="row">
+        <button class="btn btn-ghost demo-btn">ดูประวัติ</button>
+        <button class="btn btn-danger demo-btn">ยกเลิกรายการ</button>
+        <button class="btn btn-danger solid demo-btn">ลบถาวร</button>
+        <button class="btn btn-danger" disabled>disabled</button>
+      </div>
+      <h3>Icon Buttons และ Switch</h3>
+      <div class="row">
+        <button class="btn-icon" aria-label="ค้นหา"><svg class="ic ic-20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg></button>
+        <button class="btn-icon" aria-label="ตั้งค่า"><svg class="ic ic-20" viewBox="0 0 24 24" aria-hidden="true"><polygon points="10.1 5.06 10.74 2.58 13.26 2.58 13.9 5.06 15.57 5.75 17.76 4.45 19.55 6.24 18.25 8.43 18.94 10.1 21.42 10.74 21.42 13.26 18.94 13.9 18.25 15.57 19.55 17.76 17.76 19.55 15.57 18.25 13.9 18.94 13.26 21.42 10.74 21.42 10.1 18.94 8.43 18.25 6.24 19.55 4.45 17.76 5.75 15.57 5.06 13.9 2.58 13.26 2.58 10.74 5.06 10.1 5.75 8.43 4.45 6.24 6.24 4.45 8.43 5.75"/><circle cx="12" cy="12" r="3"/></svg></button>
+        <button class="btn-icon" aria-label="แจ้งเตือน"><svg class="ic ic-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 17L7 15V10a5 5 0 0 1 10 0V15L18.5 17Z"/><line x1="10" y1="20.5" x2="14" y2="20.5"/></svg></button>
+        <button class="btn-icon" aria-label="โหลดซ้ำ" id="reloadBtn"><svg class="ic ic-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 12A7.5 7.5 0 1 1 15 5.1"/><polyline points="15.5 1.5 15.5 5.5 19.5 5.5"/></svg></button>
+        <button class="btn-icon" aria-label="คัดลอก" id="copyDemoBtn"><svg class="ic ic-20" viewBox="0 0 24 24" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12"/><polyline points="15.5 8.5 15.5 3.5 3.5 3.5 3.5 15.5 8.5 15.5"/></svg></button>
+        <button class="btn-icon" disabled aria-label="ลบ"><svg class="ic ic-20" viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><polygon points="6 7 7 20.5 17 20.5 18 7"/><polyline points="9.5 7 9.5 4 14.5 4 14.5 7"/><line x1="10" y1="11" x2="10" y2="16.5"/><line x1="14" y1="11" x2="14" y2="16.5"/></svg></button>
+        <label class="switch"><input type="checkbox" checked aria-label="รับการแจ้งเตือน"><span class="track"></span></label>
+        <label class="switch"><input type="checkbox" aria-label="โหมดประหยัดข้อมูล"><span class="track"></span></label>
+        <label class="switch"><input type="checkbox" disabled aria-label="ตัวเลือกล็อก"><span class="track"></span></label>
+      </div>
+      <h3>Dropdown Menu และ Segmented</h3>
+      <div class="row" style="padding-bottom:130px">
+        <div class="dd-wrap" id="ddWrap">
+          <button class="btn btn-secondary" id="ddBtn" aria-haspopup="true" aria-expanded="false">
+            เมนูสมาชิก
+            <svg class="ic ic-20 chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="menu" role="menu" aria-label="เมนูสมาชิก">
+            <button class="menu-item" role="menuitem"><svg class="ic ic-20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><polyline points="4.5 20.5 4.5 19 8 15.5 16 15.5 19.5 19 19.5 20.5"/></svg>โปรไฟล์ของฉัน</button>
+            <button class="menu-item" role="menuitem"><svg class="ic ic-20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>ประวัติสะสม</button>
+            <button class="menu-item" role="menuitem"><svg class="ic ic-20" viewBox="0 0 24 24" aria-hidden="true"><polygon points="10.1 5.06 10.74 2.58 13.26 2.58 13.9 5.06 15.57 5.75 17.76 4.45 19.55 6.24 18.25 8.43 18.94 10.1 21.42 10.74 21.42 13.26 18.94 13.9 18.25 15.57 19.55 17.76 17.76 19.55 15.57 18.25 13.9 18.94 13.26 21.42 10.74 21.42 10.1 18.94 8.43 18.25 6.24 19.55 4.45 17.76 5.75 15.57 5.06 13.9 2.58 13.26 2.58 10.74 5.06 10.1 5.75 8.43 4.45 6.24 6.24 4.45 8.43 5.75"/><circle cx="12" cy="12" r="3"/></svg>ตั้งค่า</button>
+            <div class="menu-sep" role="separator"></div>
+            <button class="menu-item danger" role="menuitem"><svg class="ic ic-20" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H4V20H10"/><line x1="9.5" y1="12" x2="20.5" y2="12"/><polyline points="16 7.5 20.5 12 16 16.5"/></svg>ออกจากระบบ</button>
+          </div>
+        </div>
+        <div class="segmented" role="tablist" aria-label="เลือกบัตร" id="cardSeg">
+          <button class="seg active" role="tab" aria-selected="true" data-card="cannabis">บัตรกัญชา</button>
+          <button class="seg" role="tab" aria-selected="false" data-card="kratom">บัตรกระท่อม</button>
+        </div>
+      </div>
+      <p class="caption">เมนูเปิด/ปิดด้วยคลิก ปิดด้วย Esc หรือคลิกนอกเมนู เลือกบัตรใน Segmented เพื่อสลับสี accent ของ Collecting Track ด้านล่างแบบเรียลไทม์</p>
+    </div>
+  </section>
+
+  <!-- ================= TRACK ================= -->
+  <section id="track" class="reveal">
+    <div class="sec-head"><span class="sec-num mono">05</span><h2>Collecting Track · 10 ช่อง</h2></div>
+    <p class="sub">แถบสะสมแต้มแบบโต้ตอบได้ กด "สะสม +1" เพื่อเดินหน้า กดรีเซ็ตเพื่อเริ่มใหม่ ช่องสะสมแยกด้วยขอบทึบ เครื่องหมายถูก และ aria-label ไม่พึ่งสีอย่างเดียว</p>
+    <div class="track-grid">
+      <div class="panel track-card t-cannabis" id="trackCannabis"></div>
+      <div class="panel track-card t-kratom" id="trackKratom"></div>
+    </div>
+  </section>
+
+  <!-- ================= RANKS ================= -->
+  <section id="ranks" class="reveal">
+    <div class="sec-head"><span class="sec-num mono">06</span><h2>Member Rank · 10 ระดับ</h2></div>
+    <p class="sub">ตราทรงโล่ชุดเดียวกัน สัญลักษณ์กลางจาก theSVG แยกขั้นด้วยสี สัญลักษณ์ และจำนวนขีด เลื่อนแถบแล้วคลิกตราเพื่อดูรายละเอียด</p>
+    <div class="panel">
+      <div class="rank-strip" id="rankStrip" role="tablist" aria-label="เลือกระดับสมาชิก"></div>
+      <div class="rank-detail" id="rankDetail"></div>
+    </div>
+  </section>
+
+  <!-- ================= NAV DEMO ================= -->
+  <section id="nav" class="reveal">
+    <div class="sec-head"><span class="sec-num mono">07</span><h2>Navigation · Mobile Tab Bar</h2></div>
+    <p class="sub">แถบเมนูล่างสำหรับมือถือ 375px ปุ่มสแกน QR ยกสูงเป็นปุ่มกลาง ทุกแท็บสลับหน้าจอได้จริง</p>
+    <div class="phone">
+      <div class="phone-screen" id="phoneScreen" aria-live="polite"></div>
+      <div class="tabbar" role="tablist" aria-label="เมนูหลัก" id="tabbar"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>JAGUAR SPK Design System v3.0 · แยกจากหน้าจอหลัก รออนุมัติใช้งานจริง</span>
+  <span>Icons: <a href="https://github.com/glincker/thesvg" target="_blank" rel="noopener">theSVG UI Icons</a> · MIT License</span>
+</footer>
+
+<div class="toast-zone" id="toastZone" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* ================= theSVG icon registry (24x24, stroke 1.75, MIT) ================= */
+const P = {
+  member:'<circle cx="12" cy="8" r="4"/><polyline points="4.5 20.5 4.5 19 8 15.5 16 15.5 19.5 19 19.5 20.5"/>',
+  users:'<circle cx="9" cy="8" r="3.5"/><polyline points="2.5 20.5 2.5 19 5.5 15.5 12.5 15.5 15.5 19 15.5 20.5"/><circle cx="17.5" cy="7.5" r="3"/><polyline points="17.5 15.5 19.5 15.5 21.5 18 21.5 20.5"/>',
+  card:'<rect x="2.5" y="5" width="19" height="14"/><line x1="2.5" y1="9.5" x2="21.5" y2="9.5"/><line x1="6.5" y1="15" x2="10.5" y2="15"/>',
+  id_card:'<rect x="5" y="3" width="14" height="18"/><line x1="10" y1="6.5" x2="14" y2="6.5"/><circle cx="12" cy="11" r="2.5"/><polyline points="8.5 18.5 9.5 16.5 14.5 16.5 15.5 18.5"/>',
+  points:'<circle cx="9" cy="15" r="6"/><circle cx="9" cy="15" r="2.8"/><path d="M9 9A6 6 0 1 1 15 15"/>',
+  gift:'<rect x="5" y="12.5" width="14" height="8.5"/><rect x="3.5" y="8.5" width="17" height="4"/><line x1="12" y1="8.5" x2="12" y2="21"/><polygon points="12 8.5 8.5 4 5.5 6 8 8.5"/><polygon points="12 8.5 15.5 4 18.5 6 16 8.5"/>',
+  qr:'<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="5.6" y="5.6" width="1.8" height="1.8"/><rect x="16.6" y="5.6" width="1.8" height="1.8"/><rect x="5.6" y="16.6" width="1.8" height="1.8"/><line x1="14" y1="14" x2="17" y2="14"/><line x1="20" y1="14" x2="21" y2="14"/><line x1="14" y1="17.5" x2="14" y2="21"/><line x1="17.5" y1="17" x2="21" y2="17"/><line x1="18" y1="20" x2="21" y2="20"/>',
+  history:'<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/>',
+  settings:'<polygon points="10.1 5.06 10.74 2.58 13.26 2.58 13.9 5.06 15.57 5.75 17.76 4.45 19.55 6.24 18.25 8.43 18.94 10.1 21.42 10.74 21.42 13.26 18.94 13.9 18.25 15.57 19.55 17.76 17.76 19.55 15.57 18.25 13.9 18.94 13.26 21.42 10.74 21.42 10.1 18.94 8.43 18.25 6.24 19.55 4.45 17.76 5.75 15.57 5.06 13.9 2.58 13.26 2.58 10.74 5.06 10.1 5.75 8.43 4.45 6.24 6.24 4.45 8.43 5.75"/><circle cx="12" cy="12" r="3"/>',
+  search:'<circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.5" y1="15.5" x2="21" y2="21"/>',
+  check:'<polyline points="5 12.5 10 17.5 19 8.5"/>',
+  cancel:'<line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>',
+  refresh:'<path d="M19.5 12A7.5 7.5 0 1 1 15 5.1"/><polyline points="15.5 1.5 15.5 5.5 19.5 5.5"/>',
+  loader:'<path d="M12 3A9 9 0 1 1 3 12"/>',
+  success:'<circle cx="12" cy="12" r="9.5"/><polyline points="8 12.5 11 15.5 16 10.5"/>',
+  error:'<circle cx="12" cy="12" r="9.5"/><line x1="12" y1="7.5" x2="12" y2="13"/><line x1="12" y1="16" x2="12" y2="16.5"/>',
+  warning:'<path d="M12 3.5L21.5 20H2.5Z"/><line x1="12" y1="10" x2="12" y2="14.5"/><line x1="12" y1="17.5" x2="12" y2="18"/>',
+  info:'<circle cx="12" cy="12" r="9.5"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="12" y1="7.5" x2="12" y2="8"/>',
+  badge_check:'<polygon points="12 2.5 15.06 4.61 18.72 5.28 19.39 8.94 21.5 12 19.39 15.06 18.72 18.72 15.06 19.39 12 21.5 8.94 19.39 5.28 18.72 4.61 15.06 2.5 12 4.61 8.94 5.28 5.28 8.94 4.61"/><polyline points="8 12.5 11 15.5 16 10.5"/>',
+  shield_check:'<path d="M12 3L19.5 6V12L12 21L4.5 12V6Z"/><polyline points="8.5 11.5 11 14 15.5 9.5"/>',
+  crown:'<polygon points="3 18 3 8 8 12 12 5 16 12 21 8 21 18"/><line x1="3" y1="21" x2="21" y2="21"/>',
+  trophy:'<polygon points="7 3.5 17 3.5 17 10 14.5 13 9.5 13 7 10"/><polyline points="7 5.5 3.5 5.5 3.5 8.5 7 10.5"/><polyline points="17 5.5 20.5 5.5 20.5 8.5 17 10.5"/><line x1="12" y1="13" x2="12" y2="17.5"/><rect x="8" y="17.5" width="8" height="3.5"/>',
+  star:'<polygon points="12 3 14.5 9 21 9.5 16 14 17.5 20 12 16.5 6.5 20 8 14 3 9.5 9.5 9"/>',
+  sparkles:'<polygon points="10 5 11.8 11.2 18 13 11.8 14.8 10 21 8.2 14.8 2 13 8.2 11.2"/><polygon points="19 2.5 19.7 4.3 21.5 5 19.7 5.7 19 7.5 18.3 5.7 16.5 5 18.3 4.3"/>',
+  bell:'<path d="M5.5 17L7 15V10a5 5 0 0 1 10 0V15L18.5 17Z"/><line x1="10" y1="20.5" x2="14" y2="20.5"/>',
+  log_out:'<path d="M10 4H4V20H10"/><line x1="9.5" y1="12" x2="20.5" y2="12"/><polyline points="16 7.5 20.5 12 16 16.5"/>',
+  trash:'<line x1="4" y1="7" x2="20" y2="7"/><polygon points="6 7 7 20.5 17 20.5 18 7"/><polyline points="9.5 7 9.5 4 14.5 4 14.5 7"/><line x1="10" y1="11" x2="10" y2="16.5"/><line x1="14" y1="11" x2="14" y2="16.5"/>',
+  copy:'<rect x="8.5" y="8.5" width="12" height="12"/><polyline points="15.5 8.5 15.5 3.5 3.5 3.5 3.5 15.5 8.5 15.5"/>',
+  plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  arrow_right:'<line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/>',
+  zap:'<polygon points="13.5 2.5 5 13.2 10.8 13.2 10 21.5 19 10.2 13.2 10.2"/>',
+  fingerprint:'<path d="M5 18V11.5a7 7 0 0 1 14 0V14"/><path d="M8.2 20.5V11.5a3.8 3.8 0 0 1 7.6 0V17"/><line x1="12" y1="11.5" x2="12" y2="20"/>',
+  receipt:'<path d="M5 3H19V21L16.5 19.2 14 21 11.5 19.2 9 21 6.5 19.2 5 21Z"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/>',
+  flame:'<polygon points="12 2.5 17 8.5 19 13.5 16.5 19.5 12 21 7.5 19.5 5 14 7.5 9.5 10 12"/><polyline points="10 17.5 12 15 14 17.5"/>',
+  award:'<circle cx="12" cy="9" r="6.5"/><polyline points="8.5 14.5 7 21.5 12 19 17 21.5 15.5 14.5"/><circle cx="12" cy="9" r="2.5"/>',
+  wand:'<polygon points="3.7 18.18 12.18 9.7 14.3 11.82 5.82 20.3"/><polygon points="18 2.5 19 5 21.5 6 19 7 18 9.5 17 7 14.5 6 17 5"/>',
+  diamond:'<polygon points="12 2.5 21.5 12 12 21.5 2.5 12"/>',
+  vault:'<rect x="3" y="4" width="18" height="15"/><circle cx="12" cy="11.5" r="4"/><line x1="10.5" y1="11.5" x2="13.5" y2="11.5"/><line x1="6" y1="19" x2="6" y2="21"/><line x1="18" y1="19" x2="18" y2="21"/>',
+  infinity:'<polygon points="12 12 7.5 7 3 12 7.5 17 12 12 16.5 7 21 12 16.5 17"/>',
+  hand_coins:'<circle cx="15" cy="7" r="4.5"/><line x1="15" y1="5" x2="15" y2="9"/><rect x="2" y="14" width="4" height="7"/><polyline points="6 15.5 9.5 14 15 14 17 16 11 16"/><polyline points="6 19.5 14 21 21 17 17 16"/>',
+  aurora:'<polyline points="6 19 8 14 6 9 8 4"/><polyline points="11.5 19 13.5 14 11.5 9 13.5 4"/><polyline points="17 19 19 14 17 9 19 6"/><line x1="3" y1="21.5" x2="21" y2="21.5"/>',
+  signal_lock:'<line x1="4" y1="20" x2="4" y2="16"/><line x1="8" y1="20" x2="8" y2="12"/><line x1="12" y1="20" x2="12" y2="7"/><rect x="15" y="13" width="6" height="8"/><polyline points="16.5 13 16.5 10.5 19.5 10.5 19.5 13"/>',
+  house:'<path d="M12 4L20.5 11.5H18V20H6V11.5H3.5Z"/><polyline points="10 20 10 14 14 14 14 20"/>',
+  chevron_down:'<polyline points="6 9 12 15 18 9"/>',
+  sprout:'<line x1="12" y1="21" x2="12" y2="12"/><polygon points="12 15 5 14 3.5 8 10 9"/><polygon points="12 12 13 5.5 20.5 3.5 19.5 10.5"/>',
+  leaf:'<path d="M12 7c4 1.5 5 5.5 0 10-5-4.5-4-8.5 0-10Z"/><path d="M12 9.5V15"/>',
+  globe:'<circle cx="12" cy="12" r="9.5"/><ellipse cx="12" cy="12" rx="4" ry="9.5"/><line x1="2.5" y1="12" x2="21.5" y2="12"/>',
+  swords:'<line x1="4.5" y1="4.5" x2="16.5" y2="16.5"/><line x1="19.5" y1="4.5" x2="7.5" y2="16.5"/><line x1="13.5" y1="19" x2="19" y2="13.5"/><line x1="5" y1="13.5" x2="10.5" y2="19"/><line x1="4" y1="20" x2="7" y2="17"/><line x1="20" y1="20" x2="17" y2="17"/>',
+  gem:'<path d="M12 6.5 16.5 11 12 17.5 7.5 11Z"/>'
+};
+function ic(name, cls){
+  return '<svg class="ic ' + (cls || '') + '" viewBox="0 0 24 24" aria-hidden="true">' + P[name] + '</svg>';
+}
+
+/* ================= helpers ================= */
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function toast(msg){
+  const zone = document.getElementById('toastZone');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = ic('success') + '<span></span>';
+  el.querySelector('span').textContent = msg;
+  zone.appendChild(el);
+  setTimeout(function(){
+    el.classList.add('out');
+    setTimeout(function(){ el.remove(); }, 320);
+  }, 1900);
+}
+function copyText(text, okMsg){
+  function done(){ toast(okMsg || 'คัดลอกแล้ว'); }
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done, function(){ fallbackCopy(text); done(); });
+  } else { fallbackCopy(text); done(); }
+}
+function fallbackCopy(text){
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); } catch(e){}
+  ta.remove();
+}
+
+/* ================= tokens ================= */
+const TOKENS = [
+  ['bg','#050505'],['surface','#0D140F'],['neon','#00FF9D'],['gold','#D4AF37'],
+  ['gold-2','#E5C04A'],['text','#F9F6E7'],['danger','#FF5A5A'],['warn','#FFC24B'],
+  ['surface-2','#111A14'],['surface-3','#16211A']
+];
+document.getElementById('tokenGrid').innerHTML = TOKENS.map(function(t){
+  return '<div class="token-cell"><button class="swatch" style="background:' + t[1] + '" data-copy="' + t[1] + '" aria-label="คัดลอกสี ' + t[0] + ' ' + t[1] + '">'
+    + '<span class="copy-hint">คลิกเพื่อคัดลอก</span><span class="swatch-name mono">' + t[0] + '</span></button>'
+    + '<div class="token-meta mono"><span>' + t[1] + '</span><span>token</span></div></div>';
+}).join('');
+document.getElementById('tokenGrid').addEventListener('click', function(e){
+  const b = e.target.closest('.swatch');
+  if (b) copyText(b.getAttribute('data-copy'), 'คัดลอก ' + b.getAttribute('data-copy') + ' แล้ว');
+});
+
+/* ================= icon grid ================= */
+const ICONS = [
+  ['member','สมาชิก'],['users','สมาชิกหลายคน'],['card','บัตร'],['id_card','บัตรประจำตัว'],
+  ['points','แต้ม'],['gift','รางวัล'],['qr','สแกน QR'],['history','ประวัติ'],
+  ['settings','ตั้งค่า'],['search','ค้นหา'],['check','ยืนยัน'],['cancel','ยกเลิก'],
+  ['refresh','โหลดซ้ำ'],['loader','กำลังโหลด'],['success','สำเร็จ'],['error','ผิดพลาด'],
+  ['warning','เตือน'],['info','ข้อมูล'],['badge_check','ยืนยันตัวตน'],['shield_check','ปลอดภัย'],
+  ['crown','ระดับสูง'],['trophy','ชนะ'],['star','พิเศษ'],['sparkles','แนะนำ'],
+  ['bell','แจ้งเตือน'],['log_out','ออกจากระบบ'],['trash','ลบ'],['copy','คัดลอก'],
+  ['plus','เพิ่ม'],['arrow_right','ถัดไป'],['house','หน้าแรก'],['chevron_down','เปิดดู']
+];
+let iconSize = 24;
+function renderIconGrid(filter){
+  const q = (filter || '').trim().toLowerCase();
+  const list = ICONS.filter(function(x){
+    if (!q) return true;
+    return x[0].indexOf(q) !== -1 || x[1].indexOf(q) !== -1;
+  });
+  const grid = document.getElementById('iconGrid');
+  if (!list.length){
+    grid.innerHTML = '<div class="empty-note">ไม่พบไอคอนที่ตรงกับคำค้นนี้</div>';
+  } else {
+    grid.innerHTML = list.map(function(x){
+      return '<button class="icell" role="listitem" data-copy="' + x[0] + '" aria-label="คัดลอกไอคอน ' + x[1] + '">'
+        + ic(x[0], 'ic-' + iconSize)
+        + '<span class="th">' + x[1] + '</span><span class="slug mono">icon-' + x[0].replace(/_/g,'-') + '</span>'
+        + '<span class="copied">คัดลอกแล้ว</span></button>';
+    }).join('');
+  }
+  document.getElementById('iconCount').textContent = list.length + ' / ' + ICONS.length + ' icons';
+}
+renderIconGrid('');
+document.getElementById('iconSearch').addEventListener('input', function(e){
+  renderIconGrid(e.target.value);
+});
+document.querySelectorAll('.sizeseg button').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('.sizeseg button').forEach(function(x){
+      x.classList.remove('active'); x.setAttribute('aria-pressed','false');
+    });
+    b.classList.add('active'); b.setAttribute('aria-pressed','true');
+    iconSize = parseInt(b.getAttribute('data-sz'), 10);
+    renderIconGrid(document.getElementById('iconSearch').value);
+  });
+});
+document.getElementById('iconGrid').addEventListener('click', function(e){
+  const cell = e.target.closest('.icell');
+  if (!cell) return;
+  const name = cell.getAttribute('data-copy');
+  copyText('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">' + P[name] + '</svg>', 'คัดลอก SVG icon-' + name.replace(/_/g,'-') + ' แล้ว');
+  cell.classList.add('copied-now');
+  setTimeout(function(){ cell.classList.remove('copied-now'); }, 1100);
+});
+
+/* icon states */
+document.getElementById('iconStates').innerHTML =
+  [['default','ic-default'],['active','ic-active'],['disabled','ic-disabled'],['error','ic-error']].map(function(s){
+    return '<span class="st"><span class="ic ' + s[1] + '" style="display:inline-flex">' + ic('points') + '</span><span class="cap">' + s[0] + '</span></span>';
+  }).join('')
+  + ['ic-16','ic-20',''].map(function(sz){
+    return '<span class="st"><span class="ic ic-default ' + sz + '" style="display:inline-flex">' + ic('points') + '</span><span class="cap">' + (sz ? sz.replace('ic-','') : '24') + 'px</span></span>';
+  }).join('');
+
+/* ================= signature icons ================= */
+const SIG = [
+  ['diamond','เพชร พรีเมียม','neon'],['vault','ตู้เซฟ ปลอดภัย','gold'],
+  ['award','เกียรติบัตร รางวัล','gold'],['wand','ของรางวัลวิเศษ','neon'],
+  ['hand_coins','รับแต้มสะสม','gold'],['receipt','ใบเสร็จ ประวัติ','neon'],
+  ['fingerprint','ยืนยันตัวตน','neon'],['infinity','สิทธิไม่จำกัด','gold'],
+  ['zap','พลัง ด่วนทันที','neon'],['flame','ร้อนแรง ยอดนิยม','gold'],
+  ['aurora','ของขวัญพิเศษ','neon'],['signal_lock','ล็อกสถานะ VIP','gold']
+];
+document.getElementById('sigGrid').innerHTML = SIG.map(function(s){
+  return '<button class="icell sig sig-' + s[2] + '" data-copy="' + s[0] + '" aria-label="คัดลอกไอคอน ' + s[1] + '">'
+    + ic(s[0]) + '<span class="th">' + s[1] + '</span><span class="slug mono">sig-' + s[0].replace(/_/g,'-') + '</span>'
+    + '<span class="copied">คัดลอกแล้ว</span></button>';
+}).join('');
+document.getElementById('sigGrid').addEventListener('click', function(e){
+  const cell = e.target.closest('.icell');
+  if (!cell) return;
+  const name = cell.getAttribute('data-copy');
+  copyText('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">' + P[name] + '</svg>', 'คัดลอก SVG sig-' + name.replace(/_/g,'-') + ' แล้ว');
+  cell.classList.add('copied-now');
+  setTimeout(function(){ cell.classList.remove('copied-now'); }, 1100);
+});
+
+/* ================= demo buttons (loading -> success) ================= */
+document.querySelectorAll('.demo-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    if (btn.classList.contains('loading')) return;
+    const original = btn.textContent;
+    btn.classList.add('loading');
+    setTimeout(function(){
+      btn.classList.remove('loading');
+      btn.innerHTML = ic('check') + '<span>สำเร็จ</span>';
+      toast('ทำรายการ "' + original.trim() + '" สำเร็จ');
+      setTimeout(function(){ btn.textContent = original; }, 1400);
+    }, reduceMotion ? 200 : 950);
+  });
+});
+/* ripple */
+document.addEventListener('pointerdown', function(e){
+  const btn = e.target.closest('.btn');
+  if (!btn || !e.isPrimary) return;
+  const rect = btn.getBoundingClientRect();
+  const r = document.createElement('span');
+  r.className = 'ripple';
+  const d = Math.max(rect.width, rect.height);
+  r.style.width = r.style.height = d + 'px';
+  r.style.left = (e.clientX - rect.left - d/2) + 'px';
+  r.style.top = (e.clientY - rect.top - d/2) + 'px';
+  btn.appendChild(r);
+  setTimeout(function(){ r.remove(); }, 600);
+});
+/* reload icon button spins */
+document.getElementById('reloadBtn').addEventListener('click', function(){
+  const b = this;
+  b.style.transition = 'transform .6s cubic-bezier(.22,1,.36,1)';
+  b.style.transform = 'rotate(360deg)';
+  setTimeout(function(){ b.style.transition = 'none'; b.style.transform = 'none'; }, 620);
+  toast('รีเฟรชข้อมูลแล้ว');
+});
+document.getElementById('copyDemoBtn').addEventListener('click', function(){ copyText('JAGUAR SPK', 'คัดลอกข้อความแล้ว'); });
+
+/* ================= dropdown ================= */
+(function(){
+  const wrap = document.getElementById('ddWrap');
+  const btn = document.getElementById('ddBtn');
+  function setOpen(open){
+    wrap.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    setOpen(!wrap.classList.contains('open'));
+  });
+  document.addEventListener('click', function(e){
+    if (!wrap.contains(e.target)) setOpen(false);
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && wrap.classList.contains('open')){ setOpen(false); btn.focus(); }
+  });
+  wrap.querySelectorAll('.menu-item').forEach(function(mi){
+    mi.addEventListener('click', function(){ setOpen(false); toast('เลือก "' + mi.textContent.trim() + '"'); });
+  });
+})();
+
+/* ================= segmented (card accent) ================= */
+let trackCannabisPts = 7;
+let trackKratomPts = 4;
+document.getElementById('cardSeg').addEventListener('click', function(e){
+  const seg = e.target.closest('.seg');
+  if (!seg) return;
+  document.querySelectorAll('#cardSeg .seg').forEach(function(x){
+    x.classList.remove('active'); x.setAttribute('aria-selected','false');
+  });
+  seg.classList.add('active'); seg.setAttribute('aria-selected','true');
+  const card = seg.getAttribute('data-card');
+  const cEl = document.getElementById('trackCannabis');
+  const kEl = document.getElementById('trackKratom');
+  cEl.className = 'panel track-card ' + (card === 'cannabis' ? 't-cannabis' : 't-kratom');
+  kEl.className = 'panel track-card ' + (card === 'kratom' ? 't-cannabis' : 't-kratom');
+  renderTrack('trackCannabis', trackCannabisPts);
+  renderTrack('trackKratom', trackKratomPts);
+  toast('โหมด ' + (card === 'cannabis' ? 'บัตรกัญชา' : 'บัตรกระท่อม'));
+});
+
+/* ================= collecting track ================= */
+function trackHTML(id, pts, title){
+  const ready = pts >= 10;
+  let slots = '';
+  for (let i = 1; i <= 10; i++){
+    if (i > 1) slots += '<span class="link' + (i <= pts ? ' on' : '') + '" aria-hidden="true"></span>';
+    if (i <= pts){
+      slots += '<span class="slot done"><span class="sr-only">แต้มที่ ' + i + ' สะสมแล้ว</span></span>';
+    } else if (i === pts + 1){
+      slots += '<span class="slot next"><span class="n">' + i + '</span><span class="sr-only">แต้มถัดไป ช่องที่ ' + i + '</span></span>';
+    } else {
+      slots += '<span class="slot"><span class="n">' + i + '</span><span class="sr-only">ช่องที่ ' + i + ' ยังว่าง</span></span>';
+    }
+  }
+  return ''
+    + '<div class="track-head">'
+    + '<span class="track-title">' + ic('points') + '<span>' + title + '</span></span>'
+    + '<span class="track-count"><span class="big">' + pts + '</span> <span class="of">/ 10 แต้ม</span></span>'
+    + '</div>'
+    + '<div class="slots" role="img" aria-label="' + title + ' สะสมแล้ว ' + pts + ' จาก 10 แต้ม' + (ready ? ' พร้อมแลกรางวัล' : ' เหลืออีก ' + (10 - pts) + ' แต้ม') + '">' + slots + '</div>'
+    + '<div class="track-foot">'
+    + '<span class="pill' + (ready ? ' ready' : '') + '">' + (ready ? 'พร้อมแลกรางวัล' : 'เหลืออีก ' + (10 - pts) + ' แต้ม') + '</span>'
+    + '<span class="track-actions">'
+    + (ready
+        ? '<button class="btn btn-primary" style="min-height:36px;padding:0 18px" data-redeem="' + id + '">แลกเลย</button>'
+        : '<button class="mini-btn" data-add="' + id + '">สะสม +1</button>')
+    + '<button class="mini-btn" data-reset="' + id + '" aria-label="รีเซ็ต">รีเซ็ต</button>'
+    + '</span>'
+    + '</div>';
+}
+function renderTrack(id, pts){
+  const el = document.getElementById(id);
+  const title = id === 'trackCannabis' ? 'บัตรกัญชา · สะสมแต้ม' : 'บัตรกระท่อม · สะสมแต้ม';
+  el.innerHTML = trackHTML(id, pts, title);
+}
+function bumpTrack(id){
+  if (id === 'trackCannabis') trackCannabisPts = Math.min(10, trackCannabisPts + 1);
+  else trackKratomPts = Math.min(10, trackKratomPts + 1);
+  renderTrack('trackCannabis', trackCannabisPts);
+  renderTrack('trackKratom', trackKratomPts);
+  const now = id === 'trackCannabis' ? trackCannabisPts : trackKratomPts;
+  if (now >= 10) toast(id === 'trackCannabis' ? 'บัตรกัญชาครบ 10 แต้ม พร้อมแลก' : 'บัตรกระท่อมครบ 10 แต้ม พร้อมแลก');
+}
+function resetTrack(id){
+  if (id === 'trackCannabis') trackCannabisPts = 0; else trackKratomPts = 0;
+  renderTrack('trackCannabis', trackCannabisPts);
+  renderTrack('trackKratom', trackKratomPts);
+}
+renderTrack('trackCannabis', trackCannabisPts);
+renderTrack('trackKratom', trackKratomPts);
+document.getElementById('track').addEventListener('click', function(e){
+  const add = e.target.closest('[data-add]');
+  const reset = e.target.closest('[data-reset]');
+  const redeem = e.target.closest('[data-redeem]');
+  if (add) bumpTrack(add.getAttribute('data-add'));
+  else if (reset) resetTrack(reset.getAttribute('data-reset'));
+  else if (redeem){ toast('เปิดหน้าแลกรางวัล (ตัวอย่าง)'); }
+});
+
+/* ================= ranks ================= */
+const RANKS = [
+  ['Royal King','#E5C04A','diamond',5,'LEVEL 10','สิทธิ์สูงสุดของระบบ ทุกสิทธิประโยชน์เต็มจำนวน',['แต้ม 2 เท่าทุกใบเสร็จ','ของรางวัลพรีเมียม','ส่วนลดสูงสุด']],
+  ['Leopard VIP','#FFD866','crown',5,'LEVEL 9','สมาชิก VIP ระดับสูง เข้าถึงของรางวัลก่อนใคร',['แต้ม 1.5 เท่า','จองของรางวัลก่อน','ของขวัญวันเกิด']],
+  ['Nature Green','#00FF9D','sprout',4,'LEVEL 8','ระดับเขียวของแท้ สะสมต่อเนื่องได้เปรียบ',['แต้มพิเศษสินค้าเขียว','คูปองรายเดือน']],
+  ['Organic Premium','#7CE87C','leaf',4,'LEVEL 7','สินค้าออร์แกนิคพรีเมียม มาตรฐานคัดสรร',['ส่วนลดสินค้าออร์แกนิค','ฟรีสินค้าทดลอง']],
+  ['Diamond Member','#9BE8FF','gem',3,'LEVEL 6','ระดับเพชร สะสมง่าย แลกเร็ว',['แต้มโบนัสรายสัปดาห์','คูปองส่วนลด 10%']],
+  ['Cyber Start','#7FD4FF','zap',3,'LEVEL 5','จุดเริ่มต้นของสมาชิกทันสมัย',['สะสมผ่าน QR','ดูประวัติได้ครบ']],
+  ['Inferno Power','#FF7A5A','flame',2,'LEVEL 4','พลังสะสมระดับกลาง โปรโมชั่นแรง',['โปรร้อนแรงประจำเดือน','แต้มพิเศษวันหยุด']],
+  ['Cosmic World','#C79BFF','globe',2,'LEVEL 3','โลกของสิทธิประโยชน์กว้างขึ้น',['คูปองพันธมิตร','แต้มแนะนำเพื่อน']],
+  ['Dragon Emperor','#FF9D5C','swords',1,'LEVEL 2','ระดับมังกร เริ่มต้นเส้นทางพรีเมียม',['แต้มแรกพิเศษ','ทักทายต้อนรับ']],
+  ['Ultimate Legend','#C9CDD6','star',1,'LEVEL 1','ตำนานจุดเริ่มต้น สมาชิกทุกคนเริ่มที่นี่',['สมัครฟรี','สะสมได้ทันที']]
+];
+function rankSVG(color, glyph, ticks, size){
+  let tickLine = '';
+  for (let i = 0; i < ticks; i++){
+    const y = 30 - i * 3.2;
+    tickLine += '<path d="M8.5 ' + y + 'h7" stroke="' + color + '" stroke-width="1.6" stroke-linecap="round" opacity="' + (0.95 - i * 0.14) + '"/>';
+  }
+  return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 48 48" fill="none" aria-hidden="true" style="filter:drop-shadow(0 0 6px ' + color + '55)">'
+    + '<path d="M24 3 42 9v14c0 11-7.5 18.5-18 22C13.5 41.5 6 34 6 23V9Z" fill="#0D140F" stroke="' + color + '" stroke-width="2"/>'
+    + '<path d="M24 7.5 38 12v11c0 8.8-5.9 14.9-14 17.8C15.9 37.9 10 31.8 10 23V12Z" fill="none" stroke="' + color + '" stroke-width="1" opacity=".45"/>'
+    + '<g stroke="' + color + '" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" fill="none">'
+    + '<g transform="translate(12 6) scale(0.78) translate(2.64 2.64)">' + P[glyph] + '</g>' + tickLine + '</g></svg>';
+}
+let selectedRank = 0;
+function renderRankStrip(){
+  document.getElementById('rankStrip').innerHTML = RANKS.map(function(r, i){
+    return '<button class="rbadge' + (i === selectedRank ? ' selected' : '') + '" role="tab" aria-selected="' + (i === selectedRank) + '" data-rank="' + i + '" style="--rc:' + r[1] + '">'
+      + rankSVG(r[1], r[2], r[3], 44)
+      + '<span class="rname">' + r[0] + '</span><span class="rlv mono">' + r[4] + '</span></button>';
+  }).join('');
+}
+function renderRankDetail(){
+  const r = RANKS[selectedRank];
+  document.getElementById('rankDetail').innerHTML =
+    '<div class="big-badge">' + rankSVG(r[1], r[2], r[3], 96) + '</div>'
+    + '<div><h4 style="color:' + r[1] + '">' + r[0] + '</h4>'
+    + '<div class="lv mono">' + r[4] + ' · ขีดอันดับ ' + r[3] + '/5</div>'
+    + '<div class="desc">' + r[5] + '</div>'
+    + '<div class="perks">' + r[6].map(function(p){ return '<span class="perk">' + ic('sparkles') + p + '</span>'; }).join('') + '</div></div>';
+}
+renderRankStrip();
+renderRankDetail();
+document.getElementById('rankStrip').addEventListener('click', function(e){
+  const b = e.target.closest('.rbadge');
+  if (!b) return;
+  selectedRank = parseInt(b.getAttribute('data-rank'), 10);
+  renderRankStrip();
+  renderRankDetail();
+});
+
+/* ================= mobile tab bar ================= */
+const TABS = [
+  ['house','หน้าแรก','ยินดีต้อนรับสู่ JAGUAR SPK','จัดการบัตรและแต้มของคุณได้ที่นี่'],
+  ['points','สะสมแต้ม','แต้มสะสมของคุณ','กดสแกนใบเสร็จเพื่อรับแต้ม'],
+  ['qr','สแกน QR','สแกนเพื่อรับแต้ม','เล็งกล้องไปที่ QR Code หน้าร้าน'],
+  ['gift','รางวัล','รางวัลที่แลกได้','สะสมครบ 10 แต้มแลกของรางวัลได้เลย'],
+  ['member','โปรไฟล์','โปรไฟล์สมาชิก','ระดับ ประวัติ และการตั้งค่า']
+];
+let activeTab = 0;
+function renderTabbar(){
+  document.getElementById('tabbar').innerHTML = TABS.map(function(t, i){
+    if (i === 2){
+      return '<button class="tab tab-scan" role="tab" aria-selected="' + (i === activeTab) + '" aria-label="' + t[1] + '" data-tab="' + i + '">' + ic(t[0]) + '</button>';
+    }
+    return '<button class="tab" role="tab" aria-selected="' + (i === activeTab) + '" data-tab="' + i + '">' + ic(t[0], 'ic-20') + '<span>' + t[1] + '</span></button>';
+  }).join('');
+}
+function renderPhoneScreen(){
+  const t = TABS[activeTab];
+  document.getElementById('phoneScreen').innerHTML =
+    ic(t[0]) + '<span class="pt">' + t[2] + '</span><span class="pd">' + t[3] + '</span>';
+}
+renderTabbar();
+renderPhoneScreen();
+document.getElementById('tabbar').addEventListener('click', function(e){
+  const b = e.target.closest('[data-tab]');
+  if (!b) return;
+  activeTab = parseInt(b.getAttribute('data-tab'), 10);
+  renderTabbar();
+  renderPhoneScreen();
+});
+
+/* ================= reveal on scroll ================= */
+if (!reduceMotion && 'IntersectionObserver' in window){
+  const io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+} else {
+  document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in'); });
+}
+</script>
+</body>
+</html>
