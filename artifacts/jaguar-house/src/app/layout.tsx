@@ -27,7 +27,7 @@ const supabaseOrigin = (() => {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="th" className="dark">
+    <html lang="th" className="dark" suppressHydrationWarning>
       <head>
         {supabaseOrigin && <link rel="preconnect" href={supabaseOrigin} crossOrigin="anonymous" />}
         {supabaseOrigin && <link rel="dns-prefetch" href={supabaseOrigin} />}
