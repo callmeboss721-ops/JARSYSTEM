@@ -42,6 +42,7 @@
   .sum-row{display:flex;justify-content:space-between;font-size:14px;padding:3px 0}
   @media (max-width:640px){ .table-wrap{overflow-x:auto} table{min-width:640px} }
 </style>
+<link rel="stylesheet" href="app.css" />
 </head>
 <body>
 <header><div>JAGUAR SPK · แดชบอร์ดร้าน</div><a id="btn-logout" style="display:none">ออกจากระบบ</a></header>
@@ -55,6 +56,18 @@
   </div>
   <div id="dash-view" style="display:none">
     <div class="stats" id="stats"></div>
+    <div class="card" style="margin-top:12px">
+      <b>พิกัดร้าน (จุดตั้งต้นเส้นทางไรเดอร์)</b>
+      <p class="muted" style="margin:2px 0 8px">กดปุ่มขณะอยู่หน้าร้าน ระบบจะบันทึกพิกัด GPS อัตโนมัติ หรือกรอกละติจูด/ลองจิจูดเอง</p>
+      <p class="muted" id="shop-coord-now">กำลังโหลด...</p>
+      <button class="btn" id="btn-gps" style="width:100%;margin:8px 0">ตั้งพิกัดจาก GPS ปัจจุบัน</button>
+      <div style="display:flex;gap:8px">
+        <input id="lat-in" inputmode="decimal" placeholder="latitude เช่น 14.353209" />
+        <input id="lng-in" inputmode="decimal" placeholder="longitude เช่น 100.577641" />
+      </div>
+      <button class="btn sec" id="btn-coord-save" style="margin-top:8px">บันทึกพิกัดที่กรอก</button>
+      <p class="err" id="coord-err"></p>
+    </div>
     <div class="card" style="margin-top:12px">
       <b>ประวัติออเดอร์</b>
       <p class="muted" style="margin:2px 0 8px">อัปเดตอัตโนมัติทุก 30 วินาที · แสดงตั้งแต่ลูกค้าสั่ง ชำระเงิน ไรเดอร์รับ จนส่งถึงมือ</p>
@@ -111,6 +124,7 @@ $('btn-login').onclick = async function(){
   $('dash-view').style.display = 'block';
   $('btn-logout').style.display = 'inline';
   renderChips();
+  loadShopCoord();
   await refresh();
   timer = setInterval(refresh, 30000);
 };
@@ -194,6 +208,54 @@ function renderTable(){
       '</tr>';
   }).join('') || '<tr><td colspan="6" class="muted" style="text-align:center;padding:20px">ไม่มีออเดอร์ตามเงื่อนไขที่เลือก</td></tr>';
 }
+
+/* ---- พิกัดร้าน (dt_settings: shop_lat / shop_lng) ---- */
+async function loadShopCoord(){
+  var r = await sb.from('dt_settings').select('key,value').in('key', ['shop_lat', 'shop_lng']);
+  var lat = '', lng = '';
+  (r.data || []).forEach(function(x){
+    if (x.key === 'shop_lat') lat = x.value;
+    if (x.key === 'shop_lng') lng = x.value;
+  });
+  $('shop-coord-now').textContent = (lat && lng) ? ('พิกัดปัจจุบัน: ' + lat + ', ' + lng) : 'ยังไม่ได้ตั้งพิกัดร้าน';
+  if (lat) $('lat-in').value = lat;
+  if (lng) $('lng-in').value = lng;
+}
+async function saveCoord(lat, lng){
+  var e = $('coord-err'); e.style.display = 'none';
+  lat = String(lat).trim(); lng = String(lng).trim();
+  var la = parseFloat(lat), ln = parseFloat(lng);
+  if (isNaN(la) || isNaN(ln) || la < -90 || la > 90 || ln < -180 || ln > 180) {
+    e.textContent = 'พิกัดไม่ถูกต้อง (latitude -90..90, longitude -180..180)';
+    e.style.display = 'block';
+    return false;
+  }
+  var res = await sb.from('dt_settings').upsert(
+    [{ key: 'shop_lat', value: String(la) }, { key: 'shop_lng', value: String(ln) }],
+    { onConflict: 'key' }
+  );
+  if (res.error) {
+    e.textContent = 'บันทึกไม่สำเร็จ: ' + res.error.message;
+    e.style.display = 'block';
+    return false;
+  }
+  toast('บันทึกพิกัดร้านแล้ว');
+  await loadShopCoord();
+  return true;
+}
+$('btn-gps').onclick = function(){
+  if (!navigator.geolocation) { toast('อุปกรณ์นี้ไม่รองรับ GPS'); return; }
+  var b = this, old = b.textContent;
+  b.disabled = true; b.textContent = 'กำลังอ่าน GPS...';
+  navigator.geolocation.getCurrentPosition(async function(p){
+    b.disabled = false; b.textContent = old;
+    await saveCoord(p.coords.latitude.toFixed(6), p.coords.longitude.toFixed(6));
+  }, function(err){
+    b.disabled = false; b.textContent = old;
+    toast('อ่าน GPS ไม่สำเร็จ: ' + err.message);
+  }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
+};
+$('btn-coord-save').onclick = function(){ saveCoord($('lat-in').value, $('lng-in').value); };
 </script>
 </body>
 </html>

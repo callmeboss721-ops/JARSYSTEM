@@ -69,6 +69,7 @@
   .err{color:var(--danger);font-size:13px;margin-top:6px;display:none}
   @media (min-width:768px){ .grid{grid-template-columns:repeat(3,1fr)} }
 </style>
+<link rel="stylesheet" href="app.css" />
 </head>
 <body>
 <header>
@@ -234,7 +235,7 @@ function renderCats(){
 }
 function renderMenu(cat){
   var list = MENU.filter(function(m){ return !cat || cat === 'ทั้งหมด' || m.category === cat; });
-  var colors = ['#06C755','#B8860B','#0EA5E9','#8B5CF6','#EF4444','#F59E0B'];
+  var colors = ['#00FF9D','#D4AF37','#7657FF','#00F0FF','#FF5A5A','#FFC24B'];
   $('menu-grid').innerHTML = list.map(function(m, i){
     var q = cart[m.id] || 0;
     return '<div class="item">' +
