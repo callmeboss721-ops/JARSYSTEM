@@ -6,3 +6,4 @@
 - [Design reference extraction fallback](design-reference-extraction.md) — if browser capture is blocked, use the installed component package and skip repeated browser installs.
 - [Banking operations](banking-operations.md) — owner configures today's account; staff records transfer in/out; limits are warnings, not blockers.
 - [Member login policy](member-login-rules.md) — any one of phone, member code, or nickname grants access; no OTP was explicitly chosen.
+- [Vite Radix dependency warmup](vite-radix-warmup.md) — new lazy-loaded Radix modules can trigger transient hook errors while Vite optimizes them; verify after optimization settles.
