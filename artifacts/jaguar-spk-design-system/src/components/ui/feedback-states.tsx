@@ -34,10 +34,20 @@ export function ErrorState({ message, onRetry, retrying }: { message: string; on
   );
 }
 
-export function EmptyState({ title, body, action }: { title: string; body?: string; action?: ReactNode }) {
+export function EmptyState({
+  title,
+  body,
+  action,
+  markSrc,
+}: {
+  title: string;
+  body?: string;
+  action?: ReactNode;
+  markSrc?: string;
+}) {
   return (
     <div className="feedback-empty">
-      <JaguarMark size={40} className="feedback-empty__mark" />
+      <JaguarMark size={40} className="feedback-empty__mark" src={markSrc} />
       <p>{title}</p>
       {body && <p className="feedback-empty__body">{body}</p>}
       {action}
@@ -48,13 +58,15 @@ export function EmptyState({ title, body, action }: { title: string; body?: stri
 export function SignedOutState({
   loginHref = "/login",
   registerHref = "/register",
+  markSrc,
 }: {
   loginHref?: string;
   registerHref?: string;
+  markSrc?: string;
 }) {
   return (
     <div className="panel feedback-signed-out" data-testid="state-signed-out">
-      <JaguarMark size={56} />
+      <JaguarMark size={56} src={markSrc} />
       <h1>กรุณาเข้าสู่ระบบสมาชิก</h1>
       <p>ยังไม่มีเซสชันสมาชิกบนอุปกรณ์นี้ ใช้รหัสสมาชิกของคุณเพื่อเปิดบัตร</p>
       <div>

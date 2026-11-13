@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#070908",
+  themeColor: "#050505",
   width: "device-width",
   initialScale: 1,
 };
@@ -27,7 +27,7 @@ const supabaseOrigin = (() => {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="th">
+    <html lang="th" className="dark">
       <head>
         {supabaseOrigin && <link rel="preconnect" href={supabaseOrigin} crossOrigin="anonymous" />}
         {supabaseOrigin && <link rel="dns-prefetch" href={supabaseOrigin} />}

@@ -74,6 +74,7 @@
     "@tanstack/react-query": "catalog:",
     "@thesvg/ui-react": "4.4.0",
     "@workspace/api-client-react": "workspace:*",
+    "@workspace/jaguar-spk-design-system": "workspace:*",
     "@zxing/browser": "0.1.5",
     "@zxing/library": "0.21.3",
     "lucide-react": "catalog:",

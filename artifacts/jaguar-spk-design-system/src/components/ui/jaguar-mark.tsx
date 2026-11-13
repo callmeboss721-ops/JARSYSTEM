@@ -1,10 +1,15 @@
-type Props = { size?: number; className?: string; title?: string };
+type Props = { size?: number; className?: string; title?: string; src?: string };
 
 /** Transparent supplied JAGUAR SPK emblem, kept uncropped across app headers. */
-export function JaguarMark({ size = 40, className, title }: Props) {
+export function JaguarMark({
+  size = 40,
+  className,
+  title,
+  src = "/jaguar-spk-design-system/brand/logos/logo-primary.webp",
+}: Props) {
   return (
     <img
-      src={`${import.meta.env.BASE_URL}brand/logos/logo-primary.webp`}
+      src={src}
       width={size}
       height={size}
       alt={title ?? ""}

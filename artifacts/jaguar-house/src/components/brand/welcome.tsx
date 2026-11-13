@@ -63,12 +63,12 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
           </section>
           <figure className="landing-member-guide">
             <Image
-              src="/brand/jaguar-landing-promo.jpg"
-              alt="โปรโมชัน JAGUAR SPK: น้ำกระท่อมเริ่มต้น 50 บาท และกัญชาเกรดพรีเมียม 10 บาทต่อกรัม"
-              width={2752}
-              height={1536}
+              src="/brand/jaguar-member-guide-v3.webp"
+              alt="คู่มือสมาชิก JAGUAR SPK: สมัครสมาชิก สะสมแต้มทุกครั้งที่ซื้อ และรับรางวัลเมื่อครบ 10 แต้ม"
+              width={1024}
+              height={683}
               priority
-              sizes="(max-width: 540px) calc(100vw - 32px), 540px"
+              sizes="(max-width: 540px) calc(100vw - 32px), (max-width: 1000px) 90vw, 900px"
             />
           </figure>
           <details className="landing-menu-preview">

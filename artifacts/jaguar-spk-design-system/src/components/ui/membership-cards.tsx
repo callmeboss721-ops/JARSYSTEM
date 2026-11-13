@@ -1,4 +1,5 @@
 import { QRCodeSVG } from "qrcode.react";
+import type { ReactNode } from "react";
 import { BrandButton } from "./brand-button";
 import { BrandIcon } from "./brand-icon";
 
@@ -32,7 +33,9 @@ const CLUBS: Record<MemberClub, { title: string; image: string; stampIcon: strin
   },
 };
 
-const asset = (file: string) => `${import.meta.env.BASE_URL}brand/cards/${file}`;
+const DEFAULT_ASSET_BASE = "/jaguar-spk-design-system/brand/cards/";
+const DEFAULT_BUTTON_ASSET_BASE = "/jaguar-spk-design-system/brand/buttons/";
+const asset = (file: string, assetBase: string) => `${assetBase}${file}`;
 
 export function SharedMemberCard({
   kind,
@@ -40,22 +43,26 @@ export function SharedMemberCard({
   balance,
   qr,
   className,
+  assetBase = DEFAULT_ASSET_BASE,
+  dataTestId,
 }: {
   kind: MemberClub;
   memberCode: string;
   balance: number;
   qr: CardQr;
   className?: string;
+  assetBase?: string;
+  dataTestId?: string;
 }) {
   const filled = Math.min(Math.max(balance, 0), STAMPS);
   const ready = balance >= STAMPS;
   const club = CLUBS[kind];
   return (
-    <section className={`member-pass-card${className ? ` ${className}` : ""}`} data-kind={kind} aria-label={kind === "cannabis" ? "บัตรสมาชิกกัญชา" : "บัตรสมาชิกกระท่อม"}>
+    <section className={`member-pass-card${className ? ` ${className}` : ""}`} data-kind={kind} aria-label={kind === "cannabis" ? "บัตรสมาชิกกัญชา" : "บัตรสมาชิกกระท่อม"} data-testid={dataTestId}>
       <div className="member-pass-card__inner">
         <header className="member-pass-card__top">
           <div className="member-pass-card__identity">
-            <img className="member-pass-card__brand-mark" src={asset("jaguar-card-mark.webp")} alt="" width={36} height={36} />
+            <img className="member-pass-card__brand-mark" src={asset("jaguar-card-mark.webp", assetBase)} alt="" width={36} height={36} />
             <div>
               <p className="member-pass-card__label">{club.title} · MEMBER</p>
               <p className="member-pass-card__location">บุญศิริ ซอย 6 · สมุทรปราการ</p>
@@ -139,7 +146,17 @@ export function CollectingTrack({
   );
 }
 
-export function LoyaltyProgress({ balance, kind = "kratom" }: { balance: number; kind?: MemberClub }) {
+export function LoyaltyProgress({
+  balance,
+  kind = "kratom",
+  buttonAssetBase = DEFAULT_BUTTON_ASSET_BASE,
+  action,
+}: {
+  balance: number;
+  kind?: MemberClub;
+  buttonAssetBase?: string;
+  action?: ReactNode;
+}) {
   const filled = Math.min(balance, STAMPS);
   const ready = balance >= STAMPS;
   const remaining = Math.max(STAMPS - filled, 0);
@@ -148,45 +165,75 @@ export function LoyaltyProgress({ balance, kind = "kratom" }: { balance: number;
       <CollectingTrack balance={balance} kind={kind} />
       <div className="member-progress-actions">
         <p>{ready ? `ครบ 10 · ${CLUBS[kind].reward}` : `${CLUBS[kind].rule} · เหลือ ${remaining} แต้ม`}</p>
-        <BrandButton asset={ready ? "btn-crown" : "btn-frame"} label={ready ? "แลกของแถมเลย" : `อีก ${remaining} แต้ม`} disabled={!ready} />
+        {action !== undefined
+          ? action
+          : <BrandButton asset={ready ? "btn-crown" : "btn-frame"} assetBase={buttonAssetBase} label={ready ? "แลกของแถมเลย" : `อีก ${remaining} แต้ม`} disabled={!ready} />}
       </div>
     </section>
   );
 }
 
-export function LoyaltyCard({ kind = "kratom", memberCode, balance, qr }: { kind?: MemberClub; memberCode: string; balance: number; qr: CardQr }) {
+export function LoyaltyCard({
+  kind = "kratom",
+  memberCode,
+  balance,
+  qr,
+  assetBase = DEFAULT_ASSET_BASE,
+  buttonAssetBase = DEFAULT_BUTTON_ASSET_BASE,
+}: {
+  kind?: MemberClub;
+  memberCode: string;
+  balance: number;
+  qr: CardQr;
+  assetBase?: string;
+  buttonAssetBase?: string;
+}) {
   return (
     <div className="membership-card-stack">
-      <SharedMemberCard kind={kind} memberCode={memberCode} balance={balance} qr={qr} />
-      <LoyaltyProgress balance={balance} kind={kind} />
+      <SharedMemberCard kind={kind} memberCode={memberCode} balance={balance} qr={qr} assetBase={assetBase} />
+      <LoyaltyProgress balance={balance} kind={kind} buttonAssetBase={buttonAssetBase} />
     </div>
   );
 }
 
-export function MemberCardFaces({ kind, memberCode, balance, popKey = 0 }: { kind: MemberClub; memberCode: string; balance: number; popKey?: number }) {
+export function MemberCardFaces({
+  kind,
+  memberCode,
+  balance,
+  popKey = 0,
+  assetBase = DEFAULT_ASSET_BASE,
+  dataTestId,
+}: {
+  kind: MemberClub;
+  memberCode: string;
+  balance: number;
+  popKey?: number;
+  assetBase?: string;
+  dataTestId?: string;
+}) {
   const club = CLUBS[kind];
   const filled = Math.min(Math.max(balance, 0), STAMPS);
   const ready = balance >= STAMPS;
   return (
-    <div className={`club-pass club-pass--${kind}`} data-pop-key={popKey}>
+    <div className={`club-pass club-pass--${kind}`} data-pop-key={popKey} data-testid={dataTestId ?? (kind === "kratom" ? "card-member" : "card-cannabis-member")}>
       <figure className="club-pass__front">
-        <img className="club-pass__front-art" src={asset(club.image)} alt={club.alt} />
+        <img className="club-pass__front-art" src={asset(club.image, assetBase)} alt={club.alt} loading="eager" />
         <span className="club-pass__front-frame" aria-hidden="true" />
         <figcaption className="sr-only">{club.title} · บัตรสมาชิก @{memberCode} · บุญศิริ ซอย 6 · สมุทรปราการ</figcaption>
       </figure>
       <section className="club-pass__stamp-face" aria-label={`แสตมป์ ${club.title}`}>
         <header className="club-pass__stamp-head">
           <div><span>JAGUAR SPK · COLLECTING</span><strong>{filled}<small>/10</small></strong></div>
-          <img src={asset(club.stampIcon)} alt="" width={23} height={23} aria-hidden="true" />
+          <img src={asset(club.stampIcon, assetBase)} alt="" width={23} height={23} aria-hidden="true" />
         </header>
         <ol className="club-pass__stamp-grid" aria-label={`${filled} จาก 10 แต้มสะสม`}>
           {Array.from({ length: STAMPS }, (_, index) => {
             const rewardSlot = index === STAMPS - 1;
             const isFilled = index < filled;
             return (
-              <li key={`${popKey}-${index}`} className="club-pass__stamp" data-filled={isFilled} data-reward={rewardSlot} data-ready={ready}>
+              <li key={`${popKey}-${index}`} className="club-pass__stamp" data-filled={isFilled} data-reward={rewardSlot} data-ready={ready} data-pop={popKey > 0 && isFilled} data-testid={`${kind === "kratom" ? "stamp" : "cannabis-stamp"}-${index + 1}`}>
                 {rewardSlot ? <><strong>FREE!</strong><small>แถมฟรี</small></>
-                  : isFilled ? <img src={asset(club.stampIcon)} alt="" width={28} height={28} aria-hidden="true" />
+                  : isFilled ? <img src={asset(club.stampIcon, assetBase)} alt="" width={28} height={28} aria-hidden="true" />
                     : <span>{String(index + 1).padStart(2, "0")}</span>}
                 <span className="sr-only">{rewardSlot ? `ครบ 10 แต้ม ${club.reward}` : isFilled ? "สะสมแล้ว" : "ยังไม่สะสม"}</span>
               </li>
@@ -201,27 +248,50 @@ export function MemberCardFaces({ kind, memberCode, balance, popKey = 0 }: { kin
   );
 }
 
-export function MemberStatusPanel({ kind, memberCode, balance, qr }: { kind: MemberClub; memberCode: string; balance: number; qr: CardQr }) {
+export function MemberStatusPanel({
+  kind,
+  memberCode,
+  balance,
+  qr,
+  action,
+  extraPoints,
+  dataTestId,
+  memberCodeTestId,
+  qrTestId,
+  buttonAssetBase = DEFAULT_BUTTON_ASSET_BASE,
+}: {
+  kind: MemberClub;
+  memberCode: string;
+  balance: number;
+  qr: CardQr;
+  action?: ReactNode;
+  extraPoints?: number;
+  dataTestId?: string;
+  memberCodeTestId?: string;
+  qrTestId?: string;
+  buttonAssetBase?: string;
+}) {
   const club = CLUBS[kind];
   const filled = Math.min(Math.max(balance, 0), STAMPS);
   const remaining = Math.max(STAMPS - filled, 0);
   const ready = balance >= STAMPS;
   return (
-    <section className="ds-glass member-dashboard-status" aria-label="สถานะสมาชิก">
+    <section className="ds-glass member-dashboard-status" aria-label="สถานะสมาชิก" data-testid={dataTestId}>
       <div className="member-dashboard-status__main">
         <header>
-          <div><span className="member-dashboard-status__eyebrow">MEMBERS CLUB</span><h2>สวัสดี <strong>@{memberCode}</strong></h2></div>
+          <div><span className="member-dashboard-status__eyebrow">MEMBERS CLUB</span><h2>สวัสดี <strong data-testid={memberCodeTestId}>@{memberCode}</strong></h2></div>
           <span className="member-dashboard-status__chip" data-ready={ready}>{ready ? "พร้อมแลก" : "กำลังสะสม"}</span>
         </header>
         <div className="member-dashboard-status__points"><span>แต้มสะสม</span><strong>{filled}<small>/10</small></strong><span className="member-dashboard-status__remaining">{ready ? club.reward : `อีก ${remaining} แต้ม`}</span></div>
         <div className="member-dashboard-status__bar" role="progressbar" aria-label={`แต้มสะสม ${filled} จาก 10`} aria-valuemin={0} aria-valuemax={10} aria-valuenow={filled}>
           <span style={{ width: `${filled * 10}%` }} />
         </div>
-        {ready && kind === "kratom"
-          ? <BrandButton asset="btn-crown" label="แลกของแถม" />
-          : <BrandButton asset={ready ? "btn-leaf-cannabis" : "btn-frame"} label={ready ? "แสดง QR" : `อีก ${remaining} แต้ม`} disabled={!ready} />}
+        {extraPoints !== undefined && extraPoints > STAMPS && <span className="member-dashboard-status__extra" data-testid="text-extra-points">แต้มคงเหลือ {extraPoints}</span>}
+        {action !== undefined ? action : ready && kind === "kratom"
+          ? <BrandButton asset="btn-crown" assetBase={buttonAssetBase} label="แลกของแถม" />
+          : <BrandButton asset={ready ? "btn-leaf-cannabis" : "btn-frame"} assetBase={buttonAssetBase} label={ready ? "แสดง QR" : `อีก ${remaining} แต้ม`} disabled={!ready} />}
       </div>
-      <div className="member-dashboard-status__qr" aria-label="QR ส่วนตัวสำหรับพนักงานสแกน">
+      <div className="member-dashboard-status__qr" aria-label="QR ส่วนตัวสำหรับพนักงานสแกน" data-testid={qrTestId}>
         {qr.loading ? <span className="member-dashboard-status__qr-loading" aria-label="กำลังโหลด QR" />
           : qr.error || !qr.value ? <div className="member-dashboard-status__qr-error"><span role="alert">QR ไม่พร้อม</span><button type="button" onClick={qr.retry} disabled={qr.retrying}>{qr.retrying ? "รอ…" : "ลองใหม่"}</button></div>
             : <QRCodeSVG value={qr.value} size={62} level="M" aria-label={`QR สมาชิก ${memberCode}`} />}
@@ -231,6 +301,12 @@ export function MemberStatusPanel({ kind, memberCode, balance, qr }: { kind: Mem
   );
 }
 
-export function LoyaltyCardArtwork({ variant }: { variant: MemberClub }) {
-  return <img className={`loyalty-card-art loyalty-card-art--${variant}`} src={asset(CLUBS[variant].image)} alt="" aria-hidden="true" />;
+export function LoyaltyCardArtwork({
+  variant,
+  assetBase = DEFAULT_ASSET_BASE,
+}: {
+  variant: MemberClub;
+  assetBase?: string;
+}) {
+  return <img className={`loyalty-card-art loyalty-card-art--${variant}`} src={asset(CLUBS[variant].image, assetBase)} alt="" aria-hidden="true" />;
 }

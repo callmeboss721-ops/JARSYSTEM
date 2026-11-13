@@ -17,13 +17,13 @@ export function BrandButtonDemo() {
         {variants.map((item) => (
           <div className="ds-demo-tile ds-glass" key={item.art}>
             <span className="ds-type-label">{item.art}</span>
-            <BrandButton asset={item.art} label={item.label} onClick={() => setActivated(true)} disabled={item.art === "btn-frame"} />
+            <BrandButton asset={item.art} label={item.label} assetBase={`${import.meta.env.BASE_URL}brand/buttons/`} onClick={() => setActivated(true)} disabled={item.art === "btn-frame"} />
           </div>
         ))}
       </div>
       <div className="ds-demo-link ds-glass">
         <span className="ds-type-label">ANCHOR / NAVIGATION STATE</span>
-        <BrandButton asset="btn-leaf" label="กลับภาพรวม" href={import.meta.env.BASE_URL} />
+        <BrandButton asset="btn-leaf" label="กลับภาพรวม" assetBase={`${import.meta.env.BASE_URL}brand/buttons/`} href={import.meta.env.BASE_URL} />
       </div>
       <p className="ds-demo-feedback" role="status">{activated ? "ปุ่มทำงานแล้ว" : "ปุ่มที่เปิดใช้งานจะตอบสนองเมื่อกด"}</p>
     </div>

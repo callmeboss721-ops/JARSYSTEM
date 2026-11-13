@@ -1,35 +1,32 @@
 @import url('https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap');
-@import 'tailwindcss';
-
-@theme inline {
-  --color-ink: #05050a;
-  --color-neon: #e5c04a;
-  --color-gold: #e5c04a;
-  --font-display: 'Bai Jamjuree', 'IBM Plex Sans Thai', sans-serif;
-  --font-sans: 'IBM Plex Sans Thai', 'Bai Jamjuree', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-}
+@import "@workspace/jaguar-spk-design-system/styles.css";
 
 :root {
-  --bg: #05050a;
-  --panel: #0b0c12;
-  --panel-2: #12141b;
-  --line: rgba(196, 202, 214, 0.11);
-  --line-2: rgba(196, 202, 214, 0.22);
-  --control-line: #626977;
-  --text: #eeeae0;
-  --muted: #a3a6b0;
-  --silver: #c4cad6;
-  /* --neon kept as token name for existing markup: now the champagne-gold highlight */
-  --neon: #e5c04a;
-  --neon-dim: rgba(229, 192, 74, 0.12);
-  --gold: #e5c04a;
-  --gold-2: #f0d78a;
-  --emerald: #1f8a64;
-  --emerald-2: #4fc79a;
-  --lime: #b6f45b;
-  --cyan: #00f0ff;
-  --danger: #ff7a6b;
+  /* App naming aliases point to the design-system semantic tokens. */
+  --bg: hsl(var(--background));
+  --panel: hsl(var(--card));
+  --panel-2: hsl(var(--popover));
+  --line: hsl(var(--border) / .72);
+  --line-2: hsl(var(--border));
+  --control-line: hsl(var(--input));
+  --text: hsl(var(--foreground));
+  --muted: hsl(var(--muted-foreground));
+  --silver: hsl(var(--foreground) / .82);
+  --neon: hsl(var(--primary));
+  --neon-dim: hsl(var(--primary) / .12);
+  --gold: hsl(var(--secondary));
+  --gold-2: hsl(var(--accent));
+  --emerald: hsl(var(--primary) / .72);
+  --emerald-2: hsl(var(--primary));
+  --lime: hsl(var(--primary) / .8);
+  --cyan: hsl(var(--ring));
+  --danger: hsl(var(--destructive));
+  --green: hsl(var(--primary));
+  --glass: hsl(var(--card) / .72);
+  --glass-line: hsl(var(--primary) / .2);
+  --font-sans: var(--app-font-sans);
+  --font-mono: var(--app-font-mono);
+  --font-display: "Bai Jamjuree", var(--app-font-sans);
 }
 
 * { box-sizing: border-box; }
@@ -429,27 +426,28 @@ body { overflow-x: hidden; }
 
 /* ===== Dark Luxury Fintech layer ===== */
 :root {
-  --bg:#050505;
-  --panel:#0b0d0c;
-  --panel-2:#111412;
-  --glass:rgba(255,255,255,.045);
-  --glass-line:rgba(0,255,157,.19);
-  --green:#00FF9D;
-  --neon:#00FF9D;
-  --neon-dim:rgba(0,255,157,.12);
-  --gold:#e5c04a;
-  --gold-2:#f0d78a;
-  --emerald:#00a96a;
-  --emerald-2:#00FF9D;
-  --lime:#8af2c1;
-  --cyan:#00FF9D;
-  --text:#f0f1ec;
-  --muted:#a9b1ab;
-  --silver:#c9d0ca;
-  --line:rgba(219,231,223,.12);
-  --line-2:rgba(219,231,223,.22);
-  --control-line:rgba(219,231,223,.3);
-  --danger:#ff8578;
+  /* Keep legacy app selectors aligned with the package theme, not a second palette. */
+  --bg: hsl(var(--background));
+  --panel: hsl(var(--card));
+  --panel-2: hsl(var(--popover));
+  --glass: hsl(var(--card) / .72);
+  --glass-line: hsl(var(--primary) / .2);
+  --green: hsl(var(--primary));
+  --neon: hsl(var(--primary));
+  --neon-dim: hsl(var(--primary) / .12);
+  --gold: hsl(var(--secondary));
+  --gold-2: hsl(var(--accent));
+  --emerald: hsl(var(--primary) / .72);
+  --emerald-2: hsl(var(--primary));
+  --lime: hsl(var(--primary) / .8);
+  --cyan: hsl(var(--ring));
+  --text: hsl(var(--foreground));
+  --muted: hsl(var(--muted-foreground));
+  --silver: hsl(var(--foreground) / .82);
+  --line: hsl(var(--border) / .72);
+  --line-2: hsl(var(--border));
+  --control-line: hsl(var(--input));
+  --danger: hsl(var(--destructive));
 }
 body {
   background:
@@ -5812,5 +5810,234 @@ body {
   .jaguar-home--landing .landing-header__actions a,
   .jaguar-home--landing .landing-feature .landing-ctas .brand-button {
     transition: none !important;
+  }
+}
+
+/* JAGUAR SPK system alignment: app aliases consume package tokens above. */
+html,
+body {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+body {
+  font-family: var(--app-font-sans);
+  line-height: 1.65;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: "Bai Jamjuree", var(--app-font-sans);
+}
+
+.font-mono,
+code,
+kbd {
+  font-family: var(--app-font-mono);
+}
+
+.panel,
+.auth-panel {
+  border: 1px solid hsl(var(--border));
+  border-radius: 1rem;
+  background: hsl(var(--card) / .88);
+  box-shadow: 0 1px 0 hsl(var(--foreground) / .04) inset;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.eyebrow {
+  color: hsl(var(--muted-foreground));
+}
+
+.btn-neon,
+.btn-primary,
+.btn-redeem {
+  color: hsl(var(--primary-foreground));
+  background: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+  border-radius: 999px;
+  box-shadow: 0 1px 0 hsl(var(--foreground) / .18) inset;
+  transition: transform .16s ease, filter .16s ease, opacity .16s ease;
+}
+
+.btn-neon:hover:not(:disabled),
+.btn-primary:hover:not(:disabled),
+.btn-redeem:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.btn-gold {
+  color: hsl(var(--secondary-foreground));
+  background: hsl(var(--secondary));
+  border-color: hsl(var(--secondary));
+  border-radius: 999px;
+}
+
+.btn-ghost {
+  color: hsl(var(--foreground));
+  background: hsl(var(--card) / .68);
+  border-color: hsl(var(--border));
+  border-radius: 999px;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  border-color: hsl(var(--primary) / .65);
+  background: hsl(var(--primary) / .06);
+}
+
+.input {
+  min-height: 48px;
+  color: hsl(var(--foreground));
+  background: hsl(var(--background) / .82);
+  border-color: hsl(var(--input));
+  border-radius: .75rem;
+  font-family: var(--app-font-sans);
+}
+
+.input:focus {
+  border-color: hsl(var(--ring));
+  box-shadow: 0 0 0 3px hsl(var(--ring) / .16);
+}
+
+.field label,
+.field-label {
+  color: hsl(var(--muted-foreground));
+}
+
+.tab[aria-selected='true'],
+.pill-switch .tab[aria-selected='true'],
+.staff-workspace nav[aria-label="พื้นที่พนักงาน"] .tab[aria-pressed="true"] {
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / .08);
+  border-color: hsl(var(--primary) / .36);
+}
+
+.member-header,
+.staff-topline {
+  background: hsl(var(--background) / .88);
+  border-color: hsl(var(--border));
+}
+
+.member-card,
+.club-pass__front,
+.club-pass__stamp-face {
+  border-color: hsl(var(--secondary) / .4);
+}
+
+.member-dashboard-status,
+.bank-account-details,
+.counter-feature-disabled {
+  border-color: hsl(var(--primary) / .25);
+}
+
+.member-dashboard-status__bar > span,
+.progress-fill {
+  background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)));
+}
+
+.landing-header {
+  border-color: hsl(var(--border));
+}
+
+.jaguar-home--landing {
+  background: hsl(var(--background));
+}
+
+.jaguar-home--landing .landing-header__actions a {
+  min-height: 44px;
+  border-radius: .75rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.jaguar-home--landing .landing-header__actions a:hover {
+  border-color: hsl(var(--primary) / .36);
+  color: hsl(var(--primary));
+}
+
+.jaguar-home--landing .landing-member-guide {
+  width: min(100%, 900px);
+  padding: .5rem;
+  border-color: hsl(var(--secondary) / .32);
+  border-radius: 1rem;
+  background: hsl(var(--card));
+}
+
+.jaguar-home--landing .landing-member-guide img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: contain;
+}
+
+.landing-menu-preview,
+.landing-menu-preview[open] {
+  border-color: hsl(var(--border));
+}
+
+.owner-menu-tab {
+  min-height: 52px;
+}
+
+.owner-menu-tab__image {
+  margin-inline: auto;
+}
+
+.bank-direction-select button {
+  min-height: 48px;
+  border-color: hsl(var(--border));
+  color: hsl(var(--muted-foreground));
+  background: hsl(var(--card) / .68);
+}
+
+.bank-direction-select button[aria-pressed="true"] {
+  border-color: hsl(var(--primary) / .58);
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / .08);
+}
+
+.pin-key {
+  min-height: 48px;
+  border-color: hsl(var(--border));
+  color: hsl(var(--foreground));
+}
+
+.pin-key:hover:not(:disabled) {
+  border-color: hsl(var(--primary));
+}
+
+.bank-account-actions .btn,
+.staff-workspace .tab,
+.owner-workspace .tab {
+  min-height: 44px;
+}
+
+:focus-visible {
+  outline-color: hsl(var(--ring));
+}
+
+@media (max-width: 767px) {
+  .panel,
+  .auth-panel {
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+
+  .jaguar-home--landing .landing-member-guide {
+    padding: .25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
   }
 }

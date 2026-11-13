@@ -1,15 +1,6 @@
-import Image from "next/image";
-import Link from "next/link";
+import { BrandButton as DesignSystemBrandButton, type BrandButtonArt } from "@workspace/jaguar-spk-design-system/components/ui/brand-button";
 
-export type BrandButtonArt = "btn-jaguar" | "btn-leaf" | "btn-leaf-cannabis" | "btn-frame" | "btn-crown";
-
-const ART: Record<BrandButtonArt, string> = {
-  "btn-jaguar": "/ui/btn-jaguar.webp",
-  "btn-leaf": "/ui/btn-leaf.webp",
-  "btn-leaf-cannabis": "/ui/btn-leaf-cannabis.webp",
-  "btn-frame": "/ui/btn-frame.webp",
-  "btn-crown": "/ui/btn-crown.webp",
-};
+export type { BrandButtonArt };
 
 type BrandButtonProps = {
   asset: BrandButtonArt;
@@ -22,46 +13,25 @@ type BrandButtonProps = {
   testId?: string;
 };
 
-function Content({ asset, label }: Pick<BrandButtonProps, "asset" | "label">) {
-  return (
-    <>
-      <Image src={ART[asset]} alt="" fill sizes="(max-width: 480px) 100vw, 390px" aria-hidden="true" />
-      <span className="brand-button__label">{label}</span>
-    </>
-  );
-}
-
-export function BrandButton({
-  asset,
-  label,
-  href,
-  type = "button",
-  disabled = false,
-  onClick,
-  className,
-  testId,
-}: BrandButtonProps) {
-  const classes = ["brand-button", `brand-button--${asset}`, className].filter(Boolean).join(" ");
-
-  if (href) {
-    return (
-      <Link href={href} className={classes} aria-label={label} data-testid={testId} data-asset={asset}>
-        <Content asset={asset} label={label} />
-      </Link>
-    );
+export function BrandButton(props: BrandButtonProps) {
+  if (props.href) {
+    return <DesignSystemBrandButton
+      asset={props.asset}
+      assetBase="/ui/"
+      label={props.label}
+      href={props.href}
+      className={props.className}
+      testId={props.testId}
+    />;
   }
-
-  return (
-    <button
-      type={type}
-      className={classes}
-      aria-label={label}
-      disabled={disabled}
-      onClick={onClick}
-      data-testid={testId}
-      data-asset={asset}
-    >
-      <Content asset={asset} label={label} />
-    </button>
-  );
+  return <DesignSystemBrandButton
+    asset={props.asset}
+    assetBase="/ui/"
+    label={props.label}
+    type={props.type}
+    disabled={props.disabled}
+    onClick={props.onClick}
+    className={props.className}
+    testId={props.testId}
+  />;
 }

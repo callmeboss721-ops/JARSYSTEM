@@ -54,10 +54,12 @@ export function RankEmblem({
   name,
   size = 24,
   className = "",
+  assetBase = "/jaguar-spk-design-system/brand/rank-icons/",
 }: {
   name: RankEmblemName;
   size?: number;
   className?: string;
+  assetBase?: string;
 }) {
   return (
     <span
@@ -66,7 +68,7 @@ export function RankEmblem({
       aria-hidden="true"
     >
       <img
-        src={`${import.meta.env.BASE_URL}brand/rank-icons/${EMBLEMS[name]}`}
+        src={`${assetBase}${EMBLEMS[name]}`}
         alt=""
         width={size}
         height={size}

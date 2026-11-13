@@ -13,6 +13,7 @@ const ART: Record<BrandButtonArt, string> = {
 type SharedProps = {
   asset: BrandButtonArt;
   label: string;
+  assetBase?: string;
   className?: string;
   testId?: string;
 };
@@ -26,11 +27,11 @@ type ButtonProps = SharedProps & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "
   href?: never;
 };
 
-function Content({ asset, label }: Pick<SharedProps, "asset" | "label">) {
+function Content({ asset, label, assetBase }: Required<Pick<SharedProps, "asset" | "label" | "assetBase">>) {
   return (
     <>
       <img
-        src={`${import.meta.env.BASE_URL}brand/buttons/${ART[asset]}`}
+        src={`${assetBase}${ART[asset]}`}
         alt=""
         aria-hidden="true"
         draggable={false}
@@ -41,19 +42,19 @@ function Content({ asset, label }: Pick<SharedProps, "asset" | "label">) {
 }
 
 export function BrandButton(props: LinkProps | ButtonProps) {
-  const { asset, label, className, testId, ...rest } = props;
+  const { asset, label, className, testId, assetBase = "/jaguar-spk-design-system/brand/buttons/", ...rest } = props;
   const classes = ["brand-button", `brand-button--${asset}`, className].filter(Boolean).join(" ");
   if ("href" in props && props.href) {
     return (
       <a {...rest as LinkProps} href={props.href} className={classes} aria-label={label} data-testid={testId} data-asset={asset}>
-        <Content asset={asset} label={label} />
+        <Content asset={asset} label={label} assetBase={assetBase} />
       </a>
     );
   }
   const buttonProps = rest as ButtonHTMLAttributes<HTMLButtonElement>;
   return (
     <button {...buttonProps} type={buttonProps.type ?? "button"} className={classes} aria-label={label} data-testid={testId} data-asset={asset}>
-      <Content asset={asset} label={label} />
+      <Content asset={asset} label={label} assetBase={assetBase} />
     </button>
   );
 }

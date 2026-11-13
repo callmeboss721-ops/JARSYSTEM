@@ -245,6 +245,9 @@ importers:
       '@workspace/api-client-react':
         specifier: workspace:*
         version: link:../../lib/api-client-react
+      '@workspace/jaguar-spk-design-system':
+        specifier: workspace:*
+        version: link:../jaguar-spk-design-system
       '@zxing/browser':
         specifier: 0.1.5
         version: 0.1.5(@zxing/library@0.21.3)
