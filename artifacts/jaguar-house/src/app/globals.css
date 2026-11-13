@@ -6371,6 +6371,112 @@ kbd {
   color: var(--gold-2);
 }
 
+/* Login / member entry presentation. All auth state and form behavior remain
+   in Welcome and the existing LoginForm/RegisterForm components. */
+.login-reference-root {
+  min-height: 100dvh;
+  align-items: center;
+  background:
+    radial-gradient(ellipse at 50% 8%, hsl(var(--secondary) / .09), transparent 42%),
+    radial-gradient(ellipse at 50% 100%, hsl(var(--primary) / .08), transparent 48%);
+}
+
+.login-reference-root > section:last-child {
+  min-height: 100dvh;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--spacing) * 8) calc(var(--spacing) * 6);
+}
+
+.login-reference-root .auth-form-layout {
+  width: 100%;
+  max-width: 28rem;
+}
+
+.login-reference-root .brand-showcase {
+  margin-bottom: calc(var(--spacing) * 5) !important;
+}
+
+.login-reference-root .brand-showcase__campaign {
+  width: min(100%, 21rem);
+  max-height: 10rem;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 20px hsl(var(--foreground) / .12));
+}
+
+.login-reference-root .auth-form-layout > h2 {
+  margin: 0 0 calc(var(--spacing) * 4);
+  font-size: clamp(1.5rem, 3vw, 1.875rem);
+  line-height: 1.25;
+}
+
+.login-reference-root .auth-form-panel {
+  padding: calc(var(--spacing) * 6);
+  border-color: hsl(var(--primary) / .2);
+  box-shadow:
+    0 1px 0 hsl(var(--foreground) / .06) inset,
+    0 24px 56px -32px hsl(var(--background) / .95),
+    0 0 36px -28px hsl(var(--primary) / .3);
+}
+
+.login-reference-root > section:last-child > .auth-form-layout > .pill-switch {
+  margin-bottom: calc(var(--spacing) * 4);
+}
+
+.login-reference-root .auth-form-panel .input {
+  min-height: 3.25rem;
+}
+
+.login-reference-root .auth-form-panel .brand-button {
+  width: 100%;
+}
+
+@media (max-width: 767px) {
+  .login-reference-root {
+    align-items: flex-start !important;
+  }
+
+  .login-reference-root > section:last-child {
+    min-height: auto;
+    align-self: flex-start;
+    justify-content: flex-start !important;
+    padding: calc(var(--spacing) * 6) calc(var(--spacing) * 4);
+  }
+
+  .login-reference-root .auth-form-layout {
+    max-width: 28rem;
+  }
+
+  .login-reference-root .brand-showcase {
+    margin-bottom: calc(var(--spacing) * 4) !important;
+  }
+
+  .login-reference-root .brand-showcase__campaign {
+    width: min(82vw, 19rem);
+    max-height: 8rem;
+  }
+
+  .login-reference-root .auth-form-panel {
+    padding: calc(var(--spacing) * 5);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+}
+
+@media (max-width: 380px) {
+  .login-reference-root > section:last-child {
+    padding-inline: calc(var(--spacing) * 3);
+  }
+
+  .login-reference-root .brand-showcase__campaign {
+    width: min(78vw, 17rem);
+  }
+
+  .login-reference-root .auth-form-panel {
+    padding: calc(var(--spacing) * 4);
+  }
+}
+
 .member-qr-dialog {
   width: min(360px, calc(100vw - 32px));
   max-width: calc(100vw - 32px);
