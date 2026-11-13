@@ -6812,3 +6812,7 @@ kbd {
     height: 68px;
   }
 }
+
+.jaguar-home--landing .landing-delivery-promo img {
+  aspect-ratio: 2400 / 1792;
+}

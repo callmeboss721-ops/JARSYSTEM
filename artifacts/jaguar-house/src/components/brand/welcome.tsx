@@ -72,6 +72,15 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
               sizes="(max-width: 540px) calc(100vw - 32px), (max-width: 1000px) 90vw, 900px"
             />
           </figure>
+          <figure className="landing-member-guide landing-delivery-promo">
+            <Image
+              src="/brand/jaguar-delivery-promo.webp"
+              alt="โปสเตอร์โปรโมชัน JAGUAR SPK บริการจัดส่งในสมุทรปราการ พร้อมภาพแอปและ QR สำหรับสั่งซื้อ"
+              width={2400}
+              height={1792}
+              sizes="(max-width: 540px) calc(100vw - 32px), (max-width: 1000px) 90vw, 900px"
+            />
+          </figure>
           <details className="landing-menu-preview">
             <summary>เมนูหน้าร้าน</summary>
             <Image src="/brand/jaguar-price-board.webp" alt="เมนูสินค้าและราคาหน้าร้าน" width={760} height={760} sizes="(max-width: 440px) 90vw, 440px" />
