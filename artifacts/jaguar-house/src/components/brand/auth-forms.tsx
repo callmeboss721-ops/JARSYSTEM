@@ -38,10 +38,22 @@ export function LoginForm() {
     <form onSubmit={submit} noValidate className="auth-form space-y-4">
       {serverErr && <div className="auth-error-banner" role="alert" aria-live="assertive"><BrandIcon name="error" tone="danger" /><div><strong>ยังเข้าใช้งานไม่ได้</strong><p>{serverErr}</p></div></div>}
       <div className="field">
-        <div className="pill-switch grid grid-cols-3 gap-1 p-1 mb-4" role="tablist" aria-label="วิธีเข้าสู่ระบบ">
-          {([["phone", "เบอร์โทร"], ["member_code", "รหัสสมาชิก"], ["nickname", "ชื่อเล่น"]] as const).map(([key, label]) =>
-            <button key={key} type="button" role="tab" aria-selected={method === key} className="tab !px-1 !text-xs sm:!text-sm" data-testid={`login-method-${key}`} onClick={() => { setMethod(key); setIdentifier(""); setErr(null); }}>
-              {label}
+        <div className="pill-switch grid grid-cols-3 gap-1 p-1 mb-4" role="tablist" aria-label="วิธีเข้าสู่ระบบ" onKeyDown={(event) => {
+          if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+          event.preventDefault();
+          const methods = ["phone", "member_code", "nickname"] as const;
+          const currentIndex = methods.indexOf(method);
+          const direction = event.key === "ArrowRight" ? 1 : -1;
+          const next = methods[(currentIndex + direction + methods.length) % methods.length];
+          setMethod(next);
+          setIdentifier("");
+          setErr(null);
+          document.getElementById(`login-method-${next}`)?.focus();
+        }}>
+          {([["phone", "เบอร์โทร", "phone"], ["member_code", "รหัสสมาชิก", "memberCode"], ["nickname", "ชื่อเล่น", "nickname"]] as const).map(([key, label, icon]) =>
+            <button key={key} id={`login-method-${key}`} type="button" role="tab" tabIndex={method === key ? 0 : -1} aria-selected={method === key} className="tab !px-1 !text-xs sm:!text-sm flex-col !gap-1" data-testid={`login-method-${key}`} onClick={() => { setMethod(key); setIdentifier(""); setErr(null); }}>
+              <BrandIcon name={icon} size={16} tone={method === key ? "emerald" : "neutral"} />
+              <span>{label}</span>
             </button>
           )}
         </div>

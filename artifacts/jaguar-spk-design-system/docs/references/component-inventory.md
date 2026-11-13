@@ -41,7 +41,7 @@ independently; the package does not claim an upstream component dependency.
 | 16 | Dialog and sheet | `components/dialog-sheet.md` | Command dialog and responsive sidebar sheet | Radix Dialog, CVA | 4 | implemented |
 | 17 | Toast feedback | `components/toast-feedback.md` | App Toaster, swipe-close, action and live announcements | Radix Toast, source hook | 4 | implemented |
 | 18 | Skeleton | `components/skeleton.md` | Sidebar loading placeholder and card/list states | CSS pulse | 4 | implemented |
-| 19 | V3 icon catalog | `components/icon-catalog.md` | Search/size/copy-SVG catalog and 12 signature icons | Lucide React icons, browser clipboard | V3 | implemented |
+| 19 | V3 icon catalog | `components/icon-catalog.md` | Search/size/copy-SVG catalog with 34 utility icons and 12 signature icons | Lucide React icons, browser clipboard | V3 | implemented |
 | 20 | V3 action controls | `components/action-controls.md` | Neon primary, gold secondary, ghost/danger, switch, menu, segmented control | React local state, Lucide icons | V3 | implemented |
 | 21 | Mobile tab bar | `components/mobile-tab-bar.md` | Selectable five-item responsive tab/navigation preview | React local state, Lucide icons | V3 | implemented |
 | 22 | Collecting track demo | `components/membership-cards.md` | Interactive ten-slot track for two club accents | Existing `CollectingTrack`, local demo state | V3 | implemented |

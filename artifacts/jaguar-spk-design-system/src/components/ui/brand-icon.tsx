@@ -1,7 +1,10 @@
 import {
+  AtSign,
   Cannabis,
+  IdCard,
   Leaf,
   Landmark,
+  Phone,
   type LucideIcon,
 } from "lucide-react";
 import { ArrowLeftRightGlassIcon } from "@thesvg/ui-react/arrow-left-right";
@@ -36,9 +39,13 @@ export type BrandIconName =
   | "members" | "memberSearch" | "cannabis" | "leaf" | "sprout" | "lightning" | "points" | "progress"
   | "rewards" | "redeem" | "dashboard" | "addPoints" | "history" | "settings" | "search"
   | "logout" | "location" | "continue" | "security" | "banking" | "error" | "retry" | "success"
-  | "pending" | "staffAccess" | "confirm" | "add" | "subtract" | "close" | "qr" | "crown";
+  | "pending" | "staffAccess" | "confirm" | "add" | "subtract" | "close" | "qr" | "crown"
+  | "phone" | "memberCode" | "nickname";
 
 const LUCIDE_ICONS: Partial<Record<BrandIconName, LucideIcon>> = {
+  phone: Phone,
+  memberCode: IdCard,
+  nickname: AtSign,
   cannabis: Cannabis,
   leaf: Leaf,
   banking: Landmark,

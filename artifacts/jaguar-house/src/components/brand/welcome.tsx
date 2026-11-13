@@ -35,8 +35,8 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
             <span className="landing-brand__copy"><small>KRATOM · SOI 6</small></span>
           </Link>
           <nav className="landing-header__actions" aria-label="ทางเข้าพนักงาน">
-            <Link href="/admin?desk=staff" data-testid="link-staff">พนักงาน</Link>
-            <Link href="/admin" data-testid="link-owner">เจ้าของร้าน</Link>
+            <Link href="/admin?desk=staff" className="inline-flex items-center gap-1" data-testid="link-staff"><BrandIcon name="staffAccess" size={14} tone="emerald" />พนักงาน</Link>
+            <Link href="/admin" className="inline-flex items-center gap-1" data-testid="link-owner"><BrandIcon name="dashboard" size={14} tone="gold" />เจ้าของร้าน</Link>
           </nav>
         </header>
         <div className="landing-shell">
@@ -152,8 +152,8 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
             <>
               <h2 className="font-display text-2xl sm:text-3xl font-semibold mb-4">{tab === "login" ? "บัตรสมาชิก" : "เปิดบัตรใหม่"}</h2>
               <div role="tablist" onKeyDown={(e) => { if (e.key === "ArrowRight" || e.key === "ArrowLeft") { const next = tab === "login" ? "register" : "login"; setTab(next); document.getElementById(`tab-${next}`)?.focus(); } }} aria-label="เลือกการเข้าใช้" className="pill-switch flex gap-1 p-1 mb-5">
-                <button role="tab" id="tab-login" aria-selected={tab === "login"} tabIndex={tab === "login" ? 0 : -1} aria-controls="panel-auth" className="tab" onClick={() => setTab("login")} data-testid="tab-login">เข้าใช้</button>
-                <button role="tab" id="tab-register" aria-selected={tab === "register"} tabIndex={tab === "register" ? 0 : -1} aria-controls="panel-auth" className="tab" onClick={() => setTab("register")} data-testid="tab-register">สมัคร</button>
+                <button role="tab" id="tab-login" aria-selected={tab === "login"} tabIndex={tab === "login" ? 0 : -1} aria-controls="panel-auth" className="tab" onClick={() => setTab("login")} data-testid="tab-login"><span className="inline-flex items-center gap-2"><BrandIcon name="staffAccess" size={16} tone={tab === "login" ? "emerald" : "neutral"} />เข้าใช้</span></button>
+                <button role="tab" id="tab-register" aria-selected={tab === "register"} tabIndex={tab === "register" ? 0 : -1} aria-controls="panel-auth" className="tab" onClick={() => setTab("register")} data-testid="tab-register"><span className="inline-flex items-center gap-2"><BrandIcon name="members" size={16} tone={tab === "register" ? "gold" : "neutral"} />สมัคร</span></button>
               </div>
               <div id="panel-auth" role="tabpanel" aria-labelledby={`tab-${tab}`} className="panel auth-panel auth-form-panel p-5 sm:p-7">
                 {tab === "login" ? <LoginForm /> : <RegisterForm />}

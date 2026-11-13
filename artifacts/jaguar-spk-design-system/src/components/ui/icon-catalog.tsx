@@ -1,10 +1,10 @@
 import { useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import {
-  ArrowRight, Award, BadgeCheck, Bell, Check, ChevronDown, CircleAlert,
+  ArrowRight, AtSign, Award, BadgeCheck, Bell, Check, ChevronDown, CircleAlert,
   CircleCheck, Coins, Copy, CreditCard, Crown, Diamond, Fingerprint, Flame,
   Gift, Gem, Globe, HandCoins, History, House, IdCard, Infinity, Info, Leaf,
-  LoaderCircle, LogOut, Plus, QrCode, Receipt, RefreshCw, Search, Settings,
+  LoaderCircle, LogOut, Phone, Plus, QrCode, Receipt, RefreshCw, Search, Settings,
   ShieldCheck, Signal, Sparkles, Sprout, Star, Swords, Trash2, TriangleAlert,
   Trophy, UserRound, UsersRound, Vault, WandSparkles, Waves, X, Zap,
 } from "lucide-react";
@@ -14,6 +14,7 @@ type IconEntry = { slug: string; label: string; icon: LucideIcon; signature?: "n
 const ICONS: IconEntry[] = [
   { slug: "member", label: "สมาชิก", icon: UserRound }, { slug: "users", label: "สมาชิกหลายคน", icon: UsersRound },
   { slug: "card", label: "บัตร", icon: CreditCard }, { slug: "id-card", label: "บัตรประจำตัว", icon: IdCard },
+  { slug: "phone", label: "เบอร์โทรศัพท์", icon: Phone }, { slug: "nickname", label: "ชื่อเล่น", icon: AtSign },
   { slug: "points", label: "แต้ม", icon: Coins }, { slug: "gift", label: "รางวัล", icon: Gift },
   { slug: "qr", label: "สแกน QR", icon: QrCode }, { slug: "history", label: "ประวัติ", icon: History },
   { slug: "settings", label: "ตั้งค่า", icon: Settings }, { slug: "search", label: "ค้นหา", icon: Search },
