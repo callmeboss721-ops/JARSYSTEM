@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JAGUAR SPK Delivery — Rider</title>
+<style>
+  :root{ --green:#06C755; --green-dark:#049c42; --bg:#F5F6F8; --card:#fff; --text:#111827; --text2:#6B7280; --line:#E5E7EB; --danger:#EF4444; --warn:#F59E0B; }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:"Sarabun","Noto Sans Thai",system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+  header{position:sticky;top:0;z-index:20;background:#111827;color:#fff;padding:14px 16px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+  header a{color:#9CA3AF;font-size:13px;cursor:pointer;text-decoration:none}
+  main{padding:12px 12px 40px;max-width:520px;margin:0 auto}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px}
+  .card h3{font-size:16px}
+  .code{font-weight:700;color:var(--green-dark)}
+  .muted{font-size:13px;color:var(--text2)}
+  .row{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .items{font-size:14px;margin:6px 0}
+  .badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700;background:#EEF2F7;color:var(--text2)}
+  .badge.new{background:#FEF3C7;color:#92400E}
+  .badge.confirmed{background:#DBEAFE;color:#1E40AF}
+  .badge.pickup{background:#EDE9FE;color:#5B21B6}
+  .badge.delivering{background:#D1FAE5;color:#065F46}
+  .badge.done{background:#F3F4F6;color:#374151}
+  .badge.cancelled{background:#FEE2E2;color:#991B1B}
+  .acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .btn{padding:10px 14px;border:0;border-radius:10px;background:var(--green);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+  .btn.sec{background:#fff;color:var(--green-dark);border:1px solid var(--green)}
+  .btn.gray{background:#fff;color:var(--text2);border:1px solid var(--line)}
+  .btn.warn{background:var(--danger)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .login{max-width:340px;margin:15vh auto;text-align:center}
+  .login input{width:100%;padding:14px;border:1px solid var(--line);border-radius:12px;font-size:22px;text-align:center;letter-spacing:8px;margin:12px 0}
+  .login .btn{width:100%;padding:13px}
+  #toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:60;max-width:90vw;text-align:center}
+  #toast.show{opacity:1}
+  .sec-title{font-size:13px;font-weight:700;color:var(--text2);margin:14px 4px 8px;text-transform:uppercase;letter-spacing:.5px}
+  a.map{color:#1D4ED8;font-size:13px;text-decoration:none}
+</style>
+</head>
+<body>
+<header><div>JAGUAR SPK · ไรเดอร์</div><a id="btn-logout" style="display:none">ออกจากระบบ</a></header>
+<main>
+  <div id="login-view" class="login">
+    <h2>เข้าสู่ระบบไรเดอร์</h2>
+    <p class="muted">กรอกรหัสไรเดอร์ที่ร้านกำหนด</p>
+    <input id="pin" type="password" inputmode="numeric" maxlength="8" placeholder="••••" />
+    <button class="btn" id="btn-login">เข้าสู่ระบบ</button>
+    <p class="muted" id="login-err" style="color:#EF4444;margin-top:8px"></p>
+  </div>
+  <div id="rider-view" style="display:none">
+    <div class="card" style="display:flex;gap:8px;align-items:center;justify-content:space-between">
+      <span class="muted" id="sync-note">อัปเดตอัตโนมัติทุก 15 วินาที</span>
+      <button class="btn sec" id="btn-send-now">ส่งออเดอร์เข้ากลุ่มทันที</button>
+    </div>
+    <div id="lists"></div>
+  </div>
+</main>
+<div id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+'use strict';
+var SUPABASE_URL = 'https://sfoenreulwqulfofotcp.supabase.co';
+var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmb2VucmV1bHdxdWxmb2ZvdGNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNjAyNzAsImV4cCI6MjA5NTczNjI3MH0.iiCs7j6ol3-6lqUWROeLgIGkqUYuOyXokR0UFX6D7nI';
+var NOTIFY_URL = SUPABASE_URL + '/functions/v1/dt-notify';
+var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+var ORDERS = [], timer = null;
+var GROUPS = [
+  ['confirmed', 'ยืนยันการชำระเงิน / รอไรเดอร์รับ'],
+  ['new', 'รอยืนยันการชำระเงิน'],
+  ['pickup', 'ไรเดอร์รับแล้ว (รอร้านจัดของ)'],
+  ['delivering', 'กำลังจัดส่ง'],
+  ['done', 'ส่งสำเร็จวันนี้']
+];
+var STATUS_TH = { new: 'รอยืนยันชำระ', confirmed: 'ยืนยันชำระแล้ว', pickup: 'ไรเดอร์รับแล้ว', delivering: 'กำลังส่ง', done: 'ส่งสำเร็จ', cancelled: 'ยกเลิก' };
+var NEXT = { confirmed: ['pickup', 'รับออเดอร์'], pickup: ['delivering', 'เริ่มจัดส่ง'], delivering: ['done', 'ส่งสำเร็จ'] };
+
+function $(id){ return document.getElementById(id); }
+function toast(msg){ var t = $('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(function(){ t.classList.remove('show'); }, 2600); }
+function esc(s){ var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+function baht(n){ return Number(n).toFixed(2) + ' บาท'; }
+function today(){ return new Date().toISOString().slice(0, 10); }
+
+function login(pin){ sessionStorage.setItem('rider_pin', pin); }
+function logout(){ sessionStorage.removeItem('rider_pin'); location.reload(); }
+function getPin(){ return sessionStorage.getItem('rider_pin') || ''; }
+
+async function verifyPin(pin){
+  var r = await sb.from('dt_settings').select('value').eq('key', 'rider_pin').maybeSingle();
+  return r.data && r.data.value === pin;
+}
+
+$('btn-login').onclick = async function(){
+  var pin = $('pin').value.trim();
+  if (!pin) { $('login-err').textContent = 'กรุณากรอกรหัส'; return; }
+  this.disabled = true;
+  var ok = await verifyPin(pin);
+  this.disabled = false;
+  if (!ok) { $('login-err').textContent = 'รหัสไม่ถูกต้อง'; return; }
+  login(pin);
+  $('login-view').style.display = 'none';
+  $('rider-view').style.display = 'block';
+  $('btn-logout').style.display = 'inline';
+  await refresh();
+  if (timer) clearInterval(timer);
+  timer = setInterval(refresh, 15000);
+};
+$('btn-logout').onclick = logout;
+$('pin').addEventListener('keydown', function(e){ if (e.key === 'Enter') $('btn-login').click(); });
+
+async function refresh(){
+  var since = today() + 'T00:00:00';
+  var r = await sb.from('dt_orders').select('*').gte('created_at', since)
+    .in('order_status', ['new', 'confirmed', 'pickup', 'delivering', 'done'])
+    .order('created_at', { ascending: false }).limit(100);
+  if (r.error) { toast('โหลดออเดอร์ไม่สำเร็จ: ' + r.error.message); return; }
+  ORDERS = r.data || [];
+  render();
+}
+
+function render(){
+  var html = '';
+  GROUPS.forEach(function(g){
+    var list = ORDERS.filter(function(o){ return o.order_status === g[0]; });
+    if (!list.length) return;
+    html += '<div class="sec-title">' + esc(g[1]) + ' (' + list.length + ')</div>';
+    list.forEach(function(o){ html += orderCard(o); });
+  });
+  if (!html) html = '<div class="card"><p class="muted">ไม่มีออเดอร์ในระบบวันนี้</p></div>';
+  $('lists').innerHTML = html;
+  Array.prototype.forEach.call(document.querySelectorAll('[data-act]'), function(b){
+    b.onclick = function(){ doAction(b.getAttribute('data-act'), b.getAttribute('data-code'), b); };
+  });
+}
+
+function orderCard(o){
+  var items = (o.items || []).map(function(it){ return esc(it.name) + ' × ' + it.qty; }).join(', ');
+  var map = (o.lat && o.lng) ? ' <a class="map" target="_blank" rel="noopener" href="https://www.google.com/maps?q=' + o.lat + ',' + o.lng + '">เปิดแผนที่</a>' : '';
+  var acts = '';
+  if (NEXT[o.order_status]) {
+    acts += '<button class="btn" data-act="' + NEXT[o.order_status][0] + '" data-code="' + esc(o.order_code) + '">' + esc(NEXT[o.order_status][1]) + '</button>';
+  }
+  if (o.order_status === 'new') {
+    acts += '<button class="btn sec" data-act="confirm_paid" data-code="' + esc(o.order_code) + '">ยืนยันรับเงินแล้ว</button>';
+    acts += '<button class="btn warn" data-act="cancelled" data-code="' + esc(o.order_code) + '">ยกเลิก</button>';
+  }
+  if (o.order_status === 'delivering') {
+    acts += '<a class="btn gray" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="tel:' + esc(o.customer_phone) + '">โทรลูกค้า</a>';
+  }
+  return '<div class="card">' +
+    '<div class="row"><span class="code">' + esc(o.order_code) + '</span><span class="badge ' + esc(o.order_status) + '">' + esc(STATUS_TH[o.order_status] || o.order_status) + '</span></div>' +
+    '<h3>' + esc(o.customer_name) + ' · ' + esc(o.customer_phone) + '</h3>' +
+    '<p class="muted">' + esc(o.address) + map + '</p>' +
+    '<p class="items">' + items + '</p>' +
+    '<div class="row"><span class="muted">' + esc(o.payment_method === 'bank' ? 'โอนเข้าบัญชี' : 'PromptPay') + '</span><b>' + baht(o.total) + '</b></div>' +
+    (o.order_status === 'new' ? '<p class="muted">ยังไม่ยืนยันการชำระเงิน — ตรวจสลิปก่อนรับออเดอร์</p>' : '') +
+    (acts ? '<div class="acts">' + acts + '</div>' : '') +
+    '</div>';
+}
+
+async function doAction(act, code, btn){
+  btn.disabled = true;
+  var patch = {};
+  if (act === 'confirm_paid') { patch = { order_status: 'confirmed', payment_status: 'confirmed' }; }
+  else if (NEXT[act] || ['pickup', 'delivering', 'done', 'cancelled'].indexOf(act) >= 0) { patch = { order_status: act }; }
+  if (act === 'pickup') patch.payment_status = 'confirmed';
+  var r = await sb.from('dt_orders').update(patch).eq('order_code', code).select().single();
+  btn.disabled = false;
+  if (r.error) { toast('อัปเดตไม่สำเร็จ: ' + r.error.message); return; }
+  toast('อัปเดต ' + code + ' เรียบร้อย');
+  await refresh();
+}
+
+$('btn-send-now').onclick = async function(){
+  var btn = this; btn.disabled = true; btn.textContent = 'กำลังส่ง...';
+  try {
+    var res = await fetch(NOTIFY_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }, body: '{}' });
+    var data = await res.json().catch(function(){ return {}; });
+    toast('ส่งแล้ว: ' + (data.sent != null ? data.sent + ' ออเดอร์' : JSON.stringify(data)));
+    if (data.error) toast('ผิดพลาด: ' + data.error);
+  } catch (e) {
+    toast('เรียกใช้ไม่สำเร็จ: ' + e.message);
+  }
+  btn.disabled = false; btn.textContent = 'ส่งออเดอร์เข้ากลุ่มทันที';
+  await refresh();
+};
+</script>
+</body>
+</html>
