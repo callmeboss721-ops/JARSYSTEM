@@ -1,0 +1,27 @@
+/* ============================================================
+   JAGUAR SPK Design System v3 - Design Tokens
+   Repo: callmeboss721-ops/JARSYSTEM (branch: design-system-v3)
+   Source: interactive spec v3 (approved by owner)
+   ============================================================ */
+  :root{
+    --bg:#050505;
+    --surface:#0D140F;
+    --surface-2:#111A14;
+    --surface-3:#16211A;
+    --neon:#00FF9D;
+    --neon-soft:rgba(0,255,157,.14);
+    --neon-line:rgba(0,255,157,.30);
+    --gold:#D4AF37;
+    --gold-2:#E5C04A;
+    --gold-soft:rgba(212,175,55,.12);
+    --gold-line:rgba(212,175,55,.35);
+    --text:#F9F6E7;
+    --text-2:rgba(249,246,231,.70);
+    --text-3:rgba(249,246,231,.45);
+    --line:rgba(249,246,231,.10);
+    --danger:#FF5A5A;
+    --warn:#FFC24B;
+    --r-lg:20px; --r-md:12px; --r-sm:8px;
+    --tap:44px;
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
