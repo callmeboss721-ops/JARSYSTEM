@@ -26,3 +26,7 @@
   these visual components.
 - No source Storybook story or component-specific test was found.
 - Chunk 1; pilot family.
+- V3 preview: `CollectingTrack` now renders the ten-slot visual, explicit
+  progress/readiness labels, and independent cannabis-green / kratom-gold
+  accents. `src/preview/demos/collecting-track.tsx` owns local-only demo
+  controls; it does not connect to a member balance or redeem API.

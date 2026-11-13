@@ -9,6 +9,7 @@
 | `assets/card-cannabis-full.jpg` | Cannabis membership card poster | Product artwork | Jaguar Kratom House `public/brand/` | Cannabis card-face visual reference |
 | `assets/jaguar-card-mark.webp`, `mark-jaguar.svg`, `mark-leaf.svg` | Card and stamp marks | Product artwork | Jaguar Kratom House `public/brand/` | Club-specific membership card details |
 | `assets/*-*.webp` rank images | Ten rank badges | UI asset | Jaguar Kratom House `public/brand/rank-icons/` | RankEmblem variants |
+| `v3-source.md` | JAGUAR SPK Design System v3 | User-provided HTML visual/content reference | `attached_assets/jaguar-spk-design-system-v3_1794533773590.html` | React component/stories port; raw script is not served or executed |
 
 The artwork is retained under `public/brand/` only when the preview needs to
 render it. The SVG stamp marks were checked: they contain only static paths and

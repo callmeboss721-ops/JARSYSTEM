@@ -7,11 +7,14 @@ function lazyPage(load: () => Promise<ComponentType>) {
 
 const BrandButtonDemo = lazyPage(() => import("./demos/brand-button").then(({ BrandButtonDemo }) => BrandButtonDemo));
 const BrandIconDemo = lazyPage(() => import("./demos/brand-icon").then(({ BrandIconDemo }) => BrandIconDemo));
+const ActionControlsDemo = lazyPage(() => import("./demos/action-controls").then(({ ActionControlsDemo }) => ActionControlsDemo));
+const CollectingTrackDemo = lazyPage(() => import("./demos/collecting-track").then(({ CollectingTrackDemo }) => CollectingTrackDemo));
 const DialogSheetDemo = lazyPage(() => import("./demos/dialog-sheet").then(({ DialogSheetDemo }) => DialogSheetDemo));
 const FeedbackStatesDemo = lazyPage(() => import("./demos/feedback-states").then(({ FeedbackStatesDemo }) => FeedbackStatesDemo));
 const FormControlsDemo = lazyPage(() => import("./demos/form-controls").then(({ FormControlsDemo }) => FormControlsDemo));
 const JaguarMarkDemo = lazyPage(() => import("./demos/jaguar-mark").then(({ JaguarMarkDemo }) => JaguarMarkDemo));
 const MemberCardCarouselDemo = lazyPage(() => import("./demos/member-card-carousel").then(({ MemberCardCarouselDemo }) => MemberCardCarouselDemo));
+const MobileTabBarDemo = lazyPage(() => import("./demos/mobile-tab-bar").then(({ MobileTabBarDemo }) => MobileTabBarDemo));
 const MembershipCardsDemo = lazyPage(() => import("./demos/membership-cards").then(({ MembershipCardsDemo }) => MembershipCardsDemo));
 const PinPadDemo = lazyPage(() => import("./demos/pin-pad").then(({ PinPadDemo }) => PinPadDemo));
 const PrimaryButtonDemo = lazyPage(() => import("./demos/primary-button").then(({ PrimaryButtonDemo }) => PrimaryButtonDemo));
@@ -35,13 +38,13 @@ export type NavGroup = { name: string; entries: PreviewEntry[] };
 
 export const DESIGN_SYSTEM = {
   title: "JAGUAR SPK Design System",
-  description: "ระบบภาพและคอมโพเนนต์สำหรับ JAGUAR SPK DRINK ที่ถอดแบบจากเว็บ Jaguar Kratom House",
+  description: "ระบบภาพและคอมโพเนนต์ภาษาไทยเป็นหลักสำหรับ JAGUAR SPK DRINK · v3 tokens และ interaction showcases",
 } as const;
 
 export const OVERVIEW_ENTRY: PreviewEntry = {
   id: "overview",
   name: "ภาพรวม",
-  description: "สี ตัวอักษร โลโก้ และตัวอย่างคอมโพเนนต์ชุดแรก",
+  description: "โทเค็น v3, แบรนด์เดิม และภาพรวมคอมโพเนนต์ที่นำกลับใช้ได้",
   Page: OverviewPage,
 };
 
@@ -50,13 +53,13 @@ export const NAV_GROUPS: NavGroup[] = [
     name: "แบรนด์",
     entries: [
       { id: "brand-mark", name: "ตรา JAGUAR", description: "เครื่องหมายต้นฉบับและการแสดงผลที่ไม่ครอป", Page: JaguarMarkDemo },
-      { id: "brand-ranks", name: "ตราระดับสมาชิก", description: "ชุดตราสมาชิก 10 ระดับจากภาพร้าน", Page: RankEmblemsDemo },
+      { id: "brand-ranks", name: "ตราระดับสมาชิก", description: "ตัวอย่าง shield 10 ระดับตามชื่อและลำดับเดิม", Page: RankEmblemsDemo },
       { id: "brand-city-art", name: "ภาพสมุทรปราการ", description: "ภาพเส้นสะพาน ปากน้ำ และแนวเมือง", Page: SamutPrakanArtDemo },
     ],
   },
   {
     name: "สี",
-    entries: [{ id: "color-roles", name: "สีแบรนด์", description: "ทอง มรกต พื้นหลัง และสีสถานะ", Page: ColorsPage }],
+    entries: [{ id: "color-roles", name: "สีแบรนด์", description: "เขียวนีออน ทอง พื้นหลัง และสีสถานะ v3", Page: ColorsPage }],
   },
   {
     name: "ตัวอักษร",
@@ -68,7 +71,10 @@ export const NAV_GROUPS: NavGroup[] = [
   },
   {
     name: "การกระทำ",
-    entries: [{ id: "brand-button", name: "ปุ่มภาพแบรนด์", description: "ปุ่ม JAGUAR SPK พร้อมสถานะและโฟกัส", Page: BrandButtonDemo }],
+    entries: [
+      { id: "brand-button", name: "ปุ่มภาพแบรนด์", description: "ปุ่ม JAGUAR SPK พร้อมสถานะและโฟกัส", Page: BrandButtonDemo },
+      { id: "v3-actions", name: "Action controls v3", description: "ปุ่มสีเขียว/ทอง เมนู สวิตช์ และ segmented control", Page: ActionControlsDemo },
+    ],
   },
   {
     name: "ตัวควบคุม",
@@ -86,9 +92,11 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     name: "คอมโพเนนต์",
     entries: [
-      { id: "brand-icons", name: "ไอคอน glass", description: "ไอคอนเส้นที่ใช้สีตามความหมาย", Page: BrandIconDemo },
+      { id: "brand-icons", name: "Icon catalog v3", description: "ค้นหา เลือกขนาด และคัดลอก SVG พร้อม signature icons", Page: BrandIconDemo },
+      { id: "collecting-track", name: "แถบสะสม 10 ช่อง", description: "ตัวอย่างแต้มสองคลับพร้อมสถานะพร้อมแลก", Page: CollectingTrackDemo },
       { id: "membership-cards", name: "บัตรและแต้ม", description: "บัตรสองคลับ แสตมป์ และ QR", Page: MembershipCardsDemo },
       { id: "member-card-carousel", name: "สลับบัตรสมาชิก", description: "แท็บสองคลับ ปัด และคีย์บอร์ด", Page: MemberCardCarouselDemo },
+      { id: "mobile-tab-bar", name: "Mobile tab bar", description: "ตัวอย่างเมนูมือถือและปุ่มสแกนที่สลับหน้าจอได้", Page: MobileTabBarDemo },
       { id: "pin-pad", name: "แป้น PIN", description: "กรอก ลบ และล้าง PIN แบบควบคุมค่า", Page: PinPadDemo },
       { id: "feedback-states", name: "สถานะและหน้าต่าง", description: "โหลด ว่าง ผิดพลาด ออกจากระบบ และ modal", Page: FeedbackStatesDemo },
     ],

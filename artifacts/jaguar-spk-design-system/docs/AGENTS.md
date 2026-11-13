@@ -10,6 +10,9 @@ on it and import its theme and components directly.
 - `docs/references/component-inventory.md` — source-backed component catalog,
   build chunks, evidence, and pending/implemented status. Read it and the linked
   family reference before changing any cataloged component.
+- `docs/references/v3-source.md` — provenance and porting boundaries for the
+  user-provided JAGUAR SPK Design System v3 HTML reference. It is visual/content
+  input only; its raw script is never served or executed.
 - `docs/references/logos/` — the original JAGUAR SPK emblem and wordmark.
 - `docs/references/assets/` — retained source artwork used to derive card and
   button treatments.
@@ -23,6 +26,10 @@ on it and import its theme and components directly.
 - `src/components/ui/` — extracted source component families, exported as
   `./components/*`. Code-import systems prune unused scaffold families and add
   only source-backed components approved in the catalog.
+- `src/components/ui/icon-catalog.tsx`, `action-controls.tsx`, and
+  `mobile-tab-bar.tsx` — reusable v3 icon, action showcase, and mobile tab
+  primitives. The collecting track and rank shield compose existing membership
+  and rank APIs without changing their public contracts.
 - `src/lib/` (`cn`) and `src/hooks/` — exported as `./lib/*` and `./hooks/*`.
 - `src/App.tsx` — the entry point for the living style guide.
 - `src/preview/DesignSystemBrowser.tsx` — the persistent grouped navigation,
@@ -55,10 +62,9 @@ not add `.ts` files here.
 
 - Keep the original supplied JAGUAR mark whole and uncropped; use its transparent
   emblem for compact identity and its wordmark only where it remains legible.
-- Use gold for primary actions and emphasis, restrained emerald for success and
-  secondary signals, and silver for supporting content. Legacy `--neon` aliases
-  in the source are gold, not a separate action color.
-- Keep customer cards and shared panels dark, with thin gold/emerald boundaries
+- Use the v3 palette: `#050505`, `#0D140F`, `#00FF9D`, `#D4AF37`, and
+  `#E5C04A`. Neon green is the primary action; gold is secondary and emphasis.
+- Keep customer cards and shared panels dark, with thin gold/green boundaries
   and measured glow. Avoid using glow as a substitute for contrast or status text.
 - Use Bai Jamjuree for display, IBM Plex Sans Thai for Thai body text, and
   JetBrains Mono for codes and numerals. Thai text has comfortable line height
@@ -72,6 +78,8 @@ not add `.ts` files here.
 - Product routes, authentication, API calls, balances, reward rules, and
   staff/owner workflows stay in the application; this package owns reusable
   visual primitives and components only.
+- V3 collection/control examples are explicitly local demos. Rank labels
+  preserve the supplied ten-name order and do not imply benefits or thresholds.
 
 ## What this package exports
 
@@ -102,6 +110,10 @@ Register each family once in `src/preview/registry.tsx`. If a component changes,
 update its story and registry entry in the same change and note meaningful
 additions or customizations in "What's here" above. Register new component pages
 with dynamic imports; do not eagerly import stories into the registry.
+
+The user-provided v3 HTML is untrusted reference material, not an executable
+application: rebuild its behavior in React and never use its script,
+`dangerouslySetInnerHTML`, or raw served HTML.
 
 Native components live under `src/components/native/`. Match an existing web
 component family's public API wherever React Native supports it, and document

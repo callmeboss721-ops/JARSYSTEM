@@ -112,36 +112,36 @@
   --elevate-1: rgba(0,0,0, .03);
   --elevate-2: rgba(0,0,0, .08);
 
-  --background: 49 35.5% 93.9%;
-  --foreground: 103 11.9% 11.6%;
-  --border: 53 19.1% 81.6%;
+  --background: 50 60% 94.1%;
+  --foreground: 0 0% 2%;
+  --border: 46 64.6% 52.4%;
   --card: 48 100% 99%;
-  --card-foreground: 103 10.4% 13.1%;
+  --card-foreground: 0 0% 2%;
   --sidebar: 60 15.6% 91.2%;
-  --sidebar-foreground: 113 7.8% 20%;
-  --sidebar-border: 53 19.1% 81.6%;
-  --sidebar-primary: 42 65.8% 36.7%;
-  --sidebar-primary-foreground: 60 21.1% 7.5%;
-  --sidebar-accent: 147 54.5% 91.4%;
-  --sidebar-accent-foreground: 155 63.4% 16.1%;
-  --sidebar-ring: 154 56.2% 33.1%;
+  --sidebar-foreground: 0 0% 2%;
+  --sidebar-border: 46 64.6% 52.4%;
+  --sidebar-primary: 157 100% 50%;
+  --sidebar-primary-foreground: 0 0% 2%;
+  --sidebar-accent: 46 74.9% 59.4%;
+  --sidebar-accent-foreground: 0 0% 2%;
+  --sidebar-ring: 157 100% 50%;
   --popover: 48 100% 99%;
-  --popover-foreground: 103 10.4% 13.1%;
-  --primary: 42 65.8% 36.7%;
-  --primary-foreground: 60 21.1% 7.5%;
-  --secondary: 113 23.1% 92.4%;
-  --secondary-foreground: 144 37% 14.3%;
+  --popover-foreground: 0 0% 2%;
+  --primary: 157 100% 50%;
+  --primary-foreground: 0 0% 2%;
+  --secondary: 46 64.6% 52.4%;
+  --secondary-foreground: 0 0% 2%;
   --muted: 60 15.6% 91.2%;
-  --muted-foreground: 113 4.9% 35.9%;
-  --accent: 147 54.5% 91.4%;
-  --accent-foreground: 155 63.4% 16.1%;
+  --muted-foreground: 60 7% 25.3%;
+  --accent: 46 74.9% 59.4%;
+  --accent-foreground: 0 0% 2%;
   --destructive: 5 58.3% 41.4%;
   --destructive-foreground: 0 0% 100%;
-  --input: 65 8.9% 75.9%;
-  --ring: 154 56.2% 33.1%;
-  --chart-1: 42 65.8% 36.7%;
-  --chart-2: 159 63.3% 33.1%;
-  --chart-3: 152 69.1% 51.8%;
+  --input: 46 64.6% 52.4%;
+  --ring: 157 100% 50%;
+  --chart-1: 46 64.6% 52.4%;
+  --chart-2: 157 100% 50%;
+  --chart-3: 46 74.9% 59.4%;
   --chart-4: 110 5.7% 41.2%;
   --chart-5: 19 54.8% 51.4%;
 
@@ -180,36 +180,36 @@
   --elevate-1: rgba(255,255,255, .04);
   --elevate-2: rgba(255,255,255, .09);
 
-  --background: 150 20% 2%;
-  --foreground: 43 29.2% 90.6%;
-  --border: 132 6% 16.3%;
-  --card: 231 24.1% 5.7%;
-  --card-foreground: 43 29.2% 90.6%;
-  --sidebar: 231 24.1% 5.7%;
-  --sidebar-foreground: 43 29.2% 90.6%;
-  --sidebar-border: 132 6% 16.3%;
-  --sidebar-primary: 46 74.9% 59.4%;
-  --sidebar-primary-foreground: 60 21.1% 7.5%;
-  --sidebar-accent: 158 43.2% 15.9%;
-  --sidebar-accent-foreground: 148 53.8% 89.8%;
-  --sidebar-ring: 152 69.1% 51.8%;
-  --popover: 227 20% 8.8%;
-  --popover-foreground: 43 29.2% 90.6%;
-  --primary: 46 74.9% 59.4%;
-  --primary-foreground: 60 21.1% 7.5%;
-  --secondary: 159 63.3% 33.1%;
-  --secondary-foreground: 69 25.9% 94.7%;
-  --muted: 140 5.9% 10%;
-  --muted-foreground: 226 7.6% 66.5%;
-  --accent: 158 43.2% 15.9%;
-  --accent-foreground: 148 53.8% 89.8%;
+  --background: 0 0% 2%;
+  --foreground: 50 60% 94.1%;
+  --border: 142 20% 10.8%;
+  --card: 137 21.2% 6.5%;
+  --card-foreground: 50 60% 94.1%;
+  --sidebar: 137 21.2% 6.5%;
+  --sidebar-foreground: 50 60% 94.1%;
+  --sidebar-border: 142 20% 10.8%;
+  --sidebar-primary: 157 100% 50%;
+  --sidebar-primary-foreground: 0 0% 2%;
+  --sidebar-accent: 46 64.6% 52.4%;
+  --sidebar-accent-foreground: 0 0% 2%;
+  --sidebar-ring: 157 100% 50%;
+  --popover: 140 20.9% 8.4%;
+  --popover-foreground: 50 60% 94.1%;
+  --primary: 157 100% 50%;
+  --primary-foreground: 0 0% 2%;
+  --secondary: 46 64.6% 52.4%;
+  --secondary-foreground: 0 0% 2%;
+  --muted: 142 20% 10.8%;
+  --muted-foreground: 72 8.3% 76.5%;
+  --accent: 46 74.9% 59.4%;
+  --accent-foreground: 0 0% 2%;
   --destructive: 7 44.6% 32.5%;
   --destructive-foreground: 30 100% 95.7%;
-  --input: 160 5.3% 22.4%;
-  --ring: 152 69.1% 51.8%;
-  --chart-1: 46 74.9% 59.4%;
-  --chart-2: 159 63.3% 33.1%;
-  --chart-3: 152 69.1% 51.8%;
+  --input: 140 10.2% 23.1%;
+  --ring: 157 100% 50%;
+  --chart-1: 46 64.6% 52.4%;
+  --chart-2: 157 100% 50%;
+  --chart-3: 46 74.9% 59.4%;
   --chart-4: 220 18% 80.4%;
   --chart-5: 6 100% 71%;
 
@@ -230,6 +230,16 @@
 
   --card-border: hsl(var(--card));
   --popover-border: hsl(var(--popover));
+}
+
+/* Semantic aliases used by the v3 preview components; values remain token-driven. */
+:root,
+.dark {
+  --jaguar-v3-background: hsl(var(--background));
+  --jaguar-v3-surface: hsl(var(--card));
+  --jaguar-v3-primary: hsl(var(--primary));
+  --jaguar-v3-secondary: hsl(var(--secondary));
+  --jaguar-v3-emphasis: hsl(var(--accent));
 }
 
 @layer base {

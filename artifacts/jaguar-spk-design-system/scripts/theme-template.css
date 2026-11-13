@@ -232,6 +232,16 @@
   --popover-border: hsl(var(--popover));
 }
 
+/* Semantic aliases used by the v3 preview components; values remain token-driven. */
+:root,
+.dark {
+  --jaguar-v3-background: hsl(var(--background));
+  --jaguar-v3-surface: hsl(var(--card));
+  --jaguar-v3-primary: hsl(var(--primary));
+  --jaguar-v3-secondary: hsl(var(--secondary));
+  --jaguar-v3-emphasis: hsl(var(--accent));
+}
+
 @layer base {
   * {
     @apply border-border;

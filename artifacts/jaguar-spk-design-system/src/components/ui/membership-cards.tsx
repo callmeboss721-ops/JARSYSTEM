@@ -96,37 +96,45 @@ export function CollectingTrack({
   balance,
   kind = "kratom",
   titleId,
+  variant = "coins",
 }: {
   balance: number;
   kind?: MemberClub;
   titleId?: string;
+  variant?: "coins" | "v3";
 }) {
   const filled = Math.min(Math.max(balance, 0), STAMPS);
-  const connectorProgress = Math.max(0, ((filled - 1) / (STAMPS - 1)) * 100);
+  const ready = filled >= STAMPS;
+  const remaining = STAMPS - filled;
+  const clubLabel = kind === "cannabis" ? "บัตรกัญชา" : "บัตรกระท่อม";
   return (
-    <div className={`collecting-track collecting-track--${kind}`}>
+    <div className={`collecting-track collecting-track--${kind}${variant === "v3" ? " ds-v3-track" : ""}`}>
       <div className="collecting-track__heading">
-        <p>แต้มสะสม</p>
-        <h2 id={titleId}>{filled}<span>/{STAMPS}</span></h2>
+        <p>{variant === "v3" ? "JAGUAR SPK COLLECTING TRACK" : `${clubLabel} · แต้มสะสม`}</p>
+        <h2 id={titleId}>{variant === "v3" ? "POINTS: " : ""}{filled}<span>/{STAMPS}{variant === "v3" ? "" : " แต้ม"}</span></h2>
       </div>
-      <div className="collecting-track__visual">
+      <div className="collecting-track__visual" role="group" aria-label={`${clubLabel} สะสมแล้ว ${filled} จาก ${STAMPS} แต้ม${ready ? " · พร้อมแลกรางวัล" : ` · เหลืออีก ${remaining} แต้ม`}`}>
         <div className="collecting-track__connector" aria-hidden="true">
-          <span style={{ width: `${connectorProgress}%` }} />
+          <span style={{ width: `${filled * 10}%` }} />
         </div>
-        <ol aria-label={`แต้ม ${filled} จาก ${STAMPS}`}>
+        <ol aria-label={`${clubLabel} · ${filled} จาก ${STAMPS} แต้ม`}>
           {Array.from({ length: STAMPS }, (_, index) => {
             const isFilled = index < filled;
+            const isNext = index === filled && !ready;
             return (
-              <li key={index} className="collecting-track__coin" data-filled={isFilled}>
-                <BrandIcon name="crown" className="collecting-track__crown" tone="gold" size={14} />
-                <span className="collecting-track__coin-face">{String(index + 1).padStart(2, "0")}</span>
-                <span className="sr-only">{isFilled ? "สะสมแล้ว" : "ยังไม่สะสม"} แต้มที่ {index + 1}</span>
+              <li key={index} className="collecting-track__coin" data-filled={isFilled} data-next={isNext}>
+                {variant === "v3" ? null : <BrandIcon name="crown" className="collecting-track__crown" tone="gold" size={14} />}
+                <span className="collecting-track__coin-face">{isFilled ? <BrandIcon name="success" size={16} tone={kind === "cannabis" ? "inherit" : "gold"} /> : String(index + 1).padStart(2, "0")}</span>
+                <span className="sr-only">{isFilled ? "สะสมแล้ว" : isNext ? "แต้มถัดไป" : "ยังไม่สะสม"} แต้มที่ {index + 1}</span>
               </li>
             );
           })}
         </ol>
       </div>
-      <span className="sr-only" role="progressbar" aria-valuemin={0} aria-valuemax={STAMPS} aria-valuenow={filled} aria-label={`ความคืบหน้า ${filled} จาก ${STAMPS} แต้ม`} />
+      <div className={variant === "v3" ? "ds-v3-track-foot" : undefined}>
+        <span className={ready ? "is-ready" : ""} role="status">{ready ? "พร้อมแลกรางวัล" : `เหลืออีก ${remaining} แต้ม`}</span>
+        <span className="sr-only" role="progressbar" aria-valuemin={0} aria-valuemax={STAMPS} aria-valuenow={filled} aria-label={`ความคืบหน้า ${filled} จาก ${STAMPS} แต้ม`} />
+      </div>
     </div>
   );
 }

@@ -18,3 +18,6 @@
   and `app/staff/page.tsx`.
 - No source Storybook story or component-specific test was found.
 - Chunk 1; pilot family. Keep glass icon mapping and semantic tones intact.
+- V3 preview extension: `src/components/ui/icon-catalog.tsx` supplies the
+  searchable/size-selectable 32-icon catalog and 12 signature marks with
+  clipboard feedback. This does not alter the existing `BrandIcon` API.
