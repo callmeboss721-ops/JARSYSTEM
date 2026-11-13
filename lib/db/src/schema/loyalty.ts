@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { boolean, check, index, integer, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { boolean, check, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 export const loyaltyMembers = pgTable("jaguar_members", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -82,9 +82,27 @@ export const loyaltySales = pgTable("jaguar_sales", {
   check("jaguar_sale_bottle_quantity", sql`${t.bottleCount} between 1 and 999`),
   check("jaguar_sale_bundle_price", sql`${t.amountBaht} = (${t.bottleCount}/3)*150 + (${t.bottleCount}%3)*60`),
   check("jaguar_sale_formula", sql`${t.formula} in ('red','silver','gold')`),
-  check("jaguar_sale_point_rule", sql`${t.pointsAwarded}=${t.bottleCount}/3`),
+  check("jaguar_sale_points_nonnegative", sql`${t.pointsAwarded} >= 0`),
   index("jaguar_sale_formula_time").on(t.formula, t.createdAt),
   index("jaguar_sale_member_time").on(t.memberId, t.createdAt),
+]);
+
+export const loyaltyTransactionCorrections = pgTable("jaguar_transaction_corrections", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  entityType: text("entity_type").notNull(),
+  entityId: uuid("entity_id").notNull(),
+  memberId: uuid("member_id").references(() => loyaltyMembers.id),
+  reason: text("reason").notNull(),
+  beforeData: jsonb("before_data").$type<Record<string, string | number | null>>().notNull(),
+  afterData: jsonb("after_data").$type<Record<string, string | number | null>>().notNull(),
+  correctedBy: text("corrected_by").notNull().default("staff"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  check("jaguar_correction_entity_type", sql`${t.entityType} in ('kratom_sale','cannabis_sale','redemption','bank_transfer')`),
+  check("jaguar_correction_reason_length", sql`char_length(btrim(${t.reason})) between 3 and 200`),
+  check("jaguar_correction_role", sql`${t.correctedBy} in ('staff','owner')`),
+  index("jaguar_correction_entity_time").on(t.entityType, t.entityId, t.createdAt),
+  index("jaguar_correction_member_time").on(t.memberId, t.createdAt),
 ]);
 
 export const loyaltyRequests = pgTable("jaguar_point_requests", {

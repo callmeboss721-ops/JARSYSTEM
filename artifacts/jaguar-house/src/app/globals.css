@@ -6041,3 +6041,310 @@ kbd {
     transition-duration: .001ms !important;
   }
 }
+
+/* 2026 density pass: keep the app's existing routes and actions, but make
+   the hierarchy quicker to scan. Every semantic color resolves to package
+   tokens; spacing and radius use the design-system base scales. */
+:root {
+  --bg: hsl(var(--background));
+  --panel: hsl(var(--card));
+  --panel-2: hsl(var(--popover));
+  --line: hsl(var(--border) / .72);
+  --line-2: hsl(var(--border));
+  --control-line: hsl(var(--input));
+  --text: hsl(var(--foreground));
+  --muted: hsl(var(--muted-foreground));
+  --silver: hsl(var(--foreground) / .82);
+  --neon: hsl(var(--primary));
+  --neon-dim: hsl(var(--primary) / .12);
+  --gold: hsl(var(--secondary));
+  --gold-2: hsl(var(--accent));
+  --emerald: hsl(var(--primary) / .72);
+  --emerald-2: hsl(var(--primary));
+  --lime: hsl(var(--primary) / .8);
+  --cyan: hsl(var(--ring));
+  --danger: hsl(var(--destructive));
+  --green: hsl(var(--primary));
+  --glass: hsl(var(--card) / .88);
+  --glass-line: hsl(var(--border) / .8);
+}
+
+/* A compact, stable surface rhythm for busy staff and owner workflows. */
+.staff-workspace > main,
+.owner-workspace > main {
+  padding-block: calc(var(--spacing) * 5);
+}
+
+.staff-workspace main > div.space-y-5,
+.owner-workspace main > div.space-y-5 {
+  --tw-space-y-reverse: 0;
+  margin-block: 0;
+}
+
+.staff-workspace main > div.space-y-5 > :not([hidden]) ~ :not([hidden]),
+.owner-workspace main > div.space-y-5 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: calc(var(--spacing) * 4);
+}
+
+.staff-workspace main .grid.gap-5,
+.owner-workspace main .grid.gap-5 {
+  gap: calc(var(--spacing) * 3);
+}
+
+.staff-workspace main .panel,
+.owner-workspace main .panel {
+  padding: calc(var(--spacing) * 4);
+  border-radius: var(--radius);
+}
+
+.staff-workspace main h1,
+.owner-workspace main h1 {
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
+
+.staff-workspace main h2,
+.owner-workspace main h2 {
+  line-height: 1.3;
+}
+
+.staff-workspace .staff-topline,
+.owner-workspace .staff-topline {
+  border-bottom-color: hsl(var(--border));
+}
+
+.staff-workspace nav[aria-label="พื้นที่พนักงาน"] .tab[aria-pressed="true"] {
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / .1);
+  border-color: hsl(var(--primary) / .38);
+}
+
+.owner-workspace nav[aria-label="เมนูเจ้าของร้าน"] .owner-menu-tab[aria-pressed="true"] {
+  color: hsl(var(--secondary));
+  background: hsl(var(--secondary) / .1);
+  border-color: hsl(var(--secondary) / .38);
+}
+
+.owner-workspace nav[aria-label="เมนูเจ้าของร้าน"] .owner-menu-tab[aria-pressed="true"] .brand-icon {
+  color: hsl(var(--secondary));
+}
+
+.staff-workspace .staff-metric,
+.owner-workspace .staff-metric {
+  border-color: hsl(var(--border));
+}
+
+.staff-workspace table th,
+.owner-workspace table th {
+  color: hsl(var(--muted-foreground));
+  font-weight: 600;
+}
+
+.staff-workspace table th,
+.staff-workspace table td,
+.owner-workspace table th,
+.owner-workspace table td {
+  padding-block: calc(var(--spacing) * 2);
+}
+
+.staff-workspace .bank-account-row,
+.owner-workspace .bank-account-row {
+  padding: calc(var(--spacing) * 3);
+}
+
+/* Preserve short member-page scan paths while keeping both club identities. */
+.member-main {
+  padding-top: calc(var(--spacing) * 5) !important;
+}
+
+.member-main > header {
+  margin-bottom: calc(var(--spacing) * 4) !important;
+}
+
+.member-main .panel {
+  border-radius: var(--radius);
+}
+
+.member-main .card-bento-grid {
+  gap: calc(var(--spacing) * 2);
+}
+
+.member-main .card-bento-stat {
+  padding: calc(var(--spacing) * 3);
+}
+
+.member-main .cannabis-history {
+  padding: calc(var(--spacing) * 4);
+}
+
+.member-mobile-dock {
+  width: min(calc(100vw - 20px), 440px);
+}
+
+.member-bottom-nav__track {
+  gap: calc(var(--spacing) * 1);
+  padding: calc(var(--spacing) * 1);
+}
+
+.member-bottom-nav__item {
+  min-height: 64px;
+}
+
+/* Rewards: keep the balance and available actions prominent without excess
+   card padding or vertical gaps. */
+.member-main .redeem-heading-lockup + .panel {
+  padding: calc(var(--spacing) * 3) calc(var(--spacing) * 4);
+}
+
+.member-main .redeem-reward {
+  gap: calc(var(--spacing) * 3);
+  padding: calc(var(--spacing) * 4);
+}
+
+.member-main #pending-redemptions {
+  padding: calc(var(--spacing) * 4);
+}
+
+/* Customer entry: the existing heading, supporting copy, menu and guide stay
+   present; tighter hero spacing keeps the next useful action in view. */
+.jaguar-home--landing .landing-feature {
+  gap: calc(var(--spacing) * 5);
+  padding-block: calc(var(--spacing) * 7) calc(var(--spacing) * 6);
+}
+
+.jaguar-home--landing .landing-feature h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1.18;
+}
+
+.jaguar-home--landing .landing-feature .landing-ctas {
+  gap: calc(var(--spacing) * 2);
+  margin-top: calc(var(--spacing) * 5);
+}
+
+.jaguar-home--landing .landing-feature .landing-ctas .brand-button {
+  min-height: 52px;
+}
+
+.jaguar-home--landing .landing-club-previews {
+  gap: calc(var(--spacing) * 2);
+  margin-bottom: calc(var(--spacing) * 5);
+}
+
+.jaguar-home--landing .landing-club-preview {
+  min-height: 48px;
+  padding: calc(var(--spacing) * 2);
+}
+
+.jaguar-home--landing .landing-member-guide {
+  margin-bottom: calc(var(--spacing) * 5);
+}
+
+.jaguar-home--landing .landing-menu-preview summary {
+  min-height: 48px;
+}
+
+.jaguar-home--landing .landing-site-footer {
+  min-height: 44px;
+}
+
+/* Login remains a single customer-entry flow; scale the logo to the form
+   instead of allowing artwork to dominate the first viewport. */
+.login-reference-root > section:last-child {
+  padding: calc(var(--spacing) * 5) calc(var(--spacing) * 5) calc(var(--spacing) * 6);
+}
+
+.login-reference-root .brand-showcase {
+  margin-bottom: calc(var(--spacing) * 3) !important;
+}
+
+.login-reference-root .brand-showcase__campaign {
+  width: min(100%, 320px);
+}
+
+.login-reference-root .brand-slogan-inline {
+  margin-bottom: calc(var(--spacing) * 4);
+}
+
+.login-reference-root .auth-form-panel {
+  padding: calc(var(--spacing) * 4);
+}
+
+.login-reference-root .pill-switch {
+  margin-bottom: calc(var(--spacing) * 3);
+}
+
+/* Interactive controls retain their keyboard treatment and at least 44px
+   target size, including the retry action inside a QR error state. */
+:where(button, a, input, select, textarea, summary) {
+  scroll-margin-block: calc(var(--spacing) * 4);
+}
+
+:where(button, a, summary):focus-visible,
+.input:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 3px;
+}
+
+.member-pass-card__qr-error {
+  height: auto;
+  min-height: 70px;
+}
+
+.member-pass-card__qr-error button {
+  min-height: 44px;
+}
+
+.member-main :where(button, a, summary) {
+  min-height: 44px !important;
+}
+
+.staff-workspace main :where(button, a, summary),
+.owner-workspace main :where(button, a, summary),
+.jaguar-home--landing :where(button, a, summary),
+.login-reference-root :where(button, a, summary) {
+  min-height: 44px;
+}
+
+@media (max-width: 767px) {
+  .staff-workspace > main,
+  .owner-workspace > main {
+    padding-block: calc(var(--spacing) * 4);
+  }
+
+  .staff-workspace main .grid.gap-5,
+  .owner-workspace main .grid.gap-5 {
+    gap: calc(var(--spacing) * 3);
+  }
+
+  .staff-workspace main .panel,
+  .owner-workspace main .panel {
+    padding: calc(var(--spacing) * 4);
+  }
+
+  .jaguar-home--landing .landing-feature {
+    gap: calc(var(--spacing) * 4);
+    padding-block: calc(var(--spacing) * 5);
+  }
+
+  .jaguar-home--landing .landing-feature .landing-ctas {
+    margin-top: calc(var(--spacing) * 4);
+  }
+
+  .login-reference-root > section:last-child {
+    padding: calc(var(--spacing) * 4) calc(var(--spacing) * 4) calc(var(--spacing) * 6);
+  }
+
+  .login-reference-root .brand-showcase__campaign {
+    width: min(100%, 290px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .staff-workspace *,
+  .owner-workspace *,
+  .jaguar-home--landing *,
+  .login-reference-root * {
+    scroll-behavior: auto;
+  }
+}
