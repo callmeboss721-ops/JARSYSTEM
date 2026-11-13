@@ -37,6 +37,12 @@
   #toast.show{opacity:1}
   .sec-title{font-size:13px;font-weight:700;color:var(--text2);margin:14px 4px 8px;text-transform:uppercase;letter-spacing:.5px}
   a.map{color:#1D4ED8;font-size:13px;text-decoration:none}
+  #route-card{border:1px solid var(--green);background:#F0FBF4}
+  .route-step{display:flex;gap:10px;align-items:baseline;padding:4px 0;font-size:14px}
+  .route-step b{flex:0 0 22px;height:22px;border-radius:50%;background:var(--green);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;align-self:center}
+  .route-step .dist{margin-left:auto;color:var(--green-dark);font-weight:700}
+  .loc-note{font-size:12px;color:var(--text2);margin-top:6px}
+  .tl{font-size:12px;color:var(--text2);margin-top:4px}
 </style>
 </head>
 <body>
@@ -54,6 +60,15 @@
       <span class="muted" id="sync-note">อัปเดตอัตโนมัติทุก 15 วินาที</span>
       <button class="btn sec" id="btn-send-now">ส่งออเดอร์เข้ากลุ่มทันที</button>
     </div>
+    <div class="card" id="route-card" style="display:none">
+      <h3>เส้นทางแนะนำ (ใกล้สุดก่อน)</h3>
+      <div id="route-body"></div>
+      <p class="loc-note">คำนวณจากระยะทางตรง (เส้นตรง) แบบไล่จากจุดใกล้สุด เหมาะกับการรับหลายออเดอร์ในย่านเดียวกัน</p>
+    </div>
+    <div class="card" id="loc-card">
+      <div class="row"><b>การแชร์ตำแหน่ง</b><span class="muted" id="loc-status">ยังไม่เริ่ม</span></div>
+      <p class="loc-note">ลูกค้าจะเห็นตำแหน่งของคุณแบบสดเมื่อคุณกด "เริ่มจัดส่ง" ระบบขอสิทธิ์เข้าถึงตำแหน่งขณะใช้งานหน้านี้</p>
+    </div>
     <div id="lists"></div>
   </div>
 </main>
@@ -66,7 +81,8 @@ var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 var NOTIFY_URL = SUPABASE_URL + '/functions/v1/dt-notify';
 var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-var ORDERS = [], timer = null;
+var ORDERS = [], SETTINGS = {}, timer = null, watchId = null;
+var riderId = null, activeOrderCode = null, lastSentAt = 0, lastSentPos = null;
 var GROUPS = [
   ['confirmed', 'ยืนยันการชำระเงิน / รอไรเดอร์รับ'],
   ['new', 'รอยืนยันการชำระเงิน'],
@@ -82,10 +98,13 @@ function toast(msg){ var t = $('toast'); t.textContent = msg; t.classList.add('s
 function esc(s){ var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
 function baht(n){ return Number(n).toFixed(2) + ' บาท'; }
 function today(){ return new Date().toISOString().slice(0, 10); }
-
-function login(pin){ sessionStorage.setItem('rider_pin', pin); }
-function logout(){ sessionStorage.removeItem('rider_pin'); location.reload(); }
-function getPin(){ return sessionStorage.getItem('rider_pin') || ''; }
+function km(a, b){
+  var R = 6371, dLat = (b.lat - a.lat) * Math.PI / 180, dLng = (b.lng - a.lng) * Math.PI / 180;
+  var s = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(a.lat * Math.PI / 180) * Math.cos(b.lat * Math.PI / 180) *
+    Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  return 2 * R * Math.asin(Math.sqrt(s));
+}
 
 async function verifyPin(pin){
   var r = await sb.from('dt_settings').select('value').eq('key', 'rider_pin').maybeSingle();
@@ -99,16 +118,27 @@ $('btn-login').onclick = async function(){
   var ok = await verifyPin(pin);
   this.disabled = false;
   if (!ok) { $('login-err').textContent = 'รหัสไม่ถูกต้อง'; return; }
-  login(pin);
+  sessionStorage.setItem('rider_pin', pin);
   $('login-view').style.display = 'none';
   $('rider-view').style.display = 'block';
   $('btn-logout').style.display = 'inline';
+  await loadSettings();
+  startLocationSharing();
   await refresh();
   if (timer) clearInterval(timer);
   timer = setInterval(refresh, 15000);
 };
-$('btn-logout').onclick = logout;
+$('btn-logout').onclick = function(){
+  sessionStorage.removeItem('rider_pin');
+  if (watchId !== null && navigator.geolocation) navigator.geolocation.clearWatch(watchId);
+  location.reload();
+};
 $('pin').addEventListener('keydown', function(e){ if (e.key === 'Enter') $('btn-login').click(); });
+
+async function loadSettings(){
+  var r = await sb.from('dt_settings').select('key,value');
+  if (!r.error) (r.data || []).forEach(function(row){ SETTINGS[row.key] = row.value; });
+}
 
 async function refresh(){
   var since = today() + 'T00:00:00';
@@ -117,7 +147,64 @@ async function refresh(){
     .order('created_at', { ascending: false }).limit(100);
   if (r.error) { toast('โหลดออเดอร์ไม่สำเร็จ: ' + r.error.message); return; }
   ORDERS = r.data || [];
+  renderRoute();
   render();
+}
+
+/* ---------- เส้นทางแนะนำ: greedy nearest-neighbor จากหน้าร้าน ---------- */
+function renderRoute(){
+  var pending = ORDERS.filter(function(o){
+    return (o.order_status === 'confirmed' || o.order_status === 'pickup') && o.lat && o.lng;
+  });
+  var card = $('route-card');
+  if (pending.length < 2) { card.style.display = pending.length === 1 ? 'block' : 'none'; $('route-body').innerHTML = pending.length === 1 ? '<p class="muted">มี 1 ออเดอร์ที่ต้องส่ง — ส่งตรงไปที่เดียวได้เลย</p>' : ''; return; }
+  card.style.display = 'block';
+  var shop = (SETTINGS.shop_lat && SETTINGS.shop_lng)
+    ? { lat: Number(SETTINGS.shop_lat), lng: Number(SETTINGS.shop_lng), name: 'หน้าร้าน' }
+    : { lat: pending[0].lat, lng: pending[0].lng, name: 'จุดเริ่ม (ยังไม่ได้ตั้งพิกัดร้าน)' };
+  var remaining = pending.slice(), cur = shop, seq = [], total = 0;
+  while (remaining.length) {
+    var best = 0, bestD = Infinity;
+    for (var i = 0; i < remaining.length; i++) {
+      var d = km(cur, remaining[i]);
+      if (d < bestD) { bestD = d; best = i; }
+    }
+    total += bestD;
+    cur = remaining[best];
+    seq.push({ order: cur, dist: bestD });
+    remaining.splice(best, 1);
+  }
+  $('route-body').innerHTML = seq.map(function(s, i){
+    return '<div class="route-step"><b>' + (i + 1) + '</b><span><span class="code">' + esc(s.order.order_code) + '</span> ' + esc(s.order.customer_name) + '</span><span class="dist">' + s.dist.toFixed(1) + ' กม.</span></div>';
+  }).join('') + '<div class="route-step"><b>Σ</b><span><b>รวมระยะทาง</b></span><span class="dist">' + total.toFixed(1) + ' กม.</span></div>';
+}
+
+/* ---------- แชร์ตำแหน่งไรเดอร์ ---------- */
+function ensureRiderId(){
+  riderId = localStorage.getItem('spk_rider_id');
+  if (!riderId) {
+    riderId = 'r-' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+    localStorage.setItem('spk_rider_id', riderId);
+  }
+}
+function startLocationSharing(){
+  ensureRiderId();
+  if (!navigator.geolocation) { $('loc-status').textContent = 'อุปกรณ์ไม่รองรับ GPS'; return; }
+  $('loc-status').textContent = 'กำลังเปิด GPS...';
+  watchId = navigator.geolocation.watchPosition(onPosition, function(){
+    $('loc-status').textContent = 'ไม่ได้รับสิทธิ์ตำแหน่ง — เปิด GPS แล้วรีเฟรช';
+  }, { enableHighAccuracy: true, maximumAge: 8000, timeout: 20000 });
+}
+async function onPosition(pos){
+  var p = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+  $('loc-status').textContent = 'แชร์อยู่: ' + p.lat.toFixed(5) + ', ' + p.lng.toFixed(5);
+  var now = Date.now();
+  var moved = !lastSentPos || Math.abs(p.lat - lastSentPos.lat) > 0.0002 || Math.abs(p.lng - lastSentPos.lng) > 0.0002;
+  if (now - lastSentAt < 10000 && !moved) return;
+  lastSentAt = now; lastSentPos = p;
+  var row = { rider_id: riderId, lat: p.lat, lng: p.lng, active_order_code: activeOrderCode, updated_at: new Date().toISOString() };
+  var r = await sb.from('dt_rider_location').upsert(row, { onConflict: 'rider_id' });
+  if (r.error) $('loc-status').textContent = 'ส่งตำแหน่งไม่สำเร็จ: ' + r.error.message;
 }
 
 function render(){
@@ -135,6 +222,7 @@ function render(){
   });
 }
 
+function fmtTime(t){ return t ? new Date(t).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) : ''; }
 function orderCard(o){
   var items = (o.items || []).map(function(it){ return esc(it.name) + ' × ' + it.qty; }).join(', ');
   var map = (o.lat && o.lng) ? ' <a class="map" target="_blank" rel="noopener" href="https://www.google.com/maps?q=' + o.lat + ',' + o.lng + '">เปิดแผนที่</a>' : '';
@@ -149,6 +237,14 @@ function orderCard(o){
   if (o.order_status === 'delivering') {
     acts += '<a class="btn gray" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="tel:' + esc(o.customer_phone) + '">โทรลูกค้า</a>';
   }
+  var tl = '';
+  if (o.confirmed_at || o.pickup_at || o.delivering_at || o.done_at) {
+    tl = '<p class="tl">' +
+      (o.confirmed_at ? 'ชำระแล้ว ' + fmtTime(o.confirmed_at) + ' · ' : '') +
+      (o.pickup_at ? 'รับออเดอร์ ' + fmtTime(o.pickup_at) + ' · ' : '') +
+      (o.delivering_at ? 'ออกส่ง ' + fmtTime(o.delivering_at) + ' · ' : '') +
+      (o.done_at ? 'ส่งถึง ' + fmtTime(o.done_at) : '') + '</p>';
+  }
   return '<div class="card">' +
     '<div class="row"><span class="code">' + esc(o.order_code) + '</span><span class="badge ' + esc(o.order_status) + '">' + esc(STATUS_TH[o.order_status] || o.order_status) + '</span></div>' +
     '<h3>' + esc(o.customer_name) + ' · ' + esc(o.customer_phone) + '</h3>' +
@@ -156,6 +252,7 @@ function orderCard(o){
     '<p class="items">' + items + '</p>' +
     '<div class="row"><span class="muted">' + esc(o.payment_method === 'bank' ? 'โอนเข้าบัญชี' : 'PromptPay') + '</span><b>' + baht(o.total) + '</b></div>' +
     (o.order_status === 'new' ? '<p class="muted">ยังไม่ยืนยันการชำระเงิน — ตรวจสลิปก่อนรับออเดอร์</p>' : '') +
+    tl +
     (acts ? '<div class="acts">' + acts + '</div>' : '') +
     '</div>';
 }
@@ -163,12 +260,18 @@ function orderCard(o){
 async function doAction(act, code, btn){
   btn.disabled = true;
   var patch = {};
-  if (act === 'confirm_paid') { patch = { order_status: 'confirmed', payment_status: 'confirmed' }; }
-  else if (NEXT[act] || ['pickup', 'delivering', 'done', 'cancelled'].indexOf(act) >= 0) { patch = { order_status: act }; }
-  if (act === 'pickup') patch.payment_status = 'confirmed';
+  var nowIso = new Date().toISOString();
+  if (act === 'confirm_paid') { patch = { order_status: 'confirmed', payment_status: 'confirmed', confirmed_at: nowIso }; }
+  else if (act === 'pickup') { patch = { order_status: 'pickup', payment_status: 'confirmed', pickup_at: nowIso }; }
+  else if (act === 'delivering') { patch = { order_status: 'delivering', delivering_at: nowIso }; activeOrderCode = code; }
+  else if (act === 'done') { patch = { order_status: 'done', done_at: nowIso }; if (activeOrderCode === code) activeOrderCode = null; }
+  else if (act === 'cancelled') { patch = { order_status: 'cancelled', cancelled_at: nowIso }; }
   var r = await sb.from('dt_orders').update(patch).eq('order_code', code).select().single();
   btn.disabled = false;
   if (r.error) { toast('อัปเดตไม่สำเร็จ: ' + r.error.message); return; }
+  if (activeOrderCode === code) {
+    await sb.from('dt_rider_location').upsert({ rider_id: riderId, active_order_code: activeOrderCode, updated_at: new Date().toISOString(), lat: lastSentPos ? lastSentPos.lat : 0, lng: lastSentPos ? lastSentPos.lng : 0 }, { onConflict: 'rider_id' });
+  }
   toast('อัปเดต ' + code + ' เรียบร้อย');
   await refresh();
 }
