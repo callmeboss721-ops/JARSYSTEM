@@ -14,39 +14,6 @@ import { LineOaContact } from "./line-oa-contact";
 
 const GOOGLE_MAPS_URL = "https://www.google.com/maps/place/Jaguar+spk+%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A1+%E0%B8%81%E0%B8%B1%E0%B8%8D%E0%B8%8A%E0%B8%B2+%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A1+%E0%B9%83%E0%B8%81%E0%B8%A5%E0%B9%89%E0%B8%89%E0%B8%B1%E0%B8%99/data=!4m2!3m1!1s0x0:0x2dd52ed6c8dbd489?sa=X&ved=1t:2428&hl=th&ictx=111";
 
-const PRODUCTS = [
-  {
-    src: "/brand/product-kratom-gold.webp",
-    name: "JAGUAR SPK",
-    detail: "เครื่องดื่มกระท่อม · ฝาทอง",
-    alt: "ขวดเครื่องดื่มกระท่อม JAGUAR SPK ฝาสีทอง วางบนก้อนน้ำแข็ง",
-  },
-  {
-    src: "/brand/product-kratom-blue.webp",
-    name: "JAGUAR SPK",
-    detail: "เครื่องดื่มกระท่อม · ฝาน้ำเงิน",
-    alt: "ขวดเครื่องดื่มกระท่อม JAGUAR SPK ฝาสีน้ำเงิน วางบนก้อนน้ำแข็ง",
-  },
-  {
-    src: "/brand/product-kratom-red.webp",
-    name: "JAGUAR SPK",
-    detail: "เครื่องดื่มกระท่อม · ฝาแดง",
-    alt: "ขวดเครื่องดื่มกระท่อม JAGUAR SPK ฝาสีแดง วางบนก้อนน้ำแข็ง",
-  },
-  {
-    src: "/brand/product-tobacco-tin.webp",
-    name: "กรองทิพย์",
-    detail: "สินค้าในหน้าร้าน",
-    alt: "ผลิตภัณฑ์กรองทิพย์ในบรรจุภัณฑ์สีแดง",
-  },
-  {
-    src: "/brand/product-vess-packs.webp",
-    name: "VESS",
-    detail: "Advance · Menthol",
-    alt: "ผลิตภัณฑ์ VESS สองรุ่น Advance และ Menthol",
-  },
-] as const;
-
 export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
   const [tab, setTab] = useState<"login" | "register">(initialTab ?? "login");
   const [mapPopupOpen, setMapPopupOpen] = useState(false);
@@ -128,32 +95,6 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
               sizes="(max-width: 540px) calc(100vw - 32px), (max-width: 1000px) 90vw, 900px"
             />
           </figure>
-          <section className="landing-products" aria-labelledby="landing-products-title">
-            <div className="landing-products__heading">
-              <span className="landing-products__eyebrow">JAGUAR SPK</span>
-              <h2 id="landing-products-title">สินค้าของเรา</h2>
-            </div>
-            <div className="landing-products__grid">
-              {PRODUCTS.map((product) => (
-                <figure className="landing-product" key={product.src}>
-                  <div className="landing-product__image">
-                    <Image
-                      src={product.src}
-                      alt={product.alt}
-                      width={768}
-                      height={768}
-                      loading="lazy"
-                      sizes="(max-width: 520px) calc((100vw - 42px) / 2), (max-width: 900px) calc((90vw - 30px) / 3), 300px"
-                    />
-                  </div>
-                  <figcaption className="landing-product__caption">
-                    <strong>{product.name}</strong>
-                    <span>{product.detail}</span>
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
-          </section>
           <details className="landing-menu-preview">
             <summary>เมนูหน้าร้าน</summary>
             <Image src="/brand/jaguar-price-board.webp" alt="เมนูสินค้าและราคาหน้าร้าน" width={760} height={760} sizes="(max-width: 440px) 90vw, 440px" />

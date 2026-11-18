@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { MessageCircle } from "lucide-react";
 import { BrandIcon } from "./brand-icon";
@@ -9,9 +10,19 @@ const LINE_OA_URL = "https://line.me/R/ti/p/@880beqva";
 
 export function LineOaContact({ placement }: { placement: "landing" | "member" }) {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const popupId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const closePopup = () => {
+    setOpen(false);
+    triggerRef.current?.focus();
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -20,8 +31,7 @@ export function LineOaContact({ placement }: { placement: "landing" | "member" }
     };
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
-      setOpen(false);
-      triggerRef.current?.focus();
+      closePopup();
     };
     const onClose = () => setOpen(false);
     document.addEventListener("pointerdown", onPointerDown);
@@ -34,11 +44,12 @@ export function LineOaContact({ placement }: { placement: "landing" | "member" }
     };
   }, [open]);
 
-  return (
+  const contact = (
     <div
       ref={rootRef}
       className={`line-oa-contact line-oa-contact--${placement}${open ? " is-open" : ""}`}
       aria-label="ติดต่อ JAGUAR SPK ผ่าน LINE"
+      role="group"
       data-testid={`line-oa-contact-${placement}`}
     >
       <section id={popupId} className="line-oa-contact__popup" aria-label="LINE Official Account" hidden={!open}>
@@ -52,7 +63,7 @@ export function LineOaContact({ placement }: { placement: "landing" | "member" }
             type="button"
             className="line-oa-contact__close"
             aria-label="ปิดหน้าต่าง LINE"
-            onClick={() => setOpen(false)}
+            onClick={closePopup}
           >
             <BrandIcon name="close" size={17} />
           </button>
@@ -96,4 +107,11 @@ export function LineOaContact({ placement }: { placement: "landing" | "member" }
       </button>
     </div>
   );
+
+  // Portal the public landing widget directly under <body> so fixed positioning
+  // cannot be captured by an animated or isolated page wrapper.
+  if (placement === "landing") {
+    return mounted ? createPortal(contact, document.body) : null;
+  }
+  return contact;
 }
