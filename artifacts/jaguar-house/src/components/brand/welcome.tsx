@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import Image from "next/image";
@@ -18,6 +18,11 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
   const [tab, setTab] = useState<"login" | "register">(initialTab ?? "login");
   const [mapPopupOpen, setMapPopupOpen] = useState(false);
   const mapTriggerRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    const closeMapPopup = () => setMapPopupOpen(false);
+    window.addEventListener("jaguar:close-map-popup", closeMapPopup);
+    return () => window.removeEventListener("jaguar:close-map-popup", closeMapPopup);
+  }, []);
   const closeMapPopup = () => {
     setMapPopupOpen(false);
     mapTriggerRef.current?.focus();
@@ -156,7 +161,10 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
             aria-controls="landing-map-popup"
             aria-label={mapPopupOpen ? "ปิดแผนที่ร้าน" : "เปิดแผนที่ร้าน"}
             data-testid="button-map-popup"
-            onClick={() => setMapPopupOpen((open) => !open)}
+            onClick={() => {
+              window.dispatchEvent(new Event("jaguar:close-line-popup"));
+              setMapPopupOpen((open) => !open);
+            }}
           >
             <BrandIcon name="location" size={20} tone="emerald" />
             <span>แผนที่ร้าน</span>

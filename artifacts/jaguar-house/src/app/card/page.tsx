@@ -11,7 +11,6 @@ import { MemberCardFaces, MemberStatusPanel } from "@/components/brand/member-ca
 import { MemberRankLabel, RankEmblem } from "@/components/brand/rank-emblem";
 import { EmptyState, ErrorState, LoadingState, SignedOutState } from "@/components/brand/ui";
 import { api, errorText, type Sale, formulaLabels } from "@/components/brand/loyalty-api";
-import { LineOaContact } from "@/components/brand/line-oa-contact";
 
 export default function CardPage() {
   const qc = useQueryClient();
@@ -139,7 +138,6 @@ export default function CardPage() {
           {nicknameMessage && <p role="status" className={`mt-2 text-sm ${nicknameMessage.includes("แล้ว") ? "text-[var(--green)]" : "field-error"}`}>{nicknameMessage}</p>}
         </section>
         <Link href="/" className="btn btn-ghost w-full sm:w-auto">กลับหน้าแรกร้าน</Link>
-        <LineOaContact placement="member" />
       </div>
       <aside className="space-y-5">
         <section className="panel p-5" aria-labelledby="sales-title">

@@ -7,6 +7,7 @@ import { useState, type ReactNode } from "react";
 import { BrandIcon, type BrandIconName } from "./brand-icon";
 import { JaguarMark } from "./jaguar-mark";
 import { SamutPrakanArt } from "./samut-prakan-art";
+import { LineOaContact } from "./line-oa-contact";
 import { clearMemberCache, setSessionHint } from "./api-utils";
 import { api, errorText, json } from "./loyalty-api";
 
@@ -111,6 +112,7 @@ export function MemberShell({ children, signedIn }: { children: ReactNode; signe
           })}
         </div>
       </nav>
+      <LineOaContact placement="member" />
     </div>
   );
 }
