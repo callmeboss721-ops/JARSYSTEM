@@ -7941,10 +7941,11 @@ kbd {
   box-shadow: inset 0 1px 0 hsl(var(--foreground) / .06), 0 18px 38px -32px hsl(var(--background));
 }
 
-.jh-shop-map svg {
+.jh-shop-map iframe {
   display: block;
   width: 100%;
-  height: auto;
+  aspect-ratio: 16 / 11;
+  border: 0;
 }
 
 .jh-shop-map figcaption {
@@ -7986,7 +7987,7 @@ kbd {
   .jh-hero { padding-block: 32px 28px; }
   .jh-about { grid-template-columns: 72px minmax(0, 1fr); }
   .jh-shop-map { grid-column: 1 / -1; width: min(100%, 460px); justify-self: center; }
-  .jh-shop-map svg { max-height: 210px; }
+  .jh-shop-map iframe { aspect-ratio: 4 / 3; }
 }
 
 @media (max-width: 380px) {

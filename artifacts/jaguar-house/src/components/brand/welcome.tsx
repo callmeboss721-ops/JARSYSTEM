@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import Image from "next/image";
@@ -9,10 +9,35 @@ import { BrandIcon } from "./brand-icon";
 import { SamutPrakanArt } from "./samut-prakan-art";
 import { LoginForm, RegisterForm } from "./auth-forms";
 import { BrandButton } from "./brand-button";
-import { RankEmblem } from "./rank-emblem";
 import { LineOaContact } from "./line-oa-contact";
 
-const GOOGLE_MAPS_URL = "https://www.google.com/maps/place/Jaguar+spk+%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A1+%E0%B8%81%E0%B8%B1%E0%B8%8D%E0%B8%8A%E0%B8%B2+%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A1+%E0%B9%83%E0%B8%81%E0%B8%A5%E0%B9%89%E0%B8%89%E0%B8%B1%E0%B8%99/data=!4m2!3m1!1s0x0:0x2dd52ed6c8dbd489?sa=X&ved=1t:2428&hl=th&ictx=111";
+const GOOGLE_MAPS_URL = "https://www.google.com/maps/place/Jaguar+spk+%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A1+%E0%B8%81%E0%B8%B1%E0%B8%8D%E0%B8%8A%E0%B8%B2+%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A1+%E0%B9%83%E0%B8%81%E0%B8%A5%E0%B9%89%E0%B8%89%E0%B8%B1%E0%B8%99/@13.6100796,100.6008541,17z/data=!3m1!4b1!4m6!3m5!1s0x30e2a17b24c91b0f:0x2dd52ed6c8dbd489!8m2!3d13.6100796!4d100.6008541!16s%2Fg%2F11z_klv87h?hl=th&entry=ttu&g_ep=EgoyMDI2MTExNS4wIKXMDSoASAFQAw%3D%3D";
+const GOOGLE_MAPS_EMBED_URL = "https://maps.google.com/maps?q=13.6100796,100.6008541&z=17&output=embed";
+const LINE_OA_URL = "https://line.me/R/ti/p/@880beqva";
+
+const PRODUCTS = [
+  {
+    name: "เครื่องดื่ม JAGUAR SPK",
+    detail: "มี 3 สีฝา",
+    bottles: [
+      { src: "/brand/product-kratom-gold.webp", alt: "ขวด JAGUAR SPK ฝาสีทอง" },
+      { src: "/brand/product-kratom-blue.webp", alt: "ขวด JAGUAR SPK ฝาสีน้ำเงิน" },
+      { src: "/brand/product-kratom-red.webp", alt: "ขวด JAGUAR SPK ฝาสีแดง" },
+    ],
+  },
+  {
+    src: "/brand/product-tobacco-tin.webp",
+    name: "กรองทิพย์",
+    detail: "สินค้าในร้าน",
+    alt: "ผลิตภัณฑ์กรองทิพย์ในบรรจุภัณฑ์สีแดง",
+  },
+  {
+    src: "/brand/product-vess-packs.webp",
+    name: "VESS",
+    detail: "Advance · Menthol",
+    alt: "ผลิตภัณฑ์ VESS สองรุ่น Advance และ Menthol",
+  },
+] as const;
 
 export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
   const [tab, setTab] = useState<"login" | "register">(initialTab ?? "login");
@@ -23,57 +48,80 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
     window.addEventListener("jaguar:close-map-popup", closeMapPopup);
     return () => window.removeEventListener("jaguar:close-map-popup", closeMapPopup);
   }, []);
-  const closeMapPopup = () => {
+  const closeMapPopup = useCallback(() => {
     setMapPopupOpen(false);
     mapTriggerRef.current?.focus();
-  };
+  }, []);
+  useEffect(() => {
+    if (!mapPopupOpen) return;
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeMapPopup();
+    };
+    document.addEventListener("keydown", onEscape);
+    return () => document.removeEventListener("keydown", onEscape);
+  }, [mapPopupOpen, closeMapPopup]);
   const session = useQuery<{ authenticated: boolean }>({ queryKey: ["/api/loyalty/session"], queryFn: () => api("/api/loyalty/session"), enabled: initialTab !== undefined, retry: false, refetchOnWindowFocus: false });
 
   if (initialTab === undefined) {
     return (
       <>
       <main className="jaguar-home jaguar-home--landing customer-art-root min-h-[100dvh]">
-        <div className="landing-atmosphere" aria-hidden="true">
-          <svg className="landing-atmosphere__botanical landing-atmosphere__botanical--left" viewBox="0 0 180 220" focusable="false">
-            <path d="M20 196C62 148 76 91 83 22M41 165C23 137 18 116 22 94c21 12 34 30 39 53M58 133c-2-29 5-51 20-68 12 22 14 44 7 67M72 99c-1-22 6-41 20-57 11 19 13 38 7 56M33 173c25-4 45-15 60-33" />
-          </svg>
-          <svg className="landing-atmosphere__botanical landing-atmosphere__botanical--right" viewBox="0 0 180 220" focusable="false">
-            <path d="M160 197C118 150 104 92 97 22M139 165c18-28 23-49 19-71-21 12-34 30-39 53m-1-14c2-29-5-51-20-68-12 22-14 44-7 67m13-33c1-22-6-41-20-57-11 19-13 38-7 56m54 48c-25-4-45-15-60-33" />
-          </svg>
-        </div>
         <SamutPrakanArt />
-        <header className="landing-header landing-enter landing-enter--header">
-          <Link href="/" className="landing-brand" aria-label="JAGUAR SPK หน้าแรก">
-            <span className="landing-brand__logo">
-              <Image src="/ui/jaguar-spk-emblem.png" alt="โลโก้ JAGUAR SPK รูปจากัวร์" width={1254} height={1162} priority sizes="(max-width: 390px) 80px, (max-width: 760px) 88px, 110px" />
-            </span>
-            <span className="landing-brand__copy"><small>KRATOM · SOI 6</small></span>
-          </Link>
-          <nav className="landing-header__actions" aria-label="ทางเข้าพนักงาน">
-            <Link href="/admin?desk=staff" className="inline-flex items-center gap-1" data-testid="link-staff"><BrandIcon name="staffAccess" size={14} tone="emerald" />พนักงาน</Link>
-            <Link href="/admin" className="inline-flex items-center gap-1" data-testid="link-owner"><BrandIcon name="dashboard" size={14} tone="gold" />เจ้าของร้าน</Link>
-          </nav>
+        <header className="jh-header">
+          <div className="jh-header__inner">
+            <Link href="/" className="jh-brand" aria-label="JAGUAR SPK หน้าแรก">
+              <Image src="/ui/jaguar-spk-emblem.png" alt="โลโก้ JAGUAR SPK" width={1254} height={1162} priority sizes="52px" />
+              <span><strong>JAGUAR SPK</strong><small>บุญศิริ ซอย 6 · สมุทรปราการ</small></span>
+            </Link>
+            <nav className="jh-nav" aria-label="เมนูหลัก">
+              <a href="#products">สินค้า</a>
+              <a href="#membership">สมาชิก</a>
+              <a href="#about">รู้จักร้าน</a>
+              <a href="#contact">ติดต่อ</a>
+            </nav>
+            <div className="jh-access">
+              <Link href="/admin?desk=staff" data-testid="link-staff"><BrandIcon name="staffAccess" size={15} tone="emerald" />พนักงาน</Link>
+              <Link href="/admin" data-testid="link-owner"><BrandIcon name="dashboard" size={15} tone="gold" />เจ้าของร้าน</Link>
+            </div>
+          </div>
         </header>
-        <div className="landing-shell">
-          <section className="landing-feature landing-enter landing-enter--hero" aria-labelledby="landing-title">
-            <div className="landing-feature__copy">
-              <h1 id="landing-title">
-                พี่เสือพลังใบ
-                <span>ซุปเปอร์ฮีโร่ของคนไทย</span>
-              </h1>
-              <div className="landing-ctas">
-                <BrandButton href="/login?mode=register" asset="btn-jaguar" label="เปิดบัตรสมาชิก" testId="link-open-wallet" />
-                <BrandButton href="/login" asset="btn-leaf" label="เข้าใช้งาน" testId="link-member-login" />
+        <div className="jh-shell">
+          <section className="jh-hero" aria-labelledby="landing-title">
+            <div className="jh-hero__copy">
+              <p className="jh-kicker">ร้านประจำย่าน · สมุทรปราการ</p>
+              <h1 id="landing-title">JAGUAR SPK<br /><span>ร้านใกล้บ้านของคุณ</span></h1>
+              <p className="jh-hero__intro">แวะเลือกสินค้าที่ร้าน หรือเริ่มใช้บัตรสมาชิกได้ง่าย ๆ บนมือถือ</p>
+              <div className="jh-hero__actions">
+                <BrandButton href="/login?mode=register" asset="btn-jaguar" label="สมัครสมาชิก" testId="link-open-wallet" />
+                <BrandButton href="/login" asset="btn-leaf" label="เข้าสู่ระบบสมาชิก" testId="link-member-login" />
               </div>
+              <a className="jh-hero__location" href={GOOGLE_MAPS_URL} target="_blank" rel="noopener noreferrer">
+                <BrandIcon name="location" size={17} tone="emerald" />บุญศิริ ซอย 6 · เปิดแผนที่ร้าน
+              </a>
+            </div>
+            <div className="jh-hero__visual">
+              <Image
+                src="/brand/product-kratom-gold.webp"
+                alt="ขวดเครื่องดื่ม JAGUAR SPK ฝาสีทอง"
+                width={768}
+                height={768}
+                priority
+                sizes="(max-width: 720px) 78vw, 440px"
+              />
+              <span className="jh-hero__image-label">JAGUAR SPK · สินค้าในร้าน</span>
             </div>
           </section>
 
-          <section className="landing-club-previews" aria-label="บัตรสมาชิก">
-            <Link href="/card" className="landing-club-preview landing-club-preview--text-only" aria-label="ดูบัตรสมาชิกกระท่อม">
-              <span className="landing-club-preview__caption"><RankEmblem name="nature-green" size={18} /><span>กระท่อม</span></span>
+          <section className="jh-clubs" aria-label="บัตรสมาชิก Jaguar">
+            <Link href="/card" className="jh-club">
+              <Image src="/brand/icon-card-kratom.svg" alt="" width={28} height={28} />
+              <span><strong>บัตรสมาชิกกระท่อม</strong><small>เปิดดูบัตรของคุณ</small></span>
+              <span aria-hidden="true">↗</span>
             </Link>
-            <Link href="/card/cannabis" className="landing-club-preview landing-club-preview--text-only" aria-label="ดูบัตรสมาชิกกัญชา">
-              <span className="landing-club-preview__caption"><RankEmblem name="organic-premium" size={18} /><span>กัญชา</span></span>
+            <Link href="/card/cannabis" className="jh-club">
+              <Image src="/brand/icon-card-cannabis.svg" alt="" width={28} height={28} />
+              <span><strong>บัตรสมาชิกกัญชา</strong><small>เปิดดูบัตรของคุณ</small></span>
+              <span aria-hidden="true">↗</span>
             </Link>
           </section>
           <figure className="landing-member-guide">
@@ -100,27 +148,111 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
             <Image src="/brand/jaguar-price-board.webp" alt="เมนูสินค้าและราคาหน้าร้าน" width={760} height={760} sizes="(max-width: 440px) 90vw, 440px" />
           </details>
 
-          <footer className="landing-site-footer" aria-label="ติดต่อและลิงก์">
-            <LineOaContact placement="landing" />
-            <a
-              href={GOOGLE_MAPS_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="เปิดแผนที่ร้าน JAGUAR SPK ใน Google Maps"
-              data-testid="link-footer-map"
-              className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--line)] px-3 py-2 text-left text-xs font-medium text-[var(--gold-2)] no-underline transition-colors hover:border-[var(--gold-2)] hover:bg-white/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--emerald)]"
-            >
-              <BrandIcon name="location" size={17} tone="emerald" />
-              <span>
-                <strong className="block">แผนที่ร้าน</strong>
-                <small className="block text-[10px] text-[var(--muted)]">บุญศิริ ซอย 6 · สมุทรปราการ</small>
-              </span>
-            </a>
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path fill="currentColor" d="M12 2.3a9.7 9.7 0 0 0-3.07 18.9c.49.09.66-.21.66-.47v-1.68c-2.7.59-3.27-1.14-3.27-1.14-.44-1.12-1.08-1.42-1.08-1.42-.88-.6.07-.59.07-.59.97.07 1.48 1 1.48 1 .86 1.48 2.25 1.05 2.8.8.09-.63.34-1.05.61-1.29-2.15-.24-4.41-1.08-4.41-4.8 0-1.06.38-1.92 1-2.6-.1-.25-.44-1.23.1-2.57 0 0 .82-.26 2.67.99a9.3 9.3 0 0 1 4.86 0c1.85-1.25 2.67-.99 2.67-.99.54 1.34.2 2.32.1 2.57.62.68 1 1.54 1 2.6 0 3.73-2.27 4.55-4.43 4.79.35.3.66.89.66 1.79v2.65c0 .26.18.57.67.47A9.7 9.7 0 0 0 12 2.3Z" />
-            </svg>
+          <section className="jh-section" id="products" aria-labelledby="landing-products-title">
+            <div className="jh-section__heading">
+              <p className="jh-kicker">สินค้าในร้าน</p>
+              <h2 id="landing-products-title">เลือกชมสินค้า</h2>
+              <p>ภาพสินค้าบางส่วนที่มีในร้าน สอบถามรายละเอียดได้ทาง LINE OA</p>
+            </div>
+            <div className="jh-products">
+              {PRODUCTS.map((product) => (
+                <article className="jh-product" key={product.name}>
+                  {("bottles" in product) ? (
+                    <div className="jh-product__bottles">
+                      {product.bottles.map((bottle) => (
+                        <div className="jh-product__bottle" key={bottle.src}>
+                          <Image src={bottle.src} alt={bottle.alt} width={768} height={768} loading="lazy" sizes="(max-width: 520px) 28vw, 120px" />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="jh-product__image">
+                      <Image src={product.src} alt={product.alt} width={768} height={768} loading="lazy" sizes="(max-width: 520px) 90vw, (max-width: 900px) 42vw, 360px" />
+                    </div>
+                  )}
+                  <div className="jh-product__caption"><strong>{product.name}</strong><span>{product.detail}</span></div>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section className="jh-section jh-membership" id="membership" aria-labelledby="jh-membership-title">
+            <div className="jh-section__heading">
+              <p className="jh-kicker">JAGUAR MEMBER</p>
+              <h2 id="jh-membership-title">สมาชิก ใช้ง่ายทุกครั้งที่แวะ</h2>
+              <p>เริ่มต้นจากมือถือ แล้วใช้บัตรสมาชิกที่เคาน์เตอร์</p>
+            </div>
+            <div className="jh-benefits">
+              <article>
+                <div className="jh-benefit__meta"><BrandIcon name="members" size={19} tone="emerald" /><span className="jh-benefit__number">01</span></div>
+                <h3>สมัครสมาชิก</h3><p>สร้างบัตรสมาชิกจากหน้าเว็บ</p>
+              </article>
+              <article>
+                <div className="jh-benefit__meta"><BrandIcon name="qr" size={19} tone="emerald" /><span className="jh-benefit__number">02</span></div>
+                <h3>แสดงบัตรที่ร้าน</h3><p>เปิดบัตรบนมือถือให้พนักงานสแกน</p>
+              </article>
+              <article>
+                <div className="jh-benefit__meta"><BrandIcon name="points" size={19} tone="emerald" /><span className="jh-benefit__number">03</span></div>
+                <h3>สะสมแต้ม</h3><p>แต้มจะแสดงอยู่บนบัตรสมาชิก</p>
+              </article>
+              <article>
+                <div className="jh-benefit__meta"><BrandIcon name="phone" size={19} tone="emerald" /><span className="jh-benefit__number">04</span></div>
+                <h3>สอบถามสิทธิ์</h3><p>สอบถามรายละเอียดกับพนักงานหรือทาง LINE</p>
+              </article>
+            </div>
+            <div className="jh-membership__links">
+              <Link href="/login?mode=register">สมัครสมาชิก <span aria-hidden="true">↗</span></Link>
+              <a href={GOOGLE_MAPS_URL} target="_blank" rel="noopener noreferrer">ดูข้อมูลร้านและรีวิวบน Google Maps <span aria-hidden="true">↗</span></a>
+            </div>
+          </section>
+
+          <section className="jh-about" id="about" aria-labelledby="jh-about-title">
+            <div className="jh-about__brand">
+              <Image src="/ui/jaguar-spk-emblem.png" alt="" width={1254} height={1162} loading="lazy" sizes="(max-width: 600px) 88px, 112px" />
+            </div>
+            <div>
+              <p className="jh-kicker">ร้านชุมชน · สมุทรปราการ</p>
+              <h2 id="jh-about-title">แวะมาพบกันที่ร้าน</h2>
+              <p>JAGUAR SPK เป็นร้านในย่านบุญศิริ ซอย 6 พร้อมบัตรสมาชิกดิจิทัลสำหรับลูกค้าที่ต้องการสะสมแต้ม</p>
+              <a href={GOOGLE_MAPS_URL} target="_blank" rel="noopener noreferrer" className="jh-text-link">
+                <BrandIcon name="location" size={17} tone="emerald" />ดูตำแหน่งและข้อมูลร้านบน Google Maps
+              </a>
+            </div>
+            <figure className="jh-shop-map">
+              <iframe
+                src={GOOGLE_MAPS_EMBED_URL}
+                title="แผนที่ตำแหน่งร้าน JAGUAR SPK บุญศิริ ซอย 6 สมุทรปราการ"
+                loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              />
+              <figcaption><span>JAGUAR SPK</span><span>บุญศิริ ซอย 6 · สมุทรปราการ</span></figcaption>
+            </figure>
+          </section>
+
+          <section className="jh-contact" id="contact" aria-labelledby="jh-contact-title">
+            <div>
+              <p className="jh-kicker">ติดต่อร้าน</p>
+              <h2 id="jh-contact-title">มีคำถามเรื่องสินค้า หรือสมาชิก?</h2>
+              <p>ส่งข้อความถึงร้าน หรือดูตำแหน่งก่อนแวะมา</p>
+            </div>
+            <div className="jh-contact__actions">
+              <a href={LINE_OA_URL} target="_blank" rel="noopener noreferrer" className="jh-map-link" aria-label="เปิดแชตร้านทาง LINE OA">
+                LINE OA <BrandIcon name="continue" size={16} tone="emerald" />
+              </a>
+              <a href={GOOGLE_MAPS_URL} target="_blank" rel="noopener noreferrer" className="jh-map-link">
+                <BrandIcon name="location" size={18} tone="emerald" />แผนที่ร้าน
+              </a>
+            </div>
+          </section>
+
+          <footer className="jh-footer">
+            <Link href="/" className="jh-footer__brand">JAGUAR SPK</Link>
+            <span>บุญศิริ ซอย 6 · สมุทรปราการ</span>
+            <div><Link href="/staff">พนักงาน</Link><Link href="/owner">เจ้าของร้าน</Link></div>
           </footer>
         </div>
+        <LineOaContact placement="landing" />
       </main>
         <div className={`landing-map-float${mapPopupOpen ? " landing-map-float--open" : ""}`}>
           <section
@@ -128,9 +260,6 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
             className="landing-map-popup"
             aria-label="ตำแหน่งร้าน JAGUAR SPK"
             aria-hidden={!mapPopupOpen}
-            onKeyDown={(event) => {
-              if (event.key === "Escape") closeMapPopup();
-            }}
           >
             <button
               type="button"
