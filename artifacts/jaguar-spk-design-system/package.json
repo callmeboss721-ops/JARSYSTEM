@@ -9,6 +9,7 @@
     "./styles.css": "./src/index.css",
     "./components/*": "./src/components/*.tsx",
     "./lib/*": "./src/lib/*.tsx",
+    "./hooks/use-toast": "./src/hooks/use-toast.ts",
     "./hooks/*": "./src/hooks/*.tsx"
   },
   "imports": {
