@@ -67,6 +67,7 @@ export function MemberShell({ children, signedIn }: { children: ReactNode; signe
                   key={n.href}
                   href={n.href}
                   aria-current={active ? "page" : undefined}
+                  data-kind={n.kind}
                   className={`inline-flex items-center gap-2 min-h-11 px-4 py-2 rounded-xl font-display text-sm no-underline transition-colors ${active ? "text-[var(--gold-2)] bg-[rgba(196,202,214,.07)] shadow-[inset_0_-2px_0_var(--gold)]" : "text-[var(--muted)] hover:text-[var(--text)]"}`}
                   data-testid={`link-nav-${n.href.slice(1)}`}
                 >

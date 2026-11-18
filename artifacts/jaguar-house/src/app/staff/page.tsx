@@ -429,9 +429,9 @@ export default function StaffPage() {
         </nav>
 
         {tab === "counter" && <div className="space-y-4">
-          <div className="pill-switch grid grid-cols-2 p-1 gap-1 max-w-md" aria-label="เลือกประเภทบัตร">
-            <button type="button" className="tab" aria-pressed={counterMode === "kratom"} onClick={() => { setCounterMode("kratom"); setCounterActionComplete(false); setErr(""); setMsg(""); }}>กระท่อม · ขวด</button>
-            <button type="button" className="tab" aria-pressed={counterMode === "cannabis"} data-testid="staff-mode-cannabis" onClick={() => { setCounterMode("cannabis"); setCounterActionComplete(false); setErr(""); setMsg(""); setCannabisRedeemId(null); }}>กัญชา · กรัม</button>
+          <div className="pill-switch staff-product-switch grid grid-cols-2 p-1 gap-1 max-w-md" aria-label="เลือกประเภทบัตร">
+            <button type="button" className="tab" data-kind="kratom" aria-pressed={counterMode === "kratom"} onClick={() => { setCounterMode("kratom"); setCounterActionComplete(false); setErr(""); setMsg(""); }}>กระท่อม · ขวด</button>
+            <button type="button" className="tab" data-kind="cannabis" aria-pressed={counterMode === "cannabis"} data-testid="staff-mode-cannabis" onClick={() => { setCounterMode("cannabis"); setCounterActionComplete(false); setErr(""); setMsg(""); setCannabisRedeemId(null); }}>กัญชา · กรัม</button>
           </div>
           {counterMode === "cannabis" && security.data?.cannabis_points_enabled !== true && <p className="counter-feature-disabled p-3 text-sm" role="status" data-testid="staff-cannabis-disabled">ปิดการสะสมแต้มกัญชาอยู่ · ยังแลกรางวัลได้ แต่บันทึกยอดซื้อถูกปิดไว้จนกว่าเจ้าของร้านจะเปิดใช้</p>}
           <StaffWorkflow step={workflowStep} />
