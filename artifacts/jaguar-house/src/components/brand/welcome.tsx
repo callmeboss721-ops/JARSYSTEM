@@ -304,84 +304,114 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
   }
 
   return (
-    <div className={`customer-art-root min-h-[100dvh] ${initialTab === "login" ? "login-reference-root" : "auth-register-root grid lg:grid-cols-[1.1fr_1fr]"}`}>
+    <div className={`customer-art-root jaguar-auth-page ${initialTab === "login" ? "jaguar-auth-page--login" : "jaguar-auth-page--register"}`}>
       <SamutPrakanArt />
-      <section className="auth-stage relative overflow-hidden order-2 lg:order-1 px-6 pt-10 pb-12 lg:p-16 flex flex-col justify-between border-t lg:border-t-0 lg:border-r border-[var(--line)]">
-        <div className="rosette-field absolute inset-0 opacity-[.05] pointer-events-none" aria-hidden="true" />
-        <div className="relative hidden lg:flex items-center justify-between rise">
-          <span className="leading-tight">
-            <span className="block font-display text-xs font-semibold tracking-[.2em] text-[var(--gold-2)]">JAGUAR KRATOM</span>
-            <span className="mt-1 block text-xs text-[var(--muted)]">บุญศิริ ซอย 6 · สมุทรปราการ</span>
-          </span>
-          <span className="flex gap-1"><Link href="/staff" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--emerald-2)] no-underline font-mono tracking-widest" data-testid="link-staff">STAFF DESK</Link><Link href="/owner" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--gold-2)] no-underline" data-testid="link-owner">ห้องเจ้าของร้าน</Link></span>
-        </div>
-
-          <div className="relative lg:my-0 hidden lg:flex flex-col items-start">
-          <h1 aria-label="พี่เสือพลังใบ ซุปเปอร์ฮีโร่ของคนไทย" className="font-display font-semibold leading-[1.1] tracking-tight text-[30px] sm:text-[44px] lg:text-[60px] rise" style={{ animationDelay: "120ms" }}>
-            พี่เสือพลังใบ<br />
-            <span className="text-[var(--gold-2)]">ซุปเปอร์ฮีโร่<br />ของคนไทย</span>
-          </h1>
-          <div className="hairline w-24 mt-6" aria-hidden="true" />
-          <p className="mt-6 max-w-md text-[var(--gold-2)] font-display font-semibold text-lg sm:text-xl rise" style={{ animationDelay: "200ms" }}>
-            สะสม 10 แต้ม รับฟรี 1 ขวด
-          </p>
-          <p className="mt-2 max-w-md text-sm text-[var(--muted)]">บัตรอยู่ในมือถือ แสดง QR ที่เคาน์เตอร์ทุกครั้งที่ซื้อ</p>
-            <ol className="loyalty-steps mt-8 hidden sm:grid grid-cols-3 gap-3 max-w-md w-full rise list-none p-0" style={{ animationDelay: "260ms" }}>
-            {[["01", "สมัครด้วยเบอร์"], ["02", "สะสมแต้ม"], ["03", "แลกรางวัล"]].map(([n, t]) => (
-              <li key={n} className="panel min-w-0 p-4">
-                <span className="font-mono text-xs text-[var(--gold)]">{n}</span>
-                <p className="text-sm mt-1">{t}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-
-        <p className="relative mt-10 lg:mt-0 lg:hidden flex items-center gap-2 text-xs text-[var(--muted)]">
-          <BrandIcon name="location" tone="neutral" /> บุญศิริ ซอย 6 · สมุทรปราการ
-        </p>
-      </section>
-
-      <section className="order-1 lg:order-2 px-5 sm:px-6 pt-5 pb-10 lg:p-16 flex items-start lg:items-center justify-center">
-        <div className="auth-form-layout w-full max-w-md rise">
-          {initialTab !== "login" && (
-            <nav aria-label="เมนูพนักงาน" className="flex lg:hidden justify-end mb-4">
-              <Link href="/staff" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--emerald-2)] no-underline font-mono" data-testid="link-staff-mobile">พนักงาน</Link>
-              <Link href="/owner" className="inline-flex items-center min-h-11 px-3 text-xs text-[var(--gold-2)] no-underline" data-testid="link-owner-mobile">เจ้าของร้าน</Link>
-            </nav>
-          )}
-          <div className="brand-showcase mb-4 flex justify-center rise" style={{ animationDelay: "80ms" }}>
+      <div className="jaguar-auth-shell">
+        <header className="jaguar-auth-topbar">
+          <Link href="/" className="jaguar-auth-brand" aria-label="JAGUAR SPK หน้าแรก">
             <Image
-              className="brand-showcase__campaign"
-              src="/ui/jaguar-spk-wordmark.png"
-              alt="โลโก้ตัวอักษร JAGUAR SPK"
-              width={1416}
-              height={575}
+              src="/brand/jaguar-spk-wordmark.webp"
+              alt="JAGUAR SPK"
+              width={480}
+              height={214}
               priority
-              sizes="(max-width: 760px) 82vw, 400px"
+              sizes="(max-width: 560px) 148px, 190px"
             />
+          </Link>
+          <div className="jaguar-auth-topbar__right">
+            <span className="jaguar-auth-location"><BrandIcon name="location" size={15} tone="emerald" />บุญศิริ ซอย 6 · สมุทรปราการ</span>
+            <nav className="jaguar-auth-staff" aria-label="เมนูพนักงาน">
+              <Link href="/staff" data-testid="link-staff">พนักงาน</Link>
+              <Link href="/owner" data-testid="link-owner">เจ้าของร้าน</Link>
+            </nav>
           </div>
-          {session.isSuccess && session.data?.authenticated ? (
-              <div className="panel auth-panel p-7 space-y-5" data-testid="panel-session">
-              <h2 className="font-display text-2xl font-semibold">เข้าสู่ระบบแล้ว</h2>
-              <BrandButton href="/card" asset="btn-jaguar" label="เปิดบัตรสมาชิก" testId="link-open-card" />
+        </header>
+
+        <main className="jaguar-auth-main">
+          <section className="jaguar-auth-story" aria-labelledby="auth-story-title">
+            <div className="jaguar-auth-story__copy">
+              <p className="jaguar-auth-kicker">JAGUAR SPK · MEMBER CLUB</p>
+              <h1 id="auth-story-title">สมาชิกใกล้ตัว<br /><span>รางวัลใกล้คุณ</span></h1>
+              <p className="jaguar-auth-story__intro">บัตรสมาชิกดิจิทัล ใช้ได้ทุกครั้งที่แวะมา</p>
             </div>
-          ) : (
-            <>
-              <h2 className="font-display text-2xl sm:text-3xl font-semibold mb-4">{tab === "login" ? "บัตรสมาชิก" : "เปิดบัตรใหม่"}</h2>
-              <div role="tablist" onKeyDown={(e) => { if (e.key === "ArrowRight" || e.key === "ArrowLeft") { const next = tab === "login" ? "register" : "login"; setTab(next); document.getElementById(`tab-${next}`)?.focus(); } }} aria-label="เลือกการเข้าใช้" className="pill-switch flex gap-1 p-1 mb-5">
-                <button role="tab" id="tab-login" aria-selected={tab === "login"} tabIndex={tab === "login" ? 0 : -1} aria-controls="panel-auth" className="tab" onClick={() => setTab("login")} data-testid="tab-login"><span className="inline-flex items-center gap-2"><BrandIcon name="staffAccess" size={16} tone={tab === "login" ? "emerald" : "neutral"} />เข้าใช้</span></button>
-                <button role="tab" id="tab-register" aria-selected={tab === "register"} tabIndex={tab === "register" ? 0 : -1} aria-controls="panel-auth" className="tab" onClick={() => setTab("register")} data-testid="tab-register"><span className="inline-flex items-center gap-2"><BrandIcon name="members" size={16} tone={tab === "register" ? "gold" : "neutral"} />สมัคร</span></button>
+            <div className="jaguar-auth-story__lower">
+              <ol className="jaguar-auth-steps" aria-label="วิธีใช้บัตรสมาชิก">
+                {[["01", "เปิดบัตร"], ["02", "สะสมแต้ม"], ["03", "แลกรางวัล"]].map(([number, label]) => (
+                  <li key={number}>
+                    <span>{number}</span>
+                    <strong>{label}</strong>
+                  </li>
+                ))}
+              </ol>
+              <figure className="jaguar-auth-product">
+                <Image
+                  src="/brand/product-kratom-gold.webp"
+                  alt="เครื่องดื่ม JAGUAR SPK"
+                  width={768}
+                  height={768}
+                  loading="lazy"
+                  sizes="(min-width: 901px) 230px, 1px"
+                />
+                <figcaption>JAGUAR SPK · เครื่องดื่ม</figcaption>
+              </figure>
+            </div>
+          </section>
+
+          <section className="jaguar-auth-access" aria-labelledby="auth-access-title">
+            <div className="jaguar-auth-access__heading">
+              <p className="jaguar-auth-kicker">{tab === "login" ? "MEMBER ACCESS" : "JOIN THE CLUB"}</p>
+              <h2 id="auth-access-title">{tab === "login" ? "เข้าสู่บัตรสมาชิก" : "สมัครสมาชิก"}</h2>
+              <p>{tab === "login" ? "เลือกวิธีเข้าใช้ที่สะดวก" : "กรอกข้อมูลเพื่อเปิดบัตรใหม่"}</p>
+            </div>
+
+            {session.isSuccess && session.data?.authenticated ? (
+              <div className="panel auth-panel jaguar-auth-panel jaguar-auth-session" data-testid="panel-session">
+                <BrandIcon name="members" size={24} tone="emerald" />
+                <h2>เข้าสู่ระบบแล้ว</h2>
+                <BrandButton href="/card" asset="btn-jaguar" label="เปิดบัตรสมาชิก" testId="link-open-card" />
               </div>
-              <div id="panel-auth" role="tabpanel" aria-labelledby={`tab-${tab}`} className="panel auth-panel auth-form-panel p-5 sm:p-7">
-                {tab === "login" ? <LoginForm /> : <RegisterForm />}
-              </div>
-              {session.isError && (session.error as { status?: number })?.status !== 401 && (
-                <p className="mt-4 text-xs text-[var(--muted)]" role="status">เซิร์ฟเวอร์ไม่ตอบสนองชั่วคราว คุณยังลองเข้าสู่ระบบได้</p>
-              )}
-            </>
-          )}
-        </div>
-      </section>
+            ) : (
+              <>
+                <div
+                  role="tablist"
+                  onKeyDown={(event) => {
+                    if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+                    event.preventDefault();
+                    const next = tab === "login" ? "register" : "login";
+                    setTab(next);
+                    document.getElementById(`tab-${next}`)?.focus();
+                  }}
+                  aria-label="เลือกการเข้าใช้"
+                  className="pill-switch jaguar-auth-tabs"
+                >
+                  <button type="button" role="tab" id="tab-login" aria-selected={tab === "login"} tabIndex={tab === "login" ? 0 : -1} aria-controls="panel-auth" className="tab" onClick={() => setTab("login")} data-testid="tab-login">
+                    <span><BrandIcon name="staffAccess" size={16} tone={tab === "login" ? "emerald" : "neutral"} />เข้าใช้</span>
+                  </button>
+                  <button type="button" role="tab" id="tab-register" aria-selected={tab === "register"} tabIndex={tab === "register" ? 0 : -1} aria-controls="panel-auth" className="tab" onClick={() => setTab("register")} data-testid="tab-register">
+                    <span><BrandIcon name="members" size={16} tone={tab === "register" ? "gold" : "neutral"} />สมัคร</span>
+                  </button>
+                </div>
+                <div id="panel-auth" role="tabpanel" aria-labelledby={`tab-${tab}`} className="panel auth-panel auth-form-panel jaguar-auth-panel">
+                  {tab === "login" ? <LoginForm /> : <RegisterForm />}
+                </div>
+                {session.isError && (session.error as { status?: number })?.status !== 401 && (
+                  <p className="jaguar-auth-server-status" role="status">เซิร์ฟเวอร์ไม่ตอบสนองชั่วคราว คุณยังลองเข้าสู่ระบบได้</p>
+                )}
+              </>
+            )}
+
+            <div className="jaguar-auth-assurance">
+              <BrandIcon name="qr" size={16} tone="emerald" />
+              <span>บัตรและ QR ของคุณอยู่ในมือถือ</span>
+            </div>
+          </section>
+        </main>
+
+        <footer className="jaguar-auth-footer">
+          <span>JAGUAR SPK MEMBER</span>
+          <span>สมุทรปราการ</span>
+        </footer>
+      </div>
     </div>
   );
 }
