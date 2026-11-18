@@ -12,6 +12,8 @@ import { BrandButton } from "./brand-button";
 import { RankEmblem } from "./rank-emblem";
 import { LineOaContact } from "./line-oa-contact";
 
+const GOOGLE_MAPS_URL = "https://www.google.com/maps/place/Jaguar+spk+%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A1+%E0%B8%81%E0%B8%B1%E0%B8%8D%E0%B8%8A%E0%B8%B2+%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A1+%E0%B9%83%E0%B8%81%E0%B8%A5%E0%B9%89%E0%B8%89%E0%B8%B1%E0%B8%99/data=!4m2!3m1!1s0x0:0x2dd52ed6c8dbd489?sa=X&ved=1t:2428&hl=th&ictx=111";
+
 export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
   const [tab, setTab] = useState<"login" | "register">(initialTab ?? "login");
   const session = useQuery<{ authenticated: boolean }>({ queryKey: ["/api/loyalty/session"], queryFn: () => api("/api/loyalty/session"), enabled: initialTab !== undefined, retry: false, refetchOnWindowFocus: false });
@@ -51,6 +53,21 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
                 <BrandButton href="/login?mode=register" asset="btn-jaguar" label="เปิดบัตรสมาชิก" testId="link-open-wallet" />
                 <BrandButton href="/login" asset="btn-leaf" label="เข้าใช้งาน" testId="link-member-login" />
               </div>
+              <a
+                href={GOOGLE_MAPS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="เปิด Google Maps เพื่อนำทางไป JAGUAR SPK บุญศิริ ซอย 6 สมุทรปราการ"
+                data-testid="link-home-map"
+                className="landing-map-cta"
+              >
+                <span className="landing-map-cta__mark"><BrandIcon name="location" size={23} tone="emerald" /></span>
+                <span className="landing-map-cta__copy">
+                  <strong>นำทางมาที่ร้าน</strong>
+                  <small>บุญศิริ ซอย 6 · สมุทรปราการ</small>
+                </span>
+                <span className="landing-map-cta__open">เปิด Google Maps <span aria-hidden="true">↗</span></span>
+              </a>
             </div>
           </section>
 
@@ -89,10 +106,11 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
           <footer className="landing-site-footer" aria-label="ติดต่อและลิงก์">
             <LineOaContact placement="landing" />
             <a
-              href="https://www.google.com/maps/place/Jaguar+spk+%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A1+%E0%B8%81%E0%B8%B1%E0%B8%8D%E0%B8%8A%E0%B8%B2+%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A1+%E0%B9%83%E0%B8%81%E0%B8%A5%E0%B9%89%E0%B8%89%E0%B8%B1%E0%B8%99/data=!4m2!3m1!1s0x0:0x2dd52ed6c8dbd489?sa=X&ved=1t:2428&hl=th&ictx=111"
+              href={GOOGLE_MAPS_URL}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="เปิดแผนที่ร้าน JAGUAR SPK ใน Google Maps"
+              data-testid="link-footer-map"
               className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--line)] px-3 py-2 text-left text-xs font-medium text-[var(--gold-2)] no-underline transition-colors hover:border-[var(--gold-2)] hover:bg-white/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--emerald)]"
             >
               <BrandIcon name="location" size={17} tone="emerald" />

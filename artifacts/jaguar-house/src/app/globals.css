@@ -7022,3 +7022,71 @@ kbd {
     transition: none;
   }
 }
+
+.landing-map-cta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(100%, 440px);
+  min-height: 64px;
+  margin: 14px auto 0;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--landing-lime) 58%, transparent);
+  border-radius: 16px;
+  background:
+    linear-gradient(112deg, color-mix(in srgb, var(--landing-lime) 15%, transparent), color-mix(in srgb, var(--landing-royal) 10%, transparent)),
+    rgba(5, 9, 7, .96);
+  box-shadow:
+    0 0 26px color-mix(in srgb, var(--landing-lime) 15%, transparent),
+    inset 0 1px 0 rgba(255,255,255,.09);
+  color: var(--text);
+  text-align: left;
+  text-decoration: none;
+  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+.landing-map-cta:hover {
+  transform: translateY(-2px);
+  border-color: var(--landing-lime);
+  box-shadow:
+    0 0 34px color-mix(in srgb, var(--landing-lime) 24%, transparent),
+    inset 0 1px 0 rgba(255,255,255,.12);
+}
+.landing-map-cta:focus-visible {
+  outline: 2px solid var(--landing-royal);
+  outline-offset: 3px;
+}
+.landing-map-cta__mark {
+  display: grid;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--landing-lime) 36%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--landing-lime) 10%, transparent);
+}
+.landing-map-cta__copy { display: grid; min-width: 0; gap: 3px; }
+.landing-map-cta__copy strong { color: #f5f1df; font-size: 14px; font-weight: 700; }
+.landing-map-cta__copy small { color: #c0c5b8; font-size: 10px; }
+.landing-map-cta__open {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--landing-lime) 28%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--landing-lime) 11%, transparent);
+  color: var(--landing-lime);
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+@media (max-width: 390px) {
+  .landing-map-cta { gap: 8px; padding-inline: 9px; }
+  .landing-map-cta__open { gap: 3px; padding-inline: 7px; font-size: 9px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-map-cta { transition: none; }
+  .landing-map-cta:hover { transform: none; }
+}
