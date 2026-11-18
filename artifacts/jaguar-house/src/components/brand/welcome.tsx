@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import Image from "next/image";
@@ -16,10 +16,17 @@ const GOOGLE_MAPS_URL = "https://www.google.com/maps/place/Jaguar+spk+%E0%B8%81%
 
 export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
   const [tab, setTab] = useState<"login" | "register">(initialTab ?? "login");
+  const [mapPopupOpen, setMapPopupOpen] = useState(false);
+  const mapTriggerRef = useRef<HTMLButtonElement>(null);
+  const closeMapPopup = () => {
+    setMapPopupOpen(false);
+    mapTriggerRef.current?.focus();
+  };
   const session = useQuery<{ authenticated: boolean }>({ queryKey: ["/api/loyalty/session"], queryFn: () => api("/api/loyalty/session"), enabled: initialTab !== undefined, retry: false, refetchOnWindowFocus: false });
 
   if (initialTab === undefined) {
     return (
+      <>
       <main className="jaguar-home jaguar-home--landing customer-art-root min-h-[100dvh]">
         <div className="landing-atmosphere" aria-hidden="true">
           <svg className="landing-atmosphere__botanical landing-atmosphere__botanical--left" viewBox="0 0 180 220" focusable="false">
@@ -53,21 +60,6 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
                 <BrandButton href="/login?mode=register" asset="btn-jaguar" label="เปิดบัตรสมาชิก" testId="link-open-wallet" />
                 <BrandButton href="/login" asset="btn-leaf" label="เข้าใช้งาน" testId="link-member-login" />
               </div>
-              <a
-                href={GOOGLE_MAPS_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="เปิด Google Maps เพื่อนำทางไป JAGUAR SPK บุญศิริ ซอย 6 สมุทรปราการ"
-                data-testid="link-home-map"
-                className="landing-map-cta"
-              >
-                <span className="landing-map-cta__mark"><BrandIcon name="location" size={23} tone="emerald" /></span>
-                <span className="landing-map-cta__copy">
-                  <strong>นำทางมาที่ร้าน</strong>
-                  <small>บุญศิริ ซอย 6 · สมุทรปราการ</small>
-                </span>
-                <span className="landing-map-cta__open">เปิด Google Maps <span aria-hidden="true">↗</span></span>
-              </a>
             </div>
           </section>
 
@@ -125,6 +117,52 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
           </footer>
         </div>
       </main>
+        <div className={`landing-map-float${mapPopupOpen ? " landing-map-float--open" : ""}`}>
+          <section
+            id="landing-map-popup"
+            className="landing-map-popup"
+            aria-label="ตำแหน่งร้าน JAGUAR SPK"
+            aria-hidden={!mapPopupOpen}
+            onKeyDown={(event) => {
+              if (event.key === "Escape") closeMapPopup();
+            }}
+          >
+            <button
+              type="button"
+              className="landing-map-popup__close"
+              aria-label="ปิดรายละเอียดแผนที่"
+              tabIndex={mapPopupOpen ? 0 : -1}
+              onClick={closeMapPopup}
+            >
+              <span aria-hidden="true">×</span>
+            </button>
+            <div className="landing-map-popup__brand">
+              <span className="landing-map-popup__mark"><BrandIcon name="location" size={20} tone="emerald" /></span>
+              <span>
+                <strong>JAGUAR SPK</strong>
+                <small>ร้านกระท่อม · กัญชา · น้ำท่อม</small>
+              </span>
+            </div>
+            <p>บุญศิริ ซอย 6 · สมุทรปราการ</p>
+            <a href={GOOGLE_MAPS_URL} target="_blank" rel="noopener noreferrer" tabIndex={mapPopupOpen ? 0 : -1} data-testid="link-home-map">
+              เปิด Google Maps <span aria-hidden="true">↗</span>
+            </a>
+          </section>
+          <button
+            type="button"
+            ref={mapTriggerRef}
+            className="landing-map-float__trigger"
+            aria-expanded={mapPopupOpen}
+            aria-controls="landing-map-popup"
+            aria-label={mapPopupOpen ? "ปิดแผนที่ร้าน" : "เปิดแผนที่ร้าน"}
+            data-testid="button-map-popup"
+            onClick={() => setMapPopupOpen((open) => !open)}
+          >
+            <BrandIcon name="location" size={20} tone="emerald" />
+            <span>แผนที่ร้าน</span>
+          </button>
+        </div>
+      </>
     );
   }
 

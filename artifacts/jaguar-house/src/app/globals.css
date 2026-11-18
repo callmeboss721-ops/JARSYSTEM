@@ -7023,70 +7023,126 @@ kbd {
   }
 }
 
-.landing-map-cta {
+.landing-map-float {
+  --landing-lime: var(--lime);
+  --landing-royal: var(--gold-2);
+  --landing-frame: var(--line);
+  position: fixed;
+  z-index: 120;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: 18px;
+  bottom: calc(18px + env(safe-area-inset-bottom, 0px));
   display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  pointer-events: none;
+}
+.landing-map-float__trigger,
+.landing-map-popup { pointer-events: auto; }
+.landing-map-float__trigger {
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
-  width: min(100%, 440px);
-  min-height: 64px;
-  margin: 14px auto 0;
-  padding: 10px 12px;
-  border: 1px solid color-mix(in srgb, var(--landing-lime) 58%, transparent);
-  border-radius: 16px;
-  background:
-    linear-gradient(112deg, color-mix(in srgb, var(--landing-lime) 15%, transparent), color-mix(in srgb, var(--landing-royal) 10%, transparent)),
-    rgba(5, 9, 7, .96);
-  box-shadow:
-    0 0 26px color-mix(in srgb, var(--landing-lime) 15%, transparent),
-    inset 0 1px 0 rgba(255,255,255,.09);
-  color: var(--text);
-  text-align: left;
-  text-decoration: none;
-  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+  justify-content: center;
+  gap: 8px;
+  min-height: 50px;
+  padding: 0 16px;
+  border: 1px solid color-mix(in srgb, var(--landing-lime) 72%, transparent);
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--landing-lime), color-mix(in srgb, var(--landing-lime) 72%, var(--landing-royal)));
+  box-shadow: 0 8px 30px color-mix(in srgb, var(--landing-lime) 26%, transparent), inset 0 1px rgba(255,255,255,.45);
+  color: #10200f;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease;
 }
-.landing-map-cta:hover {
+.landing-map-float__trigger .brand-icon { color: #163c1f; }
+.landing-map-float__trigger:hover {
   transform: translateY(-2px);
-  border-color: var(--landing-lime);
-  box-shadow:
-    0 0 34px color-mix(in srgb, var(--landing-lime) 24%, transparent),
-    inset 0 1px 0 rgba(255,255,255,.12);
+  box-shadow: 0 12px 34px color-mix(in srgb, var(--landing-lime) 36%, transparent), inset 0 1px rgba(255,255,255,.55);
 }
-.landing-map-cta:focus-visible {
+.landing-map-float__trigger:focus-visible,
+.landing-map-popup button:focus-visible,
+.landing-map-popup a:focus-visible {
   outline: 2px solid var(--landing-royal);
   outline-offset: 3px;
 }
-.landing-map-cta__mark {
+.landing-map-popup {
+  position: relative;
+  width: min(320px, calc(100vw - 32px));
+  padding: 18px;
+  border: 1px solid color-mix(in srgb, var(--landing-lime) 42%, transparent);
+  border-radius: 18px;
+  background:
+    radial-gradient(ellipse at 0 0, color-mix(in srgb, var(--landing-lime) 13%, transparent), transparent 62%),
+    rgba(7, 12, 9, .97);
+  box-shadow: 0 18px 48px rgba(0,0,0,.55), 0 0 30px color-mix(in srgb, var(--landing-lime) 12%, transparent), inset 0 1px rgba(255,255,255,.08);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px) scale(.98);
+  transform-origin: bottom right;
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease, visibility .18s ease;
+}
+.landing-map-float--open .landing-map-popup {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.landing-map-popup__close {
+  position: absolute;
+  top: 8px;
+  right: 9px;
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 1px solid var(--landing-frame);
+  border-radius: 50%;
+  background: rgba(255,255,255,.04);
+  color: #e9e9dd;
+  font-size: 21px;
+  line-height: 1;
+  cursor: pointer;
+}
+.landing-map-popup__brand { display: flex; align-items: center; gap: 11px; padding-right: 28px; }
+.landing-map-popup__mark {
   display: grid;
   flex: 0 0 42px;
   width: 42px;
   height: 42px;
   place-items: center;
-  border: 1px solid color-mix(in srgb, var(--landing-lime) 36%, transparent);
-  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--landing-lime) 35%, transparent);
+  border-radius: 13px;
   background: color-mix(in srgb, var(--landing-lime) 10%, transparent);
 }
-.landing-map-cta__copy { display: grid; min-width: 0; gap: 3px; }
-.landing-map-cta__copy strong { color: #f5f1df; font-size: 14px; font-weight: 700; }
-.landing-map-cta__copy small { color: #c0c5b8; font-size: 10px; }
-.landing-map-cta__open {
-  display: inline-flex;
+.landing-map-popup__brand strong,
+.landing-map-popup__brand small { display: block; }
+.landing-map-popup__brand strong { color: #f5f1df; font: 700 13px var(--font-display); letter-spacing: .08em; }
+.landing-map-popup__brand small { margin-top: 3px; color: #b8c1b0; font-size: 10px; }
+.landing-map-popup p { margin: 14px 0; color: #d5d7ca; font-size: 12px; }
+.landing-map-popup > a {
+  display: flex;
   align-items: center;
-  gap: 5px;
-  margin-left: auto;
-  padding: 8px 10px;
-  border: 1px solid color-mix(in srgb, var(--landing-lime) 28%, transparent);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--landing-lime) 11%, transparent);
-  color: var(--landing-lime);
-  font-size: 10px;
-  font-weight: 700;
-  white-space: nowrap;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
+  border: 1px solid color-mix(in srgb, var(--landing-lime) 70%, transparent);
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--landing-lime), color-mix(in srgb, var(--landing-lime) 72%, var(--landing-royal)));
+  color: #10200f;
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
 }
+.landing-map-popup > a:hover { filter: brightness(1.06); }
 @media (max-width: 390px) {
-  .landing-map-cta { gap: 8px; padding-inline: 9px; }
-  .landing-map-cta__open { gap: 3px; padding-inline: 7px; font-size: 9px; }
+  .landing-map-float { right: 12px; bottom: 14px; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .landing-map-cta { transition: none; }
-  .landing-map-cta:hover { transform: none; }
+  .landing-map-float__trigger,
+  .landing-map-popup { transition: none; }
+  .landing-map-float__trigger:hover { transform: none; }
 }
