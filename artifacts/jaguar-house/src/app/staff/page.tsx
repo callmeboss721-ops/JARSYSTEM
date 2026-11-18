@@ -2,12 +2,15 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
+import { Volume2, VolumeX } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { JaguarMark } from "@/components/brand/jaguar-mark";
 import { BrandIcon, type BrandIconName } from "@/components/brand/brand-icon";
 import { EmptyState, ErrorState, LoadingSpinner, LoadingState } from "@/components/brand/ui";
+import { Skeleton } from "@workspace/jaguar-spk-design-system/components/ui/skeleton";
 import { PinPad } from "@/components/brand/pin-pad";
 import { StaffBanking } from "@/components/brand/banking";
+import { playStaffSuccessSound, primeStaffSuccessSound, readStaffSoundPreference, saveStaffSoundPreference } from "@/components/brand/staff-feedback";
 import { STAMPS } from "@/components/brand/loyalty-card";
 import { STAFF, api, bundlePrice, cleanCode, clearScope, codePattern, errorText, formulaLabels, isBottleCount, json, statusOf, type Formula, type MemberCardData, type RedemptionData } from "@/components/brand/loyalty-api";
 import { getGetCannabisMemberCardQueryKey, getGetStaffCannabisCardQueryKey, getGetStaffSecurityQueryKey, useGetStaffSecurity, useGetStaffCannabisCard, useAddCannabisStamps, useRedeemCannabisAtCounter } from "@workspace/api-client-react";
@@ -30,7 +33,9 @@ const formulaShort: Record<Formula, string> = { red: "แดง · Original", si
 export default function StaffPage() {
   const qc = useQueryClient();
   const [auth, setAuth] = useState<boolean | null>(null);
+  const [soundEnabled, setSoundEnabled] = useState(false);
   const [tab, setTab] = useState<Tab>("counter");
+  const [counterActionComplete, setCounterActionComplete] = useState(false);
   const [pin, setPin] = useState("");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
@@ -58,6 +63,18 @@ export default function StaffPage() {
   const controls = useRef<{ stop: () => void } | null>(null);
   const cannabisStampRequest = useRef<{ signature: string; id: string } | null>(null);
   const scanResult = useRef<(text: string) => void>(() => undefined);
+  const soundEnabledRef = useRef(false);
+
+  const announceSuccess = (message: string) => {
+    setMsg(message);
+    if (soundEnabledRef.current) playStaffSuccessSound();
+  };
+  const toggleStaffSound = () => {
+    const enabled = !soundEnabledRef.current;
+    soundEnabledRef.current = enabled;
+    setSoundEnabled(enabled);
+    saveStaffSoundPreference(enabled);
+  };
 
   const staffSecurityKey = getGetStaffSecurityQueryKey();
   const security = useGetStaffSecurity({ query: { queryKey: staffSecurityKey, enabled: auth === true, retry: false } });
@@ -92,6 +109,16 @@ export default function StaffPage() {
   const correctSale = useCorrectStaffSale();
   const correctCannabis = useCorrectStaffCannabisTransaction();
   const correctRedemption = useCorrectStaffRedemption();
+  const hasCounterMember = counterMode === "kratom" ? Boolean(member) : Boolean(cannabisCard);
+  const confirmingRedemption = Boolean(redeemId || cannabisRedeemId);
+  const workflowStep = !hasCounterMember ? 0 : counterActionComplete ? 3 : confirmingRedemption ? 2 : 1;
+
+  useEffect(() => {
+    const enabled = readStaffSoundPreference();
+    soundEnabledRef.current = enabled;
+    setSoundEnabled(enabled);
+    if (enabled) primeStaffSuccessSound();
+  }, []);
 
   useEffect(() => {
     void api(`${STAFF}/security`).then(() => setAuth(true)).catch((e) => {
@@ -108,6 +135,7 @@ export default function StaffPage() {
   const login = async (e: FormEvent) => {
     e.preventDefault();
     if (!/^\d{4,12}$/.test(pin)) { setErr("PIN พนักงานเป็นตัวเลข 4–12 หลัก"); return; }
+    if (soundEnabledRef.current) primeStaffSuccessSound();
     setBusy(true); setErr("");
     try { await api(`${STAFF}/login`, json("POST", { pin })); setPin(""); setAuth(true); }
     catch (e) { setErr(errorText(e)); } finally { setBusy(false); }
@@ -121,6 +149,7 @@ export default function StaffPage() {
     } catch (e) { setErr(errorText(e)); }
   };
   const find = async (value = lookup) => {
+    setCounterActionComplete(false);
     setErr(""); setMsg(""); setMember(null); setRedeemId(null);
     try {
       const endpoint = value.startsWith("JAGUAR1:") ? `${STAFF}/member?qr_token=${encodeURIComponent(value)}` : `${STAFF}/member?code=${encodeURIComponent(cleanCode(value))}`;
@@ -144,6 +173,7 @@ export default function StaffPage() {
   }, [counterMode, find]);
   const lookupCannabis = (e: FormEvent) => {
     e.preventDefault();
+    setCounterActionComplete(false);
     setErr(""); setMsg(""); setCannabisRedeemId(null); setCannabisLookup(cannabisSearch.trim());
   };
   const recordCannabis = async (e: FormEvent) => {
@@ -156,7 +186,7 @@ export default function StaffPage() {
     if (!/^\d+$/.test(grams.trim()) || !Number.isSafeInteger(Number(grams)) || Number(grams) < 1 || Number(grams) > 999) {
       setGramsError("กรอกจำนวนกรัมเป็นจำนวนเต็ม 1–999"); return;
     }
-    setGramsError(""); setErr(""); setMsg("");
+    setGramsError(""); setErr(""); setMsg(""); setCounterActionComplete(false);
     const signature = JSON.stringify([cannabisCard.member_code, Number(grams)]);
     const request = cannabisStampRequest.current?.signature === signature
       ? cannabisStampRequest.current
@@ -165,8 +195,9 @@ export default function StaffPage() {
     try {
       await addCannabisStamps.mutateAsync({ data: { member_code: cannabisCard.member_code, grams: Number(grams), request_id: request.id } });
       cannabisStampRequest.current = null;
+      setCounterActionComplete(true);
       setGrams("");
-      setMsg(`บันทึกซื้อ ${Number(grams)} กรัมแล้ว · ยอดแต้มและเศษสะสมคำนวณโดยระบบ`);
+      announceSuccess(`บันทึกซื้อ ${Number(grams)} กรัมแล้ว · ยอดแต้มและเศษสะสมคำนวณโดยระบบ`);
       await Promise.all([
         qc.invalidateQueries({ queryKey: getGetCannabisMemberCardQueryKey() }),
         qc.invalidateQueries({ queryKey: getGetStaffCannabisCardQueryKey(cannabisParams) }),
@@ -175,11 +206,12 @@ export default function StaffPage() {
   };
   const confirmCannabisRedeem = async () => {
     if (!cannabisCard || !cannabisRedeemId || cannabisCard.balance < 10) return;
-    setErr(""); setMsg("");
+    setErr(""); setMsg(""); setCounterActionComplete(false);
     try {
       await redeemCannabis.mutateAsync({ data: { member_code: cannabisCard.member_code, request_id: cannabisRedeemId } });
       setCannabisRedeemId(null);
-      setMsg("แลกฟรี 1 กรัมเรียบร้อย · หัก 10 แต้มแล้ว");
+      setCounterActionComplete(true);
+      announceSuccess("แลกฟรี 1 กรัมเรียบร้อย · หัก 10 แต้มแล้ว");
       await Promise.all([
         qc.invalidateQueries({ queryKey: getGetCannabisMemberCardQueryKey() }),
         qc.invalidateQueries({ queryKey: getGetStaffCannabisCardQueryKey(cannabisParams) }),
@@ -239,7 +271,7 @@ export default function StaffPage() {
     e.preventDefault();
     if (!member) return;
     if (!isBottleCount(bottleCount)) { setBottleCountErr("กรอกจำนวนขวดเป็นจำนวนเต็ม 1–999"); return; }
-    setBottleCountErr(""); setBusy(true); setErr("");
+    setBottleCountErr(""); setBusy(true); setErr(""); setCounterActionComplete(false);
     const bottles = Number(bottleCount);
     const price = bundlePrice(bottles);
     const signature = JSON.stringify([member.member_code, bottles, formula]);
@@ -248,20 +280,22 @@ export default function StaffPage() {
     try {
       const updated = await api<MemberCardData>(`${STAFF}/stamp`, json("POST", { member_code: member.member_code, bottle_count: bottles, formula, request_id: request.id }));
       saleRequest.current = null;
+      setCounterActionComplete(true);
       setMember(updated);
       setBottleCount("");
-      setMsg(`บันทึก ${bottles} ขวด · ฿${price.toLocaleString("th-TH")} · ยอดแต้มคำนวณและปรับโดยระบบ`);
+      announceSuccess(`บันทึก ${bottles} ขวด · ฿${price.toLocaleString("th-TH")} · ยอดแต้มคำนวณและปรับโดยระบบ`);
       void qc.invalidateQueries({ queryKey: [`${STAFF}/members`] });
     } catch (e) { setErr(errorText(e)); } finally { setBusy(false); }
   };
   const redeem = async () => {
     if (!member || !redeemId) return;
-    setBusy(true); setErr("");
+    setBusy(true); setErr(""); setCounterActionComplete(false);
     try {
       const res = await api<Partial<MemberCardData> | null>(`${STAFF}/redeem`, json("POST", { member_code: member.member_code, request_id: redeemId }));
       if (res && typeof res.balance === "number" && res.member_code) setMember(res as MemberCardData);
       else setMember(await api<MemberCardData>(`${STAFF}/member?code=${encodeURIComponent(member.member_code)}`));
-      setRedeemId(null); setMsg("แลกรับฟรี 1 ขวดเรียบร้อย หัก 10 แต้มแล้ว");
+      setCounterActionComplete(true);
+      setRedeemId(null); announceSuccess("แลกรับฟรี 1 ขวดเรียบร้อย หัก 10 แต้มแล้ว");
       void qc.invalidateQueries({ queryKey: [`${STAFF}/members`] });
     } catch (e) { setErr(`${errorText(e)} · กดยืนยันอีกครั้งได้อย่างปลอดภัย ระบบจะไม่หักซ้ำ`); } finally { setBusy(false); }
   };
@@ -272,15 +306,16 @@ export default function StaffPage() {
       setErr("ตรวจจำนวนขวดและระบุเหตุผลการแก้ไขอย่างน้อย 3 ตัวอักษร");
       return;
     }
-    setBusy(true); setErr(""); setMsg("");
+    setBusy(true); setErr(""); setMsg(""); setCounterActionComplete(false);
     try {
       const updated = await correctSale.mutateAsync({
         id: editingSale.id,
         data: { bottle_count: Number(editingSale.bottle_count), formula: editingSale.formula, reason: editingSale.reason.trim() },
       });
+      setCounterActionComplete(true);
       setMember(updated.member as MemberCardData);
       setEditingSale(null);
-      setMsg("แก้ไขรายการซื้อแล้ว · ระบบคำนวณแต้มและเศษสะสมใหม่");
+      announceSuccess("แก้ไขรายการซื้อแล้ว · ระบบคำนวณแต้มและเศษสะสมใหม่");
       await Promise.all([
         qc.invalidateQueries({ queryKey: getListStaffSalesQueryKey(salesParams) }),
         qc.invalidateQueries({ queryKey: [`${STAFF}/members`] }),
@@ -294,14 +329,15 @@ export default function StaffPage() {
       setErr("ตรวจจำนวนกรัมและระบุเหตุผลการแก้ไขอย่างน้อย 3 ตัวอักษร");
       return;
     }
-    setErr(""); setMsg("");
+    setErr(""); setMsg(""); setCounterActionComplete(false);
     try {
       await correctCannabis.mutateAsync({
         id: editingCannabis.id,
         data: { grams: Number(editingCannabis.grams), reason: editingCannabis.reason.trim() },
       });
+      setCounterActionComplete(true);
       setEditingCannabis(null);
-      setMsg("แก้ไขรายการซื้อกัญชาแล้ว · ระบบคำนวณแต้มและเศษสะสมใหม่");
+      announceSuccess("แก้ไขรายการซื้อกัญชาแล้ว · ระบบคำนวณแต้มและเศษสะสมใหม่");
       await Promise.all([
         qc.invalidateQueries({ queryKey: getGetStaffCannabisCardQueryKey(cannabisParams) }),
         qc.invalidateQueries({ queryKey: getGetCannabisMemberCardQueryKey() }),
@@ -314,14 +350,15 @@ export default function StaffPage() {
       setErr("เลือกรางวัลและระบุเหตุผลการแก้ไขอย่างน้อย 3 ตัวอักษร");
       return;
     }
-    setErr(""); setMsg("");
+    setErr(""); setMsg(""); setCounterActionComplete(false);
     try {
       await correctRedemption.mutateAsync({
         id: editingRedemption.id,
         data: { reward_id: editingRedemption.reward_id, reason: editingRedemption.reason.trim() },
       });
+      setCounterActionComplete(true);
       setEditingRedemption(null);
-      setMsg("แก้ไขรายการแลกรางวัลแล้ว · ปรับแต้มให้ตรงกับรางวัลที่เลือก");
+      announceSuccess("แก้ไขรายการแลกรางวัลแล้ว · ปรับแต้มให้ตรงกับรางวัลที่เลือก");
       await Promise.all([
         qc.invalidateQueries({ queryKey: getListRecentStaffRedemptionsQueryKey() }),
         qc.invalidateQueries({ queryKey: [`${STAFF}/redemptions`] }),
@@ -335,7 +372,7 @@ export default function StaffPage() {
     setBusy(true); setErr("");
     try {
       const added = await api<MemberCardData>(`${STAFF}/members`, json("POST", { name, member_code: code, phone, nickname: nickname.trim() }));
-      setMsg(`เปิดบัญชี ${added.member_code} แล้ว`); setName(""); setCode(""); setPhone(""); setNickname("");
+      announceSuccess(`เปิดบัญชี ${added.member_code} แล้ว`); setName(""); setCode(""); setPhone(""); setNickname("");
       void qc.invalidateQueries({ queryKey: [`${STAFF}/members`] });
     } catch (e) { setErr(errorText(e)); } finally { setBusy(false); }
   };
@@ -346,17 +383,29 @@ export default function StaffPage() {
     try {
       await api(`${STAFF}/pin`, json("POST", { current_pin: oldPin, new_pin: newPin }));
       setOldPin(""); setNewPin(""); signOutLocal();
-      setMsg("เปลี่ยน PIN เรียบร้อย กรุณาเข้าสู่ระบบด้วย PIN ใหม่");
+      announceSuccess("เปลี่ยน PIN เรียบร้อย กรุณาเข้าสู่ระบบด้วย PIN ใหม่");
     } catch (e) { setErr(errorText(e)); } finally { setBusy(false); }
   };
 
-  if (auth === null) return <main className="min-h-[100dvh] p-6"><div className="max-w-md mx-auto"><LoadingState label="กำลังตรวจสอบสิทธิ์พนักงาน" /></div></main>;
+  if (auth === null) return <StaffAuthSkeleton />;
 
   return <div className="staff-workspace min-h-[100dvh]">
     <header className="staff-topline sticky top-0 z-40 border-b border-[var(--line)]">
       <div className="mx-auto max-w-6xl px-4 h-16 flex justify-between items-center gap-2">
         <Link href="/" className="flex items-center gap-2 no-underline min-h-11"><JaguarMark size={34} /><span className="font-display text-[var(--gold-2)] tracking-wider">JAGUAR <small className="text-[var(--emerald-2)]">STAFF</small></span></Link>
-        {auth && <button className="btn btn-ghost !min-h-11 !px-4" onClick={logout}>ออกจากระบบ</button>}
+        {auth && <div className="staff-topline__actions">
+          <button
+            type="button"
+            className={`staff-sound-toggle ${soundEnabled ? "is-on" : ""}`}
+            aria-pressed={soundEnabled}
+            aria-label={soundEnabled ? "ปิดเสียงตอบรับรายการสำเร็จ" : "เปิดเสียงตอบรับรายการสำเร็จ"}
+            onClick={toggleStaffSound}
+          >
+            {soundEnabled ? <Volume2 size={16} aria-hidden="true" /> : <VolumeX size={16} aria-hidden="true" />}
+            <span>{soundEnabled ? "เสียงเปิด" : "เสียงปิด"}</span>
+          </button>
+          <button className="btn btn-ghost !min-h-11 !px-4" onClick={logout}>ออกจากระบบ</button>
+        </div>}
       </div>
     </header>
     <main className="mx-auto max-w-6xl px-4 sm:px-6 py-7">
@@ -376,15 +425,16 @@ export default function StaffPage() {
         {msg && <p role="status" className="rounded-xl border border-[rgba(47,217,138,.35)] bg-[rgba(47,217,138,.08)] p-3 text-sm text-[var(--emerald-2)]">{msg}</p>}
         {err && <p role="alert" className="field-error">{err}</p>}
         <nav className="pill-switch grid grid-cols-2 min-[480px]:grid-cols-3 lg:grid-cols-5 p-1 gap-1 !rounded-[22px]" aria-label="พื้นที่พนักงาน">
-          {TABS.map(([id, label, icon]) => <button key={id} type="button" className="tab !px-2 !rounded-[18px] flex items-center justify-center gap-2" aria-pressed={tab === id} onClick={() => { setTab(id); setScanning(false); setErr(""); }}><BrandIcon name={icon} size={18} tone={tab === id ? "gold" : "neutral"} />{label}</button>)}
+          {TABS.map(([id, label, icon]) => <button key={id} type="button" className="tab !px-2 !rounded-[18px] flex items-center justify-center gap-2" aria-pressed={tab === id} onClick={() => { setTab(id); setScanning(false); setErr(""); if (id !== "counter") setCounterActionComplete(false); }}><BrandIcon name={icon} size={18} tone={tab === id ? "gold" : "neutral"} />{label}</button>)}
         </nav>
 
         {tab === "counter" && <div className="space-y-4">
           <div className="pill-switch grid grid-cols-2 p-1 gap-1 max-w-md" aria-label="เลือกประเภทบัตร">
-            <button type="button" className="tab" aria-pressed={counterMode === "kratom"} onClick={() => { setCounterMode("kratom"); setErr(""); setMsg(""); }}>กระท่อม · ขวด</button>
-            <button type="button" className="tab" aria-pressed={counterMode === "cannabis"} data-testid="staff-mode-cannabis" onClick={() => { setCounterMode("cannabis"); setErr(""); setMsg(""); setCannabisRedeemId(null); }}>กัญชา · กรัม</button>
+            <button type="button" className="tab" aria-pressed={counterMode === "kratom"} onClick={() => { setCounterMode("kratom"); setCounterActionComplete(false); setErr(""); setMsg(""); }}>กระท่อม · ขวด</button>
+            <button type="button" className="tab" aria-pressed={counterMode === "cannabis"} data-testid="staff-mode-cannabis" onClick={() => { setCounterMode("cannabis"); setCounterActionComplete(false); setErr(""); setMsg(""); setCannabisRedeemId(null); }}>กัญชา · กรัม</button>
           </div>
           {counterMode === "cannabis" && security.data?.cannabis_points_enabled !== true && <p className="counter-feature-disabled p-3 text-sm" role="status" data-testid="staff-cannabis-disabled">ปิดการสะสมแต้มกัญชาอยู่ · ยังแลกรางวัลได้ แต่บันทึกยอดซื้อถูกปิดไว้จนกว่าเจ้าของร้านจะเปิดใช้</p>}
+          <StaffWorkflow step={workflowStep} />
           {counterMode === "kratom" && <div className="grid gap-5 lg:grid-cols-2 items-start">
           <section className="panel p-5 sm:p-6">
             <p className="eyebrow">Sale record</p><h2 className="font-display text-xl font-semibold mb-4">บันทึกยอดขาย / แลกรางวัล</h2>
@@ -402,7 +452,7 @@ export default function StaffPage() {
                 <p className={`font-display text-3xl ${member.balance >= STAMPS ? "text-[var(--gold-2)]" : "text-[var(--emerald-2)]"}`}>{member.balance} แต้ม</p>
               </div>
               {member.balance >= STAMPS && (redeemId === null
-                ? <button type="button" className="btn btn-gold w-full mt-3" disabled={busy} onClick={() => { setRedeemId(crypto.randomUUID()); setMsg(""); }}>แลกฟรี 1 ขวด (ใช้ 10 แต้ม)</button>
+                ? <button type="button" className="btn btn-gold w-full mt-3" disabled={busy} onClick={() => { setRedeemId(crypto.randomUUID()); setCounterActionComplete(false); setMsg(""); }}>แลกฟรี 1 ขวด (ใช้ 10 แต้ม)</button>
                 : <div role="alertdialog" aria-labelledby="redeem-q" className="gold-alert mt-3 space-y-3">
                   <p id="redeem-q">ยืนยันส่งมอบฟรี 1 ขวดให้ {member.member_code}? ระบบจะหัก 10 แต้ม</p>
                   <div className="grid grid-cols-2 gap-2"><button type="button" className="btn btn-ghost" disabled={busy} onClick={() => setRedeemId(null)}>ยกเลิก</button><button type="button" className="btn btn-gold" disabled={busy} onClick={() => void redeem()} autoFocus>{busy ? "กำลังบันทึก…" : "ยืนยันแลก"}</button></div>
@@ -429,7 +479,7 @@ export default function StaffPage() {
               </form>
               <section className="staff-correction-list mt-5" aria-label="รายการซื้อวันนี้">
                 <div className="flex items-center justify-between gap-2"><h3>รายการซื้อวันนี้</h3><span>{sales.data?.length ?? 0}</span></div>
-                {sales.isLoading ? <div className="mt-3"><LoadingState label="กำลังโหลดรายการซื้อ" compact /></div>
+              {sales.isLoading ? <div className="mt-3"><StaffRowsSkeleton label="กำลังโหลดรายการซื้อ" rows={2} /></div>
                   : sales.isError ? <div className="mt-3"><ErrorState message={errorText(sales.error)} onRetry={() => void sales.refetch()} retrying={sales.isFetching} /></div>
                     : !sales.data?.length ? <div className="mt-3"><EmptyState title="วันนี้ยังไม่มีรายการซื้อ" /></div>
                       : <ul className="staff-correction-list__items">{sales.data.map((sale) => (
@@ -456,11 +506,11 @@ export default function StaffPage() {
           </section>
           <section className="panel p-5 sm:p-6">
             <h2 className="font-display text-xl font-semibold">รายการแลกรอส่งมอบ</h2>
-            {queue.isLoading ? <div className="mt-4"><LoadingState label="กำลังโหลดรายการแลกรางวัล" compact /></div> : queue.isError ? <ErrorState message={errorText(queue.error)} onRetry={() => void queue.refetch()} retrying={queue.isFetching} /> : !queue.data?.length ? <div className="mt-4"><EmptyState title="ไม่มีรายการรอยืนยัน" /></div>
-            : <ul className="list-none p-0 mt-4 space-y-3">{queue.data.map((r) => <li key={r.id} className="rounded-xl border border-[var(--line-2)] p-4"><p className="font-semibold">{r.reward_name}</p><p className="text-sm text-[var(--muted)]">{r.member_nickname || r.member_code} · {r.phone_last4 ? `ลงท้าย ${r.phone_last4} · ` : ""}{r.points_spent} แต้ม</p><button className="btn btn-gold w-full mt-3" disabled={busy} onClick={async () => { setBusy(true); try { await api(`${STAFF}/redemptions/${encodeURIComponent(r.id)}/confirm`, json("POST", {})); setMsg("ยืนยันการส่งมอบรางวัลแล้ว"); await queue.refetch(); } catch (e) { setErr(errorText(e)); } finally { setBusy(false); } }}>ยืนยันส่งมอบ</button></li>)}</ul>}
+            {queue.isLoading ? <div className="mt-4"><StaffRowsSkeleton label="กำลังโหลดรายการแลกรางวัล" rows={2} /></div> : queue.isError ? <ErrorState message={errorText(queue.error)} onRetry={() => void queue.refetch()} retrying={queue.isFetching} /> : !queue.data?.length ? <div className="mt-4"><EmptyState title="ไม่มีรายการรอยืนยัน" /></div>
+            : <ul className="list-none p-0 mt-4 space-y-3">{queue.data.map((r) => <li key={r.id} className="rounded-xl border border-[var(--line-2)] p-4"><p className="font-semibold">{r.reward_name}</p><p className="text-sm text-[var(--muted)]">{r.member_nickname || r.member_code} · {r.phone_last4 ? `ลงท้าย ${r.phone_last4} · ` : ""}{r.points_spent} แต้ม</p><button className="btn btn-gold w-full mt-3" disabled={busy} onClick={async () => { setBusy(true); try { await api(`${STAFF}/redemptions/${encodeURIComponent(r.id)}/confirm`, json("POST", {})); announceSuccess("ยืนยันการส่งมอบรางวัลแล้ว"); await queue.refetch(); } catch (e) { setErr(errorText(e)); } finally { setBusy(false); } }}>ยืนยันส่งมอบ</button></li>)}</ul>}
             <section className="staff-correction-list mt-6" aria-label="รายการแลกรางวัลวันนี้">
               <div className="flex items-center justify-between gap-2"><h3>รายการแลกรางวัลวันนี้</h3><span>{recentRedemptions.data?.length ?? 0}</span></div>
-              {recentRedemptions.isLoading ? <div className="mt-3"><LoadingState label="กำลังโหลดรายการแลกล่าสุด" compact /></div>
+              {recentRedemptions.isLoading ? <div className="mt-3"><StaffRowsSkeleton label="กำลังโหลดรายการแลกล่าสุด" rows={2} /></div>
                 : recentRedemptions.isError ? <div className="mt-3"><ErrorState message={errorText(recentRedemptions.error)} onRetry={() => void recentRedemptions.refetch()} retrying={recentRedemptions.isFetching} /></div>
                   : !recentRedemptions.data?.length ? <div className="mt-3"><EmptyState title="วันนี้ยังไม่มีรายการแลก" /></div>
                     : <ul className="staff-correction-list__items">{recentRedemptions.data.map((redemption) => (
@@ -497,14 +547,14 @@ export default function StaffPage() {
               <button type="button" className="btn btn-ghost w-full mt-2" onClick={startCamera}>{scanning ? "ปิดกล้องสแกน QR" : "เปิดกล้องสแกน QR"}</button>
               {scanning && <><video ref={video} className="w-full rounded-xl aspect-video bg-black mt-3" aria-label="ภาพจากกล้องสำหรับสแกน" /><button type="button" className="btn btn-ghost w-full mt-2" onClick={() => { controls.current?.stop(); setScanning(false); }}>ปิดกล้อง</button></>}
               {scanError && <p role="alert" className="field-error">{scanError}</p>}
-              {cannabisCardQuery.isLoading && cannabisLookup && <div className="mt-4"><LoadingState label="กำลังค้นหาบัตรกัญชา" compact /></div>}
+               {cannabisCardQuery.isLoading && cannabisLookup && <div className="mt-4"><StaffRowsSkeleton label="กำลังค้นหาบัตรกัญชา" rows={2} /></div>}
               {cannabisCardQuery.isError && cannabisLookup && <div className="mt-4"><ErrorState message={errorText(cannabisCardQuery.error)} onRetry={() => void cannabisCardQuery.refetch()} retrying={cannabisCardQuery.isFetching} /></div>}
               {!cannabisLookup && <div className="mt-4"><EmptyState title="ค้นหาบัตรกัญชา" body="กรอกรหัสสมาชิกหรือสแกน QR เพื่อเริ่มรายการ" /></div>}
               {cannabisCard && <div className="cannabis-staff-card mt-5">
                 <div className="flex items-start justify-between gap-3"><div className="min-w-0"><p className="text-sm font-semibold break-words">{cannabisCard.display_name || "สมาชิก"}</p><p className="font-mono text-sm text-[var(--gold-2)]">{cannabisCard.member_code}</p></div><div className="text-right"><strong className="font-display text-3xl text-[var(--emerald-2)]">{cannabisCard.balance}</strong><p className="text-xs text-[var(--muted)]">แต้มแยกจากบัตรกระท่อม</p></div></div>
                 <div className="flex justify-between text-xs mt-4 text-[var(--muted)]"><span>ซื้อสะสม {cannabisCard.lifetime_earned} กรัม</span><span>ใช้แลก {cannabisCard.lifetime_redeemed} แต้ม</span></div>
                 {cannabisCard.balance >= 10 && (cannabisRedeemId === null
-                  ? <button type="button" className="btn btn-gold w-full mt-4" disabled={redeemCannabis.isPending || addCannabisStamps.isPending} onClick={() => { setCannabisRedeemId(crypto.randomUUID()); setErr(""); setMsg(""); }}>แลกฟรี 1 กรัม · ใช้ 10 แต้ม</button>
+                  ? <button type="button" className="btn btn-gold w-full mt-4" disabled={redeemCannabis.isPending || addCannabisStamps.isPending} onClick={() => { setCannabisRedeemId(crypto.randomUUID()); setCounterActionComplete(false); setErr(""); setMsg(""); }}>แลกฟรี 1 กรัม · ใช้ 10 แต้ม</button>
                   : <div role="alertdialog" aria-labelledby="cannabis-redeem-q" className="gold-alert mt-4 space-y-3"><p id="cannabis-redeem-q">ยืนยันส่งมอบฟรี 1 กรัมให้ {cannabisCard.member_code}? ระบบจะหัก 10 แต้ม</p><div className="grid grid-cols-2 gap-2"><button type="button" className="btn btn-ghost" disabled={redeemCannabis.isPending} onClick={() => setCannabisRedeemId(null)}>ยกเลิก</button><button type="button" className="btn btn-gold" disabled={redeemCannabis.isPending} onClick={() => void confirmCannabisRedeem()}>{redeemCannabis.isPending ? "กำลังบันทึก…" : "ยืนยันแลก"}</button></div></div>)}
                 <form onSubmit={recordCannabis} className="space-y-3 mt-4" noValidate>
                    <div className="field"><label htmlFor="cannabis-grams">จำนวนกรัมที่ซื้อ</label><input id="cannabis-grams" className="input" type="text" inputMode="numeric" autoComplete="off" maxLength={3} value={grams} onChange={(e) => { setGrams(e.target.value); setGramsError(e.target.value && (!/^\d+$/.test(e.target.value) || Number(e.target.value) < 1 || Number(e.target.value) > 999) ? "กรอกจำนวนกรัมเป็นจำนวนเต็ม 1–999" : ""); }} aria-invalid={!!gramsError} aria-describedby={gramsError ? "cannabis-grams-error" : "cannabis-grams-rule"} /></div>
@@ -537,7 +587,7 @@ export default function StaffPage() {
             <div className="field flex-1"><label htmlFor="member-search">กรองด้วยชื่อหรือรหัส</label><input id="member-search" className="input" value={search} onChange={(e) => setSearch(e.target.value)} /></div>
             <button className="btn btn-ghost">ค้นหา</button>
           </form>
-          {members.isLoading ? <div className="mt-4"><LoadingState label="กำลังโหลดรายชื่อสมาชิก" compact /></div>
+          {members.isLoading ? <div className="mt-4"><StaffRowsSkeleton label="กำลังโหลดรายชื่อสมาชิก" rows={5} /></div>
           : members.isError ? <ErrorState message={errorText(members.error)} onRetry={() => void members.refetch()} retrying={members.isFetching} />
           : !visibleMembers.length ? <div className="mt-4"><EmptyState title={query ? "ไม่พบสมาชิก" : "ยังไม่มีสมาชิก"} /></div>
           : <ul className="divide-y divide-[var(--line)] list-none p-0 mt-4">{visibleMembers.map((m) => <li className="py-3 flex gap-3 items-center" key={m.id}>
@@ -566,4 +616,60 @@ export default function StaffPage() {
 
 function Field({ id, label, value, set, type = "text", inputMode }: { id: string; label: string; value: string; set: (v: string) => void; type?: "text" | "password"; inputMode?: "numeric" | "tel" }) {
   return <div className="field"><label htmlFor={id}>{label}</label><input id={id} className="input" type={type} inputMode={inputMode} value={value} onChange={(e) => set(e.target.value)} required maxLength={type === "password" ? 12 : 120} autoComplete="off" /></div>;
+}
+
+function StaffWorkflow({ step }: { step: number }) {
+  const steps = ["ค้นหาสมาชิก", "ตรวจยอดและสิทธิ์", "บันทึกหรือแลก"];
+  return <section className="staff-workflow-card" aria-label="ลำดับงานเคาน์เตอร์">
+    <p className="staff-workflow-card__title">ขั้นตอนทำรายการ</p>
+    <ol className="staff-workflow">
+      {steps.map((label, index) => {
+        const complete = step === 3 || index < step;
+        const current = step < 3 && index === step;
+        return <li
+          className={`staff-workflow__step ${complete ? "is-complete" : ""} ${current ? "is-current" : ""}`}
+          key={label}
+          aria-current={current ? "step" : undefined}
+          data-state={complete ? "complete" : current ? "current" : "upcoming"}
+        >
+          <span className="staff-workflow__marker" aria-hidden="true">
+            {complete ? <BrandIcon name="success" size={16} tone="emerald" /> : `0${index + 1}`}
+          </span>
+          <span>{label}</span>
+        </li>;
+      })}
+    </ol>
+  </section>;
+}
+
+function StaffRowsSkeleton({ label, rows = 3 }: { label: string; rows?: number }) {
+  return <div className="staff-skeleton-list" role="status" aria-label={label}>
+    <span className="sr-only">{label}</span>
+    {Array.from({ length: rows }, (_, index) => <div className="staff-skeleton-row" key={index} aria-hidden="true">
+      <div className="staff-skeleton-row__copy">
+        <Skeleton className="h-4 w-2/5" />
+        <Skeleton className="mt-2 h-3 w-3/5" />
+      </div>
+      <Skeleton className="h-9 w-16 rounded-lg" />
+    </div>)}
+  </div>;
+}
+
+function StaffAuthSkeleton() {
+  return <main className="staff-workspace min-h-[100dvh] p-4 sm:p-6">
+    <div className="mx-auto max-w-6xl" role="status" aria-label="กำลังตรวจสอบสิทธิ์พนักงาน" aria-busy="true">
+      <span className="sr-only">กำลังตรวจสอบสิทธิ์พนักงาน</span>
+      <div className="staff-skeleton-header" aria-hidden="true">
+        <Skeleton className="h-9 w-40" />
+        <Skeleton className="h-9 w-24 rounded-lg" />
+      </div>
+      <div className="staff-skeleton-auth">
+        <Skeleton className="h-5 w-32" aria-hidden="true" />
+        <Skeleton className="h-8 w-56" aria-hidden="true" />
+        <Skeleton className="h-12 w-full rounded-xl" aria-hidden="true" />
+        <Skeleton className="h-48 w-full rounded-xl" aria-hidden="true" />
+        <Skeleton className="h-12 w-full rounded-xl" aria-hidden="true" />
+      </div>
+    </div>
+  </main>;
 }

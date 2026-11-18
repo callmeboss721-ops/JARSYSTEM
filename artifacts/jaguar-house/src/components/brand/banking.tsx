@@ -21,6 +21,8 @@ import {
 } from "@workspace/api-client-react";
 import { EmptyState, ErrorState, LoadingState } from "@/components/brand/ui";
 import { errorText } from "@/components/brand/loyalty-api";
+import { playStaffSuccessSound } from "@/components/brand/staff-feedback";
+import { Skeleton } from "@workspace/jaguar-spk-design-system/components/ui/skeleton";
 
 const money = (value: number) => `฿${value.toLocaleString("th-TH", { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
 const dateTime = (value: string) => new Date(value).toLocaleString("th-TH", { dateStyle: "short", timeStyle: "short" });
@@ -52,6 +54,7 @@ function DailyLedger({ today, editable = false }: { today: { business_date: stri
       await correctTransfer.mutateAsync({ id: editing.id, data });
       setEditing(null);
       setEditMessage("ปรับรายการแล้ว · ประวัติการแก้ไขถูกบันทึก");
+      if (editable) playStaffSuccessSound();
       await qc.invalidateQueries({ queryKey: getGetStaffBankingQueryKey() });
     } catch (cause) { setEditError(errorText(cause)); }
   };
@@ -121,11 +124,18 @@ export function StaffBanking() {
       requestRef.current = null;
       setAmount(""); setNote("");
       setMessage(direction === "in" ? "บันทึกรับเงินเรียบร้อย" : "บันทึกเงินออกเรียบร้อย");
+      playStaffSuccessSound();
       await qc.invalidateQueries({ queryKey: getGetStaffBankingQueryKey() });
     } catch (cause) { setError(`${errorText(cause)} · ตรวจสอบยอดก่อนลองบันทึกซ้ำ`); }
   };
 
-  if (query.isLoading) return <section className="panel p-5"><LoadingState label="กำลังโหลดบัญชีและรายการโอน" /></section>;
+  if (query.isLoading) return <section className="panel staff-banking-skeleton p-5" role="status" aria-label="กำลังโหลดบัญชีและรายการโอน">
+    <span className="sr-only">กำลังโหลดบัญชีและรายการโอน</span>
+    <Skeleton className="h-6 w-44" aria-hidden="true" />
+    <Skeleton className="mt-4 h-20 w-full rounded-xl" aria-hidden="true" />
+    <Skeleton className="mt-5 h-12 w-full rounded-xl" aria-hidden="true" />
+    <Skeleton className="mt-3 h-12 w-full rounded-xl" aria-hidden="true" />
+  </section>;
   if (query.isError) return <ErrorState message={errorText(query.error)} onRetry={() => void query.refetch()} retrying={query.isFetching} />;
   const today = query.data?.today;
   if (!today) return <section className="panel p-5"><EmptyState title="ยังไม่มีข้อมูลบัญชี" body="ติดต่อเจ้าของร้านเพื่อตั้งค่าบัญชีรับเงินประจำวัน" /></section>;
