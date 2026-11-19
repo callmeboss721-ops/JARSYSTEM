@@ -77,6 +77,7 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
               <a href="#products">สินค้า</a>
               <a href="#membership">สมาชิก</a>
               <a href="#about">รู้จักร้าน</a>
+              <Link href="/brand">รู้จัก JAGUAR SPK</Link>
               <a href="#contact">ติดต่อ</a>
             </nav>
             <div className="jh-access">
