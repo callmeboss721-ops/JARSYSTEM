@@ -42,3 +42,17 @@ mtime_ms = 1793887798368
 storage_uri = "gcs://replit-rams-assets-pike/rams/assets/repl:88281769-8bb3-4209-b865-ee699aa50e18/55ef1e16-3cad-4aa8-862d-69f283db8bc3/403442a5-ddd3-4a62-bf29-d11f267375c9"
 storage_version_token = "1793887810079426"
 content_type = "text/plain"
+
+[[outputs]]
+id = "qM_Htkdk-NyvvrU6JEk8h"
+uri = "file://docs/agent-guides/jaguar-spk-knowledge-base.md"
+type = "text"
+title = "JAGUAR SPK AI knowledge base"
+description = "Thai Markdown guide for NotebookLM and AI agents, covering the brand, app, operating rules, assets, and a reusable instruction prompt."
+logical_id = "1026980f-10e5-4672-9e3e-b511fc69fb2c"
+content_hash = "sha256:d2c89d5e409ec0ec084c2f3aefa33226bf5097c4f97c659a87e98e6febf121d0"
+size = 34588
+mtime_ms = 1795120386330
+storage_uri = "gcs://replit-rams-assets-pike/rams/assets/repl:d667af9b-bd96-4ef0-bde1-934a6de89f2f/1026980f-10e5-4672-9e3e-b511fc69fb2c/568b8951-512b-4132-8fef-49c72b57fcc5"
+storage_version_token = "1795120471773001"
+content_type = "text/markdown"
