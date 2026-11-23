@@ -523,11 +523,12 @@ export async function ownerReport() {
     ) r,local_day
   ), member_counts as (
     select count(*) filter (where m.status='active' and not m.is_demo)::integer as members,
-      count(*) filter (where m.status='active' and not m.is_demo and
-        (b.balance>0 or b.lifetime_earned>0 or b.lifetime_redeemed>0))::integer as kratom_members,
-      count(*) filter (where m.status='active' and not m.is_demo and
-        (greatest(coalesce(b.cannabis_balance,0),coalesce(c.balance,0))>0 or
-        coalesce(c.lifetime_earned,0)>0 or coalesce(c.lifetime_redeemed,0)>0))::integer as cannabis_members
+      (select count(distinct s.member_id)::integer from jaguar_sales s
+        join jaguar_members buyer on buyer.id=s.member_id
+        where buyer.status='active' and not buyer.is_demo) as kratom_members,
+      (select count(distinct t.member_id)::integer from jaguar_cannabis_transactions t
+        join jaguar_members buyer on buyer.id=t.member_id
+        where buyer.status='active' and not buyer.is_demo and t.grams_purchased>0) as cannabis_members
     from jaguar_members m
     join jaguar_point_balances b on b.member_id=m.id
     left join jaguar_cannabis_balances c on c.member_id=m.id

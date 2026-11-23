@@ -194,7 +194,7 @@ export default function StaffPage() {
     try {
       const results = await api<MemberCardData[]>(`${STAFF}/members?q=${encodeURIComponent(value)}`);
       const matches = results.filter((result) => !result.is_demo);
-      if (!matches.length) { setErr("ไม่พบสมาชิกจากรหัสหรือเบอร์โทร กรุณาตรวจสอบอีกครั้ง"); return; }
+      if (!matches.length) { setErr("ไม่พบสมาชิกจากรหัส เบอร์โทร หรือเลขท้าย 4 หลัก กรุณาตรวจสอบอีกครั้ง"); return; }
       if (matches.length === 1) {
         chooseQuickMember(matches[0]);
       } else {
@@ -589,7 +589,7 @@ export default function StaffPage() {
             <div className="staff-quick-counter__heading"><div><p className="eyebrow">Counter scan</p><h2 className="font-display text-xl font-semibold">สแกนหรือค้นหาสมาชิก</h2></div><span className="staff-quick-counter__hint">รหัส · เบอร์เต็ม · 4 หลักท้าย</span></div>
             <div className="staff-quick-actions">
               <form onSubmit={(event) => void quickFind(event)} className="staff-quick-counter__form">
-                <div className="field"><label htmlFor="counter-quick-search">รหัสสมาชิกหรือเบอร์โทรศัพท์</label><input id="counter-quick-search" className="input" value={quickLookup} onChange={(event) => setQuickLookup(event.target.value)} autoComplete="off" inputMode="search" placeholder="รหัสสมาชิก / เบอร์โทร / 4 หลักท้าย" /></div>
+                <div className="field"><label htmlFor="counter-quick-search">รหัสสมาชิก เบอร์โทร หรือเลขท้าย 4 หลัก</label><input id="counter-quick-search" className="input" value={quickLookup} onChange={(event) => setQuickLookup(event.target.value)} autoComplete="off" inputMode="search" placeholder="รหัสสมาชิก / เบอร์โทร / 4 หลักท้าย" /></div>
                 <button className="btn btn-neon" disabled={!quickLookup.trim() || quickSearchBusy}>{quickSearchBusy ? "กำลังค้นหา…" : "ค้นหา"}</button>
               </form>
               <button type="button" className="staff-scan-button btn btn-neon" onClick={startCamera} aria-pressed={scanning}>
@@ -624,7 +624,7 @@ export default function StaffPage() {
                   <div className="grid grid-cols-2 gap-2"><button type="button" className="btn btn-ghost" disabled={busy} onClick={() => setRedeemId(null)}>ยกเลิก</button><button type="button" className="btn btn-gold" disabled={busy || member.balance < STAMPS} onClick={() => void redeem()} autoFocus>{busy ? "กำลังบันทึก…" : "ยืนยันแลก"}</button></div>
                 </div>}
               <form onSubmit={(event) => void creditPoints(event)} className="staff-points-credit mt-4">
-                <div><p className="font-semibold">เพิ่มแต้มกระท่อม</p><p className="text-xs text-[var(--muted)]">เพิ่มได้ครั้งละ 1–20 แต้ม · บันทึกในบัญชีแต้มสมาชิก</p></div>
+                <div><p className="font-semibold">เพิ่มแต้มโบนัสกระท่อม</p><p className="text-xs text-[var(--muted)]">1–20 แต้ม · แยกจากยอดซื้อและตรวจย้อนหลังได้</p></div>
                 <div><p className="text-xs text-[var(--muted)] mb-2">แตะเพื่อเพิ่มทันที</p><div className="staff-point-presets" aria-label="เพิ่มแต้มด่วน">{[1, 2, 3, 5].map((points) => <button key={points} type="button" className="pt-btn" aria-label={`เพิ่ม ${points} แต้มทันที`} disabled={busy || creditStaffPoints.isPending} onClick={() => void addKratomPoints(points)}>{`+${points}`}</button>)}</div></div>
                 <div className="field"><label htmlFor="quick-points">แต้มกำหนดเอง (1–20)</label><input id="quick-points" className="input" inputMode="numeric" maxLength={2} value={quickPoints} onChange={(event) => { setQuickPoints(event.target.value.replace(/\D/g, "").slice(0, 2)); setQuickPointsError(""); }} /></div>
                 {quickPointsError && <p className="field-error" role="alert">{quickPointsError}</p>}

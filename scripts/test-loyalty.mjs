@@ -151,6 +151,7 @@ try {
   assert.ok(defaultReward, "development environment must contain the 10-point demo reward");
   const ownerLogin = await request("/owner/login", { method: "POST", jar: ownerJar, body: { pin: "8899" } });
   assert.equal(ownerLogin.ok, true);
+  const ownerReportBeforePurchases = await request("/owner/summary", { jar: ownerJar });
   await request("/owner/summary", { jar: staffJar, status: 401 });
   await request("/staff/members", { jar: ownerJar, status: 401 });
   assert.equal((await request("/owner/security", { jar: ownerJar })).cannabis_points_enabled, false);
@@ -178,6 +179,8 @@ try {
   const after110g = await request("/staff/cannabis-card?code=" + memberCode, { jar: staffJar });
   assert.equal(after110g.balance, 1);
   assert.equal(after110g.grams_remainder, 10);
+  const reportAfterCannabisPurchase = await request("/owner/summary", { jar: ownerJar });
+  assert.ok(reportAfterCannabisPurchase.cannabis_members >= ownerReportBeforePurchases.cannabis_members + 1);
   const dualBalance = await request("/card");
   assert.equal(dualBalance.cannabis_balance, 1);
   assert.equal(dualBalance.cannabis_remainder_grams, 10);
@@ -238,6 +241,7 @@ try {
   const members = await request("/owner/members?q=" + memberCode, { jar: ownerJar });
   assert.ok(members.some((member) => member.id === memberId));
   const reportAfterFirstSales = await request("/owner/summary", { jar: ownerJar });
+  assert.ok(reportAfterFirstSales.kratom_members >= ownerReportBeforePurchases.kratom_members + 1);
   assert.ok(reportAfterFirstSales.total_sales >= 1770);
   assert.ok(reportAfterFirstSales.by_formula.some((item) => item.formula === "gold"));
   assert.ok(reportAfterFirstSales.by_formula.some((item) => item.bottles_sold >= 3 && item.points_awarded >= 1));
@@ -306,6 +310,20 @@ try {
   });
   assert.equal(correctedRedemption.points_spent, redemptionForCorrection.points_spent);
   assert.equal(correctedRedemption.corrected, true);
+
+  const bonusRequest = { member_code: memberCode, points: 5, request_id: randomUUID() };
+  updated = await request("/card");
+  const balanceBeforeBonus = updated.balance;
+  const earnedBeforeBonus = updated.lifetime_earned;
+  const [bonusFirst, bonusRetry] = await Promise.all([1, 2].map(() =>
+    request("/staff/points", { method: "POST", jar: staffJar, body: bonusRequest })));
+  assert.equal(bonusFirst.balance, balanceBeforeBonus + 5);
+  assert.equal(bonusRetry.balance, balanceBeforeBonus + 5, "a repeated bonus request must not credit points twice");
+  assert.equal(bonusFirst.lifetime_earned, earnedBeforeBonus + 5);
+  assert.equal(bonusRetry.lifetime_earned, earnedBeforeBonus + 5);
+  assert.ok((await request("/owner/audit-log", { jar: ownerJar })).some((event) =>
+    event.member_code === memberCode && event.event_type === "points" && event.points_delta === 5),
+  "manual bonus credits must appear in the owner audit trail");
 
   await request(`/owner/rewards/${rewardId}`, { method: "PATCH", jar: ownerJar, body: { is_active: false } });
   assert.ok(!(await request("/rewards")).some((reward) => reward.id === rewardId));

@@ -526,14 +526,19 @@ export interface FormulaSales {
 }
 
 export interface OwnerSummary {
+  /** Active non-demo member count across the store */
   members: number;
+  /** Active non-demo members with at least one recorded kratom sale */
   kratom_members: number;
+  /** Active non-demo members with at least one recorded cannabis purchase */
   cannabis_members: number;
+  /** Positive kratom and cannabis points issued today in Bangkok time */
   today_points_issued: number;
   today_sales: number;
   total_sales: number;
   today_visits: number;
   total_visits: number;
+  /** Confirmed 10-point free redemptions today across both categories */
   today_redemptions: number;
   redemptions: number;
   by_formula: FormulaSales[];

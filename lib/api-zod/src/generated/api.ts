@@ -1315,15 +1315,15 @@ export const ChangeOwnerPinsResponse = zod.object({
 
 
 export const GetOwnerSummaryResponse = zod.object({
-  "members": zod.int(),
-  "kratom_members": zod.int(),
-  "cannabis_members": zod.int(),
-  "today_points_issued": zod.int(),
+  "members": zod.int().describe('Active non-demo member count across the store'),
+  "kratom_members": zod.int().describe('Active non-demo members with at least one recorded kratom sale'),
+  "cannabis_members": zod.int().describe('Active non-demo members with at least one recorded cannabis purchase'),
+  "today_points_issued": zod.int().describe('Positive kratom and cannabis points issued today in Bangkok time'),
   "today_sales": zod.number(),
   "total_sales": zod.number(),
   "today_visits": zod.int(),
   "total_visits": zod.int(),
-  "today_redemptions": zod.int(),
+  "today_redemptions": zod.int().describe('Confirmed 10-point free redemptions today across both categories'),
   "redemptions": zod.int(),
   "by_formula": zod.array(zod.object({
   "formula": zod.enum(['red', 'silver', 'gold']),
