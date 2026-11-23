@@ -32,6 +32,7 @@ export * from './formula';
 export * from './formulaSales';
 export * from './getStaffCannabisCardParams';
 export * from './healthStatus';
+export * from './listOwnerMemberHistoryParams';
 export * from './listOwnerMembersParams';
 export * from './listStaffMembersParams';
 export * from './listStaffSalesParams';

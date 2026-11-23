@@ -25,10 +25,11 @@ import {
   ListOwnerProductsResponse, CreateOwnerProductBody, CreateOwnerProductResponse,
   UpdateOwnerProductParams, UpdateOwnerProductBody, UpdateOwnerProductResponse,
   UpdateStaffSaleSlipParams, UpdateStaffSaleSlipBody, UpdateStaffSaleSlipResponse,
+  ListOwnerMemberHistoryQueryParams, ListOwnerMemberHistoryResponse,
 } from "@workspace/api-zod";
 import {
   loyaltyStore, listStaffRewards, createReward, setRewardActive, listStaffMembers,
-  createMember, softDeleteMember, ownerReport, ownerAuditLog, getMemberQr, isCannabisPointsEnabled, normalizeNickname,
+  createMember, softDeleteMember, ownerReport, ownerAuditLog, ownerMemberHistory, getMemberQr, isCannabisPointsEnabled, normalizeNickname,
 } from "../lib/loyalty-store";
 import {
   getStaffBanking, getOwnerBanking, createBankAccount, updateBankAccount,
@@ -118,6 +119,10 @@ function validatePin(value: unknown, role: Role) {
     throw new LoyaltyError(400, `PIN ใหม่ต้องเป็นตัวเลข ${min}–12 หลัก และไม่ใช้ PIN เริ่มต้น/ตัวเลขซ้ำ`);
   }
   return value;
+}
+function isCalendarDate(value: string): boolean {
+  const parsed = new Date(`${value}T00:00:00.000Z`);
+  return !Number.isNaN(parsed.valueOf()) && parsed.toISOString().slice(0, 10) === value;
 }
 
 // Customers: private member-code-only session.
@@ -440,6 +445,17 @@ router.get("/owner/summary", async (_req, res) => sendJson(res, GetOwnerSummaryR
 router.get("/owner/audit-log", async (req, res) => {
   await authLimit(req, "owner-audit-log-read", 60);
   sendJson(res, GetOwnerAuditLogResponse, await ownerAuditLog());
+});
+router.get("/owner/member-history", async (req, res) => {
+  await authLimit(req, "owner-member-history-read", 60);
+  const { q, from, to } = parse(ListOwnerMemberHistoryQueryParams, req.query);
+  const query = q.trim();
+  if (!query) throw new LoyaltyError(400, "กรุณากรอกรหัสหรือชื่อสมาชิก");
+  if ((from && !isCalendarDate(from)) || (to && !isCalendarDate(to))) {
+    throw new LoyaltyError(400, "รูปแบบวันที่ไม่ถูกต้อง");
+  }
+  if (from && to && from > to) throw new LoyaltyError(400, "วันที่เริ่มต้นต้องไม่อยู่หลังวันที่สิ้นสุด");
+  sendJson(res, ListOwnerMemberHistoryResponse, await ownerMemberHistory(query, from ?? null, to ?? null));
 });
 router.patch("/owner/features/cannabis-points", async (req, res) => {
   await authLimit(req, "owner-cannabis-feature", 20);

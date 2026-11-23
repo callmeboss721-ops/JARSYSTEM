@@ -1360,6 +1360,39 @@ export const GetOwnerAuditLogResponseItem = zod.object({
 export const GetOwnerAuditLogResponse = zod.array(GetOwnerAuditLogResponseItem).max(25)
 
 
+export const listOwnerMemberHistoryQueryQMax = 64;
+
+export const listOwnerMemberHistoryQueryFromRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const listOwnerMemberHistoryQueryToRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+
+
+export const ListOwnerMemberHistoryQueryParams = zod.object({
+  "q": zod.coerce.string().min(1).max(listOwnerMemberHistoryQueryQMax),
+  "from": zod.coerce.string().regex(listOwnerMemberHistoryQueryFromRegExp).optional(),
+  "to": zod.coerce.string().regex(listOwnerMemberHistoryQueryToRegExp).optional()
+})
+
+export const listOwnerMemberHistoryResponseMemberCodeMax = 8;
+
+export const listOwnerMemberHistoryResponseMemberLabelMax = 120;
+
+export const listOwnerMemberHistoryResponseDescriptionMax = 240;
+
+
+
+export const ListOwnerMemberHistoryResponseItem = zod.object({
+  "id": zod.uuid(),
+  "event_type": zod.enum(['sale', 'cannabis', 'redemption', 'points', 'correction']),
+  "member_code": zod.string().max(listOwnerMemberHistoryResponseMemberCodeMax),
+  "member_label": zod.string().max(listOwnerMemberHistoryResponseMemberLabelMax),
+  "description": zod.string().max(listOwnerMemberHistoryResponseDescriptionMax),
+  "points_delta": zod.int(),
+  "status": zod.enum(['completed', 'redeemed', 'pending', 'confirmed', 'corrected']),
+  "created_at": zod.string()
+})
+export const ListOwnerMemberHistoryResponse = zod.array(ListOwnerMemberHistoryResponseItem).max(200)
+
+
 export const getOwnerBankingResponseAccountsItemAccountNumberRegExp = new RegExp('^[0-9]{6,20}$');
 export const getOwnerBankingResponseAccountsItemDailyLimitMin = 0;
 

@@ -6,6 +6,7 @@ import { privateKey } from "./loyalty-security";
 import { calculateCarryPoints } from "./points-policy";
 import {
   ownerAuditLogSql,
+  ownerMemberHistorySql,
   ownerReportByFormulaSql,
   ownerReportTotalsSql,
 } from "./owner-report-queries";
@@ -520,6 +521,11 @@ export async function ownerReport() {
 
 export async function ownerAuditLog() {
   const { rows } = await pool.query(ownerAuditLogSql);
+  return rows;
+}
+
+export async function ownerMemberHistory(query: string, from: string | null, to: string | null) {
+  const { rows } = await pool.query(ownerMemberHistorySql, [query.trim(), from, to]);
   return rows;
 }
 

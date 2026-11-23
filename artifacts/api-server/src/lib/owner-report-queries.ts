@@ -64,8 +64,9 @@ export const ownerReportByFormulaSql = `with local_day as (
   group by s.formula,local_day.day
   order by case s.formula when 'red' then 1 when 'silver' then 2 else 3 end`;
 
-export const ownerAuditLogSql = `with activity as (
+const ownerActivitySql = `with activity as (
   select s.id,'sale'::text as event_type,m.member_code,
+    m.id as member_id,m.display_name as member_name,
     coalesce(nullif(m.nickname,''),m.display_name,m.member_code) as member_label,
     ('ซื้อ ' || s.bottle_count || ' ขวด · ฿' || s.amount_baht ||
       case when s.points_awarded>0 then ' · +' || s.points_awarded || ' แต้ม' else '' end)::text as description,
@@ -74,32 +75,47 @@ export const ownerAuditLogSql = `with activity as (
   union all
   select t.id,
     case when t.delta<0 and t.grams_purchased=0 then 'redemption'::text else 'cannabis'::text end,
-    m.member_code,coalesce(nullif(m.nickname,''),m.display_name,m.member_code),
+    m.member_code,m.id,m.display_name,coalesce(nullif(m.nickname,''),m.display_name,m.member_code),
     (case when t.delta<0 and t.grams_purchased=0
       then 'แลกฟรี 1 กรัม · ใช้ ' || (-t.delta) || ' แต้ม'
       else 'ซื้อ ' || t.grams_purchased || ' กรัม · ' || t.reason end)::text,
     t.delta::integer,case when t.delta<0 then 'redeemed'::text else 'completed'::text end,t.created_at
   from jaguar_cannabis_transactions t join jaguar_members m on m.id=t.member_id where not m.is_demo
   union all
-  select d.id,'redemption'::text,m.member_code,
+  select d.id,'redemption'::text,m.member_code,m.id,m.display_name,
     coalesce(nullif(m.nickname,''),m.display_name,m.member_code),
     (r.name || ' · แลก ' || d.points_spent || ' แต้ม')::text,
     (-d.points_spent)::integer,d.status::text,d.created_at
   from jaguar_redemptions d join jaguar_members m on m.id=d.member_id
     join jaguar_rewards r on r.id=d.reward_id where not m.is_demo
   union all
-  select p.id,'points'::text,m.member_code,
+  select p.id,'points'::text,m.member_code,m.id,m.display_name,
     coalesce(nullif(m.nickname,''),m.display_name,m.member_code),
     ('เพิ่มแต้ม ' || p.delta)::text,p.delta::integer,'completed'::text,p.created_at
   from jaguar_point_transactions p join jaguar_members m on m.id=p.member_id
     where p.reason='staff_credit' and not m.is_demo
   union all
-  select c.id,'correction'::text,m.member_code,
+  select c.id,'correction'::text,m.member_code,m.id,m.display_name,
     coalesce(nullif(m.nickname,''),m.display_name,m.member_code),
     ('แก้ไขรายการ · ' || c.reason)::text,0::integer,'corrected'::text,c.created_at
   from jaguar_transaction_corrections c
     join jaguar_members m on m.id=c.member_id
     where c.member_id is not null and not m.is_demo
 )
+`;
+
+export const ownerAuditLogSql = `${ownerActivitySql}
 select id::text,event_type,member_code,member_label,description,points_delta,status,created_at::text as created_at
 from activity order by created_at desc,id desc limit 25`;
+
+export const ownerMemberHistorySql = `${ownerActivitySql}
+select id::text,event_type,member_code,member_label,description,points_delta,status,created_at::text as created_at
+from activity
+where (
+  position(lower($1) in lower(member_code))>0 or
+  position(lower($1) in lower(member_name))>0 or
+  position(lower($1) in lower(member_label))>0
+)
+and ($2::date is null or created_at >= (($2::date)::timestamp at time zone 'Asia/Bangkok'))
+and ($3::date is null or created_at < ((($3::date + 1)::timestamp) at time zone 'Asia/Bangkok'))
+order by created_at desc,id desc limit 200`;

@@ -754,6 +754,22 @@ export type ListStaffSalesParams = {
 code: string;
 };
 
+export type ListOwnerMemberHistoryParams = {
+/**
+ * @minLength 1
+ * @maxLength 64
+ */
+q: string;
+/**
+ * @pattern ^\d{4}-\d{2}-\d{2}$
+ */
+from?: string;
+/**
+ * @pattern ^\d{4}-\d{2}-\d{2}$
+ */
+to?: string;
+};
+
 export type ListOwnerMembersParams = {
 /**
  * @maxLength 64

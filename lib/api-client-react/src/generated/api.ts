@@ -42,6 +42,7 @@ import type {
   FindMemberParams,
   GetStaffCannabisCardParams,
   HealthStatus,
+  ListOwnerMemberHistoryParams,
   ListOwnerMembersParams,
   ListStaffMembersParams,
   ListStaffSalesParams,
@@ -4488,6 +4489,108 @@ export function useGetOwnerAuditLog<TData = Awaited<ReturnType<typeof getOwnerAu
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetOwnerAuditLogQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getListOwnerMemberHistoryUrl = (params: ListOwnerMemberHistoryParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/loyalty/owner/member-history?${stringifiedParams}` : `/api/loyalty/owner/member-history`
+}
+
+export const listOwnerMemberHistory = async (params: ListOwnerMemberHistoryParams, options?: Parameters<typeof customFetch>[1]): Promise<OwnerAuditEntry[]> => {
+
+  return customFetch<OwnerAuditEntry[]>(getListOwnerMemberHistoryUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListOwnerMemberHistoryQueryKey = (params?: ListOwnerMemberHistoryParams,) => {
+    return [
+    `/api/loyalty/owner/member-history`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getListOwnerMemberHistoryQueryOptions = <TData = Awaited<ReturnType<typeof listOwnerMemberHistory>>, TError = ErrorType<unknown>>(params: ListOwnerMemberHistoryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOwnerMemberHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListOwnerMemberHistoryQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listOwnerMemberHistory>>> = ({ signal }) => listOwnerMemberHistory(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listOwnerMemberHistory>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListOwnerMemberHistoryQueryResult = NonNullable<Awaited<ReturnType<typeof listOwnerMemberHistory>>>
+export type ListOwnerMemberHistoryQueryError = ErrorType<unknown>
+
+
+export function useListOwnerMemberHistory<TData = Awaited<ReturnType<typeof listOwnerMemberHistory>>, TError = ErrorType<unknown>>(
+ params: ListOwnerMemberHistoryParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOwnerMemberHistory>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listOwnerMemberHistory>>,
+          TError,
+          Awaited<ReturnType<typeof listOwnerMemberHistory>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListOwnerMemberHistory<TData = Awaited<ReturnType<typeof listOwnerMemberHistory>>, TError = ErrorType<unknown>>(
+ params: ListOwnerMemberHistoryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOwnerMemberHistory>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listOwnerMemberHistory>>,
+          TError,
+          Awaited<ReturnType<typeof listOwnerMemberHistory>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListOwnerMemberHistory<TData = Awaited<ReturnType<typeof listOwnerMemberHistory>>, TError = ErrorType<unknown>>(
+ params: ListOwnerMemberHistoryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOwnerMemberHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useListOwnerMemberHistory<TData = Awaited<ReturnType<typeof listOwnerMemberHistory>>, TError = ErrorType<unknown>>(
+ params: ListOwnerMemberHistoryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOwnerMemberHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListOwnerMemberHistoryQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

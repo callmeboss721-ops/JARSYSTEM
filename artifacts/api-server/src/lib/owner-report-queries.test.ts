@@ -3,12 +3,13 @@ import test, { after } from "node:test";
 import { createRequire } from "node:module";
 const {
   ownerAuditLogSql,
+  ownerMemberHistorySql,
   ownerReportByFormulaSql,
   ownerReportTotalsSql,
 } = await import(new URL("./owner-report-queries.ts", import.meta.url).href);
 
 type FixtureClient = {
-  query: (sql: string) => Promise<{ rows: Array<Record<string, unknown>> }>;
+  query: (sql: string, params?: unknown[]) => Promise<{ rows: Array<Record<string, unknown>> }>;
   release: () => void;
 };
 const databaseUrl = process.env.DATABASE_URL;
@@ -128,6 +129,16 @@ test("owner totals and audit use actual ledgers, Bangkok dates, and exclude demo
       "cannabis free redemption should be classified as a redemption",
     );
     assert.ok(audit.every((event) => event.member_code !== "DEMO-A"), "demo member events must be excluded");
+
+    const memberHistory = (await client.query(ownerMemberHistorySql, ["Member A", null, null])).rows as Array<Record<string, string>>;
+    assert.ok(memberHistory.length > 0, "member name search should find historical records");
+    assert.ok(memberHistory.every((event) => event.member_code === "REG-A"), "member history must not include other members");
+    for (const expected of ["sale", "cannabis", "redemption", "points"]) {
+      assert.ok(memberHistory.some((event) => event.event_type === expected), `member history should contain ${expected}`);
+    }
+    const dateLimitedHistory = (await client.query(ownerMemberHistorySql, ["REG-A", "2020-01-01", "2020-01-01"])).rows as Array<Record<string, string>>;
+    assert.ok(dateLimitedHistory.length > 0, "date filters should include the selected Bangkok calendar date");
+    assert.ok(dateLimitedHistory.every((event) => event.created_at.startsWith("2020-01-01")), "date filters should exclude records outside the selected date");
   } finally {
     await client.query("rollback").catch(() => undefined);
     client.release();
