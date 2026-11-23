@@ -21,6 +21,10 @@ import {
   CorrectStaffCannabisTransactionParams, CorrectStaffCannabisTransactionBody, CorrectStaffCannabisTransactionResponse,
   ListRecentStaffRedemptionsResponse, CorrectStaffRedemptionParams, CorrectStaffRedemptionBody, CorrectStaffRedemptionResponse,
   CorrectStaffBankTransferParams, CorrectStaffBankTransferBody, CorrectStaffBankTransferResponse,
+  RequestLoyaltyUploadUrlBody, RequestLoyaltyUploadUrlResponse,
+  ListOwnerProductsResponse, CreateOwnerProductBody, CreateOwnerProductResponse,
+  UpdateOwnerProductParams, UpdateOwnerProductBody, UpdateOwnerProductResponse,
+  UpdateStaffSaleSlipParams, UpdateStaffSaleSlipBody, UpdateStaffSaleSlipResponse,
 } from "@workspace/api-zod";
 import {
   loyaltyStore, listStaffRewards, createReward, setRewardActive, listStaffMembers,
@@ -32,8 +36,15 @@ import {
 } from "../lib/banking-store";
 import {
   listStaffSales, correctStaffSale, correctStaffCannabisSale,
-  listRecentStaffRedemptions, correctStaffRedemption,
+  listRecentStaffRedemptions, correctStaffRedemption, getStaffSaleSlipPath, updateStaffSaleSlip,
 } from "../lib/loyalty-corrections";
+import {
+  listOwnerProducts, createOwnerProduct, updateOwnerProduct, getOwnerProductImagePath,
+} from "../lib/product-store";
+import {
+  assertPrivateImage, createPrivateUploadUrl, streamPrivateImage,
+  MAX_PRODUCT_IMAGE_BYTES, MAX_SALE_SLIP_BYTES,
+} from "../lib/private-object-storage";
 import { LoyaltyError } from "../lib/loyalty-errors";
 import {
   clearSession, issueSession, loyaltyGuard, ownerSetPins, privateKey, rateLimit,
@@ -75,6 +86,17 @@ function requireRole(role: Role) {
     if (session.sub !== await adminSessionSubject(role)) throw new LoyaltyError(401, "เปลี่ยนรหัสแล้ว กรุณาเข้าสู่ระบบใหม่");
     next();
   };
+}
+async function activeAdminRole(req: Request): Promise<Role> {
+  for (const role of ["staff", "owner"] as const) {
+    try {
+      const session = readSession(req, role);
+      if (session.sub === await adminSessionSubject(role)) return role;
+    } catch (error) {
+      if (!(error instanceof LoyaltyError) || error.status !== 401) throw error;
+    }
+  }
+  throw new LoyaltyError(401, "กรุณาเข้าสู่ระบบพนักงานหรือเจ้าของร้าน");
 }
 async function loginRole(role: Role, pin: unknown, req: Request, res: Response) {
   const roleAttemptKey = `${role}-pin-role`;
@@ -217,6 +239,18 @@ router.post("/redemptions", async (req, res) => {
   sendJson(res, RequestRedemptionResponse, await loyaltyStore("jaguar_request_redemption", { p_member: sub, p_reward: data.reward_id }), 201);
 });
 
+router.post("/uploads/request-url", async (req, res) => {
+  const role = await activeAdminRole(req);
+  await authLimit(req, "private-upload-url", 30);
+  const data = parse(RequestLoyaltyUploadUrlBody, req.body);
+  if (data.purpose === "product_image" && role !== "owner") {
+    throw new LoyaltyError(403, "เฉพาะเจ้าของร้านเท่านั้นที่เพิ่มภาพสินค้าได้");
+  }
+  const maxBytes = data.purpose === "product_image" ? MAX_PRODUCT_IMAGE_BYTES : MAX_SALE_SLIP_BYTES;
+  if (data.size > maxBytes) throw new LoyaltyError(413, "ไฟล์มีขนาดใหญ่เกินกำหนด");
+  sendJson(res, RequestLoyaltyUploadUrlResponse, await createPrivateUploadUrl());
+});
+
 // Employee desk: its own PIN, cookie, permissions, and limited routes.
 router.post("/staff/login", async (req, res) => loginRole("staff", parse(LoginStaffBody, req.body).pin, req, res));
 router.post("/staff/logout", (_req, res) => { clearSession(res, "staff"); res.json({ ok: true }); });
@@ -263,14 +297,15 @@ router.post("/staff/members", async (req, res) => {
 });
 router.post("/staff/stamp", async (req, res) => {
   await authLimit(req, "staff-stamp", 60);
-  const { member_code, qr_token, bottle_count, formula, request_id } = parse(RecordStaffSaleBody, req.body);
+  const { member_code, qr_token, bottle_count, formula, request_id, slip_path } = parse(RecordStaffSaleBody, req.body);
   if (Boolean(member_code) === Boolean(qr_token)) throw new LoyaltyError(400, "ระบุรหัสสมาชิกหรือ QR อย่างใดอย่างหนึ่ง");
+  if (slip_path) await assertPrivateImage(slip_path, MAX_SALE_SLIP_BYTES);
   const member = typeof member_code === "string"
     ? await loyaltyStore<MemberCard>("jaguar_member_login", { p_code: codeValue(member_code) })
     : await loyaltyStore<MemberCard>("jaguar_resolve_qr", { p_qr_token: qr_token!.replace(/^JAGUAR1:/, "") });
   await rateLimit(`staff-credit-member:${privateKey(member.id)}`, 30, 60_000);
   sendJson(res, GetMemberCardResponse, await loyaltyStore("jaguar_staff_stamp", {
-    p_member: member.id, p_bottle_count: bottle_count, p_formula: formula, p_request: request_id,
+    p_member: member.id, p_bottle_count: bottle_count, p_formula: formula, p_request: request_id, p_slip_path: slip_path,
   }));
 });
 router.get("/staff/member-sales", async (req, res) => {
@@ -278,6 +313,18 @@ router.get("/staff/member-sales", async (req, res) => {
   const { code } = parse(ListStaffSalesQueryParams, req.query);
   const member = await loyaltyStore<MemberCard>("jaguar_member_login", { p_code: codeValue(code) });
   sendJson(res, ListStaffSalesResponse, await listStaffSales(member.id));
+});
+router.get("/staff/sales/:id/slip", async (req, res) => {
+  await authLimit(req, "staff-sale-slip-read", 60);
+  const { id } = parse(CorrectStaffSaleParams, req.params);
+  await streamPrivateImage(await getStaffSaleSlipPath(id), res);
+});
+router.patch("/staff/sales/:id/slip", async (req, res) => {
+  await authLimit(req, "staff-sale-slip-update", 30);
+  const { id } = parse(UpdateStaffSaleSlipParams, req.params);
+  const data = parse(UpdateStaffSaleSlipBody, req.body);
+  if (data.slip_path) await assertPrivateImage(data.slip_path, MAX_SALE_SLIP_BYTES);
+  sendJson(res, UpdateStaffSaleSlipResponse, await updateStaffSaleSlip(id, data.slip_path));
 });
 router.patch("/staff/sales/:id", async (req, res) => {
   await authLimit(req, "staff-sale-correction", 30);
@@ -359,6 +406,11 @@ router.patch("/staff/banking/transfers/:id", async (req, res) => {
 router.post("/owner/login", async (req, res) => loginRole("owner", parse(LoginOwnerBody, req.body).pin, req, res));
 router.post("/owner/logout", (_req, res) => { clearSession(res, "owner"); res.json({ ok: true }); });
 router.use("/owner", requireRole("owner"));
+router.get("/owner/sales/:id/slip", async (req, res) => {
+  await authLimit(req, "owner-sale-slip-read", 60);
+  const { id } = parse(CorrectStaffSaleParams, req.params);
+  await streamPrivateImage(await getStaffSaleSlipPath(id), res);
+});
 router.get("/owner/security", async (_req, res) => res.json({
   staff_default_pin: await usesDefaultPin("staff"),
   owner_default_pin: await usesDefaultPin("owner"),
@@ -429,6 +481,27 @@ router.patch("/owner/rewards/:id", async (req, res) => {
   const { id } = parse(ConfirmRedemptionParams, req.params);
   const { is_active } = parse(UpdateOwnerRewardBody, req.body);
   sendJson(res, UpdateOwnerRewardResponse, await setRewardActive(id, is_active));
+});
+router.get("/owner/products", async (_req, res) => {
+  sendJson(res, ListOwnerProductsResponse, await listOwnerProducts());
+});
+router.post("/owner/products", async (req, res) => {
+  await authLimit(req, "owner-product-create", 30);
+  const data = parse(CreateOwnerProductBody, req.body);
+  if (data.reference_image_path) await assertPrivateImage(data.reference_image_path, MAX_PRODUCT_IMAGE_BYTES);
+  sendJson(res, CreateOwnerProductResponse, await createOwnerProduct(data), 201);
+});
+router.patch("/owner/products/:id", async (req, res) => {
+  await authLimit(req, "owner-product-update", 30);
+  const { id } = parse(UpdateOwnerProductParams, req.params);
+  const data = parse(UpdateOwnerProductBody, req.body);
+  if (data.reference_image_path) await assertPrivateImage(data.reference_image_path, MAX_PRODUCT_IMAGE_BYTES);
+  sendJson(res, UpdateOwnerProductResponse, await updateOwnerProduct(id, data));
+});
+router.get("/owner/products/:id/image", async (req, res) => {
+  await authLimit(req, "owner-product-image-read", 120);
+  const { id } = parse(UpdateOwnerProductParams, req.params);
+  await streamPrivateImage(await getOwnerProductImagePath(id), res);
 });
 router.get("/owner/pending", async (_req, res) => sendJson(res, ListOwnerPendingResponse, await loyaltyStore("jaguar_redemptions", { p_member: null, p_pending_only: true })));
 router.post("/owner/redemptions/:id/confirm", async (req, res) => {

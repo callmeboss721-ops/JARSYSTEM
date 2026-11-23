@@ -16,6 +16,7 @@ type StaffSale = {
   created_at: string;
   editable: boolean;
   corrected: boolean;
+  has_slip: boolean;
 };
 
 function fail(status: number, message: string): never {
@@ -64,9 +65,11 @@ function reportFailure(operation: string, error: unknown): never {
 async function staffSalesFor(client: PoolClient, memberId: string): Promise<StaffSale[]> {
   const rows = (await client.query<StaffSale>(
     `select s.id,s.formula,s.bottle_count,s.amount_baht,s.points_awarded,
+       (s.slip_path is not null) as has_slip,
        s.created_at::text as created_at,true as editable,
        exists(select 1 from jaguar_transaction_corrections c
-         where c.entity_type='kratom_sale' and c.entity_id=s.id) as corrected
+          where c.entity_type='kratom_sale' and c.entity_id=s.id
+            and (c.before_data ? 'bottle_count' or c.before_data ? 'amount_baht' or c.before_data ? 'formula')) as corrected
      from jaguar_sales s
      where s.member_id=$1
        and (s.created_at at time zone 'Asia/Bangkok')::date=(now() at time zone 'Asia/Bangkok')::date
@@ -80,6 +83,62 @@ export async function listStaffSales(memberId: string): Promise<StaffSale[]> {
   const client = await pool.connect();
   try { return await staffSalesFor(client, memberId); }
   finally { client.release(); }
+}
+
+export async function getStaffSaleSlipPath(id: string): Promise<string> {
+  const result = await pool.query<{ slip_path: string | null }>(
+    `select s.slip_path from jaguar_sales s
+     join jaguar_members m on m.id=s.member_id
+     where s.id=$1 and not m.is_demo and m.status='active'
+       and (s.created_at at time zone 'Asia/Bangkok')::date=(now() at time zone 'Asia/Bangkok')::date`,
+    [id],
+  );
+  const path = result.rows[0]?.slip_path;
+  if (!path) fail(404, "ไม่พบสลิปของรายการนี้");
+  return path;
+}
+
+export async function updateStaffSaleSlip(id: string, slipPath: string | null): Promise<{ has_slip: boolean }> {
+  if (slipPath !== null && !/^\/objects\/uploads\/[0-9a-f-]{36}$/i.test(slipPath)) {
+    fail(400, "ไฟล์แนบไม่ถูกต้อง");
+  }
+  const client = await pool.connect();
+  try {
+    await begin(client);
+    const sale = (await client.query<{
+      member_id: string;
+      slip_path: string | null;
+      is_today: boolean;
+    }>(
+      `select s.member_id,s.slip_path,
+         ((s.created_at at time zone 'Asia/Bangkok')::date=(now() at time zone 'Asia/Bangkok')::date) as is_today
+       from jaguar_sales s join jaguar_members m on m.id=s.member_id
+       where s.id=$1 and m.status='active' and not m.is_demo
+       for update of s`,
+      [id],
+    )).rows[0];
+    if (!sale) fail(404, "ไม่พบรายการซื้อที่ต้องการแก้ไข");
+    if (!sale.is_today) fail(409, "แก้ไขได้เฉพาะรายการซื้อของวันนี้");
+    if (sale.slip_path !== slipPath) {
+      await client.query("update jaguar_sales set slip_path=$2 where id=$1", [id, slipPath]);
+      await writeCorrection(
+        client,
+        "kratom_sale",
+        id,
+        sale.member_id,
+        "เปลี่ยนภาพสลิปรายการซื้อ",
+        { slip_path: sale.slip_path },
+        { slip_path: slipPath },
+      );
+    }
+    await client.query("commit");
+    return { has_slip: slipPath !== null };
+  } catch (error) {
+    await client.query("rollback").catch(() => undefined);
+    reportFailure("staff_kratom_sale_slip_update", error);
+  } finally {
+    client.release();
+  }
 }
 
 export async function correctStaffSale(
@@ -137,8 +196,9 @@ export async function correctStaffSale(
       amount_baht: number;
       points_awarded: number;
       points_policy: string;
+      slip_path: string | null;
     }>(
-      `select id,bottle_count,formula,amount_baht,points_awarded,points_policy
+      `select id,bottle_count,formula,amount_baht,points_awarded,points_policy,slip_path
        from jaguar_sales where member_id=$1 order by created_at,id for update`,
       [target.member_id],
     )).rows;
@@ -158,6 +218,7 @@ export async function correctStaffSale(
         formula,
         amount_baht: amount,
         points_awarded: earned.points,
+        has_slip: sale.slip_path !== null,
         isTarget,
       };
     });

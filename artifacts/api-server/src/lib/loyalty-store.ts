@@ -17,6 +17,7 @@ type Args = {
   p_member?: string | null; p_reward?: string; p_points?: number; p_request?: string;
   p_redemption?: string; p_pending_only?: boolean; p_amount?: number; p_bottle_count?: number;
   p_grams?: number; p_formula?: string; p_qr_token?: string; p_enabled?: boolean; p_staff?: boolean;
+  p_slip_path?: string | null;
 };
 type CannabisCard = {
   member_code: string;
@@ -248,21 +249,34 @@ export async function loyaltyStore<T>(operation: string, args: Args = {}): Promi
       case "jaguar_staff_stamp": {
         const bottleCount = args.p_bottle_count ?? 0;
         if (!Number.isInteger(bottleCount) || bottleCount < 1 || bottleCount > 999 ||
-            !["red", "silver", "gold"].includes(args.p_formula ?? "") || !args.p_request) {
+            !["red", "silver", "gold"].includes(args.p_formula ?? "") || !args.p_request ||
+            !/^[0-9a-f-]{36}$/i.test(args.p_request) ||
+            (args.p_slip_path != null && !/^\/objects\/uploads\/[0-9a-f-]{36}$/i.test(args.p_slip_path))) {
           fail(400, "กรุณาระบุจำนวนขวด สูตรสินค้า และรหัสรายการให้ถูกต้อง");
         }
         const amountBaht = Math.floor(bottleCount / 3) * 150 + (bottleCount % 3) * 60;
         const member = await card(client, args.p_member!, true);
         const { points: pointsAwarded, remainder } = calculateCarryPoints(member.kratom_remainder_baht, amountBaht);
-        const { rows: existing } = await client.query(`select s.member_id,s.bottle_count,s.formula
+        const { rows: existing } = await client.query(`select s.id,s.member_id,s.bottle_count,s.formula,s.slip_path
           from jaguar_sales s where s.request_id=$1`, [args.p_request]);
         if (existing.length) {
           if (existing[0].member_id !== args.p_member || existing[0].bottle_count !== bottleCount || existing[0].formula !== args.p_formula) {
             fail(409, "รหัสคำขอซ้ำ กรุณาโหลดหน้าค้นหาสมาชิกใหม่");
           }
+          if (args.p_slip_path && existing[0].slip_path !== args.p_slip_path) {
+            if (existing[0].slip_path) fail(409, "รายการนี้มีสลิปอีกไฟล์อยู่แล้ว กรุณาแก้ไขจากประวัติรายการ");
+            await client.query("update jaguar_sales set slip_path=$2 where id=$1", [existing[0].id, args.p_slip_path]);
+            await client.query(
+              `insert into jaguar_transaction_corrections
+                (entity_type,entity_id,member_id,reason,before_data,after_data,corrected_by)
+               values('kratom_sale',$1,$2,'แนบสลิปภายหลังการบันทึก','{"slip_path":null}'::jsonb,$3::jsonb,'staff')`,
+              [existing[0].id, args.p_member, JSON.stringify({ slip_path: args.p_slip_path })],
+            );
+          }
           result = await card(client, args.p_member!);
           break;
         }
+        // Existing sale pricing and point calculations remain separate from the product catalog.
         await client.query(`update jaguar_point_balances
           set balance=balance+$2,lifetime_earned=lifetime_earned+$2,kratom_amount_remainder=$3 where member_id=$1`,
         [args.p_member, pointsAwarded, remainder]);
@@ -270,8 +284,9 @@ export async function loyaltyStore<T>(operation: string, args: Args = {}): Promi
           await client.query("insert into jaguar_point_transactions(member_id,delta,reason) values($1,$2,$3)",
             [args.p_member, pointsAwarded, `ซื้อสินค้า ${amountBaht} บาท · สะสมครบ 100 บาทต่อแต้ม`]);
         }
-        await client.query(`insert into jaguar_sales(member_id,request_id,bottle_count,amount_baht,formula,points_awarded,points_policy)
-          values($1,$2,$3,$4,$5,$6,'kratom-cash-v2')`, [args.p_member, args.p_request, bottleCount, amountBaht, args.p_formula, pointsAwarded]);
+        await client.query(`insert into jaguar_sales(member_id,request_id,bottle_count,amount_baht,formula,points_awarded,points_policy,slip_path)
+          values($1,$2,$3,$4,$5,$6,'kratom-cash-v2',$7)`,
+        [args.p_member, args.p_request, bottleCount, amountBaht, args.p_formula, pointsAwarded, args.p_slip_path ?? null]);
         result = await card(client, args.p_member!);
         break;
       }

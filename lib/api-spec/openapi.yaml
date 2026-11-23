@@ -308,6 +308,68 @@ paths:
               schema:
                 type: array
                 items: { $ref: "#/components/schemas/StaffSale" }
+  /loyalty/uploads/request-url:
+    post:
+      operationId: requestLoyaltyUploadUrl
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PrivateUploadRequest" }
+      responses:
+        "200":
+          description: Short-lived private upload URL
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PrivateUploadUrl" }
+  /loyalty/staff/sales/{id}/slip:
+    get:
+      operationId: getStaffSaleSlip
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Private image attachment for an authorized staff member
+          content:
+            image/jpeg: { schema: { type: string, format: binary } }
+            image/png: { schema: { type: string, format: binary } }
+            image/webp: { schema: { type: string, format: binary } }
+    patch:
+      operationId: updateStaffSaleSlip
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/StaffSaleSlipInput" }
+      responses:
+        "200":
+          description: Updated private attachment without changing sale totals or loyalty points
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/StaffSaleSlipResult" }
+  /loyalty/owner/sales/{id}/slip:
+    get:
+      operationId: getOwnerSaleSlip
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Private image attachment for the authorized owner
+          content:
+            image/jpeg: { schema: { type: string, format: binary } }
+            image/png: { schema: { type: string, format: binary } }
+            image/webp: { schema: { type: string, format: binary } }
   /loyalty/staff/sales/{id}:
     patch:
       operationId: correctStaffSale
@@ -706,6 +768,64 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Reward" }
+  /loyalty/owner/products:
+    get:
+      operationId: listOwnerProducts
+      responses:
+        "200":
+          description: Private product catalog, independent of sales and loyalty calculations
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/OwnerProduct" }
+    post:
+      operationId: createOwnerProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateOwnerProductInput" }
+      responses:
+        "201":
+          description: Product added to the separate catalog
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OwnerProduct" }
+  /loyalty/owner/products/{id}:
+    patch:
+      operationId: updateOwnerProduct
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UpdateOwnerProductInput" }
+      responses:
+        "200":
+          description: Updated catalog product
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OwnerProduct" }
+  /loyalty/owner/products/{id}/image:
+    get:
+      operationId: getOwnerProductImage
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Private product reference image
+          content:
+            image/jpeg: { schema: { type: string, format: binary } }
+            image/png: { schema: { type: string, format: binary } }
+            image/webp: { schema: { type: string, format: binary } }
   /loyalty/owner/pending:
     get:
       operationId: listOwnerPending
@@ -863,6 +983,50 @@ components:
         bottle_count: { type: integer, minimum: 1, maximum: 999 }
         formula: { $ref: "#/components/schemas/Formula" }
         request_id: { type: string, format: uuid }
+        slip_path: { type: ["string", "null"], pattern: "^/objects/uploads/[0-9a-f-]{36}$" }
+    PrivateUploadRequest:
+      type: object
+      required: [purpose, size, content_type]
+      properties:
+        purpose: { type: string, enum: [sale_slip, product_image] }
+        size: { type: integer, minimum: 1, maximum: 8388608 }
+        content_type: { type: string, enum: [image/jpeg, image/png, image/webp] }
+    PrivateUploadUrl:
+      type: object
+      required: [upload_url, object_path]
+      properties:
+        upload_url: { type: string, format: uri }
+        object_path: { type: string, pattern: "^/objects/uploads/[0-9a-f-]{36}$" }
+    OwnerProduct:
+      type: object
+      required: [id, name, description, price_baht, has_image, is_active, created_at, updated_at]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string, minLength: 1, maxLength: 120 }
+        description: { type: string, maxLength: 600 }
+        price_baht: { type: integer, minimum: 1, maximum: 100000000 }
+        has_image: { type: boolean }
+        is_active: { type: boolean }
+        created_at: { type: string }
+        updated_at: { type: string }
+    CreateOwnerProductInput:
+      type: object
+      required: [name, description, price_baht]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 120 }
+        description: { type: string, maxLength: 600 }
+        price_baht: { type: integer, minimum: 1, maximum: 100000000 }
+        reference_image_path: { type: ["string", "null"], pattern: "^/objects/uploads/[0-9a-f-]{36}$" }
+        is_active: { type: boolean, default: true }
+    UpdateOwnerProductInput:
+      type: object
+      required: [name, description, price_baht, is_active]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 120 }
+        description: { type: string, maxLength: 600 }
+        price_baht: { type: integer, minimum: 1, maximum: 100000000 }
+        reference_image_path: { type: ["string", "null"], pattern: "^/objects/uploads/[0-9a-f-]{36}$" }
+        is_active: { type: boolean }
     CannabisStampInput:
       type: object
       required: [member_code, grams, request_id]
@@ -904,7 +1068,7 @@ components:
         created_at: { type: string }
     StaffSale:
       type: object
-      required: [id, formula, bottle_count, amount_baht, points_awarded, created_at, editable, corrected]
+      required: [id, formula, bottle_count, amount_baht, points_awarded, created_at, editable, corrected, has_slip]
       properties:
         id: { type: string, format: uuid }
         formula: { $ref: "#/components/schemas/Formula" }
@@ -914,6 +1078,7 @@ components:
         created_at: { type: string }
         editable: { type: boolean }
         corrected: { type: boolean }
+        has_slip: { type: boolean }
     StaffSaleCorrectionInput:
       type: object
       required: [bottle_count, formula, reason]
@@ -921,6 +1086,16 @@ components:
         bottle_count: { type: integer, minimum: 1, maximum: 999 }
         formula: { $ref: "#/components/schemas/Formula" }
         reason: { type: string, minLength: 3, maxLength: 200 }
+    StaffSaleSlipInput:
+      type: object
+      required: [slip_path]
+      properties:
+        slip_path: { type: ["string", "null"], pattern: "^/objects/uploads/[0-9a-f-]{36}$" }
+    StaffSaleSlipResult:
+      type: object
+      required: [has_slip]
+      properties:
+        has_slip: { type: boolean }
     StaffSaleCorrectionResult:
       type: object
       required: [member, sales]

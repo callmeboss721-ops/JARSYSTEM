@@ -14,6 +14,9 @@ import { playStaffSuccessSound, primeStaffSuccessSound, readStaffSoundPreference
 import { STAMPS } from "@/components/brand/loyalty-card";
 import { STAFF, api, bundlePrice, cleanCode, clearScope, codePattern, errorText, formulaLabels, isBottleCount, json, statusOf, type Formula, type MemberCardData, type RedemptionData } from "@/components/brand/loyalty-api";
 import { getGetCannabisMemberCardQueryKey, getGetStaffCannabisCardQueryKey, getGetStaffSecurityQueryKey, useGetStaffSecurity, useGetStaffCannabisCard, useAddCannabisStamps, useRedeemCannabisAtCounter } from "@workspace/api-client-react";
+import { Input } from "@workspace/jaguar-spk-design-system/components/ui/input";
+import { Label } from "@workspace/jaguar-spk-design-system/components/ui/label";
+import { uploadPrivateImage } from "@/components/brand/private-upload";
 import {
   getListRecentStaffRedemptionsQueryKey,
   getListStaffRewardsQueryKey,
@@ -56,7 +59,12 @@ export default function StaffPage() {
   const [grams, setGrams] = useState("");
   const [gramsError, setGramsError] = useState("");
   const [cannabisRedeemId, setCannabisRedeemId] = useState<string | null>(null);
-  const [editingSale, setEditingSale] = useState<{ id: string; bottle_count: string; formula: Formula; reason: string } | null>(null);
+  const [saleSlipFile, setSaleSlipFile] = useState<File | null>(null);
+  const [saleSlipPath, setSaleSlipPath] = useState<string | null>(null);
+  const [editingSale, setEditingSale] = useState<{
+    id: string; bottle_count: string; formula: Formula; reason: string;
+    slipFile: File | null; removeSlip: boolean;
+  } | null>(null);
   const [editingCannabis, setEditingCannabis] = useState<{ id: string; grams: string; reason: string } | null>(null);
   const [editingRedemption, setEditingRedemption] = useState<{ id: string; reward_id: string; reason: string } | null>(null);
   const video = useRef<HTMLVideoElement>(null);
@@ -151,6 +159,7 @@ export default function StaffPage() {
   const find = async (value = lookup) => {
     setCounterActionComplete(false);
     setErr(""); setMsg(""); setMember(null); setRedeemId(null);
+    setSaleSlipFile(null); setSaleSlipPath(null); setEditingSale(null); saleRequest.current = null;
     try {
       const endpoint = value.startsWith("JAGUAR1:") ? `${STAFF}/member?qr_token=${encodeURIComponent(value)}` : `${STAFF}/member?code=${encodeURIComponent(cleanCode(value))}`;
       const result = await api<MemberCardData>(endpoint);
@@ -278,13 +287,26 @@ export default function StaffPage() {
     const request = saleRequest.current?.signature === signature ? saleRequest.current : { signature, id: crypto.randomUUID() };
     saleRequest.current = request;
     try {
-      const updated = await api<MemberCardData>(`${STAFF}/stamp`, json("POST", { member_code: member.member_code, bottle_count: bottles, formula, request_id: request.id }));
+      let slipPath = saleSlipPath;
+      if (saleSlipFile && !slipPath) {
+        slipPath = await uploadPrivateImage(saleSlipFile, "sale_slip");
+        setSaleSlipPath(slipPath);
+      }
+      const updated = await api<MemberCardData>(`${STAFF}/stamp`, json("POST", {
+        member_code: member.member_code,
+        bottle_count: bottles,
+        formula,
+        request_id: request.id,
+        ...(slipPath ? { slip_path: slipPath } : {}),
+      }));
       saleRequest.current = null;
       setCounterActionComplete(true);
       setMember(updated);
       setBottleCount("");
+      setSaleSlipFile(null); setSaleSlipPath(null);
       announceSuccess(`บันทึก ${bottles} ขวด · ฿${price.toLocaleString("th-TH")} · ยอดแต้มคำนวณและปรับโดยระบบ`);
       void qc.invalidateQueries({ queryKey: [`${STAFF}/members`] });
+      void qc.invalidateQueries({ queryKey: getListStaffSalesQueryKey(salesParams) });
     } catch (e) { setErr(errorText(e)); } finally { setBusy(false); }
   };
   const redeem = async () => {
@@ -302,23 +324,44 @@ export default function StaffPage() {
   const saveSaleCorrection = async (event: FormEvent) => {
     event.preventDefault();
     if (!editingSale || !member) return;
-    if (!isBottleCount(editingSale.bottle_count) || editingSale.reason.trim().length < 3) {
+    const original = sales.data?.find((sale) => sale.id === editingSale.id);
+    if (!original) {
+      setErr("ไม่พบรายการซื้อ กรุณาโหลดรายการใหม่");
+      return;
+    }
+    const financialChanged = Number(editingSale.bottle_count) !== original.bottle_count || editingSale.formula !== original.formula;
+    const slipChanged = Boolean(editingSale.slipFile) || editingSale.removeSlip;
+    if (!financialChanged && !slipChanged) {
+      setErr("ยังไม่มีข้อมูลที่เปลี่ยนแปลง");
+      return;
+    }
+    if (financialChanged && (!isBottleCount(editingSale.bottle_count) || editingSale.reason.trim().length < 3)) {
       setErr("ตรวจจำนวนขวดและระบุเหตุผลการแก้ไขอย่างน้อย 3 ตัวอักษร");
       return;
     }
     setBusy(true); setErr(""); setMsg(""); setCounterActionComplete(false);
     try {
-      const updated = await correctSale.mutateAsync({
-        id: editingSale.id,
-        data: { bottle_count: Number(editingSale.bottle_count), formula: editingSale.formula, reason: editingSale.reason.trim() },
-      });
+      if (slipChanged) {
+        const slipPath = editingSale.slipFile
+          ? await uploadPrivateImage(editingSale.slipFile, "sale_slip")
+          : null;
+        await api(`${STAFF}/sales/${encodeURIComponent(editingSale.id)}/slip`, json("PATCH", { slip_path: slipPath }));
+      }
+      const updated = financialChanged
+        ? await correctSale.mutateAsync({
+            id: editingSale.id,
+            data: { bottle_count: Number(editingSale.bottle_count), formula: editingSale.formula, reason: editingSale.reason.trim() },
+          })
+        : null;
       setCounterActionComplete(true);
-      setMember(updated.member as MemberCardData);
+      if (updated) setMember(updated.member as MemberCardData);
       setEditingSale(null);
-      announceSuccess("แก้ไขรายการซื้อแล้ว · ระบบคำนวณแต้มและเศษสะสมใหม่");
+      announceSuccess(financialChanged
+        ? `${slipChanged ? "แก้ไขรายการซื้อและสลิปแล้ว" : "แก้ไขรายการซื้อแล้ว"} · ระบบคำนวณแต้มและเศษสะสมใหม่`
+        : editingSale.removeSlip ? "นำสลิปออกจากรายการแล้ว" : "บันทึกสลิปของรายการแล้ว");
       await Promise.all([
         qc.invalidateQueries({ queryKey: getListStaffSalesQueryKey(salesParams) }),
-        qc.invalidateQueries({ queryKey: [`${STAFF}/members`] }),
+        ...(financialChanged ? [qc.invalidateQueries({ queryKey: [`${STAFF}/members`] })] : []),
       ]);
     } catch (e) { setErr(errorText(e)); }
     finally { setBusy(false); }
@@ -465,6 +508,16 @@ export default function StaffPage() {
                     aria-invalid={!!bottleCountErr} aria-describedby={bottleCountErr ? "bottle-count-error" : "bottle-count-rule"} />
                   {bottleCountErr ? <p id="bottle-count-error" role="alert" className="field-error">{bottleCountErr}</p> : <p id="bottle-count-rule" className="text-xs text-[var(--muted)]">บันทึกยอดขายตามบิล · แต้มและยอดเศษสะสมคำนวณโดยระบบร้าน</p>}
                 </div>
+                <div>
+                  <Label htmlFor="sale-slip-file">ภาพสลิป (ไม่บังคับ)</Label>
+                  <Input id="sale-slip-file" className="mt-2" type="file" accept="image/jpeg,image/png,image/webp"
+                    onChange={(event) => { setSaleSlipFile(event.target.files?.[0] ?? null); setSaleSlipPath(null); }} />
+                  <p className="mt-2 text-xs text-[var(--muted)]">JPG, PNG หรือ WebP · ไม่เกิน 8 MB · ไฟล์ดูได้เฉพาะพนักงานและเจ้าของร้าน</p>
+                  {saleSlipFile && <div className="mt-2 flex items-center justify-between gap-2 rounded-lg border border-[var(--line)] p-2 text-sm">
+                    <span className="min-w-0 truncate">{saleSlipFile.name}</span>
+                    <button type="button" className="btn btn-ghost !min-h-10 !px-3" onClick={() => { setSaleSlipFile(null); setSaleSlipPath(null); }}>นำออก</button>
+                  </div>}
+                </div>
                 <fieldset>
                   <legend className="text-sm mb-2 text-[var(--silver)]">เลือกสูตร</legend>
                   <div className="grid grid-cols-3 gap-2">
@@ -488,7 +541,8 @@ export default function StaffPage() {
                             <div><strong>{sale.bottle_count} ขวด · ฿{sale.amount_baht.toLocaleString("th-TH")}</strong><p>{formulaLabels[sale.formula]} · +{sale.points_awarded} แต้ม · {new Date(sale.created_at).toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" })}</p></div>
                             <div className="staff-correction-list__actions">
                               {sale.corrected && <span className="staff-correction-list__badge">แก้แล้ว</span>}
-                              {sale.editable && <button type="button" className="btn btn-ghost !min-h-11 !px-3 text-sm" onClick={() => setEditingSale({ id: sale.id, bottle_count: String(sale.bottle_count), formula: sale.formula, reason: "" })}>แก้ไข</button>}
+                              {sale.has_slip && <a className="btn btn-ghost !min-h-11 !px-3 text-sm" href={`${STAFF}/sales/${encodeURIComponent(sale.id)}/slip`} target="_blank" rel="noreferrer">ดูสลิป</a>}
+                              {sale.editable && <button type="button" className="btn btn-ghost !min-h-11 !px-3 text-sm" onClick={() => setEditingSale({ id: sale.id, bottle_count: String(sale.bottle_count), formula: sale.formula, reason: "", slipFile: null, removeSlip: false })}>แก้ไข</button>}
                             </div>
                           </div>
                           {editingSale?.id === sale.id && <form className="staff-correction-form" onSubmit={saveSaleCorrection}>
@@ -496,7 +550,19 @@ export default function StaffPage() {
                               <div className="field"><label htmlFor={`sale-count-${sale.id}`}>จำนวนขวด</label><input id={`sale-count-${sale.id}`} className="input" inputMode="numeric" value={editingSale.bottle_count} onChange={(e) => setEditingSale({ ...editingSale, bottle_count: e.target.value.replace(/\D/g, "").slice(0, 3) })} /></div>
                               <div className="field"><label htmlFor={`sale-formula-${sale.id}`}>สูตร</label><select id={`sale-formula-${sale.id}`} className="input" value={editingSale.formula} onChange={(e) => setEditingSale({ ...editingSale, formula: e.target.value as Formula })}><option value="red">แดง · Original</option><option value="silver">ฟ้า · Refresh</option><option value="gold">ทอง · Premium</option></select></div>
                             </div>
-                            <div className="field"><label htmlFor={`sale-reason-${sale.id}`}>เหตุผลการแก้ไข</label><input id={`sale-reason-${sale.id}`} className="input" maxLength={200} value={editingSale.reason} onChange={(e) => setEditingSale({ ...editingSale, reason: e.target.value })} required /></div>
+                            <div>
+                              <Label htmlFor={`sale-slip-${sale.id}`}>ภาพสลิป (ไม่บังคับ)</Label>
+                              <Input id={`sale-slip-${sale.id}`} className="mt-2" type="file" accept="image/jpeg,image/png,image/webp"
+                                onChange={(event) => setEditingSale({ ...editingSale, slipFile: event.target.files?.[0] ?? null, removeSlip: false })} />
+                              <p className="mt-2 text-xs text-[var(--muted)]">แนบภาพใหม่เพื่อแทนที่สลิปเดิมได้ · ไม่เกิน 8 MB</p>
+                              {sale.has_slip && !editingSale.removeSlip && !editingSale.slipFile && <div className="mt-2 flex flex-wrap items-center gap-2">
+                                <a className="btn btn-ghost !min-h-10 !px-3 text-sm" href={`${STAFF}/sales/${encodeURIComponent(sale.id)}/slip`} target="_blank" rel="noreferrer">ดูสลิปปัจจุบัน</a>
+                                <button type="button" className="btn btn-ghost !min-h-10 !px-3 text-sm" onClick={() => setEditingSale({ ...editingSale, removeSlip: true })}>นำสลิปออก</button>
+                              </div>}
+                              {editingSale.slipFile && <p className="mt-2 text-sm text-[var(--muted)] break-all">{editingSale.slipFile.name}</p>}
+                              {editingSale.removeSlip && <p role="status" className="mt-2 text-sm text-[var(--muted)]">สลิปจะถูกนำออกเมื่อบันทึก</p>}
+                            </div>
+                            <div className="field"><label htmlFor={`sale-reason-${sale.id}`}>เหตุผล (จำเป็นเมื่อแก้จำนวนหรือสูตร)</label><input id={`sale-reason-${sale.id}`} className="input" maxLength={200} value={editingSale.reason} onChange={(e) => setEditingSale({ ...editingSale, reason: e.target.value })} /></div>
                             <div className="grid grid-cols-2 gap-2"><button type="button" className="btn btn-ghost" onClick={() => setEditingSale(null)}>ยกเลิก</button><button className="btn btn-neon" disabled={correctSale.isPending || busy}>{correctSale.isPending ? "กำลังแก้ไข…" : "บันทึกรายการ"}</button></div>
                           </form>}
                         </li>

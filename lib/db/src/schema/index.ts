@@ -20,3 +20,4 @@
 export * from "./loyalty";
 export * from "./cannabis";
 export * from "./banking";
+export * from "./products";

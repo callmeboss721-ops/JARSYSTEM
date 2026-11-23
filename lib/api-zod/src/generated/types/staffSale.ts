@@ -22,4 +22,5 @@ export interface StaffSale {
   created_at: string;
   editable: boolean;
   corrected: boolean;
+  has_slip: boolean;
 }

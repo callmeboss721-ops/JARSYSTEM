@@ -223,6 +223,106 @@ export interface SaleInput {
   bottle_count: number;
   formula: Formula;
   request_id: string;
+  /**
+     * @nullable
+     * @pattern ^/objects/uploads/[0-9a-f-]{36}$
+     */
+  slip_path?: string | null;
+}
+
+export type PrivateUploadRequestPurpose = typeof PrivateUploadRequestPurpose[keyof typeof PrivateUploadRequestPurpose];
+
+
+export const PrivateUploadRequestPurpose = {
+  sale_slip: 'sale_slip',
+  product_image: 'product_image',
+} as const;
+
+export type PrivateUploadRequestContentType = typeof PrivateUploadRequestContentType[keyof typeof PrivateUploadRequestContentType];
+
+
+export const PrivateUploadRequestContentType = {
+  'image/jpeg': 'image/jpeg',
+  'image/png': 'image/png',
+  'image/webp': 'image/webp',
+} as const;
+
+export interface PrivateUploadRequest {
+  purpose: PrivateUploadRequestPurpose;
+  /**
+     * @minimum 1
+     * @maximum 8388608
+     */
+  size: number;
+  content_type: PrivateUploadRequestContentType;
+}
+
+export interface PrivateUploadUrl {
+  upload_url: string;
+  /** @pattern ^/objects/uploads/[0-9a-f-]{36}$ */
+  object_path: string;
+}
+
+export interface OwnerProduct {
+  id: string;
+  /**
+     * @minLength 1
+     * @maxLength 120
+     */
+  name: string;
+  /** @maxLength 600 */
+  description: string;
+  /**
+     * @minimum 1
+     * @maximum 100000000
+     */
+  price_baht: number;
+  has_image: boolean;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateOwnerProductInput {
+  /**
+     * @minLength 1
+     * @maxLength 120
+     */
+  name: string;
+  /** @maxLength 600 */
+  description: string;
+  /**
+     * @minimum 1
+     * @maximum 100000000
+     */
+  price_baht: number;
+  /**
+     * @nullable
+     * @pattern ^/objects/uploads/[0-9a-f-]{36}$
+     */
+  reference_image_path?: string | null;
+  is_active?: boolean;
+}
+
+export interface UpdateOwnerProductInput {
+  /**
+     * @minLength 1
+     * @maxLength 120
+     */
+  name: string;
+  /** @maxLength 600 */
+  description: string;
+  /**
+     * @minimum 1
+     * @maximum 100000000
+     */
+  price_baht: number;
+  /**
+     * @nullable
+     * @pattern ^/objects/uploads/[0-9a-f-]{36}$
+     */
+  reference_image_path?: string | null;
+  is_active: boolean;
 }
 
 export interface CannabisStampInput {
@@ -276,6 +376,7 @@ export interface StaffSale {
   created_at: string;
   editable: boolean;
   corrected: boolean;
+  has_slip: boolean;
 }
 
 export interface StaffSaleCorrectionInput {
@@ -290,6 +391,18 @@ export interface StaffSaleCorrectionInput {
      * @maxLength 200
      */
   reason: string;
+}
+
+export interface StaffSaleSlipInput {
+  /**
+     * @nullable
+     * @pattern ^/objects/uploads/[0-9a-f-]{36}$
+     */
+  slip_path: string | null;
+}
+
+export interface StaffSaleSlipResult {
+  has_slip: boolean;
 }
 
 export interface StaffSaleCorrectionResult {

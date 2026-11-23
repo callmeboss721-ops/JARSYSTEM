@@ -76,8 +76,10 @@ export const loyaltySales = pgTable("jaguar_sales", {
   formula: text("formula").notNull(),
   pointsAwarded: integer("points_awarded").notNull(),
   pointsPolicy: text("points_policy").notNull().default("legacy-bottle-v1"),
+  slipPath: text("slip_path"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
+  check("jaguar_sale_slip_path_shape", sql`${t.slipPath} is null or ${t.slipPath} ~ '^/objects/uploads/[0-9a-f-]{36}$'`),
   check("jaguar_sale_amount", sql`${t.amountBaht} between 1 and 100000000`),
   check("jaguar_sale_bottle_quantity", sql`${t.bottleCount} between 1 and 999`),
   check("jaguar_sale_bundle_price", sql`${t.amountBaht} = (${t.bottleCount}/3)*150 + (${t.bottleCount}%3)*60`),

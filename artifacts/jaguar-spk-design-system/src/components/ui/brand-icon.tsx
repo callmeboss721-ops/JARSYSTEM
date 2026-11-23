@@ -4,6 +4,7 @@ import {
   IdCard,
   Leaf,
   Landmark,
+  Package,
   Phone,
   type LucideIcon,
 } from "lucide-react";
@@ -40,7 +41,7 @@ export type BrandIconName =
   | "rewards" | "redeem" | "dashboard" | "addPoints" | "history" | "settings" | "search"
   | "logout" | "location" | "continue" | "security" | "banking" | "error" | "retry" | "success"
   | "pending" | "staffAccess" | "confirm" | "add" | "subtract" | "close" | "qr" | "crown"
-  | "phone" | "memberCode" | "nickname";
+  | "phone" | "memberCode" | "nickname" | "products";
 
 const LUCIDE_ICONS: Partial<Record<BrandIconName, LucideIcon>> = {
   phone: Phone,
@@ -49,6 +50,7 @@ const LUCIDE_ICONS: Partial<Record<BrandIconName, LucideIcon>> = {
   cannabis: Cannabis,
   leaf: Leaf,
   banking: Landmark,
+  products: Package,
 };
 
 type IconTone = "neutral" | "gold" | "emerald" | "danger" | "inherit";

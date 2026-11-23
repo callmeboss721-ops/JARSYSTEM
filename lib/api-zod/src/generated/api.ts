@@ -544,6 +544,7 @@ export const recordStaffSaleBodyMemberCodeRegExp = new RegExp('^[A-Za-z0-9][A-Za
 export const recordStaffSaleBodyQrTokenRegExp = new RegExp('^(JAGUAR1:)?[0-9a-f]{64}$');
 export const recordStaffSaleBodyBottleCountMax = 999;
 
+export const recordStaffSaleBodySlipPathRegExp = new RegExp('^/objects/uploads/[0-9a-f-]{36}$');
 
 
 export const RecordStaffSaleBody = zod.object({
@@ -551,7 +552,8 @@ export const RecordStaffSaleBody = zod.object({
   "qr_token": zod.string().regex(recordStaffSaleBodyQrTokenRegExp).optional(),
   "bottle_count": zod.int().min(1).max(recordStaffSaleBodyBottleCountMax),
   "formula": zod.enum(['red', 'silver', 'gold']),
-  "request_id": zod.uuid()
+  "request_id": zod.uuid(),
+  "slip_path": zod.string().regex(recordStaffSaleBodySlipPathRegExp).nullish()
 })
 
 export const recordStaffSaleResponseNicknameMin = 2;
@@ -608,9 +610,59 @@ export const ListStaffSalesResponseItem = zod.object({
   "points_awarded": zod.int().min(listStaffSalesResponsePointsAwardedMin),
   "created_at": zod.string(),
   "editable": zod.boolean(),
-  "corrected": zod.boolean()
+  "corrected": zod.boolean(),
+  "has_slip": zod.boolean()
 })
 export const ListStaffSalesResponse = zod.array(ListStaffSalesResponseItem)
+
+
+export const requestLoyaltyUploadUrlBodySizeMax = 8388608;
+
+
+
+export const RequestLoyaltyUploadUrlBody = zod.object({
+  "purpose": zod.enum(['sale_slip', 'product_image']),
+  "size": zod.int().min(1).max(requestLoyaltyUploadUrlBodySizeMax),
+  "content_type": zod.enum(['image/jpeg', 'image/png', 'image/webp'])
+})
+
+export const requestLoyaltyUploadUrlResponseObjectPathRegExp = new RegExp('^/objects/uploads/[0-9a-f-]{36}$');
+
+
+export const RequestLoyaltyUploadUrlResponse = zod.object({
+  "upload_url": zod.url(),
+  "object_path": zod.string().regex(requestLoyaltyUploadUrlResponseObjectPathRegExp)
+})
+
+
+export const GetStaffSaleSlipParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const GetStaffSaleSlipResponse = zod.unknown()
+
+
+export const UpdateStaffSaleSlipParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const updateStaffSaleSlipBodySlipPathRegExp = new RegExp('^/objects/uploads/[0-9a-f-]{36}$');
+
+
+export const UpdateStaffSaleSlipBody = zod.object({
+  "slip_path": zod.string().regex(updateStaffSaleSlipBodySlipPathRegExp).nullable()
+})
+
+export const UpdateStaffSaleSlipResponse = zod.object({
+  "has_slip": zod.boolean()
+})
+
+
+export const GetOwnerSaleSlipParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const GetOwnerSaleSlipResponse = zod.unknown()
 
 
 export const CorrectStaffSaleParams = zod.object({
@@ -676,7 +728,8 @@ export const CorrectStaffSaleResponse = zod.object({
   "points_awarded": zod.int().min(correctStaffSaleResponseSalesItemPointsAwardedMin),
   "created_at": zod.string(),
   "editable": zod.boolean(),
-  "corrected": zod.boolean()
+  "corrected": zod.boolean(),
+  "has_slip": zod.boolean()
 })).max(correctStaffSaleResponseSalesMax)
 })
 
@@ -1596,6 +1649,112 @@ export const UpdateOwnerRewardResponse = zod.object({
   "is_active": zod.boolean(),
   "is_demo": zod.boolean()
 })
+
+
+export const listOwnerProductsResponseNameMax = 120;
+
+export const listOwnerProductsResponseDescriptionMax = 600;
+
+export const listOwnerProductsResponsePriceBahtMax = 100000000;
+
+
+
+export const ListOwnerProductsResponseItem = zod.object({
+  "id": zod.uuid(),
+  "name": zod.string().min(1).max(listOwnerProductsResponseNameMax),
+  "description": zod.string().max(listOwnerProductsResponseDescriptionMax),
+  "price_baht": zod.int().min(1).max(listOwnerProductsResponsePriceBahtMax),
+  "has_image": zod.boolean(),
+  "is_active": zod.boolean(),
+  "created_at": zod.string(),
+  "updated_at": zod.string()
+})
+export const ListOwnerProductsResponse = zod.array(ListOwnerProductsResponseItem)
+
+
+export const createOwnerProductBodyNameMax = 120;
+
+export const createOwnerProductBodyDescriptionMax = 600;
+
+export const createOwnerProductBodyPriceBahtMax = 100000000;
+
+export const createOwnerProductBodyReferenceImagePathRegExp = new RegExp('^/objects/uploads/[0-9a-f-]{36}$');
+export const createOwnerProductBodyIsActiveDefault = true;
+
+export const CreateOwnerProductBody = zod.object({
+  "name": zod.string().min(1).max(createOwnerProductBodyNameMax),
+  "description": zod.string().max(createOwnerProductBodyDescriptionMax),
+  "price_baht": zod.int().min(1).max(createOwnerProductBodyPriceBahtMax),
+  "reference_image_path": zod.string().regex(createOwnerProductBodyReferenceImagePathRegExp).nullish(),
+  "is_active": zod.boolean().default(createOwnerProductBodyIsActiveDefault)
+})
+
+export const createOwnerProductResponseNameMax = 120;
+
+export const createOwnerProductResponseDescriptionMax = 600;
+
+export const createOwnerProductResponsePriceBahtMax = 100000000;
+
+
+
+export const CreateOwnerProductResponse = zod.object({
+  "id": zod.uuid(),
+  "name": zod.string().min(1).max(createOwnerProductResponseNameMax),
+  "description": zod.string().max(createOwnerProductResponseDescriptionMax),
+  "price_baht": zod.int().min(1).max(createOwnerProductResponsePriceBahtMax),
+  "has_image": zod.boolean(),
+  "is_active": zod.boolean(),
+  "created_at": zod.string(),
+  "updated_at": zod.string()
+})
+
+
+export const UpdateOwnerProductParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const updateOwnerProductBodyNameMax = 120;
+
+export const updateOwnerProductBodyDescriptionMax = 600;
+
+export const updateOwnerProductBodyPriceBahtMax = 100000000;
+
+export const updateOwnerProductBodyReferenceImagePathRegExp = new RegExp('^/objects/uploads/[0-9a-f-]{36}$');
+
+
+export const UpdateOwnerProductBody = zod.object({
+  "name": zod.string().min(1).max(updateOwnerProductBodyNameMax),
+  "description": zod.string().max(updateOwnerProductBodyDescriptionMax),
+  "price_baht": zod.int().min(1).max(updateOwnerProductBodyPriceBahtMax),
+  "reference_image_path": zod.string().regex(updateOwnerProductBodyReferenceImagePathRegExp).nullish(),
+  "is_active": zod.boolean()
+})
+
+export const updateOwnerProductResponseNameMax = 120;
+
+export const updateOwnerProductResponseDescriptionMax = 600;
+
+export const updateOwnerProductResponsePriceBahtMax = 100000000;
+
+
+
+export const UpdateOwnerProductResponse = zod.object({
+  "id": zod.uuid(),
+  "name": zod.string().min(1).max(updateOwnerProductResponseNameMax),
+  "description": zod.string().max(updateOwnerProductResponseDescriptionMax),
+  "price_baht": zod.int().min(1).max(updateOwnerProductResponsePriceBahtMax),
+  "has_image": zod.boolean(),
+  "is_active": zod.boolean(),
+  "created_at": zod.string(),
+  "updated_at": zod.string()
+})
+
+
+export const GetOwnerProductImageParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const GetOwnerProductImageResponse = zod.unknown()
 
 
 export const listOwnerPendingResponseMemberNicknameMin = 2;

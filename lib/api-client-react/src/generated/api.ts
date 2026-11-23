@@ -38,6 +38,7 @@ import type {
   CannabisStampInput,
   CounterRedemption,
   CounterRedemptionInput,
+  CreateOwnerProductInput,
   FindMemberParams,
   GetStaffCannabisCardParams,
   HealthStatus,
@@ -54,10 +55,13 @@ import type {
   MemberSessionStatus,
   OwnerBanking,
   OwnerPinInput,
+  OwnerProduct,
   OwnerSecurityState,
   OwnerSummary,
   PinLogin,
   PointTransaction,
+  PrivateUploadRequest,
+  PrivateUploadUrl,
   Redemption,
   RedemptionInput,
   Reward,
@@ -71,8 +75,11 @@ import type {
   StaffSale,
   StaffSaleCorrectionInput,
   StaffSaleCorrectionResult,
+  StaffSaleSlipInput,
+  StaffSaleSlipResult,
   StaffSecurityState,
-  Success
+  Success,
+  UpdateOwnerProductInput
 } from './api.schemas';
 
 import { customFetch } from '../custom-fetch';
@@ -2335,6 +2342,361 @@ export function useListStaffSales<TData = Awaited<ReturnType<typeof listStaffSal
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getListStaffSalesQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getRequestLoyaltyUploadUrlUrl = () => {
+
+
+
+
+  return `/api/loyalty/uploads/request-url`
+}
+
+export const requestLoyaltyUploadUrl = async (privateUploadRequest: PrivateUploadRequest, options?: Parameters<typeof customFetch>[1]): Promise<PrivateUploadUrl> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<PrivateUploadUrl>(getRequestLoyaltyUploadUrlUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(privateUploadRequest)
+  }
+);}
+
+
+
+
+
+export const getRequestLoyaltyUploadUrlMutationKey = () => ['requestLoyaltyUploadUrl'] as const;
+
+export const getRequestLoyaltyUploadUrlMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof requestLoyaltyUploadUrl>>, TError,RequestLoyaltyUploadUrlMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof requestLoyaltyUploadUrl>>, TError,RequestLoyaltyUploadUrlMutationVariables, TContext> => {
+
+const mutationKey = getRequestLoyaltyUploadUrlMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof requestLoyaltyUploadUrl>>, RequestLoyaltyUploadUrlMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  requestLoyaltyUploadUrl(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RequestLoyaltyUploadUrlMutationResult = NonNullable<Awaited<ReturnType<typeof requestLoyaltyUploadUrl>>>
+    export type RequestLoyaltyUploadUrlMutationBody = BodyType<PrivateUploadRequest>
+    export type RequestLoyaltyUploadUrlMutationError = ErrorType<unknown>
+    export type RequestLoyaltyUploadUrlMutationVariables = {data: BodyType<PrivateUploadRequest>}
+
+    export const useRequestLoyaltyUploadUrl = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof requestLoyaltyUploadUrl>>, TError,RequestLoyaltyUploadUrlMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof requestLoyaltyUploadUrl>>,
+        TError,
+        RequestLoyaltyUploadUrlMutationVariables,
+        TContext
+      > => {
+      return useMutation(getRequestLoyaltyUploadUrlMutationOptions(options), queryClient);
+    }
+
+export const getGetStaffSaleSlipUrl = (id: string,) => {
+
+
+
+
+  return `/api/loyalty/staff/sales/${id}/slip`
+}
+
+export const getStaffSaleSlip = async (id: string, options?: Parameters<typeof customFetch>[1]): Promise<Blob> => {
+
+  return customFetch<Blob>(getGetStaffSaleSlipUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetStaffSaleSlipQueryKey = (id: string,) => {
+    return [
+    `/api/loyalty/staff/sales/${id}/slip`
+    ] as const;
+    }
+
+
+export const getGetStaffSaleSlipQueryOptions = <TData = Awaited<ReturnType<typeof getStaffSaleSlip>>, TError = ErrorType<unknown>>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStaffSaleSlip>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetStaffSaleSlipQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getStaffSaleSlip>>> = ({ signal }) => getStaffSaleSlip(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getStaffSaleSlip>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetStaffSaleSlipQueryResult = NonNullable<Awaited<ReturnType<typeof getStaffSaleSlip>>>
+export type GetStaffSaleSlipQueryError = ErrorType<unknown>
+
+
+export function useGetStaffSaleSlip<TData = Awaited<ReturnType<typeof getStaffSaleSlip>>, TError = ErrorType<unknown>>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStaffSaleSlip>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getStaffSaleSlip>>,
+          TError,
+          Awaited<ReturnType<typeof getStaffSaleSlip>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetStaffSaleSlip<TData = Awaited<ReturnType<typeof getStaffSaleSlip>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStaffSaleSlip>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getStaffSaleSlip>>,
+          TError,
+          Awaited<ReturnType<typeof getStaffSaleSlip>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetStaffSaleSlip<TData = Awaited<ReturnType<typeof getStaffSaleSlip>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStaffSaleSlip>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetStaffSaleSlip<TData = Awaited<ReturnType<typeof getStaffSaleSlip>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStaffSaleSlip>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetStaffSaleSlipQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getUpdateStaffSaleSlipUrl = (id: string,) => {
+
+
+
+
+  return `/api/loyalty/staff/sales/${id}/slip`
+}
+
+export const updateStaffSaleSlip = async (id: string,
+    staffSaleSlipInput: StaffSaleSlipInput, options?: Parameters<typeof customFetch>[1]): Promise<StaffSaleSlipResult> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<StaffSaleSlipResult>(getUpdateStaffSaleSlipUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(staffSaleSlipInput)
+  }
+);}
+
+
+
+
+
+export const getUpdateStaffSaleSlipMutationKey = () => ['updateStaffSaleSlip'] as const;
+
+export const getUpdateStaffSaleSlipMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateStaffSaleSlip>>, TError,UpdateStaffSaleSlipMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateStaffSaleSlip>>, TError,UpdateStaffSaleSlipMutationVariables, TContext> => {
+
+const mutationKey = getUpdateStaffSaleSlipMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateStaffSaleSlip>>, UpdateStaffSaleSlipMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateStaffSaleSlip(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateStaffSaleSlipMutationResult = NonNullable<Awaited<ReturnType<typeof updateStaffSaleSlip>>>
+    export type UpdateStaffSaleSlipMutationBody = BodyType<StaffSaleSlipInput>
+    export type UpdateStaffSaleSlipMutationError = ErrorType<unknown>
+    export type UpdateStaffSaleSlipMutationVariables = {id: string;data: BodyType<StaffSaleSlipInput>}
+
+    export const useUpdateStaffSaleSlip = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateStaffSaleSlip>>, TError,UpdateStaffSaleSlipMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateStaffSaleSlip>>,
+        TError,
+        UpdateStaffSaleSlipMutationVariables,
+        TContext
+      > => {
+      return useMutation(getUpdateStaffSaleSlipMutationOptions(options), queryClient);
+    }
+
+export const getGetOwnerSaleSlipUrl = (id: string,) => {
+
+
+
+
+  return `/api/loyalty/owner/sales/${id}/slip`
+}
+
+export const getOwnerSaleSlip = async (id: string, options?: Parameters<typeof customFetch>[1]): Promise<Blob> => {
+
+  return customFetch<Blob>(getGetOwnerSaleSlipUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetOwnerSaleSlipQueryKey = (id: string,) => {
+    return [
+    `/api/loyalty/owner/sales/${id}/slip`
+    ] as const;
+    }
+
+
+export const getGetOwnerSaleSlipQueryOptions = <TData = Awaited<ReturnType<typeof getOwnerSaleSlip>>, TError = ErrorType<unknown>>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOwnerSaleSlip>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetOwnerSaleSlipQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getOwnerSaleSlip>>> = ({ signal }) => getOwnerSaleSlip(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getOwnerSaleSlip>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetOwnerSaleSlipQueryResult = NonNullable<Awaited<ReturnType<typeof getOwnerSaleSlip>>>
+export type GetOwnerSaleSlipQueryError = ErrorType<unknown>
+
+
+export function useGetOwnerSaleSlip<TData = Awaited<ReturnType<typeof getOwnerSaleSlip>>, TError = ErrorType<unknown>>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOwnerSaleSlip>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getOwnerSaleSlip>>,
+          TError,
+          Awaited<ReturnType<typeof getOwnerSaleSlip>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetOwnerSaleSlip<TData = Awaited<ReturnType<typeof getOwnerSaleSlip>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOwnerSaleSlip>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getOwnerSaleSlip>>,
+          TError,
+          Awaited<ReturnType<typeof getOwnerSaleSlip>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetOwnerSaleSlip<TData = Awaited<ReturnType<typeof getOwnerSaleSlip>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOwnerSaleSlip>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetOwnerSaleSlip<TData = Awaited<ReturnType<typeof getOwnerSaleSlip>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOwnerSaleSlip>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetOwnerSaleSlipQueryOptions(id,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -4798,6 +5160,361 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       > => {
       return useMutation(getUpdateOwnerRewardMutationOptions(options), queryClient);
     }
+
+export const getListOwnerProductsUrl = () => {
+
+
+
+
+  return `/api/loyalty/owner/products`
+}
+
+export const listOwnerProducts = async ( options?: Parameters<typeof customFetch>[1]): Promise<OwnerProduct[]> => {
+
+  return customFetch<OwnerProduct[]>(getListOwnerProductsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListOwnerProductsQueryKey = () => {
+    return [
+    `/api/loyalty/owner/products`
+    ] as const;
+    }
+
+
+export const getListOwnerProductsQueryOptions = <TData = Awaited<ReturnType<typeof listOwnerProducts>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOwnerProducts>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListOwnerProductsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listOwnerProducts>>> = ({ signal }) => listOwnerProducts({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listOwnerProducts>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListOwnerProductsQueryResult = NonNullable<Awaited<ReturnType<typeof listOwnerProducts>>>
+export type ListOwnerProductsQueryError = ErrorType<unknown>
+
+
+export function useListOwnerProducts<TData = Awaited<ReturnType<typeof listOwnerProducts>>, TError = ErrorType<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOwnerProducts>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listOwnerProducts>>,
+          TError,
+          Awaited<ReturnType<typeof listOwnerProducts>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListOwnerProducts<TData = Awaited<ReturnType<typeof listOwnerProducts>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOwnerProducts>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listOwnerProducts>>,
+          TError,
+          Awaited<ReturnType<typeof listOwnerProducts>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListOwnerProducts<TData = Awaited<ReturnType<typeof listOwnerProducts>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOwnerProducts>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useListOwnerProducts<TData = Awaited<ReturnType<typeof listOwnerProducts>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOwnerProducts>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListOwnerProductsQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateOwnerProductUrl = () => {
+
+
+
+
+  return `/api/loyalty/owner/products`
+}
+
+export const createOwnerProduct = async (createOwnerProductInput: CreateOwnerProductInput, options?: Parameters<typeof customFetch>[1]): Promise<OwnerProduct> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<OwnerProduct>(getCreateOwnerProductUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(createOwnerProductInput)
+  }
+);}
+
+
+
+
+
+export const getCreateOwnerProductMutationKey = () => ['createOwnerProduct'] as const;
+
+export const getCreateOwnerProductMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createOwnerProduct>>, TError,CreateOwnerProductMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createOwnerProduct>>, TError,CreateOwnerProductMutationVariables, TContext> => {
+
+const mutationKey = getCreateOwnerProductMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createOwnerProduct>>, CreateOwnerProductMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  createOwnerProduct(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateOwnerProductMutationResult = NonNullable<Awaited<ReturnType<typeof createOwnerProduct>>>
+    export type CreateOwnerProductMutationBody = BodyType<CreateOwnerProductInput>
+    export type CreateOwnerProductMutationError = ErrorType<unknown>
+    export type CreateOwnerProductMutationVariables = {data: BodyType<CreateOwnerProductInput>}
+
+    export const useCreateOwnerProduct = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createOwnerProduct>>, TError,CreateOwnerProductMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createOwnerProduct>>,
+        TError,
+        CreateOwnerProductMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCreateOwnerProductMutationOptions(options), queryClient);
+    }
+
+export const getUpdateOwnerProductUrl = (id: string,) => {
+
+
+
+
+  return `/api/loyalty/owner/products/${id}`
+}
+
+export const updateOwnerProduct = async (id: string,
+    updateOwnerProductInput: UpdateOwnerProductInput, options?: Parameters<typeof customFetch>[1]): Promise<OwnerProduct> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<OwnerProduct>(getUpdateOwnerProductUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(updateOwnerProductInput)
+  }
+);}
+
+
+
+
+
+export const getUpdateOwnerProductMutationKey = () => ['updateOwnerProduct'] as const;
+
+export const getUpdateOwnerProductMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateOwnerProduct>>, TError,UpdateOwnerProductMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateOwnerProduct>>, TError,UpdateOwnerProductMutationVariables, TContext> => {
+
+const mutationKey = getUpdateOwnerProductMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateOwnerProduct>>, UpdateOwnerProductMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateOwnerProduct(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateOwnerProductMutationResult = NonNullable<Awaited<ReturnType<typeof updateOwnerProduct>>>
+    export type UpdateOwnerProductMutationBody = BodyType<UpdateOwnerProductInput>
+    export type UpdateOwnerProductMutationError = ErrorType<unknown>
+    export type UpdateOwnerProductMutationVariables = {id: string;data: BodyType<UpdateOwnerProductInput>}
+
+    export const useUpdateOwnerProduct = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateOwnerProduct>>, TError,UpdateOwnerProductMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateOwnerProduct>>,
+        TError,
+        UpdateOwnerProductMutationVariables,
+        TContext
+      > => {
+      return useMutation(getUpdateOwnerProductMutationOptions(options), queryClient);
+    }
+
+export const getGetOwnerProductImageUrl = (id: string,) => {
+
+
+
+
+  return `/api/loyalty/owner/products/${id}/image`
+}
+
+export const getOwnerProductImage = async (id: string, options?: Parameters<typeof customFetch>[1]): Promise<Blob> => {
+
+  return customFetch<Blob>(getGetOwnerProductImageUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetOwnerProductImageQueryKey = (id: string,) => {
+    return [
+    `/api/loyalty/owner/products/${id}/image`
+    ] as const;
+    }
+
+
+export const getGetOwnerProductImageQueryOptions = <TData = Awaited<ReturnType<typeof getOwnerProductImage>>, TError = ErrorType<unknown>>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOwnerProductImage>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetOwnerProductImageQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getOwnerProductImage>>> = ({ signal }) => getOwnerProductImage(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getOwnerProductImage>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetOwnerProductImageQueryResult = NonNullable<Awaited<ReturnType<typeof getOwnerProductImage>>>
+export type GetOwnerProductImageQueryError = ErrorType<unknown>
+
+
+export function useGetOwnerProductImage<TData = Awaited<ReturnType<typeof getOwnerProductImage>>, TError = ErrorType<unknown>>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOwnerProductImage>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getOwnerProductImage>>,
+          TError,
+          Awaited<ReturnType<typeof getOwnerProductImage>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetOwnerProductImage<TData = Awaited<ReturnType<typeof getOwnerProductImage>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOwnerProductImage>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getOwnerProductImage>>,
+          TError,
+          Awaited<ReturnType<typeof getOwnerProductImage>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetOwnerProductImage<TData = Awaited<ReturnType<typeof getOwnerProductImage>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOwnerProductImage>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetOwnerProductImage<TData = Awaited<ReturnType<typeof getOwnerProductImage>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOwnerProductImage>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetOwnerProductImageQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export const getListOwnerPendingUrl = () => {
 

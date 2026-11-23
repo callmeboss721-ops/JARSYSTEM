@@ -10,6 +10,7 @@
 - API: semantic `name`, `size` (default 18), tone, optional class.
 - Account access names include `phone`, `memberCode`, and `nickname`; use them
   consistently for the three separate member login methods.
+- `products` uses a package icon for owner catalog navigation.
 - Behavior: decorative SVG icons are hidden from assistive tech; names and
   accessible labels belong on the surrounding control.
 - Dependencies: `@thesvg/ui-react` glass icon exports and `lucide-react` for

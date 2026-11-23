@@ -19,4 +19,9 @@ export interface SaleInput {
   bottle_count: number;
   formula: Formula;
   request_id: string;
+  /**
+     * @nullable
+     * @pattern ^/objects/uploads/[0-9a-f-]{36}$
+     */
+  slip_path?: string | null;
 }
