@@ -142,7 +142,7 @@ export default function BrandPage() {
                 className="absolute inset-4 rounded-[var(--radius)] border border-border/70"
               />
               <Image
-                src="/brand/jaguar-spk-emblem-crisp.webp"
+                src="/brand/jaguar-spk-brand-id-2026-emblem.png"
                 alt="ตราสัญลักษณ์ JAGUAR SPK"
                 width={512}
                 height={512}
@@ -329,9 +329,20 @@ export default function BrandPage() {
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Button asChild>
-              <a href={`tel:${STORE_PHONE}`}>โทรหาร้าน</a>
-            </Button>
+            <a
+              href={`tel:${STORE_PHONE}`}
+              aria-label={`โทรหาร้าน ${STORE_PHONE}`}
+              className="inline-flex min-h-11 items-center justify-center rounded-[var(--radius)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <Image
+                src="/brand/jaguar-spk-call-now.png"
+                alt=""
+                width={488}
+                height={112}
+                className="h-14 w-[244px] max-w-full object-contain"
+                sizes="244px"
+              />
+            </a>
             <Button asChild variant="outline">
               <a href={GOOGLE_MAPS_URL} target="_blank" rel="noopener noreferrer">
                 ดูแผนที่ร้าน
