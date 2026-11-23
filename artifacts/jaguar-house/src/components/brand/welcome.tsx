@@ -8,7 +8,7 @@ import { api } from "./loyalty-api";
 import { BrandIcon } from "./brand-icon";
 import { SamutPrakanArt } from "./samut-prakan-art";
 import { LoginForm, RegisterForm } from "./auth-forms";
-import { BrandButton } from "./brand-button";
+import { BrandArtworkButton, BrandButton } from "./brand-button";
 
 const GOOGLE_MAPS_URL = "https://www.google.com/maps/place/Jaguar+spk+%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A1+%E0%B8%81%E0%B8%B1%E0%B8%8D%E0%B8%8A%E0%B8%B2+%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A1+%E0%B9%83%E0%B8%81%E0%B8%A5%E0%B9%89%E0%B8%89%E0%B8%B1%E0%B8%99/@13.6100796,100.6008541,17z/data=!3m1!4b1!4m6!3m5!1s0x30e2a17b24c91b0f:0x2dd52ed6c8dbd489!8m2!3d13.6100796!4d100.6008541!16s%2Fg%2F11z_klv87h?hl=th&entry=ttu&g_ep=EgoyMDI2MTExNS4wIKXMDSoASAFQAw%3D%3D";
 const GOOGLE_MAPS_EMBED_URL = "https://maps.google.com/maps?q=13.6100796,100.6008541&z=17&output=embed";
@@ -79,8 +79,8 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
               <h1 id="landing-title">JAGUAR SPK<br /><span>ร้านใกล้บ้านของคุณ</span></h1>
               <p className="jh-hero__intro">แวะเลือกสินค้าที่ร้าน หรือเริ่มใช้บัตรสมาชิกได้ง่าย ๆ บนมือถือ</p>
               <div className="jh-hero__actions">
-                <BrandButton href="/login?mode=register" asset="btn-jaguar" label="สมัครสมาชิก" testId="link-open-wallet" />
-                <BrandButton href="/login" asset="btn-leaf" label="เข้าสู่ระบบสมาชิก" testId="link-member-login" />
+                <BrandArtworkButton href="/login?mode=register" src="/ui/artwork/signup-card.webp" label="สมัครบัตรสมาชิก" testId="link-open-wallet" />
+                <BrandArtworkButton href="/login" src="/ui/artwork/sign-in.webp" label="เข้าสู่ระบบสมาชิก" testId="link-member-login" />
               </div>
               <a className="jh-hero__location" href={GOOGLE_MAPS_URL} target="_blank" rel="noopener noreferrer">
                 <BrandIcon name="location" size={17} tone="emerald" />97/56 ซอยบุญศิริ 6 · เปิดแผนที่ร้าน

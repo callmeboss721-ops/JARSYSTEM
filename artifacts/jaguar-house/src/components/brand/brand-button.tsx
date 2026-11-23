@@ -1,4 +1,7 @@
 import { BrandButton as DesignSystemBrandButton, type BrandButtonArt } from "@workspace/jaguar-spk-design-system/components/ui/brand-button";
+import { Button } from "@workspace/jaguar-spk-design-system/components/ui/button";
+import Image from "next/image";
+import Link from "next/link";
 
 export type { BrandButtonArt };
 
@@ -34,4 +37,57 @@ export function BrandButton(props: BrandButtonProps) {
     className={props.className}
     testId={props.testId}
   />;
+}
+
+type BrandArtworkButtonProps = {
+  src: string;
+  label: string;
+  href?: string;
+  type?: "button" | "submit" | "reset";
+  disabled?: boolean;
+  className?: string;
+  testId?: string;
+};
+
+export function BrandArtworkButton({
+  src,
+  label,
+  href,
+  type = "button",
+  disabled,
+  className,
+  testId,
+}: BrandArtworkButtonProps) {
+  const artwork = (
+    <Image
+      src={src}
+      alt=""
+      aria-hidden="true"
+      width={550}
+      height={190}
+      className="brand-artwork-button__image"
+      sizes="(max-width: 560px) 260px, 320px"
+    />
+  );
+
+  if (href) {
+    return (
+      <Button asChild variant="ghost" className={`brand-artwork-button ${className ?? ""}`} data-testid={testId}>
+        <Link href={href} aria-label={label}>{artwork}</Link>
+      </Button>
+    );
+  }
+
+  return (
+    <Button
+      type={type}
+      variant="ghost"
+      aria-label={label}
+      disabled={disabled}
+      className={`brand-artwork-button ${className ?? ""}`}
+      data-testid={testId}
+    >
+      {artwork}
+    </Button>
+  );
 }

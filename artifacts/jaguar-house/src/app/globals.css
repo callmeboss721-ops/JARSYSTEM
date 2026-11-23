@@ -2741,6 +2741,42 @@ input.input, textarea.input, select.input { font-size: 16px; }
   background: rgba(39, 133, 71, .12);
 }
 
+.member-tier {
+  flex-wrap: wrap;
+}
+.member-tier__art {
+  display: block;
+  flex: 0 1 auto;
+  width: clamp(88px, 24vw, 122px);
+  height: auto;
+  object-fit: contain;
+}
+.member-tier__art--vip {
+  width: clamp(112px, 33vw, 158px);
+}
+
+.brand-artwork-button {
+  display: inline-flex !important;
+  width: 100%;
+  max-width: 320px;
+  min-height: 48px;
+  height: 64px;
+  padding: 4px 8px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.brand-artwork-button__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.brand-artwork-button:hover:not(:disabled) {
+  background: transparent;
+  box-shadow: none;
+}
+
 .landing-club-preview__caption {
   display: flex;
   align-items: center;

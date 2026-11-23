@@ -270,9 +270,22 @@ export default function BrandPage() {
             </article>
             <article className="rounded-[var(--radius)] border border-border/80 bg-card/70 p-5">
               <h3 className="font-display text-lg font-semibold">บริการจัดส่ง</h3>
+              <Image
+                src="/brand/artwork/delivery-mascot.webp"
+                alt="มาสคอต JAGUAR SPK ถือพัสดุ"
+                width={768}
+                height={768}
+                className="my-3 h-24 w-24 object-contain"
+                sizes="96px"
+              />
               <p className="mt-2 text-sm leading-7 text-muted-foreground">
                 บริเวณใกล้เคียงบางเมือง กรุณาโทรสอบถามพื้นที่และเงื่อนไขก่อนสั่ง
               </p>
+              <Button asChild variant="outline" className="mt-4 w-full sm:w-auto">
+                <a href={`tel:${STORE_PHONE}`} aria-label={`โทรสอบถามพื้นที่และเงื่อนไขจัดส่ง ${STORE_PHONE}`}>
+                  สอบถามเรื่องจัดส่ง
+                </a>
+              </Button>
             </article>
             <article className="rounded-[var(--radius)] border border-secondary/30 bg-card/70 p-5 sm:col-span-2 lg:col-span-2">
               <h3 className="font-display text-lg font-semibold">โปรโมชันสมาชิก</h3>

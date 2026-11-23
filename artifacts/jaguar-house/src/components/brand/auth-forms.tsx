@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLoginMember, useRegisterMember } from "@workspace/api-client-react";
 import { BrandIcon } from "./brand-icon";
-import { BrandButton } from "./brand-button";
+import { BrandArtworkButton, BrandButton } from "./brand-button";
 import { cleanCode, codePattern, errorText, phonePattern } from "./loyalty-api";
 import { clearMemberCache } from "./api-utils";
 
@@ -61,7 +61,13 @@ export function LoginForm() {
         <input id="login-identifier" data-testid="login-identifier" className={`input ${method === "member_code" ? "uppercase" : ""}`} value={identifier} type={method === "phone" ? "tel" : "text"} inputMode={method === "phone" ? "tel" : "text"} autoComplete={method === "phone" ? "tel" : "off"} autoCapitalize={method === "member_code" ? "characters" : "off"} autoCorrect="off" spellCheck={false} maxLength={method === "member_code" ? 8 : 64} placeholder={method === "phone" ? "08x xxx xxxx" : method === "member_code" ? "รหัสสมาชิก" : "ชื่อที่ใช้สมัคร"} onChange={(e) => { setIdentifier(method === "member_code" ? cleanCode(e.target.value) : e.target.value); setErr(null); setServerErr(null); }} aria-invalid={!!err} aria-describedby={err ? "login-identifier-err" : undefined} />
         {err && <p id="login-identifier-err" className="field-error" role="alert">{err}</p>}
       </div>
-      <BrandButton type="submit" asset="btn-jaguar" label={pending ? "กำลังเข้าใช้…" : "เข้าใช้งาน"} disabled={pending} testId="login-submit" />
+      <BrandArtworkButton
+        type="submit"
+        src="/ui/artwork/sign-in.webp"
+        label={pending ? "กำลังเข้าสู่ระบบ" : "เข้าสู่ระบบ"}
+        disabled={pending}
+        testId="login-submit"
+      />
     </form>
   );
 }
@@ -112,7 +118,13 @@ export function RegisterForm() {
         {errs.code && <p id="reg-code-err" className="field-error" role="alert">{errs.code}</p>}
       </div>
       {server && <div className="auth-error-banner" role="alert" aria-live="assertive"><BrandIcon name="error" tone="danger" /><div><strong>ยังสมัครสมาชิกไม่ได้</strong><p>{server}</p></div></div>}
-      <BrandButton type="submit" asset="btn-crown" label={pending ? "กำลังสมัคร…" : "เปิดบัตร"} disabled={pending} testId="register-submit" />
+      <BrandArtworkButton
+        type="submit"
+        src="/ui/artwork/signup-card.webp"
+        label={pending ? "กำลังสมัครบัตร" : "สมัครบัตร"}
+        disabled={pending}
+        testId="register-submit"
+      />
     </form>
   );
 }
