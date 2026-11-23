@@ -336,6 +336,17 @@ export interface CannabisStampInput {
   request_id: string;
 }
 
+export interface StaffPointCreditInput {
+  /** @pattern ^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$ */
+  member_code: string;
+  /**
+     * @minimum 1
+     * @maximum 20
+     */
+  points: number;
+  request_id: string;
+}
+
 export interface CannabisRedeemInput {
   /** @pattern ^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$ */
   member_code: string;
@@ -516,6 +527,9 @@ export interface FormulaSales {
 
 export interface OwnerSummary {
   members: number;
+  kratom_members: number;
+  cannabis_members: number;
+  today_points_issued: number;
   today_sales: number;
   total_sales: number;
   today_visits: number;
@@ -523,6 +537,42 @@ export interface OwnerSummary {
   today_redemptions: number;
   redemptions: number;
   by_formula: FormulaSales[];
+}
+
+export type OwnerAuditEntryEventType = typeof OwnerAuditEntryEventType[keyof typeof OwnerAuditEntryEventType];
+
+
+export const OwnerAuditEntryEventType = {
+  sale: 'sale',
+  cannabis: 'cannabis',
+  redemption: 'redemption',
+  points: 'points',
+  correction: 'correction',
+} as const;
+
+export type OwnerAuditEntryStatus = typeof OwnerAuditEntryStatus[keyof typeof OwnerAuditEntryStatus];
+
+
+export const OwnerAuditEntryStatus = {
+  completed: 'completed',
+  redeemed: 'redeemed',
+  pending: 'pending',
+  confirmed: 'confirmed',
+  corrected: 'corrected',
+} as const;
+
+export interface OwnerAuditEntry {
+  id: string;
+  event_type: OwnerAuditEntryEventType;
+  /** @maxLength 8 */
+  member_code: string;
+  /** @maxLength 120 */
+  member_label: string;
+  /** @maxLength 240 */
+  description: string;
+  points_delta: number;
+  status: OwnerAuditEntryStatus;
+  created_at: string;
 }
 
 export interface BankAccount {

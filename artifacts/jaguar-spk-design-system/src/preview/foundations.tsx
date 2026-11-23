@@ -3,6 +3,7 @@ import { BrandIcon } from "../components/ui/brand-icon";
 import { JaguarMark } from "../components/ui/jaguar-mark";
 import { CollectingTrack, MemberCardFaces } from "../components/ui/membership-cards";
 import { RankShield } from "../components/ui/rank-emblems";
+import { tokens } from "../generated/tokens";
 import { Guidelines } from "./parts";
 
 const CORE = [
@@ -17,6 +18,17 @@ const SUPPORT = [
   { name: "Text", value: "#F9F6E7" },
   { name: "Muted", value: "#C6C8BE" },
   { name: "Border", value: "#16211A" },
+];
+
+const BRAND_ID_2026 = [
+  { name: "Deep Jaguar Black", value: tokens.color.brandId2026.background },
+  { name: "Surface", value: tokens.color.brandId2026.surface },
+  { name: "Neon Green", value: tokens.color.brandId2026.neon },
+  { name: "Jaguar Green", value: tokens.color.brandId2026.jaguarGreen },
+  { name: "Crown Gold", value: tokens.color.brandId2026.gold },
+  { name: "Pure White", value: tokens.color.brandId2026.text },
+  { name: "Border", value: tokens.color.brandId2026.border },
+  { name: "Muted", value: tokens.color.brandId2026.muted },
 ];
 
 function Swatch({ name, value, role }: { name: string; value: string; role?: string }) {
@@ -131,6 +143,11 @@ export function ColorsPage() {
       <section className="ds-section__heading"><span className="ds-eyebrow">V3 COLOR ROLES</span><h2>โทนสี JAGUAR SPK</h2></section>
       <div className="ds-swatch-grid ds-swatch-grid--core">{CORE.map((item) => <Swatch key={item.name} {...item} />)}</div>
       <div className="ds-swatch-grid">{SUPPORT.map((item) => <Swatch key={item.name} {...item} />)}</div>
+      <section className="ds-section">
+        <div className="ds-section__heading"><span className="ds-eyebrow">SCOPED BRAND ID 2026</span><h2>สี Brand ID 2026</h2></div>
+        <div className="ds-swatch-grid">{BRAND_ID_2026.map((item) => <Swatch key={item.name} {...item} />)}</div>
+        <p>ใช้เฉพาะหน้าที่อนุมัติผ่าน <code>data-brand-theme="2026"</code> · โทเคน v3 ด้านบนยังเป็นค่าเริ่มต้น</p>
+      </section>
       <Guidelines items={[
         { kind: "do", text: "ใช้โทนรองที่อ่านชัดและให้ข้อความหลักมีความต่างระดับสีเพียงพอ" },
         { kind: "do", text: "light และ dark mode ใช้ role ชุดเดียวกัน โดยแมปค่าจากโทเค็น DTCG" },

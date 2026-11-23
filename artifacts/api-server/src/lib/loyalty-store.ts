@@ -436,13 +436,26 @@ export async function isCannabisPointsEnabled(): Promise<boolean> {
 
 export async function listStaffMembers(query = "") {
   const normalized = query.trim().replace(/[%_\\]/g, "");
+  const rawPhoneDigits = normalized.replace(/\D/g, "");
+  const phoneDigits = rawPhoneDigits.startsWith("66")
+    ? `0${rawPhoneDigits.slice(2)}`
+    : rawPhoneDigits;
+  const phoneSearch = phoneDigits.length >= 4 ? phoneDigits : null;
   const rows = (await pool.query(`select m.id,m.member_code,m.display_name,m.nickname,m.phone_e164,m.status,m.is_demo,m.created_at,
     b.balance,b.lifetime_earned,b.lifetime_redeemed,b.kratom_amount_remainder as kratom_remainder_baht,
     coalesce(b.cannabis_balance,0)::integer as cannabis_balance,b.cannabis_grams_remainder as cannabis_remainder_grams
     from jaguar_members m
     join jaguar_point_balances b on b.member_id=m.id
-    where m.status <> 'deleted' and (not m.is_demo or $2) and ($1='' or m.member_code ilike '%' || $1 || '%' or m.display_name ilike '%' || $1 || '%' or coalesce(m.nickname,'') ilike '%' || $1 || '%')
-    order by m.created_at desc limit 200`, [normalized, demoAccessEnabled])).rows;
+    where m.status <> 'deleted' and (not m.is_demo or $3) and (
+      $1='' or m.member_code ilike '%' || $1 || '%' or m.display_name ilike '%' || $1 || '%' or
+      coalesce(m.nickname,'') ilike '%' || $1 || '%' or (
+        $2::text is not null and regexp_replace(
+          case when m.phone_e164 like '+66%' then '0' || substring(m.phone_e164 from 4)
+            else coalesce(m.phone_e164,'') end, '[^0-9]', '', 'g'
+        ) like '%' || $2 || '%'
+      )
+    )
+    order by m.created_at desc limit 200`, [normalized, phoneSearch, demoAccessEnabled])).rows;
   return rows.map(({ phone_e164, ...row }) => ({ ...row, phone_masked: maskPhone(phone_e164) }));
 }
 export async function createMember(name: string, code: string, phone: string, inputNickname: string) {
@@ -498,14 +511,41 @@ export async function ownerReport() {
       count(s.id)::integer as total_visits from jaguar_sales s
       join jaguar_members m on m.id=s.member_id where not m.is_demo
   ), redeemed as (
-    select count(d.id) filter (where d.status='confirmed' and (d.created_at at time zone 'Asia/Bangkok')::date=local_day.day)::integer as today_redemptions,
-      count(d.id) filter (where d.status='confirmed')::integer as redemptions
-    from jaguar_redemptions d join jaguar_members m on m.id=d.member_id,local_day
-    where not m.is_demo
+    select count(*) filter (where r.points_spent=10 and
+        (r.created_at at time zone 'Asia/Bangkok')::date=local_day.day)::integer as today_redemptions,
+      count(*)::integer as redemptions
+    from (
+      select d.created_at,d.points_spent from jaguar_redemptions d
+        join jaguar_members m on m.id=d.member_id where d.status='confirmed' and not m.is_demo
+      union all
+      select t.created_at,10::integer as points_spent from jaguar_cannabis_transactions t
+        join jaguar_members m on m.id=t.member_id where t.delta=-10 and t.grams_purchased=0 and not m.is_demo
+    ) r,local_day
+  ), member_counts as (
+    select count(*) filter (where m.status='active' and not m.is_demo)::integer as members,
+      count(*) filter (where m.status='active' and not m.is_demo and
+        (b.balance>0 or b.lifetime_earned>0 or b.lifetime_redeemed>0))::integer as kratom_members,
+      count(*) filter (where m.status='active' and not m.is_demo and
+        (greatest(coalesce(b.cannabis_balance,0),coalesce(c.balance,0))>0 or
+        coalesce(c.lifetime_earned,0)>0 or coalesce(c.lifetime_redeemed,0)>0))::integer as cannabis_members
+    from jaguar_members m
+    join jaguar_point_balances b on b.member_id=m.id
+    left join jaguar_cannabis_balances c on c.member_id=m.id
+  ), point_totals as (
+    select coalesce(sum(t.delta),0)::integer as today_points_issued
+    from (
+      select member_id,delta,created_at from jaguar_point_transactions where delta>0
+      union all
+      select member_id,delta,created_at from jaguar_cannabis_transactions where delta>0
+    ) t
+    join jaguar_members m on m.id=t.member_id
+    cross join local_day
+    where not m.is_demo and (t.created_at at time zone 'Asia/Bangkok')::date=local_day.day
   )
     select totals.today_sales,totals.today_visits,all_sales.total_sales,all_sales.total_visits,
-      redeemed.today_redemptions,redeemed.redemptions,(select count(*)::integer from jaguar_members where status='active' and not is_demo) as members
-    from totals,all_sales,redeemed`);
+      redeemed.today_redemptions,redeemed.redemptions,member_counts.members,
+      member_counts.kratom_members,member_counts.cannabis_members,point_totals.today_points_issued
+    from totals,all_sales,redeemed,member_counts,point_totals`);
   const byFormula = (await pool.query(`with local_day as (
     select (now() at time zone 'Asia/Bangkok')::date as day
   ), running as (
@@ -538,6 +578,46 @@ export async function ownerReport() {
       today_amount_baht: Number(row.today_amount_baht),
     })),
   };
+}
+
+export async function ownerAuditLog() {
+  const { rows } = await pool.query(`with activity as (
+    select s.id,'sale'::text as event_type,m.member_code,
+      coalesce(nullif(m.nickname,''),m.display_name,m.member_code) as member_label,
+      ('ซื้อ ' || s.bottle_count || ' ขวด · ฿' || s.amount_baht ||
+        case when s.points_awarded>0 then ' · +' || s.points_awarded || ' แต้ม' else '' end)::text as description,
+      s.points_awarded::integer as points_delta,'completed'::text as status,s.created_at
+    from jaguar_sales s join jaguar_members m on m.id=s.member_id where not m.is_demo
+    union all
+    select t.id,'cannabis'::text,m.member_code,
+      coalesce(nullif(m.nickname,''),m.display_name,m.member_code),
+      ('ซื้อ ' || t.grams_purchased || ' กรัม · ' || t.reason)::text,
+      t.delta::integer,case when t.delta<0 then 'redeemed'::text else 'completed'::text end,t.created_at
+    from jaguar_cannabis_transactions t join jaguar_members m on m.id=t.member_id where not m.is_demo
+    union all
+    select d.id,'redemption'::text,m.member_code,
+      coalesce(nullif(m.nickname,''),m.display_name,m.member_code),
+      (r.name || ' · แลก ' || d.points_spent || ' แต้ม')::text,
+      (-d.points_spent)::integer,d.status::text,d.created_at
+    from jaguar_redemptions d join jaguar_members m on m.id=d.member_id
+      join jaguar_rewards r on r.id=d.reward_id where not m.is_demo
+    union all
+    select p.id,'points'::text,m.member_code,
+      coalesce(nullif(m.nickname,''),m.display_name,m.member_code),
+      ('เพิ่มแต้ม ' || p.delta)::text,p.delta::integer,'completed'::text,p.created_at
+    from jaguar_point_transactions p join jaguar_members m on m.id=p.member_id
+      where p.reason='staff_credit' and not m.is_demo
+    union all
+    select c.id,'correction'::text,m.member_code,
+      coalesce(nullif(m.nickname,''),m.display_name,m.member_code),
+      ('แก้ไขรายการ · ' || c.reason)::text,0::integer,'corrected'::text,c.created_at
+    from jaguar_transaction_corrections c
+      join jaguar_members m on m.id=c.member_id
+      where c.member_id is not null and not m.is_demo
+  )
+  select id::text,event_type,member_code,member_label,description,points_delta,status,created_at::text as created_at
+  from activity order by created_at desc,id desc limit 25`);
+  return rows;
 }
 
 export async function getMemberQr(id: string) {

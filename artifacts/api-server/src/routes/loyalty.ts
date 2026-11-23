@@ -3,7 +3,7 @@ import {
   RegisterMemberBody, LoginMemberBody, UpdateMemberNicknameBody, UpdateCannabisPointsFeatureBody,
   UpdateCannabisPointsFeatureResponse, RequestRedemptionBody, ConfirmRedemptionParams,
   LoginStaffBody, LoginOwnerBody, ChangeStaffPinBody, ChangeOwnerPinsBody,
-  CreateStaffMemberBody, CreateOwnerMemberBody, RecordStaffSaleBody, RedeemAtCounterBody,
+  CreateStaffMemberBody, CreateOwnerMemberBody, RecordStaffSaleBody, CreditStaffPointsBody, RedeemAtCounterBody,
   AddCannabisStampsBody, RedeemCannabisAtCounterBody, GetStaffCannabisCardQueryParams,
   CreateOwnerRewardBody, UpdateOwnerRewardBody, FindMemberQueryParams,
   ListStaffMembersQueryParams, ListOwnerMembersQueryParams,
@@ -11,7 +11,7 @@ import {
   GetCannabisMemberCardResponse, GetStaffCannabisCardResponse, AddCannabisStampsResponse, RedeemCannabisAtCounterResponse,
   ListMemberRedemptionsResponse, RequestRedemptionResponse, GetMemberQrResponse,
   ListStaffMembersResponse, RedeemAtCounterResponse, ListStaffRewardsResponse,
-  ListPendingRedemptionsResponse, ConfirmRedemptionResponse, GetOwnerSummaryResponse,
+  ListPendingRedemptionsResponse, ConfirmRedemptionResponse, GetOwnerSummaryResponse, GetOwnerAuditLogResponse,
   ListOwnerMembersResponse, ListOwnerRewardsResponse, CreateOwnerRewardResponse, UpdateOwnerRewardResponse,
   ListOwnerPendingResponse, ConfirmOwnerRedemptionResponse,
   GetStaffBankingResponse, RecordStaffBankTransferBody, RecordStaffBankTransferResponse,
@@ -28,7 +28,7 @@ import {
 } from "@workspace/api-zod";
 import {
   loyaltyStore, listStaffRewards, createReward, setRewardActive, listStaffMembers,
-  createMember, softDeleteMember, ownerReport, getMemberQr, isCannabisPointsEnabled, normalizeNickname,
+  createMember, softDeleteMember, ownerReport, ownerAuditLog, getMemberQr, isCannabisPointsEnabled, normalizeNickname,
 } from "../lib/loyalty-store";
 import {
   getStaffBanking, getOwnerBanking, createBankAccount, updateBankAccount,
@@ -308,6 +308,15 @@ router.post("/staff/stamp", async (req, res) => {
     p_member: member.id, p_bottle_count: bottle_count, p_formula: formula, p_request: request_id, p_slip_path: slip_path,
   }));
 });
+router.post("/staff/points", async (req, res) => {
+  await authLimit(req, "staff-point-credit", 60);
+  const { member_code, points, request_id } = parse(CreditStaffPointsBody, req.body);
+  const member = await loyaltyStore<MemberCard>("jaguar_member_login", { p_code: codeValue(member_code) });
+  await rateLimit(`staff-credit-member:${privateKey(member.id)}`, 30, 60_000);
+  sendJson(res, GetMemberCardResponse, await loyaltyStore("jaguar_add_points", {
+    p_member: member.id, p_points: points, p_request: request_id,
+  }));
+});
 router.get("/staff/member-sales", async (req, res) => {
   await authLimit(req, "staff-member-sales-read", 120);
   const { code } = parse(ListStaffSalesQueryParams, req.query);
@@ -428,6 +437,10 @@ router.post("/owner/pins", async (req, res) => {
   res.json({ ok: true, staff_default_pin: await usesDefaultPin("staff"), owner_default_pin: await usesDefaultPin("owner") });
 });
 router.get("/owner/summary", async (_req, res) => sendJson(res, GetOwnerSummaryResponse, await ownerReport()));
+router.get("/owner/audit-log", async (req, res) => {
+  await authLimit(req, "owner-audit-log-read", 60);
+  sendJson(res, GetOwnerAuditLogResponse, await ownerAuditLog());
+});
 router.patch("/owner/features/cannabis-points", async (req, res) => {
   await authLimit(req, "owner-cannabis-feature", 20);
   const { enabled } = parse(UpdateCannabisPointsFeatureBody, req.body);

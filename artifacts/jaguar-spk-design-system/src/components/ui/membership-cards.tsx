@@ -1,6 +1,7 @@
 import { QRCodeSVG } from "qrcode.react";
 import { useId, useRef, type ReactNode } from "react";
 import { Maximize2, X } from "lucide-react";
+import { tokens } from "../../generated/tokens";
 import { BrandButton } from "./brand-button";
 import { BrandIcon } from "./brand-icon";
 
@@ -15,7 +16,7 @@ type CardQr = {
   retrying?: boolean;
 };
 
-const CLUBS: Record<MemberClub, { title: string; image: string; stampIcon: string; alt: string; rule: string; reward: string }> = {
+const CLUBS: Record<MemberClub, { title: string; image: string; stampIcon: string; alt: string; rule: string; reward: string; tagline: string }> = {
   kratom: {
     title: "JAGUAR KRATOM",
     image: "card-kratom-full.jpg",
@@ -23,6 +24,7 @@ const CLUBS: Record<MemberClub, { title: string; image: string; stampIcon: strin
     alt: "บัตรสะสมแต้ม JAGUAR KRATOM ลายเสือจากัวร์",
     rule: "ครบ ฿100 สะสม = 1 แต้ม",
     reward: "ฟรี 1 ขวด",
+    tagline: "JAGUAR SPK CERTIFIED · MIX FRESH · SERVE COLD",
   },
   cannabis: {
     title: "JAGUAR CANNABIS",
@@ -31,6 +33,7 @@ const CLUBS: Record<MemberClub, { title: string; image: string; stampIcon: strin
     alt: "บัตรสะสมแต้ม JAGUAR CANNABIS ลายใบกัญชา",
     rule: "ครบ 100 g สะสม = 1 แต้ม",
     reward: "ฟรี 1 g",
+    tagline: "JAGUAR SPK · BREAK ALL LIMIT",
   },
 };
 
@@ -82,7 +85,7 @@ export function SharedMemberCard({
                   <span role="alert">QR ไม่พร้อม</span>
                   <button type="button" onClick={qr.retry} disabled={qr.retrying}>{qr.retrying ? "รอ…" : "ลองใหม่"}</button>
                 </div>
-                : <QRCodeSVG value={qr.value} size={66} level="M" className="member-pass-card__qr-code" aria-label={`QR สมาชิก ${memberCode}`} />}
+                : <QRCodeSVG value={qr.value} size={66} level="M" includeMargin bgColor={tokens.color.brandId2026.text} className="member-pass-card__qr-code" aria-label={`QR สมาชิก ${memberCode}`} />}
             <small>สแกนที่ร้าน</small>
           </div>
         </div>
@@ -200,6 +203,8 @@ export function LoyaltyCard({
 export function MemberCardFaces({
   kind,
   memberCode,
+  memberLabel,
+  memberPhone,
   balance,
   popKey = 0,
   assetBase = DEFAULT_ASSET_BASE,
@@ -207,6 +212,8 @@ export function MemberCardFaces({
 }: {
   kind: MemberClub;
   memberCode: string;
+  memberLabel?: string;
+  memberPhone?: string | null;
   balance: number;
   popKey?: number;
   assetBase?: string;
@@ -220,7 +227,12 @@ export function MemberCardFaces({
       <figure className="club-pass__front">
         <img className="club-pass__front-art" src={asset(club.image, assetBase)} alt={club.alt} loading="eager" />
         <span className="club-pass__front-frame" aria-hidden="true" />
-        <figcaption className="sr-only">{club.title} · บัตรสมาชิก @{memberCode} · บุญศิริ ซอย 6 · สมุทรปราการ</figcaption>
+        <div className="club-pass__front-identity">
+          <span>{club.tagline}</span>
+          <strong>{memberLabel || `@${memberCode}`}</strong>
+          <small>รหัสสมาชิก · {memberCode}{memberPhone ? ` · ${memberPhone}` : ""}</small>
+        </div>
+        <figcaption className="sr-only">{club.title} · {club.tagline} · สมาชิก @{memberCode} · บุญศิริ ซอย 6 · สมุทรปราการ</figcaption>
       </figure>
       <section className="club-pass__stamp-face" aria-label={`แสตมป์ ${club.title}`}>
         <header className="club-pass__stamp-head">
@@ -233,7 +245,7 @@ export function MemberCardFaces({
             const isFilled = index < filled;
             return (
               <li key={`${popKey}-${index}`} className="club-pass__stamp" data-filled={isFilled} data-reward={rewardSlot} data-ready={ready} data-pop={popKey > 0 && isFilled} data-testid={`${kind === "kratom" ? "stamp" : "cannabis-stamp"}-${index + 1}`}>
-                {rewardSlot ? <><strong>FREE!</strong><small>แถมฟรี</small></>
+                {rewardSlot ? <><BrandIcon name="crown" size={24} tone="gold" /><small>10 · รางวัล</small></>
                   : isFilled ? <img src={asset(club.stampIcon, assetBase)} alt="" width={28} height={28} aria-hidden="true" />
                     : <span>{String(index + 1).padStart(2, "0")}</span>}
                 <span className="sr-only">{rewardSlot ? `ครบ 10 แต้ม ${club.reward}` : isFilled ? "สะสมแล้ว" : "ยังไม่สะสม"}</span>
@@ -252,6 +264,7 @@ export function MemberCardFaces({
 export function MemberStatusPanel({
   kind,
   memberCode,
+  memberPhone,
   balance,
   qr,
   action,
@@ -263,6 +276,7 @@ export function MemberStatusPanel({
 }: {
   kind: MemberClub;
   memberCode: string;
+  memberPhone?: string | null;
   balance: number;
   qr: CardQr;
   action?: ReactNode;
@@ -279,13 +293,17 @@ export function MemberStatusPanel({
   const qrDialog = useRef<HTMLDialogElement>(null);
   const qrTitleId = useId();
   return (
-    <section className="ds-glass member-dashboard-status" aria-label="สถานะสมาชิก" data-testid={dataTestId}>
+    <section className="ds-glass member-dashboard-status" aria-label="สถานะสมาชิก" data-kind={kind} data-testid={dataTestId}>
       <div className="member-dashboard-status__main">
         <header>
           <div><span className="member-dashboard-status__eyebrow">MEMBERS CLUB</span><h2>สวัสดี <strong data-testid={memberCodeTestId}>@{memberCode}</strong></h2></div>
           <span className="member-dashboard-status__chip" data-ready={ready}>{ready ? "พร้อมแลก" : "กำลังสะสม"}</span>
         </header>
-        <div className="member-dashboard-status__points"><span>แต้มสะสม</span><strong>{filled}<small>/10</small></strong><span className="member-dashboard-status__remaining">{ready ? club.reward : `อีก ${remaining} แต้ม`}</span></div>
+        <div className="member-dashboard-status__points"><span>แต้มสะสม</span><strong>{filled}<small>/10</small></strong><span className="member-dashboard-status__remaining">
+          {ready
+            ? <><BrandIcon name="crown" size={17} tone="gold" /> สิทธิ์แลกฟรีพร้อมใช้งาน · แจ้งพนักงานที่เคาน์เตอร์ได้เลย (แลกได้ {Math.floor(balance / STAMPS)} สิทธิ์)</>
+            : `สะสมอีก ${remaining} แต้ม แลกรับฟรีทันที 1 รายการ`}
+        </span></div>
         <div className="member-dashboard-status__bar" role="progressbar" aria-label={`แต้มสะสม ${filled} จาก 10`} aria-valuemin={0} aria-valuemax={10} aria-valuenow={filled}>
           <span style={{ width: `${filled * 10}%` }} />
         </div>
@@ -297,7 +315,7 @@ export function MemberStatusPanel({
       <div className="member-dashboard-status__qr" aria-label="QR ส่วนตัวสำหรับพนักงานสแกน" data-testid={qrTestId}>
         {qr.loading ? <span className="member-dashboard-status__qr-loading" aria-label="กำลังโหลด QR" />
           : qr.error || !qr.value ? <div className="member-dashboard-status__qr-error"><span role="alert">QR ไม่พร้อม</span><button type="button" onClick={qr.retry} disabled={qr.retrying}>{qr.retrying ? "รอ…" : "ลองใหม่"}</button></div>
-            : <QRCodeSVG value={qr.value} size={62} level="M" aria-label={`QR สมาชิก ${memberCode}`} />}
+            : <QRCodeSVG value={qr.value} size={82} level="M" includeMargin bgColor={tokens.color.brandId2026.text} className="member-dashboard-status__qr-code" aria-label={`QR สมาชิก ${memberCode}`} />}
         <small>สแกนที่ร้าน</small>
         {!qr.loading && !qr.error && qr.value && (
           <>
@@ -329,13 +347,18 @@ export function MemberStatusPanel({
                 </header>
                 <QRCodeSVG
                   value={qr.value}
-                  size={280}
+                  size={320}
                   level="H"
                   includeMargin
+                  bgColor={tokens.color.brandId2026.text}
                   className="member-qr-dialog__code"
                   aria-label={`QR สมาชิก ${memberCode} สำหรับให้พนักงานสแกน`}
                 />
-                <p>แสดง QR นี้ให้พนักงานสแกน</p>
+                <p className="member-qr-dialog__identity">
+                  <strong>{memberCode}</strong>
+                  {memberPhone && <span>{memberPhone}</span>}
+                  <small>แสดง QR นี้ให้พนักงานสแกน</small>
+                </p>
               </div>
             </dialog>
           </>

@@ -84,6 +84,8 @@ export default function CannabisCardPage() {
           <MemberCardFaces
             kind="cannabis"
             memberCode={card.member_code}
+            memberLabel={card.nickname || card.display_name}
+            memberPhone={card.phone_masked}
             balance={card.balance}
             popKey={popKey}
           />
@@ -91,6 +93,7 @@ export default function CannabisCardPage() {
         <MemberStatusPanel
           kind="cannabis"
           memberCode={card.member_code}
+          memberPhone={card.phone_masked}
           balance={card.balance}
           qr={{
             value: qr.data?.qr,

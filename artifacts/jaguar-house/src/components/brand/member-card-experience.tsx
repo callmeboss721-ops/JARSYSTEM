@@ -14,11 +14,15 @@ type CardQr = {
 export function MemberCardFaces({
   kind,
   memberCode,
+  memberLabel,
+  memberPhone,
   balance,
   popKey,
 }: {
   kind: MemberClub;
   memberCode: string;
+  memberLabel?: string;
+  memberPhone?: string | null;
   balance: number;
   popKey: number;
 }) {
@@ -26,6 +30,8 @@ export function MemberCardFaces({
     <DesignSystemMemberCardFaces
       kind={kind}
       memberCode={memberCode}
+      memberLabel={memberLabel}
+      memberPhone={memberPhone}
       balance={balance}
       popKey={popKey}
       assetBase="/brand/"
@@ -37,11 +43,13 @@ export function MemberCardFaces({
 export function MemberStatusPanel({
   kind,
   memberCode,
+  memberPhone,
   balance,
   qr,
 }: {
   kind: MemberClub;
   memberCode: string;
+  memberPhone?: string | null;
   balance: number;
   qr: CardQr;
 }) {
@@ -76,6 +84,7 @@ export function MemberStatusPanel({
     <DesignSystemMemberStatusPanel
       kind={kind}
       memberCode={memberCode}
+      memberPhone={memberPhone}
       balance={balance}
       qr={qr}
       action={action}

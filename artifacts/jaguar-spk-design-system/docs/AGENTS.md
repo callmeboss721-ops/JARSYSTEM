@@ -13,6 +13,8 @@ on it and import its theme and components directly.
 - `docs/references/v3-source.md` — provenance and porting boundaries for the
   user-provided JAGUAR SPK Design System v3 HTML reference. It is visual/content
   input only; its raw script is never served or executed.
+- `docs/references/brand-id-2026-source.md` — source and confirmed scope for the
+  additive, opt-in Brand ID 2026 color palette.
 - `docs/references/logos/` — the original JAGUAR SPK emblem and wordmark.
 - `docs/references/assets/` — retained source artwork used to derive card and
   button treatments.
@@ -63,8 +65,12 @@ not add `.ts` files here.
 
 - Keep the original supplied JAGUAR mark whole and uncropped; use its transparent
   emblem for compact identity and its wordmark only where it remains legible.
-- Use the v3 palette: `#050505`, `#0D140F`, `#00FF9D`, `#D4AF37`, and
-  `#E5C04A`. Neon green is the primary action; gold is secondary and emphasis.
+- Keep v3 light/dark roles as the package defaults. Use the separately scoped
+  Brand ID 2026 tokens only on approved JAGUAR SPK app surfaces; do not remap the
+  defaults or copy palette values into consuming apps.
+- The Brand ID 2026 scope uses the DTCG tokens in `tokens.json` and the generated
+  `[data-brand-theme="2026"]` semantic mapping. `docs/references/brand-id-2026-source.md`
+  records provenance and approved application scope.
 - Keep customer cards and shared panels dark, with thin gold/green boundaries
   and measured glow. Avoid using glow as a substitute for contrast or status text.
 - Use Bai Jamjuree for display, IBM Plex Sans Thai for Thai body text, and

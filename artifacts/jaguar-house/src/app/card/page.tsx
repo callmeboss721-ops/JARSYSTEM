@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getGetMemberCardQueryKey, useGetMemberCard, useUpdateMemberNickname } from "@workspace/api-client-react";
+import { getGetMemberCardQueryKey, getListMemberActivityQueryKey, useGetMemberCard, useUpdateMemberNickname, useListMemberActivity } from "@workspace/api-client-react";
 import { MemberShell } from "@/components/brand/member-shell";
 import { MemberCardCarousel } from "@/components/brand/member-card-carousel";
 import { STAMPS } from "@/components/brand/loyalty-card";
@@ -27,6 +27,29 @@ export default function CardPage() {
   const card = useGetMemberCard({ query: { queryKey: cardKey, refetchInterval: visible ? 2000 : false, refetchIntervalInBackground: false, refetchOnWindowFocus: true, refetchOnMount: true, staleTime: 0, retry: false } });
   const updateNickname = useUpdateMemberNickname();
   const sales = useQuery<Sale[]>({ queryKey: ["/api/loyalty/sales"], queryFn: () => api("/api/loyalty/sales"), enabled: card.isSuccess, refetchInterval: visible ? 5000 : false, refetchIntervalInBackground: false, refetchOnWindowFocus: false });
+  const activityKey = getListMemberActivityQueryKey();
+  const activity = useListMemberActivity({ query: { queryKey: activityKey, enabled: card.isSuccess, refetchInterval: visible ? 5000 : false, refetchIntervalInBackground: false, refetchOnWindowFocus: false, retry: false } });
+  const recentEvents = useMemo(() => {
+    const purchaseEvents = (sales.data ?? []).map((sale) => ({
+      id: `sale-${sale.id}`,
+      created_at: sale.created_at,
+      title: `${formulaLabels[sale.formula] || sale.formula} · ${sale.bottle_count} ขวด`,
+      detail: `฿${sale.amount_baht.toLocaleString("th-TH")}`,
+      delta: sale.points_awarded,
+    }));
+    const pointEvents = (activity.data ?? [])
+      .filter((event) => !event.reason.includes("ซื้อสินค้า"))
+      .map((event) => ({
+        id: `activity-${event.id}`,
+        created_at: event.created_at,
+        title: event.delta < 0 ? "แลกแต้ม" : "รับแต้ม",
+        detail: event.reason,
+        delta: event.delta,
+      }));
+    return [...purchaseEvents, ...pointEvents]
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .slice(0, 5);
+  }, [activity.data, sales.data]);
   const code = card.data?.member_code;
   // The opaque staff-scan token is stable across reloads; keep one account-scoped fetch.
   const qr = useQuery<{ qr: string }>({ queryKey: ["/api/loyalty/qr", code], queryFn: () => api("/api/loyalty/qr"), enabled: !!code, staleTime: Infinity, gcTime: Infinity, refetchOnWindowFocus: false, refetchOnReconnect: false, refetchOnMount: false, retry: false });
@@ -88,6 +111,8 @@ export default function CardPage() {
             <MemberCardFaces
               kind="kratom"
               memberCode={card.data.member_code}
+              memberLabel={card.data.nickname || card.data.display_name}
+              memberPhone={card.data.phone_masked}
               balance={card.data.balance}
               popKey={pop}
             />
@@ -96,6 +121,7 @@ export default function CardPage() {
         <MemberStatusPanel
           kind="kratom"
           memberCode={card.data.member_code}
+          memberPhone={card.data.phone_masked}
           balance={card.data.balance}
           qr={{
             value: qr.data?.qr,
@@ -141,14 +167,14 @@ export default function CardPage() {
       </div>
       <aside className="space-y-5">
         <section className="panel p-5" aria-labelledby="sales-title">
-          <div className="flex items-center justify-between mb-3"><h2 id="sales-title" className="font-display text-lg font-semibold">รายการล่าสุด</h2></div>
-          {sales.isLoading ? <div className="space-y-2">{[1,2,3].map(x => <div key={x} className="skeleton h-14" />)}</div>
-          : sales.isError ? <ErrorState message={errorText(sales.error)} onRetry={() => sales.refetch()} retrying={sales.isFetching} />
-          : !sales.data?.length ? <EmptyState title="ยังไม่มีรายการซื้อ" />
-          : <ul className="divide-y divide-[var(--line)] list-none p-0 m-0">{sales.data.slice(0,5).map(s => <li key={s.id} className="py-3 flex gap-3 items-center">
-            <div className="min-w-0 flex-1"><p className="text-sm font-medium">{formulaLabels[s.formula] || s.formula} · {s.bottle_count} ขวด</p><p className="text-xs text-[var(--muted)]">{new Date(s.created_at).toLocaleString("th-TH")}</p></div>
-            <div className="text-right shrink-0"><p className="font-mono">฿{s.amount_baht.toLocaleString("th-TH")}</p><p className={`text-xs ${s.points_awarded ? "text-[var(--emerald-2)]" : "text-[var(--muted)]"}`}>{s.points_awarded ? `+${s.points_awarded} แต้ม` : "ยอดเศษทบต่อโดยระบบ"}</p></div>
+          <div className="flex items-center justify-between mb-3"><h2 id="sales-title" className="font-display text-lg font-semibold">รายการแต้มล่าสุด</h2></div>
+          {sales.isLoading || activity.isLoading ? <div className="space-y-2">{[1,2,3].map(x => <div key={x} className="skeleton h-14" />)}</div>
+          : !recentEvents.length ? <EmptyState title="ยังไม่มีรายการแต้ม" />
+          : <ul className="divide-y divide-[var(--line)] list-none p-0 m-0">{recentEvents.map((event) => <li key={event.id} className="py-3 flex gap-3 items-center">
+            <div className="min-w-0 flex-1"><p className="text-sm font-medium">{event.title}</p><p className="text-xs text-[var(--muted)]">{event.detail} · {new Date(event.created_at).toLocaleString("th-TH")}</p></div>
+            <div className="text-right shrink-0"><p className={`font-mono ${event.delta < 0 ? "text-[var(--gold-2)]" : "text-[var(--emerald-2)]"}`}>{event.delta > 0 ? "+" : ""}{event.delta}</p><p className="text-xs text-[var(--muted)]">แต้ม</p></div>
           </li>)}</ul>}
+          {(sales.isError || activity.isError) && recentEvents.length > 0 && <p role="status" className="mt-3 text-xs text-[var(--muted)]">แสดงรายการที่โหลดได้ · บางรายการอาจยังโหลดไม่ครบ</p>}
         </section>
       </aside>
     </div>}

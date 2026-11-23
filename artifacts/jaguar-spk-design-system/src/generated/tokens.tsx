@@ -71,6 +71,16 @@ export const tokens = {
       "sidebarAccent": "#D4AF37",
       "sidebarAccentForeground": "#050505",
       "sidebarRing": "#00FF9D"
+    },
+    "brandId2026": {
+      "background": "#08120A",
+      "surface": "#0D1F10",
+      "border": "#1C3A22",
+      "neon": "#A6FF00",
+      "jaguarGreen": "#00A651",
+      "gold": "#FFC400",
+      "text": "#FFFFFF",
+      "muted": "#A7C4AD"
     }
   },
   "fontFamily": {

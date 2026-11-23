@@ -9,6 +9,9 @@ import type { FormulaSales } from './formulaSales';
 
 export interface OwnerSummary {
   members: number;
+  kratom_members: number;
+  cannabis_members: number;
+  today_points_issued: number;
   today_sales: number;
   total_sales: number;
   today_visits: number;

@@ -292,6 +292,20 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/MemberCard" }
+  /loyalty/staff/points:
+    post:
+      operationId: creditStaffPoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/StaffPointCreditInput" }
+      responses:
+        "200":
+          description: Idempotent staff point credit recorded in the existing points ledger
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MemberCard" }
   /loyalty/staff/member-sales:
     get:
       operationId: listStaffSales
@@ -623,10 +637,22 @@ paths:
       operationId: getOwnerSummary
       responses:
         "200":
-          description: Persisted sales, Bangkok-day totals and formula mix excluding demo data
+          description: Persisted sales, points, redemptions, category member counts and Bangkok-day totals excluding demo data
           content:
             application/json:
               schema: { $ref: "#/components/schemas/OwnerSummary" }
+  /loyalty/owner/audit-log:
+    get:
+      operationId: getOwnerAuditLog
+      responses:
+        "200":
+          description: Latest 25 point, sale, redemption and correction events excluding demo members
+          content:
+            application/json:
+              schema:
+                type: array
+                maxItems: 25
+                items: { $ref: "#/components/schemas/OwnerAuditEntry" }
   /loyalty/owner/banking:
     get:
       operationId: getOwnerBanking
@@ -1034,6 +1060,13 @@ components:
         member_code: { type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$" }
         grams: { type: integer, minimum: 1, maximum: 999 }
         request_id: { type: string, format: uuid }
+    StaffPointCreditInput:
+      type: object
+      required: [member_code, points, request_id]
+      properties:
+        member_code: { type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9-]{4,6}[A-Za-z0-9]$" }
+        points: { type: integer, minimum: 1, maximum: 20 }
+        request_id: { type: string, format: uuid }
     CannabisRedeemInput:
       type: object
       required: [member_code, request_id]
@@ -1197,18 +1230,33 @@ components:
         today_amount_baht: { type: number }
     OwnerSummary:
       type: object
-      required: [members, today_sales, total_sales, today_visits, total_visits, today_redemptions, redemptions, by_formula]
+      required: [members, kratom_members, cannabis_members, today_points_issued, today_sales, total_sales, today_visits, total_visits, today_redemptions, redemptions, by_formula]
       properties:
-        members: { type: integer }
+        members: { type: integer, description: "Active non-demo member count across the store" }
+        kratom_members: { type: integer, description: "Active members with current or lifetime kratom point activity" }
+        cannabis_members: { type: integer, description: "Active members with current or lifetime cannabis point activity" }
+        today_points_issued: { type: integer, description: "Positive kratom and cannabis points issued today in Bangkok time" }
         today_sales: { type: number }
         total_sales: { type: number }
         today_visits: { type: integer }
         total_visits: { type: integer }
-        today_redemptions: { type: integer }
+        today_redemptions: { type: integer, description: "Confirmed 10-point free redemptions today across both categories" }
         redemptions: { type: integer }
         by_formula:
           type: array
           items: { $ref: "#/components/schemas/FormulaSales" }
+    OwnerAuditEntry:
+      type: object
+      required: [id, event_type, member_code, member_label, description, points_delta, status, created_at]
+      properties:
+        id: { type: string, format: uuid }
+        event_type: { type: string, enum: [sale, cannabis, redemption, points, correction] }
+        member_code: { type: string, maxLength: 8 }
+        member_label: { type: string, maxLength: 120 }
+        description: { type: string, maxLength: 240 }
+        points_delta: { type: integer }
+        status: { type: string, enum: [completed, redeemed, pending, confirmed, corrected] }
+        created_at: { type: string }
     BankAccount:
       type: object
       required: [id, bank_name, account_number, account_holder, daily_limit, is_active, created_at]

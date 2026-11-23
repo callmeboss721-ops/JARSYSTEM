@@ -1,0 +1,335 @@
+/* Product-specific compositions using only generated Design System tokens. */
+html[data-brand-theme="2026"] body::after {
+  display: none;
+}
+
+html[data-brand-theme="2026"] .club-pass {
+  --club-neon: hsl(var(--brand-id-2026-neon));
+  --club-gold: hsl(var(--brand-id-2026-gold));
+}
+
+html[data-brand-theme="2026"] .club-pass--kratom {
+  --club-neon: hsl(var(--brand-id-2026-gold));
+  --club-gold: hsl(var(--brand-id-2026-gold));
+}
+
+html[data-brand-theme="2026"] .club-pass--cannabis {
+  --club-neon: hsl(var(--brand-id-2026-neon));
+  --club-gold: hsl(var(--brand-id-2026-jaguar-green));
+}
+
+html[data-brand-theme="2026"] .club-pass__front-identity {
+  position: absolute;
+  z-index: 2;
+  right: 9px;
+  bottom: 8px;
+  left: 9px;
+  display: grid;
+  gap: 3px;
+  padding: 8px 10px;
+  border: 1px solid hsl(var(--brand-id-2026-border) / .84);
+  border-radius: 10px;
+  background: linear-gradient(120deg, hsl(var(--brand-id-2026-background) / .94), hsl(var(--brand-id-2026-background) / .76));
+  color: hsl(var(--brand-id-2026-text));
+  backdrop-filter: blur(8px);
+}
+
+html[data-brand-theme="2026"] .club-pass__front-identity > span {
+  color: hsl(var(--brand-id-2026-gold));
+  font: 700 7px/1.35 var(--font-mono);
+  letter-spacing: .06em;
+}
+
+html[data-brand-theme="2026"] .club-pass--cannabis .club-pass__front-identity > span {
+  color: hsl(var(--brand-id-2026-neon));
+}
+
+html[data-brand-theme="2026"] .club-pass__front-identity > strong {
+  overflow: hidden;
+  color: hsl(var(--brand-id-2026-text));
+  font: 700 12px/1.3 var(--font-display);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+html[data-brand-theme="2026"] .club-pass__front-identity > small {
+  overflow-wrap: anywhere;
+  color: hsl(var(--brand-id-2026-muted));
+  font: 600 8px/1.25 var(--font-mono);
+}
+
+html[data-brand-theme="2026"] .club-pass__stamp-face {
+  background:
+    radial-gradient(ellipse at 0 100%, color-mix(in srgb, var(--club-neon) 12%, transparent), transparent 42%),
+    radial-gradient(ellipse at 100% 0, color-mix(in srgb, var(--club-gold) 12%, transparent), transparent 38%),
+    linear-gradient(145deg, hsl(var(--brand-id-2026-surface)), hsl(var(--brand-id-2026-background)));
+}
+
+html[data-brand-theme="2026"] .club-pass__stamp[data-reward="true"] {
+  color: hsl(var(--brand-id-2026-gold));
+}
+
+html[data-brand-theme="2026"] .club-pass--cannabis .club-pass__stamp[data-reward="true"] {
+  color: hsl(var(--brand-id-2026-neon));
+}
+
+html[data-brand-theme="2026"] .club-pass__stamp[data-reward="true"] .brand-icon {
+  width: 24px;
+  height: 24px;
+  color: hsl(var(--brand-id-2026-gold));
+}
+
+html[data-brand-theme="2026"] .club-pass__stamp[data-reward="true"] > small {
+  font-size: 7px;
+}
+
+html[data-brand-theme="2026"] .member-card-stage {
+  color: hsl(var(--brand-id-2026-text));
+}
+
+html[data-brand-theme="2026"] .member-card-switcher {
+  border-color: hsl(var(--brand-id-2026-border));
+  background: hsl(var(--brand-id-2026-background));
+}
+
+html[data-brand-theme="2026"] .member-card-switcher__option[data-card="kratom"] {
+  color: hsl(var(--brand-id-2026-gold));
+}
+
+html[data-brand-theme="2026"] .member-card-switcher__option[data-card="cannabis"] {
+  color: hsl(var(--brand-id-2026-neon));
+}
+
+html[data-brand-theme="2026"] .member-card-switcher__option[data-card="kratom"][data-active="true"] {
+  border-color: hsl(var(--brand-id-2026-gold) / .8);
+  background: hsl(var(--brand-id-2026-gold));
+  color: hsl(var(--brand-id-2026-background));
+}
+
+html[data-brand-theme="2026"] .member-card-switcher__option[data-card="cannabis"][data-active="true"] {
+  border-color: hsl(var(--brand-id-2026-neon) / .8);
+  background: hsl(var(--brand-id-2026-neon));
+  color: hsl(var(--brand-id-2026-background));
+}
+
+html[data-brand-theme="2026"] .member-dashboard-status {
+  grid-template-columns: minmax(0, 1fr) 104px;
+  background: linear-gradient(145deg, hsl(var(--brand-id-2026-surface)), hsl(var(--brand-id-2026-background)));
+  border-color: hsl(var(--brand-id-2026-border));
+}
+
+html[data-brand-theme="2026"] .member-dashboard-status[data-kind="kratom"] {
+  --club-neon: hsl(var(--brand-id-2026-gold));
+  --club-gold: hsl(var(--brand-id-2026-gold));
+}
+
+html[data-brand-theme="2026"] .member-dashboard-status[data-kind="cannabis"] {
+  --club-neon: hsl(var(--brand-id-2026-neon));
+  --club-gold: hsl(var(--brand-id-2026-jaguar-green));
+}
+
+html[data-brand-theme="2026"] .member-dashboard-status__cta {
+  border-color: hsl(var(--brand-id-2026-gold) / .76);
+  background: hsl(var(--brand-id-2026-gold));
+  color: hsl(var(--brand-id-2026-background));
+}
+
+html[data-brand-theme="2026"] .member-dashboard-status[data-kind="cannabis"] .member-dashboard-status__cta {
+  border-color: hsl(var(--brand-id-2026-neon) / .8);
+  background: hsl(var(--brand-id-2026-neon));
+  color: hsl(var(--brand-id-2026-background));
+}
+
+html[data-brand-theme="2026"] .member-dashboard-status__points {
+  flex-wrap: wrap;
+  gap: 3px 7px;
+}
+
+html[data-brand-theme="2026"] .member-dashboard-status__remaining {
+  display: flex;
+  flex: 1 0 100%;
+  align-items: center;
+  gap: 5px;
+  margin-left: 0;
+  color: hsl(var(--brand-id-2026-text));
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+html[data-brand-theme="2026"] .member-dashboard-status__remaining .brand-icon {
+  flex: 0 0 auto;
+  color: hsl(var(--brand-id-2026-gold));
+}
+
+html[data-brand-theme="2026"] .member-dashboard-status__qr {
+  position: relative;
+  z-index: 101;
+  width: 96px;
+  min-height: 102px;
+  padding: 7px;
+  border-color: hsl(var(--brand-id-2026-border));
+  background: hsl(var(--brand-id-2026-text));
+  color: hsl(var(--brand-id-2026-background));
+}
+
+html[data-brand-theme="2026"] .member-dashboard-status__qr > svg {
+  width: 82px;
+  height: 82px;
+  background: hsl(var(--brand-id-2026-text));
+}
+
+html[data-brand-theme="2026"] .member-dashboard-status__qr > small {
+  color: hsl(var(--brand-id-2026-background));
+}
+
+html[data-brand-theme="2026"] .member-header,
+html[data-brand-theme="2026"] .member-bottom-nav {
+  border-color: hsl(var(--brand-id-2026-border));
+  background: hsl(var(--brand-id-2026-background) / .95);
+}
+
+html[data-brand-theme="2026"] .member-bottom-nav__item.is-active[data-kind="kratom"] {
+  color: hsl(var(--brand-id-2026-gold));
+  background: hsl(var(--brand-id-2026-gold) / .1);
+}
+
+html[data-brand-theme="2026"] .member-bottom-nav__item.is-active[data-kind="cannabis"] {
+  color: hsl(var(--brand-id-2026-neon));
+  background: hsl(var(--brand-id-2026-neon) / .1);
+}
+
+html[data-brand-theme="2026"] .gold-alert {
+  border-color: hsl(var(--brand-id-2026-gold) / .48);
+  background: hsl(var(--brand-id-2026-gold) / .1);
+  color: hsl(var(--brand-id-2026-gold));
+}
+
+html[data-brand-theme="2026"] .member-qr-dialog {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  max-width: 100vw;
+  max-height: 100dvh;
+  margin: 0;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: 0;
+  border-color: hsl(var(--brand-id-2026-gold));
+  background: hsl(var(--brand-id-2026-background));
+}
+
+html[data-brand-theme="2026"] .member-qr-dialog__surface {
+  min-height: 100dvh;
+  align-content: center;
+  padding: max(24px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+  border-radius: 0;
+}
+
+html[data-brand-theme="2026"] .member-qr-dialog__surface {
+  background: linear-gradient(145deg, hsl(var(--brand-id-2026-surface)), hsl(var(--brand-id-2026-background)));
+}
+
+html[data-brand-theme="2026"] .member-qr-dialog__code {
+  width: min(320px, 100%);
+  padding: 14px;
+  background: hsl(var(--brand-id-2026-text));
+}
+
+html[data-brand-theme="2026"] .member-qr-dialog__identity {
+  display: grid;
+  gap: 2px;
+}
+
+html[data-brand-theme="2026"] .member-qr-dialog__identity strong {
+  color: hsl(var(--brand-id-2026-text));
+  font: 800 20px/1.3 var(--font-mono);
+  letter-spacing: .04em;
+}
+
+html[data-brand-theme="2026"] .member-qr-dialog__identity span {
+  color: hsl(var(--brand-id-2026-muted));
+  font: 700 14px/1.4 var(--font-mono);
+}
+
+html[data-brand-theme="2026"] .member-qr-dialog__identity small {
+  color: hsl(var(--brand-id-2026-muted));
+  font: 500 12px/1.5 var(--font-sans);
+}
+
+html[data-brand-theme="2026"] .staff-success-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px 12px;
+  padding: 16px;
+  border: 1px solid hsl(var(--brand-id-2026-jaguar-green) / .58);
+  border-radius: 16px;
+  background: hsl(var(--brand-id-2026-jaguar-green) / .12);
+}
+
+html[data-brand-theme="2026"] .staff-success-card > .brand-icon {
+  color: hsl(var(--brand-id-2026-neon));
+}
+
+html[data-brand-theme="2026"] .staff-success-card > p {
+  margin: 0;
+  color: hsl(var(--brand-id-2026-text));
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
+html[data-brand-theme="2026"] .staff-success-card .staff-next-scan {
+  grid-column: 1 / -1;
+  min-height: 56px;
+}
+
+html[data-brand-theme="2026"] .staff-main-nav .tab[aria-pressed="true"] {
+  border-color: hsl(var(--brand-id-2026-neon) / .7);
+  background: hsl(var(--brand-id-2026-neon));
+  color: hsl(var(--brand-id-2026-background));
+}
+
+html[data-brand-theme="2026"] .staff-quick-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(220px, .85fr);
+  align-items: end;
+  gap: 10px;
+}
+
+html[data-brand-theme="2026"] .staff-quick-actions .staff-scan-button {
+  display: flex;
+  width: 100%;
+  min-height: 52px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+html[data-brand-theme="2026"] .staff-quick-matches ul {
+  max-height: 320px;
+  overflow: auto;
+}
+
+html[data-brand-theme="2026"] .owner-audit-list > li {
+  border-color: hsl(var(--brand-id-2026-border) / .72);
+}
+
+@media (max-width: 380px) {
+  html[data-brand-theme="2026"] .member-dashboard-status {
+    grid-template-columns: minmax(0, 1fr) 96px;
+  }
+}
+
+@media (max-width: 639px) {
+  html[data-brand-theme="2026"] .staff-quick-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-brand-theme="2026"] .member-dashboard-status__bar > span {
+    transition: none;
+  }
+}

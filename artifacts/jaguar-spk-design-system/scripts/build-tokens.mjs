@@ -139,6 +139,10 @@ function colorEntries(scope, tokens) {
   return out;
 }
 
+function kebabCase(value) {
+  return value.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
+}
+
 function buildCss(tokens) {
   let css = readFileSync(templatePath, "utf8");
   const replacements = {};
@@ -166,6 +170,61 @@ function buildCss(tokens) {
     css = css.split(token).join(value);
   }
 
+  const brandId2026 = colorEntries("brandId2026", tokens);
+  const brandId2026Vars = Object.entries(brandId2026)
+    .map(
+      ([name, hex]) =>
+        `  --brand-id-2026-${kebabCase(name)}: ${hexToHslChannels(hex)};`,
+    )
+    .join("\n");
+  css += `
+
+/* Scoped official Brand ID 2026 palette. The v3 defaults above stay intact. */
+:root {
+${brandId2026Vars}
+}
+
+[data-brand-theme="2026"] {
+  --background: var(--brand-id-2026-background);
+  --foreground: var(--brand-id-2026-text);
+  --border: var(--brand-id-2026-border);
+  --card: var(--brand-id-2026-surface);
+  --card-foreground: var(--brand-id-2026-text);
+  --popover: var(--brand-id-2026-surface);
+  --popover-foreground: var(--brand-id-2026-text);
+  --primary: var(--brand-id-2026-neon);
+  --primary-foreground: var(--brand-id-2026-background);
+  --secondary: var(--brand-id-2026-gold);
+  --secondary-foreground: var(--brand-id-2026-background);
+  --muted: var(--brand-id-2026-surface);
+  --muted-foreground: var(--brand-id-2026-muted);
+  --accent: var(--brand-id-2026-gold);
+  --accent-foreground: var(--brand-id-2026-background);
+  --input: var(--brand-id-2026-border);
+  --ring: var(--brand-id-2026-neon);
+  --chart-1: var(--brand-id-2026-gold);
+  --chart-2: var(--brand-id-2026-neon);
+  --chart-3: var(--brand-id-2026-jaguar-green);
+  --chart-4: var(--brand-id-2026-muted);
+  --chart-5: var(--brand-id-2026-gold);
+  --sidebar: var(--brand-id-2026-surface);
+  --sidebar-foreground: var(--brand-id-2026-text);
+  --sidebar-border: var(--brand-id-2026-border);
+  --sidebar-primary: var(--brand-id-2026-neon);
+  --sidebar-primary-foreground: var(--brand-id-2026-background);
+  --sidebar-accent: var(--brand-id-2026-gold);
+  --sidebar-accent-foreground: var(--brand-id-2026-background);
+  --sidebar-ring: var(--brand-id-2026-neon);
+  --primary-border: hsl(var(--primary));
+  --secondary-border: hsl(var(--secondary));
+  --accent-border: hsl(var(--accent));
+  --sidebar-primary-border: hsl(var(--sidebar-primary));
+  --sidebar-accent-border: hsl(var(--sidebar-accent));
+  --card-border: hsl(var(--card));
+  --popover-border: hsl(var(--popover));
+}
+`;
+
   const leftover = css.match(/__DS_[A-Z0-9_]+__/g);
   if (leftover) {
     throw new Error(
@@ -180,6 +239,7 @@ function buildTs(tokens) {
     color: {
       light: colorEntries("light", tokens),
       dark: colorEntries("dark", tokens),
+      brandId2026: colorEntries("brandId2026", tokens),
     },
     fontFamily: {
       sans: resolveValue(tokens.typography.fontFamily.sans, tokens),
