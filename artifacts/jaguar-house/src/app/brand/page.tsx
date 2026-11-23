@@ -5,23 +5,21 @@ import { Button } from "@workspace/jaguar-spk-design-system/components/ui/button
 
 const GOOGLE_MAPS_URL =
   "https://www.google.com/maps/place/Jaguar+spk+%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A1+%E0%B8%81%E0%B8%B1%E0%B8%8D%E0%B8%8A%E0%B8%B2+%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A1+%E0%B9%83%E0%B8%81%E0%B8%A5%E0%B9%89%E0%B8%89%E0%B8%B1%E0%B8%99/@13.6100796,100.6008541,17z/data=!3m1!4b1!4m6!3m5!1s0x30e2a17b24c91b0f:0x2dd52ed6c8dbd489!8m2!3d13.6100796!4d100.6008541!16s%2Fg%2F11z_klv87h?hl=th&entry=ttu&g_ep=EgoyMDI2MTExNS4wIKXMDSoASAFQAw%3D%3D";
-const LINE_OA_URL = "https://line.me/R/ti/p/@880beqva";
+const STORE_PHONE = "0996125914";
 
 export const metadata: Metadata = {
-  title: "รู้จัก JAGUAR SPK | ร้านบุญศิริ ซอย 6 สมุทรปราการ",
+  title: "รู้จัก JAGUAR SPK | 97/56 ซอยบุญศิริ 6",
   description:
-    "ทำความรู้จัก JAGUAR SPK ร้านในย่านบุญศิริ ซอย 6 สมุทรปราการ พร้อมบัตรสมาชิกดิจิทัล ดูเส้นทางร้าน สมัครสมาชิก หรือเปิดบัตรของคุณ",
+    "JAGUAR SPK เปิด 24 ชั่วโมง ที่ 97/56 ซอยบุญศิริ 6 โทร 0996125914 พร้อมบัตรสมาชิกดิจิทัล",
   openGraph: {
-    title: "รู้จัก JAGUAR SPK | ร้านบุญศิริ ซอย 6 สมุทรปราการ",
-    description:
-      "ร้าน JAGUAR SPK ในย่านบุญศิริ ซอย 6 พร้อมประสบการณ์บัตรสมาชิกดิจิทัล ดูเส้นทางร้านหรือเริ่มต้นใช้งานสมาชิก",
+    title: "รู้จัก JAGUAR SPK | 97/56 ซอยบุญศิริ 6",
+    description: "เปิด 24 ชั่วโมง โทร 0996125914 พร้อมบัตรสมาชิกดิจิทัล",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "รู้จัก JAGUAR SPK | ร้านบุญศิริ ซอย 6 สมุทรปราการ",
-    description:
-      "ร้าน JAGUAR SPK ในย่านบุญศิริ ซอย 6 พร้อมประสบการณ์บัตรสมาชิกดิจิทัล",
+    title: "รู้จัก JAGUAR SPK | 97/56 ซอยบุญศิริ 6",
+    description: "เปิด 24 ชั่วโมง โทร 0996125914 พร้อมบัตรสมาชิกดิจิทัล",
   },
 };
 
@@ -29,7 +27,7 @@ const pathways = [
   {
     number: "01",
     title: "แวะที่ร้าน",
-    description: "พบกันที่บุญศิริ ซอย 6 จังหวัดสมุทรปราการ",
+    description: "พบกันที่ 97/56 ซอยบุญศิริ 6 จังหวัดสมุทรปราการ",
     href: GOOGLE_MAPS_URL,
     label: "ดูแผนที่ร้าน",
     external: true,
@@ -75,7 +73,7 @@ export default function BrandPage() {
               <span className="font-display text-sm font-semibold tracking-widest text-accent">
                 JAGUAR SPK
               </span>
-              <span className="text-xs text-muted-foreground">สมุทรปราการ</span>
+              <span className="text-xs text-muted-foreground">97/56 ซอยบุญศิริ 6</span>
             </span>
           </Link>
           <nav aria-label="เมนูหน้าแนะนำแบรนด์" className="flex items-center gap-2">
@@ -111,7 +109,7 @@ export default function BrandPage() {
               <span className="mt-2 block text-accent">ใกล้บ้าน ในแบบของคุณ</span>
             </h1>
             <p className="mt-6 max-w-xl text-base leading-8 text-muted-foreground sm:text-lg">
-              ร้านในย่านบุญศิริ ซอย 6 ที่มาพร้อมประสบการณ์สมาชิกดิจิทัล
+              ร้านที่ 97/56 ซอยบุญศิริ 6 พร้อมประสบการณ์สมาชิกดิจิทัล
               แวะมาที่ร้าน หรือเริ่มต้นจัดการบัตรสมาชิกผ่านมือถือได้
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -128,7 +126,7 @@ export default function BrandPage() {
               rel="noopener noreferrer"
               className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-md text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              บุญศิริ ซอย 6 · สมุทรปราการ
+              97/56 ซอยบุญศิริ 6 · สมุทรปราการ
               <span aria-hidden="true">↗</span>
             </a>
           </div>
@@ -153,7 +151,7 @@ export default function BrandPage() {
                 sizes="(max-width: 640px) 72vw, (max-width: 1024px) 420px, 480px"
               />
               <figcaption className="relative z-10 mt-6 text-center font-mono text-xs uppercase tracking-widest text-muted-foreground">
-                บุญศิริ ซอย 6 · สมุทรปราการ
+                97/56 ซอยบุญศิริ 6 · สมุทรปราการ
               </figcaption>
             </figure>
           </div>
@@ -180,7 +178,7 @@ export default function BrandPage() {
                 <p className="font-mono text-xs tracking-widest text-secondary">ที่ร้าน</p>
                 <h3 className="mt-4 font-display text-xl font-semibold">แวะมาพบกัน</h3>
                 <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                  JAGUAR SPK อยู่ในย่านบุญศิริ ซอย 6 จังหวัดสมุทรปราการ
+                  JAGUAR SPK อยู่ที่ 97/56 ซอยบุญศิริ 6 จังหวัดสมุทรปราการ
                   เปิดแผนที่เพื่อดูตำแหน่งร้านก่อนเดินทาง
                 </p>
                 <a
@@ -210,6 +208,59 @@ export default function BrandPage() {
           </div>
         </section>
 
+        <section
+          aria-labelledby="store-details-title"
+          className="border-t border-border/70 py-12 sm:py-16"
+        >
+          <div className="mb-7 max-w-2xl sm:mb-9">
+            <p className="font-mono text-xs uppercase tracking-widest text-accent">
+              ข้อมูลที่ร้านยืนยัน
+            </p>
+            <h2
+              id="store-details-title"
+              className="mt-3 font-display text-3xl font-semibold sm:text-4xl"
+            >
+              ก่อนแวะหรือสั่งซื้อ
+            </h2>
+            <p className="mt-3 text-sm leading-7 text-muted-foreground">
+              รายละเอียดร้านตามข้อมูลปัจจุบันที่เจ้าของยืนยัน สอบถามร้านเพื่อเช็กสต็อกและเงื่อนไขเพิ่มเติม
+            </p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <article className="rounded-[var(--radius)] border border-border/80 bg-card/70 p-5">
+              <h3 className="font-display text-lg font-semibold">เวลาเปิดร้าน</h3>
+              <p className="mt-2 text-sm leading-7 text-muted-foreground">เปิด 24 ชั่วโมง</p>
+            </article>
+            <article className="rounded-[var(--radius)] border border-border/80 bg-card/70 p-5">
+              <h3 className="font-display text-lg font-semibold">โทรศัพท์</h3>
+              <a
+                href={`tel:${STORE_PHONE}`}
+                className="mt-2 inline-flex min-h-11 items-center text-sm text-accent underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                {STORE_PHONE}
+              </a>
+            </article>
+            <article className="rounded-[var(--radius)] border border-border/80 bg-card/70 p-5">
+              <h3 className="font-display text-lg font-semibold">ราคาเครื่องดื่ม</h3>
+              <p className="mt-2 text-sm leading-7 text-muted-foreground">
+                ฿60 ต่อขวด · สอบถามสต็อกก่อนซื้อ
+              </p>
+            </article>
+            <article className="rounded-[var(--radius)] border border-border/80 bg-card/70 p-5">
+              <h3 className="font-display text-lg font-semibold">บริการจัดส่ง</h3>
+              <p className="mt-2 text-sm leading-7 text-muted-foreground">
+                บริเวณใกล้เคียงบางเมือง กรุณาโทรสอบถามพื้นที่และเงื่อนไขก่อนสั่ง
+              </p>
+            </article>
+            <article className="rounded-[var(--radius)] border border-secondary/30 bg-card/70 p-5 sm:col-span-2 lg:col-span-2">
+              <h3 className="font-display text-lg font-semibold">โปรโมชันสมาชิก</h3>
+              <p className="mt-2 text-sm leading-7 text-muted-foreground">
+                สะสม 10 แต้ม รับฟรี 1 รายการ สอบถามสินค้าที่ร่วมรายการและเงื่อนไขที่ร้าน
+              </p>
+            </article>
+          </div>
+        </section>
+
         <section aria-labelledby="pathways-title" className="py-12 sm:py-16 lg:py-20">
           <div className="mb-7 flex flex-col gap-3 sm:mb-9 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -224,7 +275,7 @@ export default function BrandPage() {
               </h2>
             </div>
             <p className="max-w-md text-sm leading-7 text-muted-foreground">
-              มาที่ร้าน ใช้บัตรสมาชิก หรือส่งข้อความถามรายละเอียดผ่าน LINE OA
+              มาที่ร้าน ใช้บัตรสมาชิก หรือโทรสอบถามรายละเอียดจากร้าน
             </p>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
@@ -274,14 +325,12 @@ export default function BrandPage() {
               อยากรู้ข้อมูลเพิ่มเติม?
             </h2>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">
-              ติดต่อร้านทาง LINE OA หรือดูตำแหน่งบนแผนที่ก่อนแวะมา
+              เปิด 24 ชั่วโมง · โทร {STORE_PHONE} · จัดส่งบริเวณใกล้เคียงบางเมือง
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
             <Button asChild>
-              <a href={LINE_OA_URL} target="_blank" rel="noopener noreferrer">
-                ติดต่อทาง LINE OA
-              </a>
+              <a href={`tel:${STORE_PHONE}`}>โทรหาร้าน</a>
             </Button>
             <Button asChild variant="outline">
               <a href={GOOGLE_MAPS_URL} target="_blank" rel="noopener noreferrer">
@@ -298,7 +347,7 @@ export default function BrandPage() {
           >
             JAGUAR SPK
           </Link>
-          <span>บุญศิริ ซอย 6 · สมุทรปราการ</span>
+          <span>97/56 ซอยบุญศิริ 6 · สมุทรปราการ</span>
           <div className="flex flex-wrap gap-x-5 gap-y-2">
             <Link
               href="/card"

@@ -5,7 +5,8 @@ import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "JAGUAR SPK — บัตรสมาชิก",
-  description: "บัตรสมาชิกกระท่อมและกัญชา JAGUAR SPK · บุญศิริ ซอย 6 สมุทรปราการ",
+  description:
+    "JAGUAR SPK ที่ 97/56 ซอยบุญศิริ 6 เปิด 24 ชั่วโมง โทร 0996125914 พร้อมบัตรสมาชิกดิจิทัล",
 };
 
 export const viewport: Viewport = {
