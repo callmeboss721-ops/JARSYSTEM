@@ -1,9 +1,12 @@
 "use client";
 
+import { JaguarMark } from "@/components/brand/jaguar-mark";
+
 export default function ErrorPage({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return (
     <main className="min-h-[100dvh] grid place-items-center p-6">
       <section className="panel max-w-md p-8 text-center" role="alert">
+        <div className="mb-4 flex justify-center"><JaguarMark size={64} /></div>
         <p className="eyebrow">Jaguar Kratom</p>
         <h1 className="font-display text-2xl mt-4">ไม่สามารถแสดงหน้านี้ได้</h1>
         <p className="mt-3 text-[var(--muted)]">กรุณาลองใหม่ ข้อมูลสมาชิกของคุณไม่ได้ถูกลบ</p>

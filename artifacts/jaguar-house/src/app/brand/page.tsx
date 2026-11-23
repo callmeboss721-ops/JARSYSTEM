@@ -150,6 +150,15 @@ export default function BrandPage() {
                 priority
                 sizes="(max-width: 640px) 72vw, (max-width: 1024px) 420px, 480px"
               />
+              <Image
+                src="/brand/jaguar-spk-mascot-face.webp"
+                alt=""
+                aria-hidden="true"
+                width={112}
+                height={112}
+                className="brand-page-mascot"
+                sizes="72px"
+              />
               <figcaption className="relative z-10 mt-6 text-center font-mono text-xs uppercase tracking-widest text-muted-foreground">
                 97/56 ซอยบุญศิริ 6 · สมุทรปราการ
               </figcaption>

@@ -95,6 +95,15 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
                 priority
                 sizes="(max-width: 720px) 78vw, 440px"
               />
+              <Image
+                src="/brand/jaguar-spk-mascot-face.webp"
+                alt=""
+                aria-hidden="true"
+                width={112}
+                height={112}
+                className="jh-hero__mascot"
+                sizes="72px"
+              />
               <span className="jh-hero__image-label">JAGUAR SPK · ภาพตัวอย่าง</span>
             </div>
           </section>
@@ -317,6 +326,15 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
                   height={768}
                   loading="lazy"
                   sizes="(min-width: 901px) 230px, 1px"
+                />
+                <Image
+                  src="/brand/jaguar-spk-mascot-face.webp"
+                  alt=""
+                  aria-hidden="true"
+                  width={96}
+                  height={96}
+                  className="jaguar-auth-product__mascot"
+                  sizes="56px"
                 />
                 <figcaption>JAGUAR SPK · เครื่องดื่ม</figcaption>
               </figure>
