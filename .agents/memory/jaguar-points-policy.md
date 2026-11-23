@@ -7,6 +7,8 @@ Award one kratom point for each cumulative ฿100 of eligible spend and one cann
 
 In the staff POS, kratom quick credits are manual bonuses separate from purchase awards. Cannabis quick actions map +1/+2/+3/+5 points to recording 100/200/300/500 g of actual purchases; do not create arbitrary cannabis credits or misstate grams.
 
+Owner reports must use the points recorded on each sale and the category ledgers for issued-point totals. Do not recalculate historical sale awards under the current policy: migrated sales can retain older recorded values.
+
 **Why:** YOUNGBOSS replaced the earlier per-bottle/per-gram rules with cumulative ฿100 and 100 g thresholds on 2026-11-12. On 2026-11-24, YOUNGBOSS confirmed that kratom quick credits should be separate bonuses and cannabis quick actions should record actual grams at 100 g per point.
 
 **How to apply:** Preserve historical transactions and balances during any migration. Keep purchase awards server-calculated; validate kratom staff bonuses through an authenticated, idempotent ledger flow without direct client balance writes. Keep cannabis accrual behind the owner-controlled feature flag and tie quick actions to actual purchase grams.
