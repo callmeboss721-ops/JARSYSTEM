@@ -200,8 +200,21 @@ export default function BrandPage() {
                 </a>
               </article>
               <article className="rounded-[var(--radius)] border border-primary/30 bg-card/70 p-5 sm:p-6">
-                <p className="font-mono text-xs tracking-widest text-primary">บนมือถือ</p>
-                <h3 className="mt-4 font-display text-xl font-semibold">บัตรสมาชิกดิจิทัล</h3>
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-mono text-xs tracking-widest text-primary">บนมือถือ</p>
+                    <h3 className="mt-4 font-display text-xl font-semibold">บัตรสมาชิกดิจิทัล</h3>
+                  </div>
+                  <Image
+                    src="/brand/mascot-digital-guide.webp"
+                    alt=""
+                    aria-hidden="true"
+                    width={128}
+                    height={128}
+                    className="h-20 w-20 shrink-0 rounded-[var(--radius)] border border-border/70 object-contain sm:h-24 sm:w-24"
+                    sizes="96px"
+                  />
+                </div>
                 <p className="mt-3 text-sm leading-7 text-muted-foreground">
                   สมัครผ่านเว็บ เปิดบัตรบนมือถือ และแสดงบัตรที่ร้าน
                   แต้มสมาชิกแสดงอยู่บนบัตรของคุณ

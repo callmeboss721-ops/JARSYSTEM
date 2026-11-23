@@ -88,23 +88,14 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
             </div>
             <div className="jh-hero__visual">
               <Image
-                src="/brand/product-kratom-gold.webp"
-                alt="ขวดเครื่องดื่ม JAGUAR SPK ฝาสีทอง"
-                width={768}
-                height={768}
+                src="/brand/mascot-kratom-host.webp"
+                alt="มาสคอต JAGUAR SPK ถือขวดเครื่องดื่ม"
+                width={720}
+                height={720}
                 priority
                 sizes="(max-width: 720px) 78vw, 440px"
               />
-              <Image
-                src="/brand/jaguar-spk-mascot-face.webp"
-                alt=""
-                aria-hidden="true"
-                width={112}
-                height={112}
-                className="jh-hero__mascot"
-                sizes="72px"
-              />
-              <span className="jh-hero__image-label">JAGUAR SPK · ภาพตัวอย่าง</span>
+              <span className="jh-hero__image-label">JAGUAR SPK · Official Mascot</span>
             </div>
           </section>
 
@@ -320,23 +311,14 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
               </ol>
               <figure className="jaguar-auth-product">
                 <Image
-                  src="/brand/product-kratom-gold.webp"
-                  alt="เครื่องดื่ม JAGUAR SPK"
-                  width={768}
-                  height={768}
+                  src="/brand/mascot-welcome.webp"
+                  alt="มาสคอต JAGUAR SPK โบกมือทักทาย"
+                  width={720}
+                  height={720}
                   loading="lazy"
                   sizes="(min-width: 901px) 230px, 1px"
                 />
-                <Image
-                  src="/brand/jaguar-spk-mascot-face.webp"
-                  alt=""
-                  aria-hidden="true"
-                  width={96}
-                  height={96}
-                  className="jaguar-auth-product__mascot"
-                  sizes="56px"
-                />
-                <figcaption>JAGUAR SPK · เครื่องดื่ม</figcaption>
+                <figcaption>JAGUAR SPK · MEMBER CLUB</figcaption>
               </figure>
             </div>
           </section>
