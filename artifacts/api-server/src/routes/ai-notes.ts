@@ -1,4 +1,4 @@
-import { getAuth } from "@clerk/express";
+import { createHmac, randomUUID, timingSafeEqual } from "node:crypto";
 import {
   and,
   count,
@@ -14,6 +14,7 @@ import {
 import {
   Router,
   type IRouter,
+  type Request,
   type RequestHandler,
   type Response as ExpressResponse,
 } from "express";
@@ -49,18 +50,49 @@ const router: IRouter = Router();
 const DAILY_AI_LIMIT = 40;
 const PER_MINUTE_LIMIT = 5;
 const STREAM_TIMEOUT_MS = 60_000;
+const NOTE_SESSION_COOKIE = "stillnote_session";
+const NOTE_SESSION_MAX_AGE_SEC = 30 * 24 * 60 * 60;
 const rateWindows = new Map<string, { count: number; resetAt: number }>();
 let requestsSinceRateCleanup = 0;
 
-const requireSignedIn: RequestHandler = (req, res, next) => {
-  const { userId } = getAuth(req);
-  if (!userId) {
-    res.status(401).json({ error: "Sign in to continue." });
-    return;
+type NoteSessionPayload = { sub: string; name: string; exp: number };
+
+function sessionSecret(): string {
+  const secret = process.env.SESSION_SECRET;
+  if (!secret || secret.length < 32) {
+    throw new Error("SESSION_SECRET must be configured with at least 32 characters.");
   }
-  res.locals.aiNotesOwnerId = userId;
-  next();
-};
+  return secret;
+}
+
+function signToken(payload: string): string {
+  return createHmac("sha256", sessionSecret()).update(payload).digest("base64url");
+}
+
+function readNoteSession(req: Request): NoteSessionPayload | null {
+  const raw: unknown = req.cookies?.[NOTE_SESSION_COOKIE];
+  if (typeof raw !== "string" || raw.length > 1024) return null;
+  const [payload, sig, extra] = raw.split(".");
+  if (!payload || !sig || extra) return null;
+  const expected = Buffer.from(signToken(payload));
+  const actual = Buffer.from(sig);
+  if (actual.length !== expected.length || !timingSafeEqual(actual, expected)) return null;
+  try {
+    const parsed = JSON.parse(Buffer.from(payload, "base64url").toString("utf8")) as NoteSessionPayload;
+    if (
+      typeof parsed.sub !== "string" ||
+      !parsed.sub ||
+      typeof parsed.name !== "string" ||
+      typeof parsed.exp !== "number" ||
+      parsed.exp <= Math.floor(Date.now() / 1000)
+    ) {
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+}
 
 const requireSameOrigin: RequestHandler = (req, res, next) => {
   const origin = req.get("origin");
@@ -88,7 +120,53 @@ const requireSameOrigin: RequestHandler = (req, res, next) => {
   next();
 };
 
-router.use(requireSignedIn);
+router.get("/ai-notes/session", (req, res): void => {
+  const session = readNoteSession(req);
+  if (!session) {
+    res.json({ authenticated: false, user: null });
+    return;
+  }
+  res.json({ authenticated: true, user: { id: session.sub, name: session.name } });
+});
+
+router.post("/ai-notes/session", requireSameOrigin, (req, res): void => {
+  const existing = readNoteSession(req);
+  const rawName = typeof req.body?.name === "string" ? req.body.name.normalize("NFC").trim() : "";
+  const cleanName = Array.from(rawName).slice(0, 32).join("") || existing?.name || "Your space";
+  const sub = existing?.sub ?? `note_${randomUUID()}`;
+  const exp = Math.floor(Date.now() / 1000) + NOTE_SESSION_MAX_AGE_SEC;
+  const encoded = Buffer.from(JSON.stringify({ sub, name: cleanName, exp })).toString("base64url");
+  res.cookie(NOTE_SESSION_COOKIE, `${encoded}.${signToken(encoded)}`, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    path: "/api/ai-notes",
+    maxAge: NOTE_SESSION_MAX_AGE_SEC * 1000,
+  });
+  res.json({ authenticated: true, user: { id: sub, name: cleanName } });
+});
+
+router.delete("/ai-notes/session", requireSameOrigin, (_req, res): void => {
+  res.clearCookie(NOTE_SESSION_COOKIE, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    path: "/api/ai-notes",
+  });
+  res.json({ ok: true });
+});
+
+const requireSignedIn: RequestHandler = (req, res, next) => {
+  const session = readNoteSession(req);
+  if (!session) {
+    res.status(401).json({ error: "Sign in to continue." });
+    return;
+  }
+  res.locals.aiNotesOwnerId = session.sub;
+  next();
+};
+
+router.use("/ai-notes", requireSignedIn);
 
 router.get("/ai-notes/overview", async (_req, res): Promise<void> => {
   const ownerId = getOwnerId(res);

@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap');
 @import "@workspace/jaguar-spk-design-system/styles.css";
 
 :root {
@@ -24,9 +23,9 @@
   --green: hsl(var(--primary));
   --glass: hsl(var(--card) / .72);
   --glass-line: hsl(var(--primary) / .2);
-  --font-sans: var(--app-font-sans);
-  --font-mono: var(--app-font-mono);
-  --font-display: "Bai Jamjuree", var(--app-font-sans);
+  --font-sans: var(--font-ibm-plex-thai), var(--app-font-sans);
+  --font-mono: var(--font-jetbrains-mono), var(--app-font-mono);
+  --font-display: var(--font-bai-jamjuree), var(--font-ibm-plex-thai), var(--app-font-sans);
 }
 
 * { box-sizing: border-box; }
@@ -7979,7 +7978,6 @@ html[data-brand-theme="2026"] .input:focus {
     radial-gradient(ellipse at 8% 42%, hsl(var(--primary) / .11), transparent 38%),
     radial-gradient(ellipse at 88% 78%, hsl(var(--primary) / .07), transparent 36%),
     linear-gradient(160deg, hsl(var(--background)), hsl(var(--card) / .86) 56%, hsl(var(--background)));
-  background-attachment: fixed;
 }
 
 .jh-header {

@@ -1,14 +1,52 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import { Bai_Jamjuree, IBM_Plex_Sans_Thai, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import "./brand-id-2026.css";
 import { Providers } from "./providers";
 import { tokens } from "@workspace/jaguar-spk-design-system";
 
+const baiJamjuree = Bai_Jamjuree({
+  subsets: ["thai", "latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-bai-jamjuree",
+});
+
+const ibmPlexSansThai = IBM_Plex_Sans_Thai({
+  subsets: ["thai", "latin"],
+  weight: ["300", "400", "500", "600"],
+  display: "swap",
+  variable: "--font-ibm-plex-thai",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "600"],
+  display: "swap",
+  variable: "--font-jetbrains-mono",
+});
+
 export const metadata: Metadata = {
-  title: "JAGUAR SPK — บัตรสมาชิก",
+  title: {
+    default: "JAGUAR SPK — บัตรสมาชิกดิจิทัล | 97/56 ซอยบุญศิริ 6",
+    template: "%s | JAGUAR SPK",
+  },
   description:
-    "JAGUAR SPK ที่ 97/56 ซอยบุญศิริ 6 เปิด 24 ชั่วโมง โทร 0996125914 พร้อมบัตรสมาชิกดิจิทัล",
+    "JAGUAR SPK ที่ 97/56 ซอยบุญศิริ 6 สมุทรปราการ เปิด 24 ชั่วโมง โทร 0996125914 พร้อมบัตรสมาชิกดิจิทัลสะสมแต้มบนมือถือ",
+  openGraph: {
+    title: "JAGUAR SPK — บัตรสมาชิกดิจิทัล",
+    description:
+      "JAGUAR SPK ที่ 97/56 ซอยบุญศิริ 6 เปิด 24 ชั่วโมง โทร 0996125914 พร้อมบัตรสมาชิกดิจิทัล",
+    locale: "th_TH",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "JAGUAR SPK — บัตรสมาชิกดิจิทัล",
+    description:
+      "JAGUAR SPK ที่ 97/56 ซอยบุญศิริ 6 เปิด 24 ชั่วโมง โทร 0996125914 พร้อมบัตรสมาชิกดิจิทัล",
+  },
 };
 
 export const viewport: Viewport = {
@@ -17,24 +55,14 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-const supabaseOrigin = (() => {
-  try {
-    const value = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    if (!value) return undefined;
-    const url = new URL(value);
-    return url.protocol === "https:" ? url.origin : undefined;
-  } catch {
-    return undefined;
-  }
-})();
-
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="th" className="dark" data-brand-theme="2026" suppressHydrationWarning>
-      <head>
-        {supabaseOrigin && <link rel="preconnect" href={supabaseOrigin} crossOrigin="anonymous" />}
-        {supabaseOrigin && <link rel="dns-prefetch" href={supabaseOrigin} />}
-      </head>
+    <html
+      lang="th"
+      className={`dark ${baiJamjuree.variable} ${ibmPlexSansThai.variable} ${jetbrainsMono.variable}`}
+      data-brand-theme="2026"
+      suppressHydrationWarning
+    >
       <body>
         <Providers>{children}</Providers>
       </body>
