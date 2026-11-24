@@ -38,10 +38,17 @@
 | `rider_pin` | รหัสเข้าหน้าไรเดอร์ | 2580 (ควรเปลี่ยน) |
 | `shop_name` | ชื่อร้าน | JAGUAR SPK Delivery |
 
-## การเปิดใช้ Telegram (ต้องมีบัญชีเจ้าของร้านทำเอง)
+## การเปิดใช้แจ้งเตือนเข้า LINE ร้าน / กลุ่มไรเดอร์ (LINE Messaging API)
 
-1. คุยกับ `@BotFather` ในไลน์แอป Telegram สร้างบอท รับ `TELEGRAM_BOT_TOKEN`
-2. เชิญบอทเข้ากลุ่มไรเดอร์/ร้าน แล้วหา `TELEGRAM_CHAT_ID` (เช่น จาก `https://api.telegram.org/bot<TOKEN>/getUpdates` หลังมีคนพิมพ์ในกลุ่ม)
+1. สร้าง Messaging API Channel ใน LINE Developers รับ `LINE_CHANNEL_ACCESS_TOKEN`
+2. เชิญบอทเข้ากลุ่มร้าน/ไรเดอร์ แล้วนำ `User ID` หรือ `Group ID` มาตั้งเป็น `LINE_TARGET_ID`
+3. ตั้ง secrets ใน Supabase: `supabase secrets set LINE_CHANNEL_ACCESS_TOKEN=xxx LINE_TARGET_ID=xxx`
+4. เมื่อลูกค้ากดสั่งซื้อ ระบบจะเรียก `dt-notify` ส่งรายละเอียดออเดอร์ + ลิงก์ Google Maps เข้า LINE ทันที (และยังมีปุ่มกดส่งเข้า LINE ด้วยตนเองในหน้าติดตามออเดอร์ด้วย)
+
+## การเปิดใช้ Telegram (ทางเลือกเพิ่มเติม)
+
+1. คุยกับ `@BotFather` ในแอป Telegram สร้างบอท รับ `TELEGRAM_BOT_TOKEN`
+2. เชิญบอทเข้ากลุ่มไรเดอร์/ร้าน แล้วหา `TELEGRAM_CHAT_ID`
 3. ตั้ง secrets ใน Supabase: `supabase secrets set TELEGRAM_BOT_TOKEN=xxx TELEGRAM_CHAT_ID=xxx`
 4. รอบ cron ถัดไป (หรือกดปุ่มส่งทันทีในหน้าไรเดอร์) ออเดอร์ค้างจะถูกส่งทั้งหมด
 
