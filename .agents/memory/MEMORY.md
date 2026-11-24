@@ -1,5 +1,6 @@
 - [Framework intent](jaguar-product-decisions.md) — Next.js 15 was explicitly selected over the React+Vite artifact option.
 - [YOUNGBOSS brand intent](youngboss-brand-intent.md) — Premium customer/staff UI; original supplied logo imagery takes precedence over an invented minimalist seal.
+- [Artwork claim approvals](artwork-claim-approvals.md) — Customer-facing image text is approved only as the exact wording recorded in the knowledge base; approval does not establish extra service or product details.
 - [Supabase connection boundaries](supabase-connection-boundaries.md) — Connector host configuration is independent of Supabase environment variables; verify each separately.
 - [Drizzle check diffs](drizzle-check-constraint-diffs.md) — A successful schema push may retain an old CHECK expression under an unchanged constraint name; verify the live definition.
 - [JAGUAR points policy](jaguar-points-policy.md) — Kratom earns per cumulative ฿100; cannabis per cumulative 100 g, with separate carry-over balances.
