@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/ai-notes-assistant/"
+title = "AI Note & Chat Assistant"
+description = "A private multi-account Thai and English AI note-taking and chat workspace with streaming Gemini 2.5 Flash, searchable saved history, and fast summarization and action-item modes."
+version = "1.0.0"
+id = "artifacts/ai-notes-assistant"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/ai-notes-assistant/" ]
+localPort = 26021
+
+[services.development]
+run = "pnpm --filter @workspace/ai-notes-assistant run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/ai-notes-assistant", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/ai-notes-assistant/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "26021"
+BASE_PATH = "/ai-notes-assistant/"

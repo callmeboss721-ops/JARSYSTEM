@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
-  title: Api
+  title: Workspace API
   version: 1.0.0
-  description: Jaguar Kratom loyalty API
+  description: Shared API for JAGUAR SPK and AI notes applications
 servers:
   - url: /api
 paths:
@@ -15,6 +15,158 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/HealthStatus" }
+  /ai-notes/overview:
+    get:
+      operationId: getAiNotesOverview
+      responses:
+        "200":
+          description: Account-scoped conversation counts and current daily AI request allowance
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AiNotesOverview" }
+        "401":
+          description: Sign-in required
+  /ai-notes/conversations:
+    get:
+      operationId: listAiNoteConversations
+      parameters:
+        - in: query
+          name: search
+          required: false
+          schema: { type: string, maxLength: 120 }
+        - in: query
+          name: limit
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 100, default: 50 }
+      responses:
+        "200":
+          description: Current account's conversations, newest first
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/AiNoteConversationSummary" }
+        "401":
+          description: Sign-in required
+        "400":
+          description: Search filters are invalid
+    post:
+      operationId: createAiNoteConversation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AiNoteConversationInput" }
+      responses:
+        "201":
+          description: Empty conversation created for the signed-in account
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AiNoteConversation" }
+        "401":
+          description: Sign-in required
+        "400":
+          description: Conversation details are invalid
+        "403":
+          description: Request origin could not be verified
+  /ai-notes/conversations/{id}:
+    get:
+      operationId: getAiNoteConversation
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Conversation and its messages, scoped to the signed-in account
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AiNoteConversation" }
+        "401":
+          description: Sign-in required
+        "400":
+          description: Conversation ID is invalid
+        "404":
+          description: Conversation not found
+    patch:
+      operationId: updateAiNoteConversation
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AiNoteConversationTitleInput" }
+      responses:
+        "200":
+          description: Updated conversation title
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AiNoteConversation" }
+        "401":
+          description: Sign-in required
+        "400":
+          description: Conversation ID or title is invalid
+        "403":
+          description: Request origin could not be verified
+        "404":
+          description: Conversation not found
+    delete:
+      operationId: deleteAiNoteConversation
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "204":
+          description: Conversation and its messages deleted
+        "401":
+          description: Sign-in required
+        "400":
+          description: Conversation ID is invalid
+        "403":
+          description: Request origin could not be verified
+        "404":
+          description: Conversation not found
+  /ai-notes/conversations/{id}/messages/stream:
+    post:
+      operationId: streamAiNoteMessage
+      description: "Authenticated, same-origin streaming endpoint. SSE event names are start ({conversation_id,title,user_message,assistant_message}), delta ({text}), complete ({assistant_message}), and error ({message}). Non-streaming errors use JSON."
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AiNoteMessageInput" }
+      responses:
+        "200":
+          description: Server-sent text deltas followed by a completion event; output is persisted to this account's conversation
+          content:
+            text/event-stream:
+              schema: { type: string }
+        "401":
+          description: Sign-in required
+        "400":
+          description: Conversation ID or message details are invalid
+        "403":
+          description: Request origin could not be verified
+        "404":
+          description: Conversation not found
+        "429":
+          description: Request limit reached; Retry-After is provided
+        "502":
+          description: Gemini request failed
+        "503":
+          description: Gemini API is not configured
   /loyalty/register:
     post:
       operationId: registerMember
@@ -958,6 +1110,74 @@ components:
       required: [status]
       properties:
         status: { type: string }
+    AiNoteMode:
+      type: string
+      enum: [chat, summarize, action_items]
+    AiNoteRole:
+      type: string
+      enum: [user, assistant]
+    AiNoteMessageStatus:
+      type: string
+      enum: [complete, interrupted, error]
+    AiNoteMessage:
+      type: object
+      required: [id, role, mode, content, status, created_at]
+      properties:
+        id: { type: string, format: uuid }
+        role: { $ref: "#/components/schemas/AiNoteRole" }
+        mode: { $ref: "#/components/schemas/AiNoteMode" }
+        content: { type: string, maxLength: 60000 }
+        status: { $ref: "#/components/schemas/AiNoteMessageStatus" }
+        created_at: { type: string, format: date-time }
+    AiNoteConversationSummary:
+      type: object
+      required: [id, title, mode, preview, message_count, created_at, updated_at]
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string, maxLength: 120 }
+        mode: { $ref: "#/components/schemas/AiNoteMode" }
+        preview: { type: string, maxLength: 240 }
+        message_count: { type: integer, minimum: 0 }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+    AiNoteConversation:
+      type: object
+      required: [id, title, mode, messages, created_at, updated_at]
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string, maxLength: 120 }
+        mode: { $ref: "#/components/schemas/AiNoteMode" }
+        messages:
+          type: array
+          maxItems: 100
+          items: { $ref: "#/components/schemas/AiNoteMessage" }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+    AiNotesOverview:
+      type: object
+      required: [conversation_count, message_count, requests_today, daily_limit, recent_activity_at]
+      properties:
+        conversation_count: { type: integer, minimum: 0 }
+        message_count: { type: integer, minimum: 0 }
+        requests_today: { type: integer, minimum: 0 }
+        daily_limit: { type: integer, minimum: 1 }
+        recent_activity_at: { type: ["string", "null"], format: date-time }
+    AiNoteConversationInput:
+      type: object
+      required: [mode]
+      properties:
+        mode: { $ref: "#/components/schemas/AiNoteMode" }
+    AiNoteConversationTitleInput:
+      type: object
+      required: [title]
+      properties:
+        title: { type: string, minLength: 1, maxLength: 120 }
+    AiNoteMessageInput:
+      type: object
+      required: [mode, prompt]
+      properties:
+        mode: { $ref: "#/components/schemas/AiNoteMode" }
+        prompt: { type: string, minLength: 1, maxLength: 16000 }
     Success:
       type: object
       required: [ok]

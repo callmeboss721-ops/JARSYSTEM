@@ -2754,6 +2754,9 @@ input.input, textarea.input, select.input { font-size: 16px; }
 .member-tier__art--vip {
   width: clamp(112px, 33vw, 158px);
 }
+.member-tier__art--new {
+  width: clamp(112px, 33vw, 158px);
+}
 
 .brand-artwork-button {
   display: inline-flex !important;
@@ -7909,7 +7912,7 @@ html[data-brand-theme="2026"] .input:focus {
   .jh-club { gap: 8px; padding-inline: 7px; }
   .jh-club strong { font-size: 11px; }
   .jh-club small { font-size: 9px; }
-  .jh-club img { width: 23px; height: 23px; }
+   .jh-club img { width: 28px; height: 28px; }
   .jh-products { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .jh-product:first-child { grid-column: 1 / -1; }
   .jh-product__bottles { padding: 8px; }

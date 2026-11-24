@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { MemberShell } from "@/components/brand/member-shell";
 import { RankEmblem } from "@/components/brand/rank-emblem";
@@ -61,7 +62,7 @@ export default function RedeemPage() {
   const pendingRequests = (history.data ?? []).filter(r => r.status.toLowerCase() === "pending");
   return <MemberShell signedIn>
     <header className="flex flex-wrap items-end justify-between gap-4 mb-7 rise">
-       <div className="redeem-heading-lockup"><RankEmblem name="inferno-power" size={32} /><div><p className="eyebrow">Rewards</p><h1 className="font-display text-3xl sm:text-4xl font-semibold mt-1">แลกรางวัล</h1></div></div>
+        <div className="redeem-heading-lockup"><Image src="/brand/icon-reward-2026.webp" alt="" aria-hidden="true" width={48} height={48} sizes="48px" className="h-12 w-12 shrink-0 object-contain" /><div><p className="eyebrow">Rewards</p><h1 className="font-display text-3xl sm:text-4xl font-semibold mt-1">แลกรางวัล</h1></div></div>
        <div className="panel px-5 py-3 text-right"><p className="text-xs text-[var(--muted)]">แต้มคงเหลือ</p><p className="font-display text-3xl font-bold text-[var(--gold-2)]">{card.balance}</p></div>
     </header>
      {success && <div role="status" className="redeem-success panel mb-5 p-5 sm:p-6">

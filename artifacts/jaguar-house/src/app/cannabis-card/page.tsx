@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { useGetCannabisMemberCard, getGetCannabisMemberCardQueryKey, type CannabisCard } from "@workspace/api-client-react";
 import { MemberShell } from "@/components/brand/member-shell";
@@ -84,7 +85,20 @@ export default function CannabisCardPage() {
           <div className="member-heading-top"><div><h1>{card.display_name || "บัตรกัญชา"}</h1><MemberRankLabel earned={card.lifetime_earned} /></div></div>
         </header>
         {confettiKey > 0 && <CannabisConfetti key={confettiKey} />}
-        {celebrate && <div role="status" className="cannabis-ready cannabis-ready--celebrate">ครบ 10 · แลกรางวัลฟรี 1 รายการที่เคาน์เตอร์</div>}
+        {celebrate && (
+          <div role="status" className="cannabis-ready cannabis-ready--celebrate flex items-center gap-3">
+            <Image
+              src="/brand/member-status-free.webp"
+              alt=""
+              aria-hidden="true"
+              width={64}
+              height={64}
+              sizes="64px"
+              className="h-12 w-12 shrink-0 object-contain"
+            />
+            <span>ครบ 10 · แลกรางวัลฟรี 1 รายการที่เคาน์เตอร์</span>
+          </div>
+        )}
         <MemberCardCarousel active="cannabis">
           <MemberCardFaces
             kind="cannabis"

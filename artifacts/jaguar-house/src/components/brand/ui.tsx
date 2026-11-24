@@ -13,9 +13,9 @@ import {
 export { ErrorState, LoadingSpinner, LoadingState, Modal };
 
 export function EmptyState({ title, body, action }: { title: string; body?: string; action?: ReactNode }) {
-  return <DesignSystemEmptyState title={title} body={body} action={action} markSrc="/brand/jaguar-spk-emblem-crisp.webp" />;
+  return <DesignSystemEmptyState title={title} body={body} action={action} markSrc="/brand/jaguar-spk-mark.webp" />;
 }
 
 export function SignedOutState() {
-  return <DesignSystemSignedOutState markSrc="/brand/jaguar-spk-emblem-crisp.webp" />;
+  return <DesignSystemSignedOutState markSrc="/brand/jaguar-spk-mark.webp" />;
 }

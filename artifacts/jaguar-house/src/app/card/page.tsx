@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getGetMemberCardQueryKey, getListMemberActivityQueryKey, useGetMemberCard, useUpdateMemberNickname, useListMemberActivity } from "@workspace/api-client-react";
 import { MemberShell } from "@/components/brand/member-shell";
@@ -104,7 +105,22 @@ export default function CardPage() {
             </div>
           </div>
         </header>
-        {(celebrate || card.data.balance >= STAMPS) && <div role="status" className="gold-alert">ครบ 10 แต้ม! แลกรางวัลฟรี 1 รายการที่เคาน์เตอร์</div>}
+        {(celebrate || card.data.balance >= STAMPS) && (
+          <div role="status" className="gold-alert">
+            <span className="flex items-center gap-3">
+              <Image
+                src="/brand/member-status-free.webp"
+                alt=""
+                aria-hidden="true"
+                width={64}
+                height={64}
+                sizes="64px"
+                className="h-12 w-12 shrink-0 object-contain"
+              />
+              <span>ครบ 10 แต้ม! แลกรางวัลฟรี 1 รายการที่เคาน์เตอร์</span>
+            </span>
+          </div>
+        )}
         {confettiKey > 0 && <Confetti key={confettiKey} />}
         <div className={pop ? `card-pop card-pop--${pop % 2}` : undefined}>
           <MemberCardCarousel active="kratom">

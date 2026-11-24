@@ -101,12 +101,12 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
 
           <section className="jh-clubs" aria-label="บัตรสมาชิก Jaguar">
             <Link href="/card" className="jh-club">
-              <Image src="/brand/icon-card-kratom.svg" alt="" width={28} height={28} />
+              <Image src="/brand/icon-card-kratom-2026.webp" alt="" width={32} height={32} sizes="32px" />
               <span><strong>บัตรสมาชิกกระท่อม</strong><small>เปิดดูบัตรของคุณ</small></span>
               <span aria-hidden="true">↗</span>
             </Link>
             <Link href="/card/cannabis" className="jh-club">
-              <Image src="/brand/icon-card-cannabis.svg" alt="" width={28} height={28} />
+              <Image src="/brand/icon-card-cannabis-2026.webp" alt="" width={32} height={32} sizes="32px" />
               <span><strong>บัตรสมาชิกกัญชา</strong><small>เปิดดูบัตรของคุณ</small></span>
               <span aria-hidden="true">↗</span>
             </Link>

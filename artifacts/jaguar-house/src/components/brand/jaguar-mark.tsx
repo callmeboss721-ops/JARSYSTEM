@@ -7,7 +7,7 @@ type Props = { size?: number; className?: string; animated?: boolean; title?: st
 export function JaguarMark({ size = 40, className, title }: Props) {
   return (
     <span className={`jaguar-mark-composition${className ? ` ${className}` : ""}`} style={{ width: size, height: size }}>
-      <DesignSystemJaguarMark src="/brand/jaguar-spk-emblem-crisp.webp" size={size} title={title} />
+      <DesignSystemJaguarMark src="/brand/jaguar-spk-mark.webp" size={size} title={title} />
       <Image
         src="/brand/jaguar-spk-mascot-face.webp"
         alt=""

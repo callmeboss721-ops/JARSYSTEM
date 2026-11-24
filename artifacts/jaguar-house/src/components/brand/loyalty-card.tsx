@@ -7,7 +7,7 @@ import {
   STAMPS,
   type MemberClub,
 } from "@workspace/jaguar-spk-design-system/components/ui/membership-cards";
-import { BrandButton } from "./brand-button";
+import { BrandArtworkButton, BrandButton } from "./brand-button";
 import type { MemberCardData } from "./loyalty-api";
 
 export { STAMPS };
@@ -48,7 +48,7 @@ export function LoyaltyProgress({ balance, kind = "kratom" }: { balance: number;
   const ready = balance >= STAMPS;
   const remaining = Math.max(STAMPS - Math.min(Math.max(balance, 0), STAMPS), 0);
   const action = ready
-    ? <BrandButton href="/redeem" asset="btn-crown" label="แลกของแถมเลย" />
+    ? <BrandArtworkButton href="/redeem" src="/ui/artwork/redeem-button.webp" label="แลกรางวัล" />
     : <BrandButton asset="btn-frame" label={`อีก ${remaining} แต้ม`} disabled />;
   return <DesignSystemLoyaltyProgress balance={balance} kind={kind} buttonAssetBase="/ui/" action={action} />;
 }

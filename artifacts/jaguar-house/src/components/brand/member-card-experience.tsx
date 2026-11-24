@@ -1,7 +1,7 @@
 "use client";
 
 import { MemberCardFaces as DesignSystemMemberCardFaces, MemberStatusPanel as DesignSystemMemberStatusPanel, type MemberClub } from "@workspace/jaguar-spk-design-system/components/ui/membership-cards";
-import { BrandButton } from "./brand-button";
+import { BrandArtworkButton, BrandButton } from "./brand-button";
 
 type CardQr = {
   value?: string;
@@ -58,7 +58,14 @@ export function MemberStatusPanel({
 
   let action;
   if (ready && kind === "kratom") {
-    action = <BrandButton href="/redeem" asset="btn-crown" label="แลกของแถม" testId="member-redeem-cta" />;
+    action = (
+      <BrandArtworkButton
+        href="/redeem"
+        src="/ui/artwork/redeem-button.webp"
+        label="แลกรางวัล"
+        testId="member-redeem-cta"
+      />
+    );
   } else if (ready) {
     action = (
       <BrandButton

@@ -19,6 +19,10 @@ palette; gold is the main brand accent, emerald secondary, and cyan is limited
 to necessary status/interaction feedback. Do not treat a polished UI as proof
 that the underlying Supabase connection or real transactions work.
 
+Apply supplied JAGUAR SPK artwork across all relevant storefront surfaces,
+including sign-in, delivery, membership, and rewards. Keep functional utility
+glyphs simple when decorative imagery would make their action harder to read.
+
 The user permits an alternative to the blocked Supabase implementation and
 prioritizes a usable system, not continued attempts to force that integration.
 

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, type KeyboardEvent, type ReactNode, type TouchEvent } from "react";
+import Image from "next/image";
 
 type CardKind = "kratom" | "cannabis";
 
@@ -56,6 +57,15 @@ export function MemberCardCarousel({ active, children }: { active: CardKind; chi
           data-active={active === "kratom"}
           data-testid="link-switch-kratom"
         >
+          <Image
+            src="/brand/icon-card-kratom-2026.webp"
+            alt=""
+            aria-hidden="true"
+            width={32}
+            height={32}
+            sizes="32px"
+            className="h-7 w-7 shrink-0 object-contain"
+          />
           <span className="member-card-switcher__number" aria-hidden="true">01</span>
           <span>กระท่อม</span>
         </Link>
@@ -68,6 +78,15 @@ export function MemberCardCarousel({ active, children }: { active: CardKind; chi
           data-active={active === "cannabis"}
           data-testid="link-switch-cannabis"
         >
+          <Image
+            src="/brand/icon-card-cannabis-2026.webp"
+            alt=""
+            aria-hidden="true"
+            width={32}
+            height={32}
+            sizes="32px"
+            className="h-7 w-7 shrink-0 object-contain"
+          />
           <span className="member-card-switcher__number" aria-hidden="true">02</span>
           <span>กัญชา</span>
         </Link>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@workspace/jaguar-spk-design-system/components/ui/button";
-import { BrandDeliveryLink } from "@/components/brand/brand-button";
+import { BrandArtworkButton, BrandDeliveryLink } from "@/components/brand/brand-button";
 
 const GOOGLE_MAPS_URL =
   "https://www.google.com/maps/place/Jaguar+spk+%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A1+%E0%B8%81%E0%B8%B1%E0%B8%8D%E0%B8%8A%E0%B8%B2+%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A1+%E0%B9%83%E0%B8%81%E0%B8%A5%E0%B9%89%E0%B8%89%E0%B8%B1%E0%B8%99/@13.6100796,100.6008541,17z/data=!3m1!4b1!4m6!3m5!1s0x30e2a17b24c91b0f:0x2dd52ed6c8dbd489!8m2!3d13.6100796!4d100.6008541!16s%2Fg%2F11z_klv87h?hl=th&entry=ttu&g_ep=EgoyMDI2MTExNS4wIKXMDSoASAFQAw%3D%3D";
@@ -114,11 +114,16 @@ export default function BrandPage() {
               แวะมาที่ร้าน หรือเริ่มต้นจัดการบัตรสมาชิกผ่านมือถือได้
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Button asChild size="lg">
-                <Link href="/login?mode=register">สมัครสมาชิก</Link>
-              </Button>
+              <BrandArtworkButton
+                href="/login?mode=register"
+                src="/ui/artwork/signup-card.webp"
+                label="สมัครสมาชิก"
+              />
               <Button asChild variant="outline" size="lg">
-                <Link href="/card">เปิดบัตรสมาชิก</Link>
+                <Link href="/card" className="inline-flex items-center gap-2">
+                  <Image src="/brand/icon-card-kratom-2026.webp" alt="" aria-hidden="true" width={24} height={24} sizes="24px" />
+                  เปิดบัตรสมาชิก
+                </Link>
               </Button>
             </div>
             <a
@@ -270,7 +275,18 @@ export default function BrandPage() {
               </p>
             </article>
             <article className="rounded-[var(--radius)] border border-border/80 bg-card/70 p-5">
-              <h3 className="font-display text-lg font-semibold">บริการจัดส่ง</h3>
+              <div className="flex items-start justify-between gap-3">
+                <h3 className="font-display text-lg font-semibold">บริการจัดส่ง</h3>
+                <Image
+                  src="/brand/mascot-delivery.webp"
+                  alt=""
+                  aria-hidden="true"
+                  width={96}
+                  height={96}
+                  sizes="80px"
+                  className="h-20 w-20 shrink-0 object-contain"
+                />
+              </div>
               <p className="mt-2 text-sm leading-7 text-muted-foreground">
                 โทรสอบถามเพื่อยืนยันพื้นที่ให้บริการและเงื่อนไขก่อนสั่ง พื้นที่และการจัดส่งขึ้นอยู่กับการยืนยันจากร้าน
               </p>
@@ -329,13 +345,31 @@ export default function BrandPage() {
                         {pathway.label}
                       </a>
                     </Button>
+                  ) : pathway.href === "/login?mode=register" ? (
+                    <BrandArtworkButton
+                      href={pathway.href}
+                      src="/ui/artwork/signup-card.webp"
+                      label={pathway.label}
+                    />
                   ) : (
                     <Button
                       asChild
-                      variant={pathway.href === "/login?mode=register" ? "default" : "outline"}
+                      variant="outline"
                       className="w-full"
                     >
-                      <Link href={pathway.href}>{pathway.label}</Link>
+                      <Link href={pathway.href} className="inline-flex items-center justify-center gap-2">
+                        {pathway.href === "/card" && (
+                          <Image
+                            src="/brand/icon-card-kratom-2026.webp"
+                            alt=""
+                            aria-hidden="true"
+                            width={24}
+                            height={24}
+                            sizes="24px"
+                          />
+                        )}
+                        {pathway.label}
+                      </Link>
                     </Button>
                   )}
                 </div>
