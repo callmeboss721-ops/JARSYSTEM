@@ -270,8 +270,8 @@ try {
   const oneBottle = { member_code: memberCode, bottle_count: 1, formula: "silver", request_id: randomUUID() };
   assert.equal((await request("/staff/stamp", { method: "POST", jar: staffJar, body: oneBottle })).balance, 1);
   const belowThreshold = await request("/sales");
-  assert.ok(belowThreshold.some((sale) => sale.bottle_count === 2 && sale.amount_baht === 120 && sale.points_awarded === 1));
-  assert.ok(belowThreshold.some((sale) => sale.bottle_count === 1 && sale.amount_baht === 60 && sale.points_awarded === 0));
+  assert.ok(belowThreshold.some((sale) => sale.bottle_count === 2 && sale.amount_baht === 100 && sale.points_awarded === 1));
+  assert.ok(belowThreshold.some((sale) => sale.bottle_count === 1 && sale.amount_baht === 50 && sale.points_awarded === 0));
 
   const stampRows = Array.from({ length: 8 }, (_, index) => ({
     member_code: memberCode,
@@ -285,12 +285,12 @@ try {
     request("/staff/stamp", { method: "POST", jar: staffJar, body: finalStamp }),
     request("/staff/stamp", { method: "POST", jar: staffJar, body: finalStamp }),
   ]);
-  assert.equal(sameA.balance, 19);
-  assert.equal(sameB.balance, 19);
+  assert.equal(sameA.balance, 16);
+  assert.equal(sameB.balance, 16);
   await request("/staff/stamp", { method: "POST", jar: staffJar, body: { ...finalStamp, bottle_count: 3 }, status: 409 });
   let updated = await request("/card");
-  assert.equal(updated.lifetime_earned, 19);
-  assert.equal(updated.balance, 19);
+  assert.equal(updated.lifetime_earned, 16);
+  assert.equal(updated.balance, 16);
   const purchases = await request("/sales");
   assert.equal(purchases.length, 5);
   assert.ok(purchases.every((sale) => sale.amount_baht > 0 && sale.bottle_count >= 1 && ["red", "silver", "gold"].includes(sale.formula)));
@@ -306,12 +306,12 @@ try {
   const stampViaQr = { qr_token: qrToken, bottle_count: 3, formula: "red", request_id: randomUUID() };
   await request("/staff/stamp", { method: "POST", jar: staffJar, body: stampViaQr });
   updated = await request("/card");
-  assert.equal(updated.balance, 21);
+  assert.equal(updated.balance, 18);
   const redeemRequest = { member_code: memberCode, request_id: randomUUID() };
   const [staffRedeem, duplicateRedeem] = await Promise.all([1, 2].map(() =>
     request("/staff/redeem", { method: "POST", jar: staffJar, body: redeemRequest })));
-  assert.equal(staffRedeem.balance, 11);
-  assert.equal(duplicateRedeem.balance, 11);
+  assert.equal(staffRedeem.balance, 8);
+  assert.equal(duplicateRedeem.balance, 8);
   assert.equal(staffRedeem.lifetime_redeemed, 10);
   const members = await request("/owner/members?q=" + memberCode, { jar: ownerJar });
   assert.ok(members.some((member) => member.id === memberId));
@@ -346,13 +346,13 @@ try {
   assert.equal(pending.status, "pending");
   assert.equal(pending.member_nickname, nickname);
   assert.equal(pending.phone_last4, phone.slice(-4));
-  assert.equal((await request("/card")).balance, 29);
+  assert.equal((await request("/card")).balance, 23);
   await request("/owner/members/" + memberId, { method: "DELETE", jar: ownerJar, status: 409 });
   assert.ok((await request("/staff/redemptions", { jar: staffJar })).some((item) => item.id === pending.id));
   await Promise.all([1, 2].map(() => request(`/staff/redemptions/${pending.id}/confirm`, { method: "POST", jar: staffJar })));
   updated = await request("/card");
-  assert.equal(updated.balance, 19);
-  assert.equal(updated.lifetime_earned, 39);
+  assert.equal(updated.balance, 13);
+  assert.equal(updated.lifetime_earned, 33);
   assert.equal(updated.lifetime_redeemed, 20);
 
   const balanceBeforeCorrection = updated.balance;

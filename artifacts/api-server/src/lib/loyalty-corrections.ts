@@ -204,7 +204,7 @@ export async function correctStaffSale(
     )).rows;
     const oldTotalAmount = sales.reduce((total, sale) => total + sale.amount_baht, 0);
     let remainder = (balance.kratom_amount_remainder - (oldTotalAmount % 100) + 100) % 100;
-    const newAmount = Math.floor(input.bottle_count / 3) * 150 + (input.bottle_count % 3) * 60;
+    const newAmount = input.bottle_count * 50;
     const correctedSales = sales.map((sale) => {
       const isTarget = sale.id === id;
       const bottleCount = isTarget ? input.bottle_count : sale.bottle_count;

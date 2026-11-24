@@ -74,6 +74,7 @@ export default function StaffPage() {
   } | null>(null);
   const [editingCannabis, setEditingCannabis] = useState<{ id: string; grams: string; reason: string } | null>(null);
   const [editingRedemption, setEditingRedemption] = useState<{ id: string; reward_id: string; reason: string } | null>(null);
+  const [shiftTotals, setShiftTotals] = useState({ bills: 0, bottles: 0, baht: 0 });
   const video = useRef<HTMLVideoElement>(null);
   const controls = useRef<{ stop: () => void } | null>(null);
   const cannabisStampRequest = useRef<{ signature: string; id: string } | null>(null);
@@ -403,8 +404,9 @@ export default function StaffPage() {
       setBottleCount("");
       setSaleSlipFile(null); setSaleSlipPath(null);
       const pointsAdded = updated.balance - member.balance;
+      setShiftTotals((prev) => ({ bills: prev.bills + 1, bottles: prev.bottles + bottles, baht: prev.baht + price }));
       announceSuccess(`บันทึก ${bottles} ขวด · ฿${price.toLocaleString("th-TH")} · เพิ่ม +${pointsAdded} แต้ม · ยอดใหม่ ${updated.balance}/10 แต้ม`);
-      addRecentActivity(`ซื้อ ${bottles} ขวด · ${member.member_code}`);
+      addRecentActivity(`ซื้อ ${bottles} ขวด · ฿${price.toLocaleString("th-TH")} · ${member.member_code}`);
       void qc.invalidateQueries({ queryKey: [`${STAFF}/members`] });
       void qc.invalidateQueries({ queryKey: getListStaffSalesQueryKey(salesParams) });
     } catch (e) { setErr(errorText(e)); } finally { setBusy(false); }
@@ -605,6 +607,19 @@ export default function StaffPage() {
             <p>{msg || "รายการสำเร็จ"}</p>
             <button type="button" className="staff-next-scan btn btn-neon" onClick={scanNextMember}>สแกนคนถัดไปทันที</button>
           </section>}
+          {shiftTotals.bills > 0 && (
+            <section className="panel p-4 flex flex-wrap items-center justify-between gap-3" aria-label="สรุปยอดขายกะนี้" data-testid="staff-shift-summary">
+              <div>
+                <p className="eyebrow">Shift counter</p>
+                <p className="font-display text-base font-semibold">สรุปยอดขายที่บันทึกในกะนี้</p>
+              </div>
+              <div className="flex flex-wrap gap-4 font-mono text-sm tabular-nums">
+                <span><strong className="text-[var(--text)]">{shiftTotals.bills}</strong> <small className="text-[var(--muted)]">บิล</small></span>
+                <span><strong className="text-[var(--text)]">{shiftTotals.bottles}</strong> <small className="text-[var(--muted)]">ขวด</small></span>
+                <span><strong className="text-[var(--gold-2)]">฿{shiftTotals.baht.toLocaleString("th-TH")}</strong></span>
+              </div>
+            </section>
+          )}
           {recentActivity.length > 0 && <section className="staff-session-activity panel p-4" aria-label="กิจกรรมเคาน์เตอร์ในเซสชันนี้"><div className="flex justify-between gap-2"><h2 className="font-display text-base font-semibold">กิจกรรมล่าสุดในเซสชัน</h2><span>{recentActivity.length}/5</span></div><ol>{recentActivity.map((activity, index) => <li key={`${activity}-${index}`}>{activity}</li>)}</ol></section>}
           {counterMode === "kratom" && <div className="grid gap-5 lg:grid-cols-2 items-start">
           <section className="panel p-5 sm:p-6">
@@ -631,12 +646,33 @@ export default function StaffPage() {
                 <button className="btn btn-neon w-full" disabled={busy || !quickPoints || creditStaffPoints.isPending}>{creditStaffPoints.isPending ? "กำลังเพิ่มแต้ม…" : "เพิ่มแต้มตามจำนวน"}</button>
               </form>
               <form onSubmit={record} className="space-y-3 mt-4" noValidate>
+                <div>
+                  <p className="text-xs text-[var(--muted)] mb-2">เลือกจำนวนขวดยอดนิยม</p>
+                  <div className="grid grid-cols-4 gap-2" role="group" aria-label="เลือกจำนวนขวดด่วน">
+                    {[1, 2, 3, 6].map((preset) => {
+                      const active = bottleCount === String(preset);
+                      return (
+                        <button
+                          key={preset}
+                          type="button"
+                          className="pt-btn flex flex-col items-center justify-center py-1.5 leading-tight"
+                          aria-pressed={active}
+                          data-testid={`bottle-preset-${preset}`}
+                          onClick={() => { setBottleCount(String(preset)); setBottleCountErr(""); }}
+                        >
+                          <span className="text-sm font-semibold">{preset} ขวด</span>
+                          <span className="text-[11px] opacity-80">฿{bundlePrice(preset)}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
                 <div className="field">
                   <label htmlFor="bottle-count">จำนวนขวดในบิล</label>
                   <input id="bottle-count" className="input" type="text" inputMode="numeric" autoComplete="off" maxLength={12} required value={bottleCount}
                     onChange={(e) => { const value = e.target.value; setBottleCount(value); setBottleCountErr(value && !isBottleCount(value) ? "กรอกจำนวนขวดเป็นจำนวนเต็ม 1–999" : ""); }}
                     aria-invalid={!!bottleCountErr} aria-describedby={bottleCountErr ? "bottle-count-error" : "bottle-count-rule"} />
-                  {bottleCountErr ? <p id="bottle-count-error" role="alert" className="field-error">{bottleCountErr}</p> : <p id="bottle-count-rule" className="text-xs text-[var(--muted)]">บันทึกยอดขายตามบิล · แต้มและยอดเศษสะสมคำนวณโดยระบบร้าน</p>}
+                  {bottleCountErr ? <p id="bottle-count-error" role="alert" className="field-error">{bottleCountErr}</p> : <p id="bottle-count-rule" className="text-xs text-[var(--muted)]">บันทึกยอดขายตามบิล (฿50 / ขวด) · แต้มและยอดเศษสะสมคำนวณโดยระบบร้าน</p>}
                 </div>
                 <div>
                   <Label htmlFor="sale-slip-file">ภาพสลิป (ไม่บังคับ)</Label>
@@ -655,7 +691,7 @@ export default function StaffPage() {
                   </div>
                 </fieldset>
                 <div className="flex items-center justify-between gap-2 rounded-xl border border-[var(--glass-line)] bg-black/30 px-3 py-2 text-sm">
-                  <span className="text-xs text-[var(--muted)]">ราคาพิเศษอัตโนมัติ</span>
+                  <span className="text-xs text-[var(--muted)]">ยอดรวม (฿50 / ขวด)</span>
                    <span className="font-semibold tabular-nums text-[var(--gold-2)]">{isBottleCount(bottleCount) ? `฿${bundlePrice(Number(bottleCount)).toLocaleString("th-TH")}` : "—"}</span>
                 </div>
                 <button className="btn btn-neon w-full" disabled={busy}>บันทึกยอดซื้อและแต้ม</button>

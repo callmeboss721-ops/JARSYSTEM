@@ -108,18 +108,42 @@ function baht(n){ return Number(n).toFixed(2) + ' บาท'; }
 function fmt(t){ return t ? new Date(t).toLocaleString('th-TH', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—'; }
 function todayStart(){ var d = new Date(); d.setHours(0, 0, 0, 0); return d.toISOString(); }
 
+var failedAttempts = 0, lockUntil = 0;
+
 async function verifyPin(pin){
-  var r = await sb.from('dt_settings').select('value').eq('key', 'admin_pin').maybeSingle();
-  return r.data && r.data.value === pin;
+  var rpc = await sb.rpc('verify_dt_pin', { p_role: 'admin', p_pin: pin });
+  if (!rpc.error) return rpc.data === true;
+  if (rpc.error.code === 'PGRST202' || rpc.error.code === '42883') {
+    var r = await sb.from('dt_settings').select('value').eq('key', 'admin_pin').maybeSingle();
+    return Boolean(r.data && r.data.value === pin);
+  }
+  return false;
 }
 $('btn-login').onclick = async function(){
+  if (Date.now() < lockUntil) {
+    var secs = Math.ceil((lockUntil - Date.now()) / 1000);
+    $('login-err').textContent = 'ลองผิดหลายครั้ง กรุณารอ ' + secs + ' วินาที';
+    return;
+  }
   var pin = $('pin').value.trim();
   if (!pin) { $('login-err').textContent = 'กรุณากรอกรหัส'; return; }
   this.disabled = true;
   var ok = await verifyPin(pin);
   this.disabled = false;
-  if (!ok) { $('login-err').textContent = 'รหัสไม่ถูกต้อง'; return; }
-  sessionStorage.setItem('admin_pin', pin);
+  if (!ok) {
+    failedAttempts += 1;
+    if (failedAttempts >= 5) {
+      lockUntil = Date.now() + 60000;
+      failedAttempts = 0;
+      $('login-err').textContent = 'รหัสไม่ถูกต้องหลายครั้ง กรุณารอ 60 วินาที';
+    } else {
+      $('login-err').textContent = 'รหัสไม่ถูกต้อง';
+    }
+    return;
+  }
+  failedAttempts = 0;
+  $('pin').value = '';
+  sessionStorage.setItem('dt_admin_session', '1');
   $('login-view').style.display = 'none';
   $('dash-view').style.display = 'block';
   $('btn-logout').style.display = 'inline';
@@ -128,7 +152,7 @@ $('btn-login').onclick = async function(){
   await refresh();
   timer = setInterval(refresh, 30000);
 };
-$('btn-logout').onclick = function(){ sessionStorage.removeItem('admin_pin'); location.reload(); };
+$('btn-logout').onclick = function(){ sessionStorage.removeItem('dt_admin_session'); sessionStorage.removeItem('admin_pin'); location.reload(); };
 $('pin').addEventListener('keydown', function(e){ if (e.key === 'Enter') $('btn-login').click(); });
 
 function renderChips(){

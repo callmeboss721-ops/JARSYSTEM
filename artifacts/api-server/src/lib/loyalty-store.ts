@@ -260,7 +260,7 @@ export async function loyaltyStore<T>(operation: string, args: Args = {}): Promi
             (args.p_slip_path != null && !/^\/objects\/uploads\/[0-9a-f-]{36}$/i.test(args.p_slip_path))) {
           fail(400, "กรุณาระบุจำนวนขวด สูตรสินค้า และรหัสรายการให้ถูกต้อง");
         }
-        const amountBaht = Math.floor(bottleCount / 3) * 150 + (bottleCount % 3) * 60;
+        const amountBaht = bottleCount * 50;
         const member = await card(client, args.p_member!, true);
         const { points: pointsAwarded, remainder } = calculateCarryPoints(member.kratom_remainder_baht, amountBaht);
         const { rows: existing } = await client.query(`select s.id,s.member_id,s.bottle_count,s.formula,s.slip_path
