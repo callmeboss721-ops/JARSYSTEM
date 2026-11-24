@@ -63,4 +63,4 @@ export function clearScope(qc: import("@tanstack/react-query").QueryClient, scop
 export const statusOf = (e: unknown) => (e && typeof e === "object" && "status" in e ? (e as { status?: number }).status : undefined);
 export const isWholeBaht = (s: string) => /^\d+$/.test(s.trim()) && Number.isSafeInteger(Number(s)) && Number(s) >= 1 && Number(s) <= 100000000;
 export const isBottleCount = (s: string) => /^\d+$/.test(s.trim()) && Number.isSafeInteger(Number(s)) && Number(s) >= 1 && Number(s) <= 999;
-export const bundlePrice = (bottles: number) => Math.floor(bottles / 3) * 150 + (bottles % 3) * 60;
+export const bundlePrice = (bottles: number) => bottles * 50;

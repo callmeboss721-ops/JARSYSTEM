@@ -7779,6 +7779,25 @@ html[data-brand-theme="2026"] .input:focus {
 }
 
 .jh-products { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: 16px; }
+.jh-product-filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; }
+.jh-product-filter {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid hsl(var(--brand-id-2026-border));
+  border-radius: 999px;
+  background: hsl(var(--card) / .7);
+  color: hsl(var(--muted-foreground));
+  font: 600 12px/1.2 var(--font-sans);
+  cursor: pointer;
+  transition: color .18s ease, background .18s ease, border-color .18s ease, transform .18s ease;
+}
+.jh-product-filter:hover { border-color: hsl(var(--brand-id-2026-gold) / .62); color: hsl(var(--foreground)); }
+.jh-product-filter[aria-pressed="true"] {
+  border-color: hsl(var(--brand-id-2026-gold));
+  background: hsl(var(--brand-id-2026-gold));
+  color: hsl(var(--brand-id-2026-background));
+}
+.jh-products--variants .jh-product:first-child { grid-column: auto; }
 .jh-product {
   min-width: 0;
   overflow: hidden;
@@ -7801,6 +7820,10 @@ html[data-brand-theme="2026"] .input:focus {
 .jh-product__caption { display: grid; gap: 3px; padding: 13px 15px 15px; }
 .jh-product__caption strong { color: hsl(var(--foreground)); font: 600 14px/1.35 var(--font-display); }
 .jh-product__caption span { color: hsl(var(--muted-foreground)); font-size: 11px; }
+.jh-product__price { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-top: 7px; }
+.jh-product__price > span { font-size: 11px; }
+.jh-product__price strong { color: hsl(var(--brand-id-2026-gold)); font: 700 19px/1.2 var(--font-display); }
+.jh-product__price small { color: hsl(var(--muted-foreground)); font: 500 11px/1 var(--font-sans); }
 
 .jh-membership {
   padding: clamp(28px, 5vw, 52px);
@@ -7915,6 +7938,7 @@ html[data-brand-theme="2026"] .input:focus {
    .jh-club img { width: 28px; height: 28px; }
   .jh-products { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .jh-product:first-child { grid-column: 1 / -1; }
+  .jh-products--variants .jh-product:first-child { grid-column: auto; }
   .jh-product__bottles { padding: 8px; }
   .jh-product__caption { padding: 10px 11px 12px; }
   .jh-product__caption strong { font-size: 12px; }

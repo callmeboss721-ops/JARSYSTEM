@@ -1328,6 +1328,7 @@ components:
         price_baht: { type: integer, minimum: 1, maximum: 100000000 }
         stock_quantity: { type: ["integer", "null"], minimum: 0, maximum: 1000000 }
         stock_unit: { type: ["string", "null"], minLength: 1, maxLength: 24 }
+        reference_image_path: { type: ["string", "null"], pattern: "^/objects/uploads/[0-9a-fA-F-]{36}$" }
         has_image: { type: boolean }
         is_active: { type: boolean }
         created_at: { type: string }
@@ -1383,14 +1384,14 @@ components:
           items: { $ref: "#/components/schemas/ImportOwnerProductRow" }
     ImportOwnerProductRow:
       type: object
-      required: [name, category, description, price_baht, stock_quantity, stock_unit]
+      required: [name, category, description, price_baht]
       properties:
         name: { type: string, minLength: 1, maxLength: 120 }
         category: { type: string, minLength: 1, maxLength: 80 }
         description: { type: string, maxLength: 600 }
         price_baht: { type: integer, minimum: 1, maximum: 100000000 }
-        stock_quantity: { type: integer, minimum: 0, maximum: 1000000 }
-        stock_unit: { type: string, minLength: 1, maxLength: 24 }
+        stock_quantity: { type: ["integer", "null"], minimum: 0, maximum: 1000000 }
+        stock_unit: { type: ["string", "null"], minLength: 1, maxLength: 24 }
     OwnerProductImportResult:
       type: object
       required: [created_count, skipped_count]

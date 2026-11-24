@@ -7,7 +7,9 @@
     "dev": "next dev --hostname 0.0.0.0 --port $PORT",
     "build": "next build",
     "serve": "next start --hostname 0.0.0.0 --port $PORT",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test:catalog-csv": "node --experimental-strip-types --test src/components/brand/owner-products-csv.test.ts",
+    "test:pricing": "node --experimental-strip-types --test src/components/brand/loyalty-api.test.ts"
   },
   "devDependencies": {
     "@hookform/resolvers": "^3.10.0",

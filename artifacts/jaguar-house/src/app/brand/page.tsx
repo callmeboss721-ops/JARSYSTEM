@@ -271,7 +271,7 @@ export default function BrandPage() {
             <article className="rounded-[var(--radius)] border border-border/80 bg-card/70 p-5">
               <h3 className="font-display text-lg font-semibold">ราคาเครื่องดื่ม</h3>
               <p className="mt-2 text-sm leading-7 text-muted-foreground">
-                ฿60 ต่อขวด · สอบถามสต็อกก่อนซื้อ
+                ฿50 ต่อขวดทุกรส · สอบถามสต็อกก่อนซื้อ
               </p>
             </article>
             <article className="rounded-[var(--radius)] border border-border/80 bg-card/70 p-5">

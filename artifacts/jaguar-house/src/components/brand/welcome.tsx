@@ -13,20 +13,22 @@ import { BrandArtworkButton, BrandButton, BrandDeliveryLink } from "./brand-butt
 const GOOGLE_MAPS_URL = "https://www.google.com/maps/place/Jaguar+spk+%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A1+%E0%B8%81%E0%B8%B1%E0%B8%8D%E0%B8%8A%E0%B8%B2+%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A1+%E0%B9%83%E0%B8%81%E0%B8%A5%E0%B9%89%E0%B8%89%E0%B8%B1%E0%B8%99/@13.6100796,100.6008541,17z/data=!3m1!4b1!4m6!3m5!1s0x30e2a17b24c91b0f:0x2dd52ed6c8dbd489!8m2!3d13.6100796!4d100.6008541!16s%2Fg%2F11z_klv87h?hl=th&entry=ttu&g_ep=EgoyMDI2MTExNS4wIKXMDSoASAFQAw%3D%3D";
 const GOOGLE_MAPS_EMBED_URL = "https://maps.google.com/maps?q=13.6100796,100.6008541&z=17&output=embed";
 
-const PRODUCTS = [
-  {
-    name: "เครื่องดื่ม JAGUAR SPK",
-    detail: "ภาพตัวอย่าง · สอบถามสต็อก",
-    bottles: [
-      { src: "/brand/product-kratom-gold.webp", alt: "ขวด JAGUAR SPK ฝาสีทอง" },
-      { src: "/brand/product-kratom-blue.webp", alt: "ขวด JAGUAR SPK ฝาสีน้ำเงิน" },
-      { src: "/brand/product-kratom-red.webp", alt: "ขวด JAGUAR SPK ฝาสีแดง" },
-    ],
-  },
+const PRODUCT_VARIANTS = [
+  { variant: "gold", name: "สูตร JG01 · ฝาทอง", src: "/brand/product-kratom-gold.webp", alt: "ขวด JAGUAR SPK สูตร JG01 ฝาสีทอง" },
+  { variant: "blue", name: "สูตรฟ้า · ฝาน้ำเงิน", src: "/brand/product-kratom-blue.webp", alt: "ขวด JAGUAR SPK สูตรฟ้า ฝาสีน้ำเงิน" },
+  { variant: "red", name: "สูตรแดง · ฝาแดง", src: "/brand/product-kratom-red.webp", alt: "ขวด JAGUAR SPK สูตรแดง ฝาสีแดง" },
 ] as const;
+type ProductFilter = "all" | (typeof PRODUCT_VARIANTS)[number]["variant"];
+const PRODUCT_FILTERS: { value: ProductFilter; label: string }[] = [
+  { value: "all", label: "ทุกรส" },
+  { value: "gold", label: "ฝาทอง" },
+  { value: "blue", label: "ฝาน้ำเงิน" },
+  { value: "red", label: "ฝาแดง" },
+];
 
 export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
   const [tab, setTab] = useState<"login" | "register">(initialTab ?? "login");
+  const [productFilter, setProductFilter] = useState<ProductFilter>("all");
   const [mapPopupOpen, setMapPopupOpen] = useState(false);
   const mapTriggerRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
@@ -115,26 +117,40 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
             <div className="jh-section__heading">
               <p className="jh-kicker">ภาพตัวอย่างสินค้า</p>
               <h2 id="landing-products-title">เครื่องดื่ม JAGUAR SPK</h2>
-              <p>เจ้าของยืนยันราคา ฿60 ต่อขวด · ภาพเป็นตัวอย่าง สอบถามสต็อกก่อนซื้อ</p>
+              <p>ทุกรส ฿50 ต่อขวด · ภาพเป็นตัวอย่าง สอบถามสต็อกก่อนซื้อ</p>
             </div>
-            <div className="jh-products">
-              {PRODUCTS.map((product) => (
-                <article className="jh-product" key={product.name}>
-                  <div className="jh-product__bottles">
-                    {product.bottles.map((bottle) => (
-                      <div className="jh-product__bottle" key={bottle.src}>
-                        <Image
-                          src={bottle.src}
-                          alt={bottle.alt}
-                          width={768}
-                          height={768}
-                          loading="lazy"
-                          sizes="(max-width: 520px) 28vw, 120px"
-                        />
-                      </div>
-                    ))}
-                    </div>
-                  <div className="jh-product__caption"><strong>{product.name}</strong><span>{product.detail}</span></div>
+            <div className="jh-product-filters" role="group" aria-label="กรองรสเครื่องดื่ม">
+              {PRODUCT_FILTERS.map((filter) => (
+                <button
+                  type="button"
+                  key={filter.value}
+                  className="jh-product-filter"
+                  aria-pressed={productFilter === filter.value}
+                  data-testid={`product-filter-${filter.value}`}
+                  onClick={() => setProductFilter(filter.value)}
+                >
+                  {filter.label}
+                </button>
+              ))}
+            </div>
+            <div className="jh-products jh-products--variants" aria-live="polite">
+              {PRODUCT_VARIANTS.filter((product) => productFilter === "all" || product.variant === productFilter).map((product) => (
+                <article className="jh-product" key={product.variant} data-testid={`product-${product.variant}`}>
+                  <div className="jh-product__image">
+                    <Image
+                      src={product.src}
+                      alt={product.alt}
+                      width={768}
+                      height={768}
+                      loading="lazy"
+                      sizes="(max-width: 520px) 46vw, 360px"
+                    />
+                  </div>
+                  <div className="jh-product__caption">
+                    <strong>{product.name}</strong>
+                    <span>ภาพตัวอย่าง · เช็กสต็อกก่อนซื้อ</span>
+                    <div className="jh-product__price"><span>ราคา</span><strong>฿50 <small>/ ขวด</small></strong></div>
+                  </div>
                 </article>
               ))}
             </div>

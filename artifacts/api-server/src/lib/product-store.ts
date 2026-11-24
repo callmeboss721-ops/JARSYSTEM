@@ -42,8 +42,8 @@ export type ImportedOwnerProduct = {
   category: string;
   description: string;
   price_baht: number;
-  stock_quantity: number;
-  stock_unit: string;
+  stock_quantity?: number | null;
+  stock_unit?: string | null;
 };
 
 const selectProduct = `select id,name,category,description,price_baht,stock_quantity,stock_unit,
@@ -225,8 +225,19 @@ export async function importOwnerProducts(rows: ImportedOwnerProduct[]): Promise
   if (rows.length < 1 || rows.length > 200) fail(400, "ไฟล์นำเข้าต้องมีสินค้า 1–200 รายการ");
   const products = rows.map((row) => {
     const fields = normalizeFields(row);
-    if (fields.stock_quantity == null || !fields.stock_unit) fail(400, "สินค้าแต่ละรายการต้องมีจำนวนและหน่วยสต็อก");
-    return fields as Required<Pick<ProductFields, "name" | "category" | "description" | "price_baht" | "stock_quantity" | "stock_unit">>;
+    const stockQuantity = fields.stock_quantity ?? null;
+    const stockUnit = fields.stock_unit ?? null;
+    if ((stockQuantity === null) !== (stockUnit === null)) {
+      fail(400, "ระบุทั้งจำนวนและหน่วยสต็อก หรือเว้นว่างทั้งคู่เมื่อยังไม่ทราบ");
+    }
+    return {
+      name: fields.name,
+      category: fields.category ?? "ยังไม่จัดหมวด",
+      description: fields.description,
+      price_baht: fields.price_baht,
+      stock_quantity: stockQuantity,
+      stock_unit: stockUnit,
+    };
   });
   const client = await pool.connect();
   let createdCount = 0;
@@ -256,11 +267,13 @@ export async function importOwnerProducts(rows: ImportedOwnerProduct[]): Promise
          values($1,$2,$3,$4,$5,$6,true) returning id`,
         [product.name, category, product.description, product.price_baht, product.stock_quantity, product.stock_unit],
       );
-      await client.query(
-        `insert into jaguar_product_stock_events(product_id,previous_quantity,new_quantity,stock_unit,reason,source)
-         values($1,null,$2,$3,'นำเข้าจากไฟล์ CSV','import')`,
-        [inserted.rows[0].id, product.stock_quantity, product.stock_unit],
-      );
+      if (product.stock_quantity !== null && product.stock_unit !== null) {
+        await client.query(
+          `insert into jaguar_product_stock_events(product_id,previous_quantity,new_quantity,stock_unit,reason,source)
+           values($1,null,$2,$3,'นำเข้าจากไฟล์ CSV','import')`,
+          [inserted.rows[0].id, product.stock_quantity, product.stock_unit],
+        );
+      }
       createdCount += 1;
     }
     await client.query("commit");

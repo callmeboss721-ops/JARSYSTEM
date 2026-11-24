@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import type {
-  ImportOwnerProductRow,
   OwnerProduct,
   OwnerProductStockEvent,
 } from "@workspace/api-client-react";
@@ -24,108 +23,9 @@ import { Textarea } from "@workspace/jaguar-spk-design-system/components/ui/text
 import { EmptyState, ErrorState, LoadingState } from "@/components/brand/ui";
 import { OWNER, errorText, isWholeBaht } from "@/components/brand/loyalty-api";
 import { uploadPrivateImage } from "@/components/brand/private-upload";
+import { CSV_HEADERS, validateCsv, type CsvPreviewRow } from "./owner-products-csv";
 
-const CSV_HEADERS = ["category", "name", "description", "price_baht", "stock_quantity", "stock_unit"] as const;
 const CSV_MAX_BYTES = 1024 * 1024;
-const CSV_MAX_ROWS = 200;
-
-type CsvPreviewRow = {
-  rowNumber: number;
-  row: ImportOwnerProductRow;
-  duplicate: boolean;
-};
-
-function parseCsvText(text: string): string[][] {
-  const rows: string[][] = [];
-  let row: string[] = [];
-  let cell = "";
-  let quoted = false;
-  let afterQuote = false;
-  for (let index = 0; index < text.length; index += 1) {
-    const character = text[index];
-    if (quoted) {
-      if (character === '"' && text[index + 1] === '"') {
-        cell += '"';
-        index += 1;
-      } else if (character === '"') {
-        quoted = false;
-        afterQuote = true;
-      } else {
-        cell += character;
-      }
-    } else if (character === '"' && cell.length === 0) {
-      quoted = true;
-    } else if (character === ",") {
-      row.push(cell);
-      cell = "";
-      afterQuote = false;
-    } else if (character === "\n" || character === "\r") {
-      if (character === "\r" && text[index + 1] === "\n") index += 1;
-      row.push(cell);
-      if (row.some((value) => value.trim() !== "")) rows.push(row);
-      row = [];
-      cell = "";
-      afterQuote = false;
-    } else {
-      if (afterQuote && !/\s/.test(character)) throw new Error("พบข้อความต่อท้ายช่องที่ปิดเครื่องหมายอัญประกาศ");
-      cell += character;
-    }
-  }
-  if (quoted) throw new Error("พบเครื่องหมายอัญประกาศที่ไม่ปิดในไฟล์ CSV");
-  row.push(cell);
-  if (row.some((value) => value.trim() !== "")) rows.push(row);
-  return rows;
-}
-
-function validateCsv(text: string, existingProducts: OwnerProduct[]): { rows: CsvPreviewRow[]; errors: string[] } {
-  const parsed = parseCsvText(text);
-  if (parsed.length < 2) throw new Error("ไฟล์ต้องมีหัวตารางและข้อมูลสินค้าอย่างน้อย 1 แถว");
-  const headers = parsed[0].map((header) => header.trim().replace(/^\uFEFF/, ""));
-  if (headers.length !== CSV_HEADERS.length || headers.some((header, index) => header !== CSV_HEADERS[index])) {
-    throw new Error(`หัวตารางต้องเรียงตามนี้: ${CSV_HEADERS.join(", ")}`);
-  }
-  const dataRows = parsed.slice(1);
-  if (dataRows.length > CSV_MAX_ROWS) throw new Error(`ไฟล์มีได้ไม่เกิน ${CSV_MAX_ROWS} แถว`);
-  const productKey = (productCategory: string, productName: string) =>
-    `${productCategory.trim().toLocaleLowerCase("th-TH")}\u0000${productName.trim().toLocaleLowerCase("th-TH")}`;
-  const knownNames = new Set(existingProducts.map((product) => productKey(product.category, product.name)));
-  const seenNames = new Set<string>();
-  const errors: string[] = [];
-  const rows = dataRows.map((cells, index): CsvPreviewRow | null => {
-    const rowNumber = index + 2;
-    if (cells.length !== CSV_HEADERS.length) {
-      errors.push(`แถว ${rowNumber}: จำนวนช่องไม่ตรงกับหัวตาราง`);
-      return null;
-    }
-    const [categoryRaw, nameRaw, descriptionRaw, priceRaw, quantityRaw, unitRaw] = cells.map((cell) => cell.trim());
-    const category = categoryRaw;
-    const name = nameRaw;
-    const description = descriptionRaw;
-    const price = Number(priceRaw);
-    const quantity = Number(quantityRaw);
-    const stockUnit = unitRaw;
-    const rowErrors: string[] = [];
-    if (!category || category.length > 80) rowErrors.push("หมวดหมู่ต้องมี 1–80 ตัวอักษร");
-    if (!name || Array.from(name).length > 120) rowErrors.push("ชื่อต้องมี 1–120 ตัวอักษร");
-    if (Array.from(description).length > 600) rowErrors.push("รายละเอียดต้องไม่เกิน 600 ตัวอักษร");
-    if (!/^\d+$/.test(priceRaw) || !Number.isInteger(price) || price < 1 || price > 100_000_000) rowErrors.push("ราคาต้องเป็นจำนวนเต็ม 1–100,000,000 บาท");
-    if (!/^\d+$/.test(quantityRaw) || !Number.isInteger(quantity) || quantity < 0 || quantity > 1_000_000) rowErrors.push("สต็อกต้องเป็นจำนวนเต็ม 0–1,000,000");
-    if (!stockUnit || Array.from(stockUnit).length > 24) rowErrors.push("หน่วยสต็อกต้องมี 1–24 ตัวอักษร");
-    if (rowErrors.length) {
-      errors.push(`แถว ${rowNumber}: ${rowErrors.join(" · ")}`);
-      return null;
-    }
-    const key = productKey(category, name);
-    const duplicate = knownNames.has(key) || seenNames.has(key);
-    seenNames.add(key);
-    return {
-      rowNumber,
-      duplicate,
-      row: { category, name, description, price_baht: price, stock_quantity: quantity, stock_unit: stockUnit },
-    };
-  }).filter((row): row is CsvPreviewRow => row !== null);
-  return { rows, errors };
-}
 
 export function OwnerProducts() {
   const queryClient = useQueryClient();
@@ -427,6 +327,9 @@ export function OwnerProducts() {
         <p className="mt-2 text-sm text-[var(--muted)]">
           เลือกไฟล์เพื่อดูตัวอย่างและตรวจสอบก่อนยืนยัน ไฟล์อยู่ในหน่วยความจำเบราว์เซอร์เท่านั้น · สูงสุด 1 MB และ 200 แถว
         </p>
+        <p className="mt-2 text-sm text-[var(--muted)]">
+          หากยังไม่ทราบสต็อก ให้เว้นทั้ง stock_quantity และ stock_unit ว่างไว้ ระบบจะไม่สร้างรายการประวัติสต็อก และห้ามใส่ 0 แทนค่าที่ไม่ทราบ
+        </p>
         <p className="mt-2 break-all text-xs text-[var(--muted)]">หัวตาราง: {CSV_HEADERS.join(", ")}</p>
         <div className="mt-4">
           <Label htmlFor="catalog-csv-file">ไฟล์ CSV</Label>
@@ -442,14 +345,14 @@ export function OwnerProducts() {
                 <article key={rowNumber} className="rounded-xl border border-[var(--line)] p-3">
                   <div className="flex items-start justify-between gap-3"><strong className="break-words">{row.name}</strong><span className="chip">{duplicate ? "ข้ามรายการซ้ำ" : "พร้อมนำเข้า"}</span></div>
                   <p className="mt-1 text-xs text-[var(--muted)]">{row.category} · ฿{row.price_baht.toLocaleString("th-TH")}</p>
-                  <p className="text-xs text-[var(--muted)]">สต็อก {row.stock_quantity.toLocaleString("th-TH")} {row.stock_unit}</p>
+                  <p className="text-xs text-[var(--muted)]">{row.stock_quantity == null ? "สต็อกยังไม่ระบุ" : `สต็อก ${row.stock_quantity.toLocaleString("th-TH")} ${row.stock_unit ?? ""}`}</p>
                 </article>
               ))}
             </div>
             <div className="mt-4 hidden overflow-x-auto sm:block">
               <table className="w-full min-w-[640px] text-left text-sm">
                 <thead><tr className="border-b border-[var(--line)] text-xs text-[var(--muted)]"><th className="py-2 pr-3">สถานะ</th><th className="py-2 pr-3">หมวดหมู่</th><th className="py-2 pr-3">ชื่อสินค้า</th><th className="py-2 pr-3">ราคา</th><th className="py-2">สต็อก</th></tr></thead>
-                <tbody>{csvRows.map(({ row, duplicate, rowNumber }) => <tr key={rowNumber} className="border-b border-[var(--line)]"><td className="py-2 pr-3">{duplicate ? "ข้ามรายการซ้ำ" : "พร้อมนำเข้า"}</td><td className="py-2 pr-3">{row.category}</td><td className="py-2 pr-3">{row.name}</td><td className="py-2 pr-3">฿{row.price_baht.toLocaleString("th-TH")}</td><td className="py-2">{row.stock_quantity.toLocaleString("th-TH")} {row.stock_unit}</td></tr>)}</tbody>
+                <tbody>{csvRows.map(({ row, duplicate, rowNumber }) => <tr key={rowNumber} className="border-b border-[var(--line)]"><td className="py-2 pr-3">{duplicate ? "ข้ามรายการซ้ำ" : "พร้อมนำเข้า"}</td><td className="py-2 pr-3">{row.category}</td><td className="py-2 pr-3">{row.name}</td><td className="py-2 pr-3">฿{row.price_baht.toLocaleString("th-TH")}</td><td className="py-2">{row.stock_quantity == null ? "ยังไม่ระบุ" : `${row.stock_quantity.toLocaleString("th-TH")} ${row.stock_unit ?? ""}`}</td></tr>)}</tbody>
               </table>
             </div>
             <p className="mt-3 text-sm text-[var(--muted)]">ตรวจพบ {csvRows.length} แถว · นำเข้าได้ {csvImportRows.length} · ข้ามรายการซ้ำ {csvRows.length - csvImportRows.length}</p>

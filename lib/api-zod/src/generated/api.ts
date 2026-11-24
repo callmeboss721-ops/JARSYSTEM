@@ -1935,6 +1935,7 @@ export const listOwnerProductsResponseStockQuantityMax = 1000000;
 
 export const listOwnerProductsResponseStockUnitMax = 24;
 
+export const listOwnerProductsResponseReferenceImagePathRegExp = new RegExp('^/objects/uploads/[0-9a-fA-F-]{36}$');
 
 
 export const ListOwnerProductsResponseItem = zod.object({
@@ -1945,6 +1946,7 @@ export const ListOwnerProductsResponseItem = zod.object({
   "price_baht": zod.int().min(1).max(listOwnerProductsResponsePriceBahtMax),
   "stock_quantity": zod.int().min(listOwnerProductsResponseStockQuantityMin).max(listOwnerProductsResponseStockQuantityMax).nullable(),
   "stock_unit": zod.string().min(1).max(listOwnerProductsResponseStockUnitMax).nullable(),
+  "reference_image_path": zod.string().regex(listOwnerProductsResponseReferenceImagePathRegExp).nullish(),
   "has_image": zod.boolean(),
   "is_active": zod.boolean(),
   "created_at": zod.string(),
@@ -1993,6 +1995,7 @@ export const createOwnerProductResponseStockQuantityMax = 1000000;
 
 export const createOwnerProductResponseStockUnitMax = 24;
 
+export const createOwnerProductResponseReferenceImagePathRegExp = new RegExp('^/objects/uploads/[0-9a-fA-F-]{36}$');
 
 
 export const CreateOwnerProductResponse = zod.object({
@@ -2003,6 +2006,7 @@ export const CreateOwnerProductResponse = zod.object({
   "price_baht": zod.int().min(1).max(createOwnerProductResponsePriceBahtMax),
   "stock_quantity": zod.int().min(createOwnerProductResponseStockQuantityMin).max(createOwnerProductResponseStockQuantityMax).nullable(),
   "stock_unit": zod.string().min(1).max(createOwnerProductResponseStockUnitMax).nullable(),
+  "reference_image_path": zod.string().regex(createOwnerProductResponseReferenceImagePathRegExp).nullish(),
   "has_image": zod.boolean(),
   "is_active": zod.boolean(),
   "created_at": zod.string(),
@@ -2047,6 +2051,7 @@ export const updateOwnerProductResponseStockQuantityMax = 1000000;
 
 export const updateOwnerProductResponseStockUnitMax = 24;
 
+export const updateOwnerProductResponseReferenceImagePathRegExp = new RegExp('^/objects/uploads/[0-9a-fA-F-]{36}$');
 
 
 export const UpdateOwnerProductResponse = zod.object({
@@ -2057,6 +2062,7 @@ export const UpdateOwnerProductResponse = zod.object({
   "price_baht": zod.int().min(1).max(updateOwnerProductResponsePriceBahtMax),
   "stock_quantity": zod.int().min(updateOwnerProductResponseStockQuantityMin).max(updateOwnerProductResponseStockQuantityMax).nullable(),
   "stock_unit": zod.string().min(1).max(updateOwnerProductResponseStockUnitMax).nullable(),
+  "reference_image_path": zod.string().regex(updateOwnerProductResponseReferenceImagePathRegExp).nullish(),
   "has_image": zod.boolean(),
   "is_active": zod.boolean(),
   "created_at": zod.string(),
@@ -2103,6 +2109,7 @@ export const updateOwnerProductStockResponseStockQuantityMax = 1000000;
 
 export const updateOwnerProductStockResponseStockUnitMax = 24;
 
+export const updateOwnerProductStockResponseReferenceImagePathRegExp = new RegExp('^/objects/uploads/[0-9a-fA-F-]{36}$');
 
 
 export const UpdateOwnerProductStockResponse = zod.object({
@@ -2113,6 +2120,7 @@ export const UpdateOwnerProductStockResponse = zod.object({
   "price_baht": zod.int().min(1).max(updateOwnerProductStockResponsePriceBahtMax),
   "stock_quantity": zod.int().min(updateOwnerProductStockResponseStockQuantityMin).max(updateOwnerProductStockResponseStockQuantityMax).nullable(),
   "stock_unit": zod.string().min(1).max(updateOwnerProductStockResponseStockUnitMax).nullable(),
+  "reference_image_path": zod.string().regex(updateOwnerProductStockResponseReferenceImagePathRegExp).nullish(),
   "has_image": zod.boolean(),
   "is_active": zod.boolean(),
   "created_at": zod.string(),
@@ -2171,8 +2179,8 @@ export const ImportOwnerProductsBody = zod.object({
   "category": zod.string().min(1).max(importOwnerProductsBodyRowsItemCategoryMax),
   "description": zod.string().max(importOwnerProductsBodyRowsItemDescriptionMax),
   "price_baht": zod.int().min(1).max(importOwnerProductsBodyRowsItemPriceBahtMax),
-  "stock_quantity": zod.int().min(importOwnerProductsBodyRowsItemStockQuantityMin).max(importOwnerProductsBodyRowsItemStockQuantityMax),
-  "stock_unit": zod.string().min(1).max(importOwnerProductsBodyRowsItemStockUnitMax)
+  "stock_quantity": zod.int().min(importOwnerProductsBodyRowsItemStockQuantityMin).max(importOwnerProductsBodyRowsItemStockQuantityMax).nullish(),
+  "stock_unit": zod.string().min(1).max(importOwnerProductsBodyRowsItemStockUnitMax).nullish()
 })).min(1).max(importOwnerProductsBodyRowsMax)
 })
 

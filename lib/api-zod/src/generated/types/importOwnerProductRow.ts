@@ -27,11 +27,13 @@ export interface ImportOwnerProductRow {
   /**
      * @minimum 0
      * @maximum 1000000
+     * @nullable
      */
-  stock_quantity: number;
+  stock_quantity?: number | null;
   /**
      * @minLength 1
      * @maxLength 24
+     * @nullable
      */
-  stock_unit: string;
+  stock_unit?: string | null;
 }

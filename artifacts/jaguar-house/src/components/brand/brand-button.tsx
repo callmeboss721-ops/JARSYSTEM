@@ -104,7 +104,7 @@ export function BrandDeliveryLink({ className }: { className?: string }) {
         <Image
           src="/ui/artwork/delivery-button.webp"
           alt="สั่งด่วนส่งฟรี"
-          loading="eager"
+          loading="lazy"
           width={1056}
           height={436}
           sizes="(max-width: 640px) 100vw, 320px"

@@ -37,6 +37,11 @@ export interface OwnerProduct {
      * @nullable
      */
   stock_unit: string | null;
+  /**
+     * @nullable
+     * @pattern ^/objects/uploads/[0-9a-fA-F-]{36}$
+     */
+  reference_image_path?: string | null;
   has_image: boolean;
   is_active: boolean;
   created_at: string;

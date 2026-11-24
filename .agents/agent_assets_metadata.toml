@@ -56,3 +56,31 @@ mtime_ms = 1795120386330
 storage_uri = "gcs://replit-rams-assets-pike/rams/assets/repl:d667af9b-bd96-4ef0-bde1-934a6de89f2f/1026980f-10e5-4672-9e3e-b511fc69fb2c/568b8951-512b-4132-8fef-49c72b57fcc5"
 storage_version_token = "1795120471773001"
 content_type = "text/markdown"
+
+[[outputs]]
+id = "3HmSI_sbuO8SyF2JTdy23"
+uri = "file://generated-artifacts/jaguar-spk-inventory-import.csv"
+type = "table"
+title = "JAGUAR SPK inventory import CSV"
+description = "Four prepared product rows: drink at ฿50, cigarettes at ฿40; unknown stock is intentionally blank."
+logical_id = "c44ca5d2-9e8f-464a-afcb-76a93dc45c5f"
+content_hash = "sha256:2867ae12a0b0215a0a1d5a9eac0abde6770d56ad0b982a588d06a784f5f4e96f"
+size = 285
+mtime_ms = 1795512834383
+storage_uri = "gcs://replit-rams-assets-pike/rams/assets/repl:d667af9b-bd96-4ef0-bde1-934a6de89f2f/c44ca5d2-9e8f-464a-afcb-76a93dc45c5f/b7f9691e-e2bf-4138-9d53-6f77882bd9e1"
+storage_version_token = "1795514574452111"
+content_type = "text/csv"
+
+[[outputs]]
+id = "WxzZcQmq_7Amet3v0mir2"
+uri = "file://generated-artifacts/jaguar-spk-drinks-all-flavors.jpg"
+type = "image"
+title = "Combined JAGUAR SPK drink photo"
+description = "Gold-cap and red-cap bottle photos combined for the single all-flavors inventory SKU."
+logical_id = "e1296bf9-9cf6-4fc8-99bc-270d9880a801"
+content_hash = "sha256:63ebb5a0392b63028f18d56469101a250330b704808ad1b4a3ad6d6b3cb72471"
+size = 139759
+mtime_ms = 1795513372095
+storage_uri = "gcs://replit-rams-assets-pike/rams/assets/repl:d667af9b-bd96-4ef0-bde1-934a6de89f2f/e1296bf9-9cf6-4fc8-99bc-270d9880a801/845143b2-e70d-43b8-9a7b-8739012e4b09"
+storage_version_token = "1795514575744285"
+content_type = "image/jpeg"
