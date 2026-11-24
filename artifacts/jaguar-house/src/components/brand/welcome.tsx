@@ -79,7 +79,21 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
             <div className="jh-hero__copy">
               <p className="jh-kicker">ร้านประจำย่าน · สมุทรปราการ</p>
               <h1 id="landing-title">JAGUAR SPK<br /><span>ร้านใกล้บ้านของคุณ</span></h1>
-              <p className="jh-hero__intro">แวะเลือกสินค้าที่ร้าน หรือเริ่มใช้บัตรสมาชิกได้ง่าย ๆ บนมือถือ</p>
+              <p className="jh-hero__intro">แวะเลือกสินค้าที่ร้าน หรือเริ่มใช้บัตรสมาชิกดิจิทัลสะสมแต้มได้ง่าย ๆ บนมือถือ</p>
+              <dl className="jh-hero__facts" aria-label="ข้อมูลร้านที่ยืนยัน">
+                <div>
+                  <dt>เวลาเปิดบริการ</dt>
+                  <dd>เปิด 24 ชั่วโมง</dd>
+                </div>
+                <div>
+                  <dt>สิทธิสมาชิก</dt>
+                  <dd>10 แต้ม ฟรี 1 รายการ</dd>
+                </div>
+                <div>
+                  <dt>โทรสอบถาม</dt>
+                  <dd><a href="tel:0996125914">0996125914</a></dd>
+                </div>
+              </dl>
               <div className="jh-hero__actions">
                 <BrandArtworkButton href="/login?mode=register" src="/ui/artwork/signup-card.webp" label="สมัครบัตรสมาชิก" testId="link-open-wallet" />
                 <BrandArtworkButton href="/login" src="/ui/artwork/sign-in.webp" label="เข้าสู่ระบบสมาชิก" testId="link-member-login" />
@@ -103,39 +117,53 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
 
           <section className="jh-clubs" aria-label="บัตรสมาชิก Jaguar">
             <Link href="/card" className="jh-club" data-club="kratom">
-              <Image src="/brand/icon-card-kratom-2026.webp" alt="" width={32} height={32} sizes="32px" />
-              <span><strong>บัตรสมาชิกกระท่อม</strong><small>เปิดดูบัตรของคุณ</small></span>
-              <span aria-hidden="true">↗</span>
+              <span className="jh-club__badge-icon">
+                <Image src="/brand/icon-card-kratom-2026.webp" alt="" width={36} height={36} sizes="36px" />
+              </span>
+              <span>
+                <em className="jh-club__eyebrow">KRATOM PASS · CROWN GOLD</em>
+                <strong>บัตรสมาชิกกระท่อม</strong>
+                <small>เปิดดูยอดแต้มและ QR ส่วนตัวของคุณ</small>
+              </span>
+              <span className="jh-club__arrow" aria-hidden="true">↗</span>
             </Link>
             <Link href="/card/cannabis" className="jh-club" data-club="cannabis">
-              <Image src="/brand/icon-card-cannabis-2026.webp" alt="" width={32} height={32} sizes="32px" />
-              <span><strong>บัตรสมาชิกกัญชา</strong><small>เปิดดูบัตรของคุณ</small></span>
-              <span aria-hidden="true">↗</span>
+              <span className="jh-club__badge-icon">
+                <Image src="/brand/icon-card-cannabis-2026.webp" alt="" width={36} height={36} sizes="36px" />
+              </span>
+              <span>
+                <em className="jh-club__eyebrow">CANNABIS PASS · JAGUAR GREEN</em>
+                <strong>บัตรสมาชิกกัญชา</strong>
+                <small>บัตรแยกเฉพาะหมวด · ตรวจสอบแต้มของคุณ</small>
+              </span>
+              <span className="jh-club__arrow" aria-hidden="true">↗</span>
             </Link>
           </section>
           <section className="jh-section" id="products" aria-labelledby="landing-products-title">
-            <div className="jh-section__heading">
-              <p className="jh-kicker">ภาพตัวอย่างสินค้า</p>
-              <h2 id="landing-products-title">เครื่องดื่ม JAGUAR SPK</h2>
-              <p>ทุกรส ฿50 ต่อขวด · ภาพเป็นตัวอย่าง สอบถามสต็อกก่อนซื้อ</p>
-            </div>
-            <div className="jh-product-filters" role="group" aria-label="กรองรสเครื่องดื่ม">
-              {PRODUCT_FILTERS.map((filter) => (
-                <button
-                  type="button"
-                  key={filter.value}
-                  className="jh-product-filter"
-                  aria-pressed={productFilter === filter.value}
-                  data-testid={`product-filter-${filter.value}`}
-                  onClick={() => setProductFilter(filter.value)}
-                >
-                  {filter.label}
-                </button>
-              ))}
+            <div className="jh-section__header-row">
+              <div className="jh-section__heading">
+                <p className="jh-kicker">ภาพตัวอย่างสินค้า</p>
+                <h2 id="landing-products-title">เครื่องดื่ม JAGUAR SPK</h2>
+                <p>ภาพเป็นตัวอย่างสินค้า · สอบถามรายการและสต็อกหน้าร้านก่อนซื้อ</p>
+              </div>
+              <div className="jh-product-filters" role="group" aria-label="กรองรสเครื่องดื่ม">
+                {PRODUCT_FILTERS.map((filter) => (
+                  <button
+                    type="button"
+                    key={filter.value}
+                    className="jh-product-filter"
+                    aria-pressed={productFilter === filter.value}
+                    data-testid={`product-filter-${filter.value}`}
+                    onClick={() => setProductFilter(filter.value)}
+                  >
+                    {filter.label}
+                  </button>
+                ))}
+              </div>
             </div>
             <div className="jh-products jh-products--variants" aria-live="polite">
               {PRODUCT_VARIANTS.filter((product) => productFilter === "all" || product.variant === productFilter).map((product) => (
-                <article className="jh-product" key={product.variant} data-testid={`product-${product.variant}`}>
+                <article className="jh-product" key={product.variant} data-variant={product.variant} data-testid={`product-${product.variant}`}>
                   <div className="jh-product__image">
                     <Image
                       src={product.src}
@@ -160,31 +188,34 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
             <div className="jh-section__heading">
               <p className="jh-kicker">JAGUAR MEMBER</p>
               <h2 id="jh-membership-title">สมาชิก ใช้ง่ายทุกครั้งที่แวะ</h2>
-              <p>เริ่มต้นจากมือถือ แล้วใช้บัตรสมาชิกที่เคาน์เตอร์</p>
+              <p>เริ่มต้นจากมือถือ แล้วแสดงบัตรสมาชิกดิจิทัลที่เคาน์เตอร์</p>
             </div>
             <div className="jh-benefits">
               <article>
                 <div className="jh-benefit__meta"><BrandIcon name="members" size={19} tone="emerald" /><span className="jh-benefit__number">01</span></div>
-                <h3>สมัครสมาชิก</h3><p>สร้างบัตรสมาชิกจากหน้าเว็บ</p>
+                <h3>สมัครสมาชิก</h3><p>สร้างบัตรสมาชิกจากหน้าเว็บในไม่กี่วินาที</p>
               </article>
               <article>
                 <div className="jh-benefit__meta"><BrandIcon name="qr" size={19} tone="emerald" /><span className="jh-benefit__number">02</span></div>
-                <h3>แสดงบัตรที่ร้าน</h3><p>เปิดบัตรบนมือถือให้พนักงานสแกน</p>
+                <h3>แสดงบัตรที่ร้าน</h3><p>เปิดบัตรบนมือถือให้พนักงานสแกน QR</p>
               </article>
               <article>
                 <div className="jh-benefit__meta"><BrandIcon name="points" size={19} tone="emerald" /><span className="jh-benefit__number">03</span></div>
-                <h3>สะสมแต้ม</h3><p>แต้มจะแสดงอยู่บนบัตรสมาชิก</p>
+                <h3>สะสมแต้ม</h3><p>ตรวจสอบแต้มสะสมแบบเรียลไทม์บนบัตร</p>
               </article>
               <article>
                 <div className="jh-benefit__meta"><BrandIcon name="phone" size={19} tone="emerald" /><span className="jh-benefit__number">04</span></div>
-                <h3>สอบถามสิทธิ์</h3><p>สอบถามรายละเอียดกับพนักงานหรือโทรหาร้าน</p>
+                <h3>สอบถามสิทธิ์</h3><p>สอบถามเงื่อนไขกับพนักงานหรือโทรหาร้าน</p>
               </article>
             </div>
-            <p className="mt-5 text-sm leading-7 text-muted-foreground">
-              โปรโมชันที่ร้านยืนยัน: สะสม 10 แต้ม รับฟรี 1 รายการ · สอบถามสินค้าที่ร่วมรายการและเงื่อนไข
-            </p>
+            <div className="jh-membership__promo" role="note">
+              <span className="jh-membership__promo-tag">PROMO</span>
+              <p>
+                โปรโมชันที่ร้านยืนยัน: <strong>สะสม 10 แต้ม รับฟรี 1 รายการ</strong> · สอบถามสินค้าที่ร่วมรายการและเงื่อนไขที่หน้าร้าน
+              </p>
+            </div>
             <div className="jh-membership__links">
-              <Link href="/login?mode=register">สมัครสมาชิก <span aria-hidden="true">↗</span></Link>
+              <Link href="/login?mode=register" className="jh-membership__primary-link">สมัครสมาชิก <span aria-hidden="true">↗</span></Link>
               <a href={GOOGLE_MAPS_URL} target="_blank" rel="noopener noreferrer">ดูข้อมูลร้านและรีวิวบน Google Maps <span aria-hidden="true">↗</span></a>
             </div>
           </section>
