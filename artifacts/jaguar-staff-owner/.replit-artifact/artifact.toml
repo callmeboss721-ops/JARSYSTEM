@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/jaguar-staff-owner/"
+title = "JAGUAR SPK Staff & Owner"
+description = "A separate mobile-first staff counter and owner management web app for JAGUAR SPK, connected to the existing loyalty, inventory, and banking API with separate staff and owner PIN sessions."
+version = "1.0.0"
+id = "artifacts/jaguar-staff-owner"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/jaguar-staff-owner/" ]
+localPort = 22726
+
+[services.development]
+run = "pnpm --filter @workspace/jaguar-staff-owner run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/jaguar-staff-owner", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/jaguar-staff-owner/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22726"
+BASE_PATH = "/jaguar-staff-owner/"

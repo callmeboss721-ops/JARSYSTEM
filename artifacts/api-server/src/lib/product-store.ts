@@ -1,5 +1,7 @@
 import { pool } from "@workspace/db";
-import { LoyaltyError } from "./loyalty-errors";
+import { fail, normalizeFields, normalizeImportedProducts, normalizeText } from "./product-validation";
+import type { ImportedOwnerProduct, ProductFields } from "./product-validation";
+export type { ImportedOwnerProduct } from "./product-validation";
 
 export type OwnerProduct = {
   id: string;
@@ -16,17 +18,6 @@ export type OwnerProduct = {
 };
 
 type ProductRow = OwnerProduct & { reference_image_path: string | null };
-type ProductFields = {
-  name: string;
-  description: string;
-  price_baht: number;
-  category?: string;
-  stock_quantity?: number | null;
-  stock_unit?: string | null;
-  reference_image_path?: string | null;
-  is_active?: boolean;
-};
-
 export type OwnerProductStockEvent = {
   id: string;
   previous_quantity: number | null;
@@ -35,15 +26,6 @@ export type OwnerProductStockEvent = {
   reason: string;
   source: "manual" | "import";
   created_at: string;
-};
-
-export type ImportedOwnerProduct = {
-  name: string;
-  category: string;
-  description: string;
-  price_baht: number;
-  stock_quantity?: number | null;
-  stock_unit?: string | null;
 };
 
 const selectProduct = `select id,name,category,description,price_baht,stock_quantity,stock_unit,
@@ -221,14 +203,14 @@ export async function listOwnerProductStockHistory(id: string): Promise<OwnerPro
   return result.rows;
 }
 
-export async function importOwnerProducts(rows: ImportedOwnerProduct[]): Promise<{ created_count: number; skipped_count: number }> {
+export function normalizeImportedProducts(rows: ImportedOwnerProduct[]) {
   if (rows.length < 1 || rows.length > 200) fail(400, "ไฟล์นำเข้าต้องมีสินค้า 1–200 รายการ");
-  const products = rows.map((row) => {
+  return rows.map((row) => {
     const fields = normalizeFields(row);
     const stockQuantity = fields.stock_quantity ?? null;
     const stockUnit = fields.stock_unit ?? null;
-    if ((stockQuantity === null) !== (stockUnit === null)) {
-      fail(400, "ระบุทั้งจำนวนและหน่วยสต็อก หรือเว้นว่างทั้งคู่เมื่อยังไม่ทราบ");
+    if (stockQuantity !== null && stockUnit === null) {
+      fail(400, "เมื่อระบุจำนวนคงเหลือ ต้องระบุหน่วยสต็อกด้วย");
     }
     return {
       name: fields.name,
@@ -239,6 +221,10 @@ export async function importOwnerProducts(rows: ImportedOwnerProduct[]): Promise
       stock_unit: stockUnit,
     };
   });
+}
+
+export async function importOwnerProducts(rows: ImportedOwnerProduct[]): Promise<{ created_count: number; skipped_count: number }> {
+  const products = normalizeImportedProducts(rows);
   const client = await pool.connect();
   let createdCount = 0;
   let skippedCount = 0;
