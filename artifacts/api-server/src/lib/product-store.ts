@@ -1,7 +1,5 @@
 import { pool } from "@workspace/db";
-import { fail, normalizeFields, normalizeImportedProducts, normalizeText } from "./product-validation";
-import type { ImportedOwnerProduct, ProductFields } from "./product-validation";
-export type { ImportedOwnerProduct } from "./product-validation";
+import { LoyaltyError } from "./loyalty-errors";
 
 export type OwnerProduct = {
   id: string;
@@ -18,6 +16,17 @@ export type OwnerProduct = {
 };
 
 type ProductRow = OwnerProduct & { reference_image_path: string | null };
+type ProductFields = {
+  name: string;
+  description: string;
+  price_baht: number;
+  category?: string;
+  stock_quantity?: number | null;
+  stock_unit?: string | null;
+  reference_image_path?: string | null;
+  is_active?: boolean;
+};
+
 export type OwnerProductStockEvent = {
   id: string;
   previous_quantity: number | null;
@@ -26,6 +35,15 @@ export type OwnerProductStockEvent = {
   reason: string;
   source: "manual" | "import";
   created_at: string;
+};
+
+export type ImportedOwnerProduct = {
+  name: string;
+  category: string;
+  description: string;
+  price_baht: number;
+  stock_quantity?: number | null;
+  stock_unit?: string | null;
 };
 
 const selectProduct = `select id,name,category,description,price_baht,stock_quantity,stock_unit,

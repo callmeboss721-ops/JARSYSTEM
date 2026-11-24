@@ -9,3 +9,4 @@
 - [Member login policy](member-login-rules.md) — any one of phone, member code, or nickname grants access; no OTP was explicitly chosen.
 - [Vite Radix dependency warmup](vite-radix-warmup.md) — new lazy-loaded Radix modules can trigger transient hook errors while Vite optimizes them; verify after optimization settles.
 - [Loyalty test isolation](loyalty-test-isolation.md) — repeat integration runs through the shared preview proxy can collide with persistent IP-based rate limits; isolate test IPs.
+- [JAGUAR release guardrails](jaguar-release-guardrails.md) — do not restore Clerk; use the shared React catalog and self-hosted brand fonts; preserve store data, routes, QR payloads, and point rules.
