@@ -1,6 +1,6 @@
 import { QRCodeSVG } from "qrcode.react";
 import { useId, useRef, type ReactNode } from "react";
-import { Maximize2, X } from "lucide-react";
+import { X } from "lucide-react";
 import { tokens } from "../../generated/tokens";
 import { BrandButton } from "./brand-button";
 import { BrandIcon } from "./brand-icon";
@@ -23,7 +23,7 @@ const CLUBS: Record<MemberClub, { title: string; image: string; stampIcon: strin
     stampIcon: "mark-jaguar.svg",
     alt: "บัตรสะสมแต้ม JAGUAR KRATOM ลายเสือจากัวร์",
     rule: "ครบ ฿100 สะสม = 1 แต้ม",
-    reward: "ฟรี 1 ขวด",
+    reward: "รับฟรี 1 รายการ",
     tagline: "JAGUAR SPK CERTIFIED · MIX FRESH · SERVE COLD",
   },
   cannabis: {
@@ -32,7 +32,7 @@ const CLUBS: Record<MemberClub, { title: string; image: string; stampIcon: strin
     stampIcon: "mark-leaf.svg",
     alt: "บัตรสะสมแต้ม JAGUAR CANNABIS ลายใบกัญชา",
     rule: "ครบ 100 g สะสม = 1 แต้ม",
-    reward: "ฟรี 1 g",
+    reward: "รับฟรี 1 รายการ",
     tagline: "JAGUAR SPK · BREAK ALL LIMIT",
   },
 };
@@ -315,20 +315,20 @@ export function MemberStatusPanel({
       <div className="member-dashboard-status__qr" aria-label="QR ส่วนตัวสำหรับพนักงานสแกน" data-testid={qrTestId}>
         {qr.loading ? <span className="member-dashboard-status__qr-loading" aria-label="กำลังโหลด QR" />
           : qr.error || !qr.value ? <div className="member-dashboard-status__qr-error"><span role="alert">QR ไม่พร้อม</span><button type="button" onClick={qr.retry} disabled={qr.retrying}>{qr.retrying ? "รอ…" : "ลองใหม่"}</button></div>
-            : <QRCodeSVG value={qr.value} size={82} level="M" includeMargin bgColor={tokens.color.brandId2026.text} className="member-dashboard-status__qr-code" aria-label={`QR สมาชิก ${memberCode}`} />}
-        <small>สแกนที่ร้าน</small>
+            : (
+              <button
+                type="button"
+                className="member-dashboard-status__qr-trigger"
+                aria-haspopup="dialog"
+                aria-label={`เปิด QR สมาชิก ${memberCode} แบบเต็มจอ`}
+                onClick={() => qrDialog.current?.showModal()}
+              >
+                <QRCodeSVG value={qr.value} size={82} level="M" includeMargin bgColor={tokens.color.brandId2026.text} className="member-dashboard-status__qr-code" aria-label={`QR สมาชิก ${memberCode}`} />
+                <small>แตะเพื่อขยาย QR</small>
+              </button>
+            )}
         {!qr.loading && !qr.error && qr.value && (
           <>
-            <button
-              type="button"
-              className="member-dashboard-status__qr-expand"
-              aria-haspopup="dialog"
-              aria-label={`ขยาย QR สมาชิก ${memberCode}`}
-              onClick={() => qrDialog.current?.showModal()}
-            >
-              <Maximize2 size={14} aria-hidden="true" />
-              <span>ขยาย</span>
-            </button>
             <dialog ref={qrDialog} className="member-qr-dialog" aria-labelledby={qrTitleId}>
               <div className="member-qr-dialog__surface">
                 <header className="member-qr-dialog__header">

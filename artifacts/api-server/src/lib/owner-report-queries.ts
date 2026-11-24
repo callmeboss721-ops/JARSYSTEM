@@ -77,7 +77,7 @@ const ownerActivitySql = `with activity as (
     case when t.delta<0 and t.grams_purchased=0 then 'redemption'::text else 'cannabis'::text end,
     m.member_code,m.id,m.display_name,coalesce(nullif(m.nickname,''),m.display_name,m.member_code),
     (case when t.delta<0 and t.grams_purchased=0
-      then 'แลกฟรี 1 กรัม · ใช้ ' || (-t.delta) || ' แต้ม'
+       then 'แลกรางวัล · ใช้ ' || (-t.delta) || ' แต้ม'
       else 'ซื้อ ' || t.grams_purchased || ' กรัม · ' || t.reason end)::text,
     t.delta::integer,case when t.delta<0 then 'redeemed'::text else 'completed'::text end,t.created_at
   from jaguar_cannabis_transactions t join jaguar_members m on m.id=t.member_id where not m.is_demo

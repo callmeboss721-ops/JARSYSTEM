@@ -22,6 +22,8 @@ const ownerJar = new Map();
 const memberCode = `T${randomUUID().replaceAll("-", "").slice(0, 5)}`.toUpperCase();
 const phone = `08${String(Math.floor(Math.random() * 100000000)).padStart(8, "0")}`;
 const nickname = `M${randomUUID().replaceAll("-", "").slice(0, 10)}`;
+const testCatalogCategory = `TEST-${randomUUID().replaceAll("-", "").slice(0, 12)}`;
+const testCatalogPrefix = `TEST-${randomUUID().replaceAll("-", "").slice(0, 12)}`;
 const unknownLoginCode = `Z${randomUUID().replaceAll("-", "").slice(0, 5)}`.toUpperCase();
 const unknownLoginPhone = `07${String(Number.parseInt(randomUUID().replaceAll("-", "").slice(0, 8), 16) % 100_000_000).padStart(8, "0")}`;
 const unknownLoginNickname = `U${randomUUID().replaceAll("-", "").slice(0, 10)}`;
@@ -32,6 +34,7 @@ let createdMemberCode;
 let rewardId;
 let staffPinHash;
 let ownerPinHash;
+const productIds = [];
 const storedPinCount = (await db.query(`select count(*)::integer as count from jaguar_settings
   where key in ('staff_pin_hash','owner_pin_hash')`)).rows[0].count;
 const adminTestsAvailable = !Object.hasOwn(process.env, "STAFF_PIN") &&
@@ -145,12 +148,81 @@ try {
   const staffLogin = await request("/staff/login", { method: "POST", jar: staffJar, body: { pin: "2024" } });
   assert.equal(staffLogin.ok, true);
   await request("/owner/summary", { jar: staffJar, status: 401 });
+  await request("/owner/products", { jar: staffJar, status: 401 });
   const memberViaQr = await request("/staff/member?qr_token=" + encodeURIComponent(qrToken), { jar: staffJar });
   assert.equal(memberViaQr.id, memberId);
   const defaultReward = (await request("/rewards")).find((reward) => reward.is_active && reward.points_cost === 10);
   assert.ok(defaultReward, "development environment must contain the 10-point demo reward");
   const ownerLogin = await request("/owner/login", { method: "POST", jar: ownerJar, body: { pin: "8899" } });
   assert.equal(ownerLogin.ok, true);
+  const catalogProduct = await request("/owner/products", {
+    method: "POST", jar: ownerJar, status: 201,
+    body: {
+      name: `${testCatalogPrefix} manual`,
+      category: testCatalogCategory,
+      description: "temporary inventory test",
+      price_baht: 123,
+      stock_quantity: 10,
+      stock_unit: "ขวด",
+    },
+  });
+  productIds.push(catalogProduct.id);
+  assert.equal(catalogProduct.stock_quantity, 10);
+  const changedStock = await request(`/owner/products/${catalogProduct.id}/stock`, {
+    method: "PATCH", jar: ownerJar,
+    body: { quantity: 8, stock_unit: "ขวด", reason: "ทดสอบตรวจนับสต็อก" },
+  });
+  assert.equal(changedStock.stock_quantity, 8);
+  const manualStockHistory = await request(`/owner/products/${catalogProduct.id}/stock-history`, { jar: ownerJar });
+  assert.equal(manualStockHistory[0].previous_quantity, 10);
+  assert.equal(manualStockHistory[0].new_quantity, 8);
+  assert.equal(manualStockHistory[0].source, "manual");
+
+  const importRows = [
+    {
+      name: catalogProduct.name,
+      category: testCatalogCategory,
+      description: "must not overwrite existing product",
+      price_baht: 999,
+      stock_quantity: 88,
+      stock_unit: "ขวด",
+    },
+    {
+      name: `${testCatalogPrefix} imported`,
+      category: testCatalogCategory,
+      description: "temporary CSV import test",
+      price_baht: 456,
+      stock_quantity: 5,
+      stock_unit: "ถุง",
+    },
+  ];
+  const firstImport = await request("/owner/products/import", { method: "POST", jar: ownerJar, body: { rows: importRows } });
+  assert.deepEqual(firstImport, { created_count: 1, skipped_count: 1 });
+  const repeatedImport = await request("/owner/products/import", { method: "POST", jar: ownerJar, body: { rows: importRows } });
+  assert.deepEqual(repeatedImport, { created_count: 0, skipped_count: 2 });
+  const largeImportRows = Array.from({ length: 8 }, (_, index) => ({
+    name: `${testCatalogPrefix} large ${index + 1}`,
+    category: testCatalogCategory,
+    description: "ก".repeat(600),
+    price_baht: 100 + index,
+    stock_quantity: index,
+    stock_unit: "ชิ้น",
+  }));
+  const largeImport = await request("/owner/products/import", {
+    method: "POST", jar: ownerJar, body: { rows: largeImportRows },
+  });
+  assert.deepEqual(largeImport, { created_count: 8, skipped_count: 0 },
+    "the bounded CSV import payload may exceed the small default JSON limit");
+  const catalogAfterImport = await request("/owner/products", { jar: ownerJar });
+  const unchangedExisting = catalogAfterImport.find((item) => item.id === catalogProduct.id);
+  const importedProduct = catalogAfterImport.find((item) => item.name === `${testCatalogPrefix} imported`);
+  assert.equal(unchangedExisting.price_baht, 123, "duplicate import must not overwrite price");
+  assert.equal(unchangedExisting.stock_quantity, 8, "duplicate import must not overwrite manual stock");
+  assert.equal(importedProduct.stock_quantity, 5);
+  assert.ok(catalogAfterImport.some((item) => item.category === testCatalogCategory));
+  if (importedProduct) productIds.push(importedProduct.id);
+  const importHistory = await request(`/owner/products/${importedProduct.id}/stock-history`, { jar: ownerJar });
+  assert.equal(importHistory[0].source, "import");
   const ownerReportBeforePurchases = await request("/owner/summary", { jar: ownerJar });
   await request("/owner/summary", { jar: staffJar, status: 401 });
   await request("/staff/members", { jar: ownerJar, status: 401 });
@@ -227,6 +299,9 @@ try {
   assert.ok(search.some((member) => member.id === memberId));
   const memberQrLookup = await request("/staff/member?qr_token=" + encodeURIComponent(qrToken), { jar: staffJar });
   assert.equal(memberQrLookup.id, memberId);
+  const stockAfterSales = await request("/owner/products", { jar: ownerJar });
+  assert.equal(stockAfterSales.find((item) => item.id === catalogProduct.id).stock_quantity, 8,
+    "sales must not alter the separate product catalog stock");
 
   const stampViaQr = { qr_token: qrToken, bottle_count: 3, formula: "red", request_id: randomUUID() };
   await request("/staff/stamp", { method: "POST", jar: staffJar, body: stampViaQr });
@@ -348,6 +423,15 @@ try {
     console.log("SKIP: staff/owner end-to-end scenarios; existing PIN configuration was preserved and not read or modified.");
   }
 } finally {
+  if (productIds.length) {
+    await db.query("delete from jaguar_product_stock_events where product_id = any($1::uuid[])", [productIds]);
+    await db.query("delete from jaguar_products where id = any($1::uuid[])", [productIds]);
+  }
+  await db.query("delete from jaguar_product_stock_events where product_id in (select id from jaguar_products where category=$1 and name like $2)", [
+    testCatalogCategory,
+    `${testCatalogPrefix}%`,
+  ]);
+  await db.query("delete from jaguar_products where category=$1 and name like $2", [testCatalogCategory, `${testCatalogPrefix}%`]);
   for (const id of [memberId, createdMemberId].filter(Boolean)) {
     await db.query("delete from jaguar_transaction_corrections where member_id=$1", [id]);
     await db.query("delete from jaguar_sales where member_id=$1", [id]);

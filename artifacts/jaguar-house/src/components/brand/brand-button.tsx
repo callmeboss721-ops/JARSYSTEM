@@ -91,3 +91,25 @@ export function BrandArtworkButton({
     </Button>
   );
 }
+
+export function BrandDeliveryLink({ className }: { className?: string }) {
+  return (
+    <Button
+      asChild
+      variant="ghost"
+      className={`delivery-call-link ${className ?? ""}`}
+      aria-label="โทร 0996125914 เพื่อสอบถามและยืนยันพื้นที่กับเงื่อนไขจัดส่ง"
+    >
+      <a href="tel:0996125914">
+        <Image
+          src="/ui/artwork/delivery-button.webp"
+          alt="สั่งด่วนส่งฟรี"
+          loading="eager"
+          width={2752}
+          height={1536}
+          sizes="(max-width: 640px) 100vw, 320px"
+        />
+      </a>
+    </Button>
+  );
+}

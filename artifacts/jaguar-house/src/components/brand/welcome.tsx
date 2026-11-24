@@ -8,7 +8,7 @@ import { api } from "./loyalty-api";
 import { BrandIcon } from "./brand-icon";
 import { SamutPrakanArt } from "./samut-prakan-art";
 import { LoginForm, RegisterForm } from "./auth-forms";
-import { BrandArtworkButton, BrandButton } from "./brand-button";
+import { BrandArtworkButton, BrandButton, BrandDeliveryLink } from "./brand-button";
 
 const GOOGLE_MAPS_URL = "https://www.google.com/maps/place/Jaguar+spk+%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A1+%E0%B8%81%E0%B8%B1%E0%B8%8D%E0%B8%8A%E0%B8%B2+%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A1+%E0%B9%83%E0%B8%81%E0%B8%A5%E0%B9%89%E0%B8%89%E0%B8%B1%E0%B8%99/@13.6100796,100.6008541,17z/data=!3m1!4b1!4m6!3m5!1s0x30e2a17b24c91b0f:0x2dd52ed6c8dbd489!8m2!3d13.6100796!4d100.6008541!16s%2Fg%2F11z_klv87h?hl=th&entry=ttu&g_ep=EgoyMDI2MTExNS4wIKXMDSoASAFQAw%3D%3D";
 const GOOGLE_MAPS_EMBED_URL = "https://maps.google.com/maps?q=13.6100796,100.6008541&z=17&output=embed";
@@ -201,7 +201,7 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
             <div>
               <p className="jh-kicker">ติดต่อร้าน</p>
               <h2 id="jh-contact-title">มีคำถามเรื่องสินค้า หรือสมาชิก?</h2>
-              <p>เปิด 24 ชั่วโมง · จัดส่งบริเวณใกล้เคียงบางเมือง กรุณาสอบถามสต็อกและพื้นที่จัดส่ง</p>
+              <p>เปิด 24 ชั่วโมง · พื้นที่จัดส่งและเงื่อนไขต้องโทรยืนยันกับร้านก่อนสั่ง</p>
               <p>
                 โทรศัพท์:{" "}
                 <a href="tel:0996125914" className="jh-text-link">
@@ -210,6 +210,7 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
               </p>
             </div>
             <div className="jh-contact__actions">
+              <BrandDeliveryLink />
               <a href={GOOGLE_MAPS_URL} target="_blank" rel="noopener noreferrer" className="jh-map-link">
                 <BrandIcon name="location" size={18} tone="emerald" />แผนที่ร้าน
               </a>

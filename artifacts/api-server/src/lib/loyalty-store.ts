@@ -351,7 +351,7 @@ export async function loyaltyStore<T>(operation: string, args: Args = {}): Promi
           await client.query(`update jaguar_cannabis_balances set balance=balance-10,lifetime_redeemed=lifetime_redeemed+10 where member_id=$1`,
             [args.p_member]);
           await client.query(`insert into jaguar_cannabis_transactions(member_id,request_id,delta,grams_purchased,reason)
-            values($1,$2,-10,0,'แลกรับฟรี 1 g')`, [args.p_member, args.p_request]);
+            values($1,$2,-10,0,'แลกรางวัล')`, [args.p_member, args.p_request]);
         }
         result = await cannabisCard(client, args.p_member!);
         break;
@@ -372,7 +372,7 @@ export async function loyaltyStore<T>(operation: string, args: Args = {}): Promi
         const { rows } = await client.query(`insert into jaguar_redemptions(member_id,reward_id,points_spent,status,request_id)
           values($1,$2,10,'confirmed',$3) returning id`, [args.p_member, reward.id, args.p_request]);
         await client.query("update jaguar_point_balances set balance=balance-10,lifetime_redeemed=lifetime_redeemed+10 where member_id=$1", [args.p_member]);
-        await client.query("insert into jaguar_point_transactions(member_id,delta,reason) values($1,-10,'แลกรางวัล 1 ขวด')", [args.p_member]);
+        await client.query("insert into jaguar_point_transactions(member_id,delta,reason) values($1,-10,'แลกรางวัล')", [args.p_member]);
         result = { redemption_id: rows[0].id, ...await card(client, args.p_member!) };
         break;
       }

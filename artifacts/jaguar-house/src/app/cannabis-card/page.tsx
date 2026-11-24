@@ -11,7 +11,12 @@ import { ErrorState, SignedOutState, EmptyState, LoadingState } from "@/componen
 import { api, errorText } from "@/components/brand/loyalty-api";
 
 const CARD_KEY = getGetCannabisMemberCardQueryKey();
-const CONFETTI_COLORS = ["#e5c04a", "#f6e09a", "#2fd98a", "#c4cad6", "#b8901f"];
+const CONFETTI_COLORS = [
+  "hsl(var(--brand-id-2026-gold))",
+  "hsl(var(--brand-id-2026-neon))",
+  "hsl(var(--brand-id-2026-jaguar-green))",
+  "hsl(var(--brand-id-2026-text))",
+];
 
 export default function CannabisCardPage() {
   const [visible, setVisible] = useState(true);
@@ -79,7 +84,7 @@ export default function CannabisCardPage() {
           <div className="member-heading-top"><div><h1>{card.display_name || "บัตรกัญชา"}</h1><MemberRankLabel earned={card.lifetime_earned} /></div></div>
         </header>
         {confettiKey > 0 && <CannabisConfetti key={confettiKey} />}
-        {celebrate && <div role="status" className="cannabis-ready cannabis-ready--celebrate">ครบ 10 · แลกฟรี 1 กรัมที่เคาน์เตอร์</div>}
+        {celebrate && <div role="status" className="cannabis-ready cannabis-ready--celebrate">ครบ 10 · แลกรางวัลฟรี 1 รายการที่เคาน์เตอร์</div>}
         <MemberCardCarousel active="cannabis">
           <MemberCardFaces
             kind="cannabis"

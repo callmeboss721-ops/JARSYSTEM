@@ -270,6 +270,11 @@ export interface OwnerProduct {
      * @maxLength 120
      */
   name: string;
+  /**
+     * @minLength 1
+     * @maxLength 80
+     */
+  category: string;
   /** @maxLength 600 */
   description: string;
   /**
@@ -277,6 +282,18 @@ export interface OwnerProduct {
      * @maximum 100000000
      */
   price_baht: number;
+  /**
+     * @minimum 0
+     * @maximum 1000000
+     * @nullable
+     */
+  stock_quantity: number | null;
+  /**
+     * @minLength 1
+     * @maxLength 24
+     * @nullable
+     */
+  stock_unit: string | null;
   has_image: boolean;
   is_active: boolean;
   created_at: string;
@@ -289,6 +306,11 @@ export interface CreateOwnerProductInput {
      * @maxLength 120
      */
   name: string;
+  /**
+     * @minLength 1
+     * @maxLength 80
+     */
+  category?: string;
   /** @maxLength 600 */
   description: string;
   /**
@@ -296,6 +318,18 @@ export interface CreateOwnerProductInput {
      * @maximum 100000000
      */
   price_baht: number;
+  /**
+     * @minimum 0
+     * @maximum 1000000
+     * @nullable
+     */
+  stock_quantity?: number | null;
+  /**
+     * @minLength 1
+     * @maxLength 24
+     * @nullable
+     */
+  stock_unit?: string | null;
   /**
      * @nullable
      * @pattern ^/objects/uploads/[0-9a-f-]{36}$
@@ -310,6 +344,11 @@ export interface UpdateOwnerProductInput {
      * @maxLength 120
      */
   name: string;
+  /**
+     * @minLength 1
+     * @maxLength 80
+     */
+  category?: string;
   /** @maxLength 600 */
   description: string;
   /**
@@ -323,6 +362,104 @@ export interface UpdateOwnerProductInput {
      */
   reference_image_path?: string | null;
   is_active: boolean;
+}
+
+export interface UpdateOwnerProductStockInput {
+  /**
+     * @minimum 0
+     * @maximum 1000000
+     */
+  quantity: number;
+  /**
+     * @minLength 1
+     * @maxLength 24
+     */
+  stock_unit: string;
+  /**
+     * @minLength 1
+     * @maxLength 160
+     */
+  reason: string;
+}
+
+export type OwnerProductStockEventSource = typeof OwnerProductStockEventSource[keyof typeof OwnerProductStockEventSource];
+
+
+export const OwnerProductStockEventSource = {
+  manual: 'manual',
+  import: 'import',
+} as const;
+
+export interface OwnerProductStockEvent {
+  id: string;
+  /**
+     * @minimum 0
+     * @maximum 1000000
+     * @nullable
+     */
+  previous_quantity: number | null;
+  /**
+     * @minimum 0
+     * @maximum 1000000
+     */
+  new_quantity: number;
+  /**
+     * @minLength 1
+     * @maxLength 24
+     */
+  stock_unit: string;
+  /**
+     * @minLength 1
+     * @maxLength 160
+     */
+  reason: string;
+  source: OwnerProductStockEventSource;
+  created_at: string;
+}
+
+export interface ImportOwnerProductRow {
+  /**
+     * @minLength 1
+     * @maxLength 120
+     */
+  name: string;
+  /**
+     * @minLength 1
+     * @maxLength 80
+     */
+  category: string;
+  /** @maxLength 600 */
+  description: string;
+  /**
+     * @minimum 1
+     * @maximum 100000000
+     */
+  price_baht: number;
+  /**
+     * @minimum 0
+     * @maximum 1000000
+     */
+  stock_quantity: number;
+  /**
+     * @minLength 1
+     * @maxLength 24
+     */
+  stock_unit: string;
+}
+
+export interface ImportOwnerProductsInput {
+  /**
+     * @minItems 1
+     * @maxItems 200
+     */
+  rows: ImportOwnerProductRow[];
+}
+
+export interface OwnerProductImportResult {
+  /** @minimum 0 */
+  created_count: number;
+  /** @minimum 0 */
+  skipped_count: number;
 }
 
 export interface CannabisStampInput {

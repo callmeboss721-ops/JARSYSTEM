@@ -94,7 +94,7 @@ export const NAV_GROUPS: NavGroup[] = [
     entries: [
       { id: "brand-icons", name: "Icon catalog v3", description: "ค้นหา เลือกขนาด และคัดลอก SVG พร้อม signature icons", Page: BrandIconDemo },
       { id: "collecting-track", name: "แถบสะสม 10 ช่อง", description: "ตัวอย่างแต้มสองคลับพร้อมสถานะพร้อมแลก", Page: CollectingTrackDemo },
-      { id: "membership-cards", name: "บัตรและแต้ม", description: "บัตรสองคลับ แสตมป์ และ QR", Page: MembershipCardsDemo },
+      { id: "membership-cards", name: "บัตรและแต้ม", description: "บัตรสองคลับ แสตมป์ และ QR ที่เปิดแบบเต็มจอได้จากปุ่ม QR", Page: MembershipCardsDemo },
       { id: "member-card-carousel", name: "สลับบัตรสมาชิก", description: "แท็บสองคลับ ปัด และคีย์บอร์ด", Page: MemberCardCarouselDemo },
       { id: "mobile-tab-bar", name: "Mobile tab bar", description: "ตัวอย่างเมนูมือถือและปุ่มสแกนที่สลับหน้าจอได้", Page: MobileTabBarDemo },
       { id: "pin-pad", name: "แป้น PIN", description: "กรอก ลบ และล้าง PIN แบบควบคุมค่า", Page: PinPadDemo },

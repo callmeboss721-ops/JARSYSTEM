@@ -317,8 +317,8 @@ export default function StaffPage() {
       const updated = await redeemCannabis.mutateAsync({ data: { member_code: cannabisCard.member_code, request_id: cannabisRedeemId } });
       setCannabisRedeemId(null);
       setCounterActionComplete(true);
-      announceSuccess(`แลกฟรี 1 กรัมสำเร็จ · หัก 10 แต้มแล้ว · ยอดใหม่ ${updated.balance}/10 แต้ม`);
-      addRecentActivity(`แลกฟรี 1 กรัม · ${cannabisCard.member_code}`);
+      announceSuccess(`แลกรางวัลสำเร็จ · หัก 10 แต้มแล้ว · ยอดใหม่ ${updated.balance}/10 แต้ม`);
+      addRecentActivity(`แลกรางวัล · ${cannabisCard.member_code}`);
       await Promise.all([
         qc.invalidateQueries({ queryKey: getGetCannabisMemberCardQueryKey() }),
         qc.invalidateQueries({ queryKey: getGetStaffCannabisCardQueryKey(cannabisParams) }),
@@ -419,8 +419,8 @@ export default function StaffPage() {
         : await api<MemberCardData>(`${STAFF}/member?code=${encodeURIComponent(member.member_code)}`);
       setMember(updated);
       setCounterActionComplete(true);
-      setRedeemId(null); announceSuccess(`แลกรับฟรี 1 ขวดสำเร็จ · หัก 10 แต้ม · ยอดใหม่ ${updated.balance}/10 แต้ม`);
-      addRecentActivity(`แลกฟรี 1 ขวด · ${member.member_code}`);
+      setRedeemId(null); announceSuccess(`แลกรางวัลสำเร็จ · หัก 10 แต้ม · ยอดใหม่ ${updated.balance}/10 แต้ม`);
+      addRecentActivity(`แลกรางวัล · ${member.member_code}`);
       void qc.invalidateQueries({ queryKey: [`${STAFF}/members`] });
     } catch (e) { setErr(`${errorText(e)} · กดยืนยันอีกครั้งได้อย่างปลอดภัย ระบบจะไม่หักซ้ำ`); } finally { setBusy(false); }
   };
@@ -557,7 +557,7 @@ export default function StaffPage() {
     <main className="mx-auto max-w-6xl px-4 sm:px-6 py-7">
       {!auth ? <section className="max-w-sm mx-auto pt-4">
         <div className="text-center mb-6"><p className="eyebrow">Staff access</p><h1 className="font-display text-3xl font-semibold mt-2">เข้าสู่ระบบพนักงาน</h1><p className="text-sm text-[var(--muted)] mt-2">ใช้ PIN ที่เจ้าของร้านกำหนด</p></div>
-        {msg && <p role="status" className="mb-4 rounded-xl border border-[rgba(47,217,138,.35)] bg-[rgba(47,217,138,.08)] p-3 text-sm text-[var(--emerald-2)]">{msg}</p>}
+        {msg && <p role="status" className="mb-4 rounded-xl border border-[var(--line)] bg-[var(--panel)] p-3 text-sm text-[var(--emerald-2)]">{msg}</p>}
         <form className="panel p-5 sm:p-6 space-y-4" onSubmit={login}>
           <div className="field"><label htmlFor="staff-pin">PIN พนักงาน</label><input id="staff-pin" type="password" inputMode="numeric" autoComplete="one-time-code" maxLength={12} className="input text-center !text-2xl !tracking-[.5em]" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 12))} aria-invalid={!!err} aria-describedby={err ? "staff-pin-err" : undefined} /></div>
           <PinPad value={pin} onChange={setPin} label="แป้นตัวเลข PIN พนักงาน" />
@@ -568,7 +568,7 @@ export default function StaffPage() {
       </section>
       : <div className="space-y-5">
         <div className="flex flex-wrap justify-between items-end gap-3"><div><p className="eyebrow">Counter operations</p><h1 className="font-display text-3xl font-semibold">เคาน์เตอร์ร้าน</h1></div>{security.data?.default_pin && <p className="text-xs text-[var(--gold-2)]">กำลังใช้ PIN เริ่มต้น · เปลี่ยนได้ในตั้งค่า PIN</p>}</div>
-        {msg && !counterActionComplete && <p role="status" className="rounded-xl border border-[rgba(47,217,138,.35)] bg-[rgba(47,217,138,.08)] p-3 text-sm text-[var(--emerald-2)]">{msg}</p>}
+        {msg && !counterActionComplete && <p role="status" className="rounded-xl border border-[var(--line)] bg-[var(--panel)] p-3 text-sm text-[var(--emerald-2)]">{msg}</p>}
         {err && <p role="alert" className="field-error">{err}</p>}
         <nav className="staff-main-nav pill-switch grid grid-cols-2 p-1 gap-1 !rounded-[22px]" aria-label="เมนูหลักพนักงาน">
           <button type="button" className="tab !px-2 !rounded-[18px] flex items-center justify-center gap-2" aria-pressed={tab === "counter"} onClick={() => selectTab("counter")}><BrandIcon name="lightning" size={19} tone={tab === "counter" ? "gold" : "neutral"} />หน้าเคาน์เตอร์</button>
@@ -617,10 +617,10 @@ export default function StaffPage() {
               </div>
               {redeemId === null
                 ? <button type="button" className="btn btn-gold w-full mt-3 flex items-center justify-center gap-2" disabled={busy || member.balance < STAMPS} onClick={() => { setRedeemId(crypto.randomUUID()); setCounterActionComplete(false); setMsg(""); }}>
-                    <BrandIcon name="crown" size={18} tone="inherit" />{member.balance >= STAMPS ? "แลกสิทธิ์ฟรี 1 ขวด · ใช้ 10 แต้ม" : `แลกฟรีเมื่อครบ 10 แต้ม · อีก ${STAMPS - member.balance} แต้ม`}
+                    <BrandIcon name="crown" size={18} tone="inherit" />{member.balance >= STAMPS ? "แลกสิทธิ์ฟรี · ใช้ 10 แต้ม" : `แลกฟรีเมื่อครบ 10 แต้ม · อีก ${STAMPS - member.balance} แต้ม`}
                   </button>
-                : <div role="alertdialog" aria-labelledby="redeem-q" className="gold-alert mt-3 space-y-3">
-                  <p id="redeem-q">ยืนยันส่งมอบฟรี 1 ขวดให้ {member.member_code}? ระบบจะหัก 10 แต้ม</p>
+                : <div role="group" aria-labelledby="redeem-q" className="gold-alert mt-3 space-y-3">
+                  <p id="redeem-q">ยืนยันแลกรางวัลให้ {member.member_code}? ระบบจะหัก 10 แต้ม</p>
                   <div className="grid grid-cols-2 gap-2"><button type="button" className="btn btn-ghost" disabled={busy} onClick={() => setRedeemId(null)}>ยกเลิก</button><button type="button" className="btn btn-gold" disabled={busy || member.balance < STAMPS} onClick={() => void redeem()} autoFocus>{busy ? "กำลังบันทึก…" : "ยืนยันแลก"}</button></div>
                 </div>}
               <form onSubmit={(event) => void creditPoints(event)} className="staff-points-credit mt-4">
@@ -735,7 +735,7 @@ export default function StaffPage() {
           </div>}
           {counterMode === "cannabis" && <div className="grid gap-5 lg:grid-cols-2 items-start">
             <section className="panel p-5 sm:p-6">
-              <p className="eyebrow">Cannabis counter</p><h2 className="font-display text-xl font-semibold mb-4">ประทับแต้ม / แลก 1 กรัม</h2>
+              <p className="eyebrow">Cannabis counter</p><h2 className="font-display text-xl font-semibold mb-4">ประทับแต้ม / แลกรางวัล</h2>
                {cannabisCardQuery.isLoading && cannabisLookup && <div className="mt-4"><StaffRowsSkeleton label="กำลังค้นหาบัตรกัญชา" rows={2} /></div>}
               {cannabisCardQuery.isError && cannabisLookup && <div className="mt-4"><ErrorState message={errorText(cannabisCardQuery.error)} onRetry={() => void cannabisCardQuery.refetch()} retrying={cannabisCardQuery.isFetching} /></div>}
               {!cannabisLookup && <div className="mt-4"><EmptyState title="ค้นหาบัตรกัญชา" body="กรอกรหัสสมาชิกหรือสแกน QR เพื่อเริ่มรายการ" /></div>}
@@ -743,8 +743,8 @@ export default function StaffPage() {
                 <div className="flex items-start justify-between gap-3"><div className="min-w-0"><p className="text-sm font-semibold break-words">{cannabisCard.display_name || "สมาชิก"}</p><p className="font-mono text-sm text-[var(--gold-2)]">{cannabisCard.member_code}</p></div><div className="text-right"><strong className="font-display text-3xl text-[var(--emerald-2)]">{cannabisCard.balance}</strong><p className="text-xs text-[var(--muted)]">แต้มแยกจากบัตรกระท่อม</p></div></div>
                 <div className="flex justify-between text-xs mt-4 text-[var(--muted)]"><span>ซื้อสะสม {cannabisCard.lifetime_earned} กรัม</span><span>ใช้แลก {cannabisCard.lifetime_redeemed} แต้ม</span></div>
                 {cannabisRedeemId === null
-                  ? <button type="button" className="btn btn-gold w-full mt-4 flex items-center justify-center gap-2" disabled={cannabisCard.balance < 10 || redeemCannabis.isPending || addCannabisStamps.isPending} onClick={() => { setCannabisRedeemId(crypto.randomUUID()); setCounterActionComplete(false); setErr(""); setMsg(""); }}><BrandIcon name="crown" size={18} tone="inherit" />{cannabisCard.balance >= 10 ? "แลกสิทธิ์ฟรี 1 กรัม · ใช้ 10 แต้ม" : `แลกฟรีเมื่อครบ 10 แต้ม · อีก ${10 - cannabisCard.balance} แต้ม`}</button>
-                  : <div role="alertdialog" aria-labelledby="cannabis-redeem-q" className="gold-alert mt-4 space-y-3"><p id="cannabis-redeem-q">ยืนยันส่งมอบฟรี 1 กรัมให้ {cannabisCard.member_code}? ระบบจะหัก 10 แต้ม</p><div className="grid grid-cols-2 gap-2"><button type="button" className="btn btn-ghost" disabled={redeemCannabis.isPending} onClick={() => setCannabisRedeemId(null)}>ยกเลิก</button><button type="button" className="btn btn-gold" disabled={redeemCannabis.isPending || cannabisCard.balance < 10} onClick={() => void confirmCannabisRedeem()}>{redeemCannabis.isPending ? "กำลังบันทึก…" : "ยืนยันแลก"}</button></div></div>}
+                  ? <button type="button" className="btn btn-gold w-full mt-4 flex items-center justify-center gap-2" disabled={cannabisCard.balance < 10 || redeemCannabis.isPending || addCannabisStamps.isPending} onClick={() => { setCannabisRedeemId(crypto.randomUUID()); setCounterActionComplete(false); setErr(""); setMsg(""); }}><BrandIcon name="crown" size={18} tone="inherit" />{cannabisCard.balance >= 10 ? "แลกสิทธิ์ฟรี · ใช้ 10 แต้ม" : `แลกฟรีเมื่อครบ 10 แต้ม · อีก ${10 - cannabisCard.balance} แต้ม`}</button>
+                  : <div role="group" aria-labelledby="cannabis-redeem-q" className="gold-alert mt-4 space-y-3"><p id="cannabis-redeem-q">ยืนยันแลกรางวัลให้ {cannabisCard.member_code}? ระบบจะหัก 10 แต้ม</p><div className="grid grid-cols-2 gap-2"><button type="button" className="btn btn-ghost" disabled={redeemCannabis.isPending} onClick={() => setCannabisRedeemId(null)}>ยกเลิก</button><button type="button" className="btn btn-gold" disabled={redeemCannabis.isPending || cannabisCard.balance < 10} onClick={() => void confirmCannabisRedeem()}>{redeemCannabis.isPending ? "กำลังบันทึก…" : "ยืนยันแลก"}</button></div></div>}
                 <form onSubmit={recordCannabis} className="space-y-3 mt-4" noValidate>
                     <fieldset className="staff-cannabis-presets"><legend>ยอดซื้อจริง · 100 กรัมต่อ 1 แต้ม</legend><div>{[{ points: 1, grams: 100 }, { points: 2, grams: 200 }, { points: 3, grams: 300 }, { points: 5, grams: 500 }].map(({ points, grams: amount }) => <button key={points} type="button" className="pt-btn" aria-label={`เพิ่ม ${points} แต้มจากการซื้อ ${amount} กรัม`} aria-pressed={grams === String(amount)} onClick={() => { setGrams(String(amount)); setGramsError(""); }}>+{points} แต้ม · {amount} กรัม</button>)}</div></fieldset>
                    <div className="field"><label htmlFor="cannabis-grams">จำนวนกรัมที่ซื้อ</label><input id="cannabis-grams" className="input" type="text" inputMode="numeric" autoComplete="off" maxLength={3} value={grams} onChange={(e) => { setGrams(e.target.value); setGramsError(e.target.value && (!/^\d+$/.test(e.target.value) || Number(e.target.value) < 1 || Number(e.target.value) > 999) ? "กรอกจำนวนกรัมเป็นจำนวนเต็ม 1–999" : ""); }} aria-invalid={!!gramsError} aria-describedby={gramsError ? "cannabis-grams-error" : "cannabis-grams-rule"} /></div>

@@ -12,6 +12,11 @@ export interface UpdateOwnerProductInput {
      * @maxLength 120
      */
   name: string;
+  /**
+     * @minLength 1
+     * @maxLength 80
+     */
+  category?: string;
   /** @maxLength 600 */
   description: string;
   /**

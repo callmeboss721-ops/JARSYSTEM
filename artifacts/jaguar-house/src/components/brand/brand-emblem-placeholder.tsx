@@ -10,7 +10,7 @@ export function BrandEmblemPlaceholder({ variant }: { variant: Variant }) {
       width={768}
       height={768}
       decoding="async"
-      className={`${size} object-contain p-1 rounded-2xl border border-[rgba(229,192,74,.35)] bg-[rgba(10,10,10,.2)]`}
+      className={`${size} object-contain p-1 rounded-2xl border border-[var(--line)] bg-[var(--panel)]`}
       data-asset-slot="jaguar-emblem"
     />
   );

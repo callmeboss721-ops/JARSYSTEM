@@ -13,6 +13,11 @@ export interface OwnerProduct {
      * @maxLength 120
      */
   name: string;
+  /**
+     * @minLength 1
+     * @maxLength 80
+     */
+  category: string;
   /** @maxLength 600 */
   description: string;
   /**
@@ -20,6 +25,18 @@ export interface OwnerProduct {
      * @maximum 100000000
      */
   price_baht: number;
+  /**
+     * @minimum 0
+     * @maximum 1000000
+     * @nullable
+     */
+  stock_quantity: number | null;
+  /**
+     * @minLength 1
+     * @maxLength 24
+     * @nullable
+     */
+  stock_unit: string | null;
   has_image: boolean;
   is_active: boolean;
   created_at: string;

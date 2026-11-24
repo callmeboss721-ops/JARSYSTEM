@@ -125,7 +125,7 @@ test("owner totals and audit use actual ledgers, Bangkok dates, and exclude demo
       assert.ok(types.has(expected), `audit should contain ${expected}`);
     }
     assert.ok(
-      regularEvents.some((event) => event.event_type === "redemption" && event.description.includes("แลกฟรี 1 กรัม")),
+      regularEvents.some((event) => event.event_type === "redemption" && event.description.includes("แลกรางวัล")),
       "cannabis free redemption should be classified as a redemption",
     );
     assert.ok(audit.every((event) => event.member_code !== "DEMO-A"), "demo member events must be excluded");

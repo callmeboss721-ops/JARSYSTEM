@@ -12,6 +12,11 @@ export interface CreateOwnerProductInput {
      * @maxLength 120
      */
   name: string;
+  /**
+     * @minLength 1
+     * @maxLength 80
+     */
+  category?: string;
   /** @maxLength 600 */
   description: string;
   /**
@@ -19,6 +24,18 @@ export interface CreateOwnerProductInput {
      * @maximum 100000000
      */
   price_baht: number;
+  /**
+     * @minimum 0
+     * @maximum 1000000
+     * @nullable
+     */
+  stock_quantity?: number | null;
+  /**
+     * @minLength 1
+     * @maxLength 24
+     * @nullable
+     */
+  stock_unit?: string | null;
   /**
      * @nullable
      * @pattern ^/objects/uploads/[0-9a-f-]{36}$

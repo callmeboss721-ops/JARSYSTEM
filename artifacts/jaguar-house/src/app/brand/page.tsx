@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@workspace/jaguar-spk-design-system/components/ui/button";
+import { BrandDeliveryLink } from "@/components/brand/brand-button";
 
 const GOOGLE_MAPS_URL =
   "https://www.google.com/maps/place/Jaguar+spk+%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A1+%E0%B8%81%E0%B8%B1%E0%B8%8D%E0%B8%8A%E0%B8%B2+%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A1+%E0%B9%83%E0%B8%81%E0%B8%A5%E0%B9%89%E0%B8%89%E0%B8%B1%E0%B8%99/@13.6100796,100.6008541,17z/data=!3m1!4b1!4m6!3m5!1s0x30e2a17b24c91b0f:0x2dd52ed6c8dbd489!8m2!3d13.6100796!4d100.6008541!16s%2Fg%2F11z_klv87h?hl=th&entry=ttu&g_ep=EgoyMDI2MTExNS4wIKXMDSoASAFQAw%3D%3D";
@@ -270,22 +271,17 @@ export default function BrandPage() {
             </article>
             <article className="rounded-[var(--radius)] border border-border/80 bg-card/70 p-5">
               <h3 className="font-display text-lg font-semibold">บริการจัดส่ง</h3>
-              <Image
-                src="/brand/artwork/delivery-mascot.webp"
-                alt="มาสคอต JAGUAR SPK ถือพัสดุ"
-                width={768}
-                height={768}
-                className="my-3 h-24 w-24 object-contain"
-                sizes="96px"
-              />
               <p className="mt-2 text-sm leading-7 text-muted-foreground">
-                บริเวณใกล้เคียงบางเมือง กรุณาโทรสอบถามพื้นที่และเงื่อนไขก่อนสั่ง
+                โทรสอบถามเพื่อยืนยันพื้นที่ให้บริการและเงื่อนไขก่อนสั่ง พื้นที่และการจัดส่งขึ้นอยู่กับการยืนยันจากร้าน
               </p>
-              <Button asChild variant="outline" className="mt-4 w-full sm:w-auto">
-                <a href={`tel:${STORE_PHONE}`} aria-label={`โทรสอบถามพื้นที่และเงื่อนไขจัดส่ง ${STORE_PHONE}`}>
-                  สอบถามเรื่องจัดส่ง
-                </a>
-              </Button>
+              <BrandDeliveryLink className="mt-3 w-full" />
+              <a
+                href={`tel:${STORE_PHONE}`}
+                className="mt-2 inline-flex min-h-11 items-center text-sm text-accent underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label={`โทรสอบถามพื้นที่และเงื่อนไขจัดส่ง ${STORE_PHONE}`}
+              >
+                โทร {STORE_PHONE} เพื่อยืนยันก่อนสั่ง
+              </a>
             </article>
             <article className="rounded-[var(--radius)] border border-secondary/30 bg-card/70 p-5 sm:col-span-2 lg:col-span-2">
               <h3 className="font-display text-lg font-semibold">โปรโมชันสมาชิก</h3>

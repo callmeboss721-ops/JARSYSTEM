@@ -104,7 +104,7 @@ export default function CardPage() {
             </div>
           </div>
         </header>
-        {(celebrate || card.data.balance >= STAMPS) && <div role="status" className="gold-alert">ครบ 10 แต้ม! รับขวดแถมฟรี 1 ขวด</div>}
+        {(celebrate || card.data.balance >= STAMPS) && <div role="status" className="gold-alert">ครบ 10 แต้ม! แลกรางวัลฟรี 1 รายการที่เคาน์เตอร์</div>}
         {confettiKey > 0 && <Confetti key={confettiKey} />}
         <div className={pop ? `card-pop card-pop--${pop % 2}` : undefined}>
           <MemberCardCarousel active="kratom">
@@ -137,12 +137,12 @@ export default function CardPage() {
           <div className="panel card-bento-stat"><RankEmblem name="ultimate-legend" size={22} className="card-bento-stat__emblem" /><p>แลกแล้ว</p><strong>{card.data.lifetime_redeemed}</strong><small>แต้ม</small></div>
         </div>
         <section className="grid gap-3 sm:grid-cols-2" aria-label="ยอดสะสมแยกตามประเภท">
-          <article className="panel p-4 border-[rgba(0,255,157,.28)]">
+          <article className="panel p-4 border-[var(--line)]">
             <p className="eyebrow">KRATOM · ยอดซื้อสะสม</p>
             <div className="mt-2 flex items-end justify-between gap-2"><strong className="font-display text-3xl text-[var(--green)]">{card.data.balance}<small className="ml-1 text-sm font-sans text-[var(--text)]">แต้ม</small></strong><span className="text-xs text-[var(--muted)]">เศษ ฿{card.data.kratom_remainder_baht}/100</span></div>
             <p className="mt-2 text-xs text-[var(--muted)]">ยอดเศษยังทบต่อ · คำนวณแต้มโดยระบบร้าน</p>
           </article>
-          <article className="panel p-4 border-[rgba(229,192,74,.27)]">
+          <article className="panel p-4 border-[var(--line)]">
             <p className="eyebrow">CANNABIS · ยอดซื้อสะสม</p>
             <div className="mt-2 flex items-end justify-between gap-2"><strong className="font-display text-3xl text-[var(--gold-2)]">{card.data.cannabis_balance}<small className="ml-1 text-sm font-sans text-[var(--text)]">แต้ม</small></strong><span className="text-xs text-[var(--muted)]">เศษ {card.data.cannabis_remainder_grams} g / 100</span></div>
             <p className="mt-2 text-xs text-[var(--muted)]">บัตรแยก · แต้มและเศษคงเหลือไม่ปะปนกัน</p>
@@ -181,7 +181,12 @@ export default function CardPage() {
   </MemberShell>;
 }
 
-const COLORS = ["#e5c04a", "#f6e09a", "#2fd98a", "#c4cad6", "#b8901f"];
+const COLORS = [
+  "hsl(var(--brand-id-2026-gold))",
+  "hsl(var(--brand-id-2026-neon))",
+  "hsl(var(--brand-id-2026-jaguar-green))",
+  "hsl(var(--brand-id-2026-text))",
+];
 function Confetti() {
   const bits = useMemo(() => Array.from({ length: 70 }, (_, i) => ({
     left: `${(i * 37) % 100}%`, x: `${((i * 53) % 120) - 60}px`, r: `${(i * 97) % 720}deg`,

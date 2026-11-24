@@ -28,6 +28,10 @@ app.use(
 app.disable("x-powered-by");
 app.set("trust proxy", 1);
 app.use(cookieParser());
+app.use(
+  "/api/loyalty/owner/products/import",
+  express.json({ limit: "640kb", inflate: false }),
+);
 app.use(express.json({ limit: "8kb", inflate: false }));
 
 app.use("/api", router);

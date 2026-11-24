@@ -49,7 +49,7 @@ export function MemberShell({ children, signedIn }: { children: ReactNode; signe
   return (
     <div className="customer-art-root min-h-[100dvh] pb-28 md:pb-12">
       <SamutPrakanArt />
-      <header className="member-header sticky top-0 z-40 border-b border-[var(--line)] bg-[rgba(5,5,10,.85)] backdrop-blur-md">
+      <header className="member-header sticky top-0 z-40 border-b border-[var(--line)] backdrop-blur-md">
         <div className="mx-auto max-w-5xl px-5 h-16 flex items-center justify-between gap-4">
           <Link href="/" className="member-shell-brand flex items-center min-h-11 gap-3 no-underline text-[var(--text)]" data-testid="link-home">
             <JaguarMark size={30} />
@@ -69,7 +69,7 @@ export function MemberShell({ children, signedIn }: { children: ReactNode; signe
                   href={n.href}
                   aria-current={active ? "page" : undefined}
                   data-kind={n.kind}
-                  className={`inline-flex items-center gap-2 min-h-11 px-4 py-2 rounded-xl font-display text-sm no-underline transition-colors ${active ? "text-[var(--gold-2)] bg-[rgba(196,202,214,.07)] shadow-[inset_0_-2px_0_var(--gold)]" : "text-[var(--muted)] hover:text-[var(--text)]"}`}
+                  className={`inline-flex items-center gap-2 min-h-11 px-4 py-2 rounded-xl font-display text-sm no-underline transition-colors ${active ? "text-[var(--gold-2)] bg-[var(--panel)] shadow-[inset_0_-2px_0_var(--gold)]" : "text-[var(--muted)] hover:text-[var(--text)]"}`}
                   data-testid={`link-nav-${n.href.slice(1)}`}
                 >
                   <BrandIcon name={n.icon} size={20} tone={active ? n.kind === "cannabis" ? "emerald" : "gold" : "neutral"} className="member-nav-icon" />

@@ -35,7 +35,7 @@ export function MembershipCardsDemo() {
         <MemberCardFaces kind={kind} memberCode="JAGUAR06" balance={balance} />
         <MemberStatusPanel kind={kind} memberCode="JAGUAR06" balance={balance} qr={qr} />
       </div>
-      <p className="ds-demo-feedback">ตัวอย่างเท่านั้น · ทดลองปุ่มขยาย QR และสถานะโหลด/ผิดพลาดได้ · ระบบจริงส่งยอดแต้มและ QR จาก API</p>
+      <p className="ds-demo-feedback">ตัวอย่างเท่านั้น · เลือกหรือกด Enter ที่ QR เพื่อเปิดแบบเต็มจอได้ · ระบบจริงส่งยอดแต้มและ QR จาก API</p>
     </div>
   );
 }

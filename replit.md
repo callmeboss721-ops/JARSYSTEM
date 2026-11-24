@@ -45,39 +45,52 @@ approved a fresh database rather than importing the old Supabase data.
   Development alone seeds a clearly marked demo member and a demo reward, without
   invented sales. Real rewards are configured explicitly by the owner.
 - The old Supabase project/data is untouched; do not attempt an automatic import.
-- Member-code-only login and staff PIN are explicit user requirements; do not
-  silently migrate to another auth provider. Explain their security limits.
+- Member login accepts phone, member code, or nickname; there is no OTP. Staff and
+  owner use separate PIN sessions. Do not silently change these auth rules.
 - localStorage remembers only a session-present flag; never identity credentials.
 - Sales/confirmations run in database transactions with member row locks.
 - Repeated sale/redemption request IDs and repeated confirmations do not charge twice.
 - Personal QR uses a separate opaque staff-scan token, not the member login code.
+- Preserve the existing QR payload and historical point balances when changing UI.
 
 ## Product
 
 - Register with Thai mobile phone and a unique 6–8 character member code; letters,
   numbers and internal hyphens are allowed. Staff-created accounts also have a name.
-- `/card` shows balance, ten stamps, private QR, latest five purchases and lifetime
+- `/card` shows balance, ten stamps, private QR, latest five point/purchase events and lifetime
   grade: Green initially, Gold at 40 earned, Black VIP at 100 earned.
-- The ten-point shop promotion is “สะสม 10 แต้ม รับฟรี 2 ขวด”.
+- Ten points can be redeemed for one eligible item; the specific item and terms are
+  set by the owner and must not be guessed in customer-facing copy.
 - The visible customer card polls about every two seconds, with reduced-motion-safe
   stamp feedback and a celebration on crossing the ten-point threshold.
 - `/redeem` lists active rewards and creates one pending request per member.
-- `/staff` has counter, member directory, new-account and staff-PIN tabs. A sale
-  records bottle quantity and formula (`red`, `silver`, `gold`). Every complete set
-  of three bottles on one bill earns one point; leftovers never carry between bills.
-  Server-calculated price is 60 baht per bottle or 150 per complete three-bottle set.
-  Staff may confirm pending requests or redeem ten points directly at the counter.
+- Kratom earns one point per cumulative ฿100 paid; cannabis earns one point per
+  cumulative 100 g. Their balances and remaining amounts are separate. Do not
+  recalculate historical awards when the policy changes.
+- `/staff` has counter, member directory, new-account and staff-PIN tools. Sales
+  keep the existing server-calculated pricing/points path; optional private sale-slip
+  images do not change sale totals or points. Manual kratom bonus points are separate
+  from purchases; cannabis credits correspond to recorded grams.
 - `/owner` has separate authentication, Bangkok-day/all-time sales and formula
-  reports, member soft deletion, rewards, PIN controls and a printable shop QR poster.
+  reports, member soft deletion, rewards, PIN controls, and a printable shop QR poster.
+  Its product catalog is separate from sales and loyalty: categories, reference images,
+  stock adjustments, and one-time CSV import must not affect checkout or points.
+  Existing stock is unknown until the owner records or imports a count; never display
+  an unknown count as zero. CSV imports append only, skip duplicates, and never
+  overwrite existing products. No source-site export has been provided yet.
   Closing a member preserves financial and points history. Demo activity is excluded
-  from real sales reports. `/admin` is a compatibility redirect to `/owner`.
+  from real sales reports. `/admin` redirects to `/owner`; `/admin?desk=staff`
+  is the staff-counter compatibility route.
 - Pending requests deduct points only when confirmed; direct counter redemption
   is immediate confirmation. Both paths are duplicate-safe.
 
 ## User preferences
 
-- Dark #050505, neon #00FF9D, gold accents; Thai-first, mobile-first.
-- Use only the original supplied JAGUAR logo image; do not invent a replacement seal.
+- Use the approved JAGUAR SPK Brand ID 2026 theme through design-system tokens on
+  the storefront, member cards, staff POS, and owner dashboard. Do not hardcode or
+  invent app colors.
+- Use the supplied JAGUAR logo and approved mascot assets; do not invent a replacement
+  seal or character.
 
 ## Gotchas
 

@@ -24,6 +24,9 @@ import {
   RequestLoyaltyUploadUrlBody, RequestLoyaltyUploadUrlResponse,
   ListOwnerProductsResponse, CreateOwnerProductBody, CreateOwnerProductResponse,
   UpdateOwnerProductParams, UpdateOwnerProductBody, UpdateOwnerProductResponse,
+  UpdateOwnerProductStockParams, UpdateOwnerProductStockBody, UpdateOwnerProductStockResponse,
+  ListOwnerProductStockHistoryParams, ListOwnerProductStockHistoryResponse,
+  ImportOwnerProductsBody, ImportOwnerProductsResponse,
   UpdateStaffSaleSlipParams, UpdateStaffSaleSlipBody, UpdateStaffSaleSlipResponse,
   ListOwnerMemberHistoryQueryParams, ListOwnerMemberHistoryResponse,
 } from "@workspace/api-zod";
@@ -41,6 +44,7 @@ import {
 } from "../lib/loyalty-corrections";
 import {
   listOwnerProducts, createOwnerProduct, updateOwnerProduct, getOwnerProductImagePath,
+  updateOwnerProductStock, listOwnerProductStockHistory, importOwnerProducts,
 } from "../lib/product-store";
 import {
   assertPrivateImage, createPrivateUploadUrl, streamPrivateImage,
@@ -520,12 +524,28 @@ router.post("/owner/products", async (req, res) => {
   if (data.reference_image_path) await assertPrivateImage(data.reference_image_path, MAX_PRODUCT_IMAGE_BYTES);
   sendJson(res, CreateOwnerProductResponse, await createOwnerProduct(data), 201);
 });
+router.post("/owner/products/import", async (req, res) => {
+  await authLimit(req, "owner-product-import", 10);
+  const data = parse(ImportOwnerProductsBody, req.body);
+  sendJson(res, ImportOwnerProductsResponse, await importOwnerProducts(data.rows));
+});
 router.patch("/owner/products/:id", async (req, res) => {
   await authLimit(req, "owner-product-update", 30);
   const { id } = parse(UpdateOwnerProductParams, req.params);
   const data = parse(UpdateOwnerProductBody, req.body);
   if (data.reference_image_path) await assertPrivateImage(data.reference_image_path, MAX_PRODUCT_IMAGE_BYTES);
   sendJson(res, UpdateOwnerProductResponse, await updateOwnerProduct(id, data));
+});
+router.patch("/owner/products/:id/stock", async (req, res) => {
+  await authLimit(req, "owner-product-stock-update", 60);
+  const { id } = parse(UpdateOwnerProductStockParams, req.params);
+  const data = parse(UpdateOwnerProductStockBody, req.body);
+  sendJson(res, UpdateOwnerProductStockResponse, await updateOwnerProductStock(id, data));
+});
+router.get("/owner/products/:id/stock-history", async (req, res) => {
+  await authLimit(req, "owner-product-stock-history", 120);
+  const { id } = parse(ListOwnerProductStockHistoryParams, req.params);
+  sendJson(res, ListOwnerProductStockHistoryResponse, await listOwnerProductStockHistory(id));
 });
 router.get("/owner/products/:id/image", async (req, res) => {
   await authLimit(req, "owner-product-image-read", 120);
