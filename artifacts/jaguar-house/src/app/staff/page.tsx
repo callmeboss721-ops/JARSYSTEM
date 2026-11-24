@@ -12,6 +12,7 @@ import { EmptyState, ErrorState, LoadingSpinner, LoadingState } from "@/componen
 import { Skeleton } from "@workspace/jaguar-spk-design-system/components/ui/skeleton";
 import { PinPad } from "@/components/brand/pin-pad";
 import { StaffBanking } from "@/components/brand/banking";
+import { StaffProductSales } from "@/components/brand/product-sales";
 import { playStaffSuccessSound, primeStaffSuccessSound, readStaffSoundPreference, saveStaffSoundPreference } from "@/components/brand/staff-feedback";
 import { STAMPS } from "@/components/brand/loyalty-card";
 import { STAFF, api, bundlePrice, cleanCode, clearScope, codePattern, errorText, formulaLabels, isBottleCount, json, statusOf, type Formula, type MemberCardData, type RedemptionData } from "@/components/brand/loyalty-api";
@@ -31,7 +32,7 @@ import {
   useListStaffSales,
 } from "@workspace/api-client-react";
 
-type Tab = "counter" | "members" | "open" | "banking" | "settings";
+type Tab = "counter" | "product-sales" | "members" | "open" | "banking" | "settings";
 const TABS: [Tab, string, BrandIconName][] = [["counter", "ขาย / แลก", "lightning"], ["members", "สมาชิก", "members"], ["open", "เปิดบัญชี", "add"], ["banking", "บัญชี / โอน", "banking"], ["settings", "ตั้งค่า PIN", "security"]];
 const formulaShort: Record<Formula, string> = { red: "แดง · Original", silver: "ฟ้า · Refresh", gold: "ทอง · Premium" };
 
@@ -574,9 +575,10 @@ export default function StaffPage() {
         <div className="flex flex-wrap justify-between items-end gap-3"><div><p className="eyebrow">Counter operations</p><h1 className="font-display text-3xl font-semibold">เคาน์เตอร์ร้าน</h1></div>{security.data?.default_pin && <p className="text-xs text-[var(--gold-2)]">กำลังใช้ PIN เริ่มต้น · เปลี่ยนได้ในตั้งค่า PIN</p>}</div>
         {msg && !counterActionComplete && <p role="status" className="rounded-xl border border-[var(--line)] bg-[var(--panel)] p-3 text-sm text-[var(--emerald-2)]">{msg}</p>}
         {err && <p role="alert" className="field-error">{err}</p>}
-        <nav className="staff-main-nav pill-switch grid grid-cols-2 p-1 gap-1 !rounded-[22px]" aria-label="เมนูหลักพนักงาน">
+        <nav className="staff-main-nav pill-switch grid grid-cols-3 p-1 gap-1 !rounded-[22px]" aria-label="เมนูหลักพนักงาน">
           <button type="button" className="tab !px-2 !rounded-[18px] flex items-center justify-center gap-2" aria-pressed={tab === "counter"} onClick={() => selectTab("counter")}><BrandIcon name="lightning" size={19} tone={tab === "counter" ? "gold" : "neutral"} />หน้าเคาน์เตอร์</button>
-          <button type="button" className="tab !px-2 !rounded-[18px] flex items-center justify-center gap-2" aria-expanded={showMoreTabs} aria-controls="staff-secondary-tabs" aria-pressed={showMoreTabs || tab !== "counter"} onClick={() => setShowMoreTabs((value) => !value)}><BrandIcon name="members" size={18} tone={showMoreTabs || tab !== "counter" ? "gold" : "neutral"} />{TABS.find(([id]) => id === tab && id !== "counter")?.[1] || "เมนูอื่น"}</button>
+          <button type="button" className="tab !px-2 !rounded-[18px] flex items-center justify-center gap-2" aria-pressed={tab === "product-sales"} data-testid="staff-tab-product-sales" onClick={() => selectTab("product-sales")}><BrandIcon name="products" size={19} tone={tab === "product-sales" ? "gold" : "neutral"} />ขายสินค้า</button>
+          <button type="button" className="tab !px-2 !rounded-[18px] flex items-center justify-center gap-2" aria-expanded={showMoreTabs} aria-controls="staff-secondary-tabs" aria-pressed={showMoreTabs || (tab !== "counter" && tab !== "product-sales")} onClick={() => setShowMoreTabs((value) => !value)}><BrandIcon name="members" size={18} tone={showMoreTabs || (tab !== "counter" && tab !== "product-sales") ? "gold" : "neutral"} />{TABS.find(([id]) => id === tab && id !== "counter")?.[1] || "เมนูอื่น"}</button>
         </nav>
         {showMoreTabs && <nav id="staff-secondary-tabs" className="pill-switch grid grid-cols-2 min-[480px]:grid-cols-3 p-1 gap-1 !rounded-[18px]" aria-label="เครื่องมือพนักงานอื่น">
           {TABS.filter(([id]) => id !== "counter").map(([id, label, icon]) => <button key={id} type="button" className="tab !px-2 !rounded-[14px] flex items-center justify-center gap-2" aria-pressed={tab === id} onClick={() => selectTab(id)}><BrandIcon name={icon} size={18} tone={tab === id ? "gold" : "neutral"} />{label}</button>)}
@@ -840,6 +842,8 @@ export default function StaffPage() {
             </section>
           </div>}
         </div>}
+
+        {tab === "product-sales" && <StaffProductSales />}
 
         {tab === "members" && <section className="panel p-5 sm:p-6">
           <h2 className="font-display text-xl font-semibold mb-4">สมาชิกทั้งหมด</h2>

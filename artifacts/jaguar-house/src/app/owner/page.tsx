@@ -10,13 +10,15 @@ import { PinPad } from "@/components/brand/pin-pad";
 import { PublicPoster } from "@/components/brand/shop-tools";
 import { OwnerBanking } from "@/components/brand/banking";
 import { OwnerProducts } from "@/components/brand/owner-products";
+import { OwnerProductSales } from "@/components/brand/product-sales";
 import { OWNER, api, clearScope, statusOf, isWholeBaht, cleanCode, codePattern, errorText, formulaLabels, json, type MemberCardData, type RedemptionData, type RewardData } from "@/components/brand/loyalty-api";
 import { buildOwnerActivityCsv, buildOwnerSalesCsv, downloadCsvFile } from "@/components/brand/owner-reports-csv";
 import { getGetOwnerSecurityQueryKey, getGetOwnerSummaryQueryKey, getGetOwnerAuditLogQueryKey, useGetOwnerSecurity, useUpdateCannabisPointsFeature, useGetOwnerSummary, useGetOwnerAuditLog, useListOwnerMemberHistory, type ListOwnerMemberHistoryParams, type OwnerAuditEntry } from "@workspace/api-client-react";
 
-type View="reports"|"members"|"rewards"|"products"|"pending"|"banking"|"security"|"poster";
+type View="reports"|"product-sales"|"members"|"rewards"|"products"|"pending"|"banking"|"security"|"poster";
 const tabs:{id:View;label:string;icon:BrandIconName}[]=[
   {id:"reports",label:"ยอดขาย",icon:"dashboard"},
+  {id:"product-sales",label:"ขายสินค้าทั่วไป",icon:"products"},
   {id:"members",label:"สมาชิก",icon:"members"},
   {id:"rewards",label:"รางวัล",icon:"rewards"},
   {id:"products",label:"สินค้า",icon:"products"},
@@ -119,6 +121,7 @@ export default function OwnerPage(){
     {view==="poster"&&<PublicPoster/>}
     {view==="banking"&&<OwnerBanking/>}
     {view==="products"&&<OwnerProducts/>}
+     {view==="product-sales"&&<OwnerProductSales/>}
     </div>}
   </main></div>;
 }

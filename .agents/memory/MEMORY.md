@@ -10,3 +10,4 @@
 - [Vite Radix dependency warmup](vite-radix-warmup.md) — new lazy-loaded Radix modules can trigger transient hook errors while Vite optimizes them; verify after optimization settles.
 - [Loyalty test isolation](loyalty-test-isolation.md) — repeat integration runs through the shared preview proxy can collide with persistent IP-based rate limits; isolate test IPs.
 - [JAGUAR release guardrails](jaguar-release-guardrails.md) — do not restore Clerk; use the shared React catalog and self-hosted brand fonts; preserve store data, routes, QR payloads, and point rules.
+- [Quick-sale stock policy](jaguar-quick-sales-policy.md) — non-loyalty sales may be recorded beyond available stock; clamp tracked inventory at zero and warn staff.

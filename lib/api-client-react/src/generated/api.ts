@@ -52,7 +52,9 @@ import type {
   ListAiNoteConversationsParams,
   ListOwnerMemberHistoryParams,
   ListOwnerMembersParams,
+  ListOwnerProductSalesParams,
   ListStaffMembersParams,
+  ListStaffProductSalesParams,
   ListStaffSalesParams,
   LoyaltyHealth,
   MemberAccountInput,
@@ -74,6 +76,11 @@ import type {
   PointTransaction,
   PrivateUploadRequest,
   PrivateUploadUrl,
+  QuickSale,
+  QuickSaleInput,
+  QuickSaleList,
+  QuickSaleProduct,
+  QuickSaleVoidInput,
   Redemption,
   RedemptionInput,
   Reward,
@@ -3060,6 +3067,558 @@ export function useListStaffSales<TData = Awaited<ReturnType<typeof listStaffSal
 
 
 
+
+export const getListStaffSaleProductsUrl = () => {
+
+
+
+
+  return `/api/loyalty/staff/products`
+}
+
+export const listStaffSaleProducts = async ( options?: Parameters<typeof customFetch>[1]): Promise<QuickSaleProduct[]> => {
+
+  return customFetch<QuickSaleProduct[]>(getListStaffSaleProductsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListStaffSaleProductsQueryKey = () => {
+    return [
+    `/api/loyalty/staff/products`
+    ] as const;
+    }
+
+
+export const getListStaffSaleProductsQueryOptions = <TData = Awaited<ReturnType<typeof listStaffSaleProducts>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listStaffSaleProducts>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListStaffSaleProductsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listStaffSaleProducts>>> = ({ signal }) => listStaffSaleProducts({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listStaffSaleProducts>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListStaffSaleProductsQueryResult = NonNullable<Awaited<ReturnType<typeof listStaffSaleProducts>>>
+export type ListStaffSaleProductsQueryError = ErrorType<unknown>
+
+
+export function useListStaffSaleProducts<TData = Awaited<ReturnType<typeof listStaffSaleProducts>>, TError = ErrorType<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listStaffSaleProducts>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listStaffSaleProducts>>,
+          TError,
+          Awaited<ReturnType<typeof listStaffSaleProducts>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListStaffSaleProducts<TData = Awaited<ReturnType<typeof listStaffSaleProducts>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listStaffSaleProducts>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listStaffSaleProducts>>,
+          TError,
+          Awaited<ReturnType<typeof listStaffSaleProducts>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListStaffSaleProducts<TData = Awaited<ReturnType<typeof listStaffSaleProducts>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listStaffSaleProducts>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useListStaffSaleProducts<TData = Awaited<ReturnType<typeof listStaffSaleProducts>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listStaffSaleProducts>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListStaffSaleProductsQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetStaffSaleProductImageUrl = (id: string,) => {
+
+
+
+
+  return `/api/loyalty/staff/products/${id}/image`
+}
+
+export const getStaffSaleProductImage = async (id: string, options?: Parameters<typeof customFetch>[1]): Promise<Blob> => {
+
+  return customFetch<Blob>(getGetStaffSaleProductImageUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetStaffSaleProductImageQueryKey = (id: string,) => {
+    return [
+    `/api/loyalty/staff/products/${id}/image`
+    ] as const;
+    }
+
+
+export const getGetStaffSaleProductImageQueryOptions = <TData = Awaited<ReturnType<typeof getStaffSaleProductImage>>, TError = ErrorType<unknown>>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStaffSaleProductImage>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetStaffSaleProductImageQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getStaffSaleProductImage>>> = ({ signal }) => getStaffSaleProductImage(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getStaffSaleProductImage>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetStaffSaleProductImageQueryResult = NonNullable<Awaited<ReturnType<typeof getStaffSaleProductImage>>>
+export type GetStaffSaleProductImageQueryError = ErrorType<unknown>
+
+
+export function useGetStaffSaleProductImage<TData = Awaited<ReturnType<typeof getStaffSaleProductImage>>, TError = ErrorType<unknown>>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStaffSaleProductImage>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getStaffSaleProductImage>>,
+          TError,
+          Awaited<ReturnType<typeof getStaffSaleProductImage>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetStaffSaleProductImage<TData = Awaited<ReturnType<typeof getStaffSaleProductImage>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStaffSaleProductImage>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getStaffSaleProductImage>>,
+          TError,
+          Awaited<ReturnType<typeof getStaffSaleProductImage>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetStaffSaleProductImage<TData = Awaited<ReturnType<typeof getStaffSaleProductImage>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStaffSaleProductImage>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetStaffSaleProductImage<TData = Awaited<ReturnType<typeof getStaffSaleProductImage>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStaffSaleProductImage>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetStaffSaleProductImageQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getListStaffProductSalesUrl = (params?: ListStaffProductSalesParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/loyalty/staff/product-sales?${stringifiedParams}` : `/api/loyalty/staff/product-sales`
+}
+
+export const listStaffProductSales = async (params?: ListStaffProductSalesParams, options?: Parameters<typeof customFetch>[1]): Promise<QuickSaleList> => {
+
+  return customFetch<QuickSaleList>(getListStaffProductSalesUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListStaffProductSalesQueryKey = (params?: ListStaffProductSalesParams,) => {
+    return [
+    `/api/loyalty/staff/product-sales`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getListStaffProductSalesQueryOptions = <TData = Awaited<ReturnType<typeof listStaffProductSales>>, TError = ErrorType<unknown>>(params?: ListStaffProductSalesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listStaffProductSales>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListStaffProductSalesQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listStaffProductSales>>> = ({ signal }) => listStaffProductSales(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listStaffProductSales>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListStaffProductSalesQueryResult = NonNullable<Awaited<ReturnType<typeof listStaffProductSales>>>
+export type ListStaffProductSalesQueryError = ErrorType<unknown>
+
+
+export function useListStaffProductSales<TData = Awaited<ReturnType<typeof listStaffProductSales>>, TError = ErrorType<unknown>>(
+ params: undefined |  ListStaffProductSalesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listStaffProductSales>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listStaffProductSales>>,
+          TError,
+          Awaited<ReturnType<typeof listStaffProductSales>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListStaffProductSales<TData = Awaited<ReturnType<typeof listStaffProductSales>>, TError = ErrorType<unknown>>(
+ params?: ListStaffProductSalesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listStaffProductSales>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listStaffProductSales>>,
+          TError,
+          Awaited<ReturnType<typeof listStaffProductSales>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListStaffProductSales<TData = Awaited<ReturnType<typeof listStaffProductSales>>, TError = ErrorType<unknown>>(
+ params?: ListStaffProductSalesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listStaffProductSales>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useListStaffProductSales<TData = Awaited<ReturnType<typeof listStaffProductSales>>, TError = ErrorType<unknown>>(
+ params?: ListStaffProductSalesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listStaffProductSales>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListStaffProductSalesQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateStaffProductSaleUrl = () => {
+
+
+
+
+  return `/api/loyalty/staff/product-sales`
+}
+
+export const createStaffProductSale = async (quickSaleInput: QuickSaleInput, options?: Parameters<typeof customFetch>[1]): Promise<QuickSale> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<QuickSale>(getCreateStaffProductSaleUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(quickSaleInput)
+  }
+);}
+
+
+
+
+
+export const getCreateStaffProductSaleMutationKey = () => ['createStaffProductSale'] as const;
+
+export const getCreateStaffProductSaleMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createStaffProductSale>>, TError,CreateStaffProductSaleMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createStaffProductSale>>, TError,CreateStaffProductSaleMutationVariables, TContext> => {
+
+const mutationKey = getCreateStaffProductSaleMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createStaffProductSale>>, CreateStaffProductSaleMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  createStaffProductSale(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateStaffProductSaleMutationResult = NonNullable<Awaited<ReturnType<typeof createStaffProductSale>>>
+    export type CreateStaffProductSaleMutationBody = BodyType<QuickSaleInput>
+    export type CreateStaffProductSaleMutationError = ErrorType<unknown>
+    export type CreateStaffProductSaleMutationVariables = {data: BodyType<QuickSaleInput>}
+
+    export const useCreateStaffProductSale = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createStaffProductSale>>, TError,CreateStaffProductSaleMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createStaffProductSale>>,
+        TError,
+        CreateStaffProductSaleMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCreateStaffProductSaleMutationOptions(options), queryClient);
+    }
+
+export const getGetStaffProductSaleSlipUrl = (id: string,) => {
+
+
+
+
+  return `/api/loyalty/staff/product-sales/${id}/slip`
+}
+
+export const getStaffProductSaleSlip = async (id: string, options?: Parameters<typeof customFetch>[1]): Promise<Blob> => {
+
+  return customFetch<Blob>(getGetStaffProductSaleSlipUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetStaffProductSaleSlipQueryKey = (id: string,) => {
+    return [
+    `/api/loyalty/staff/product-sales/${id}/slip`
+    ] as const;
+    }
+
+
+export const getGetStaffProductSaleSlipQueryOptions = <TData = Awaited<ReturnType<typeof getStaffProductSaleSlip>>, TError = ErrorType<unknown>>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStaffProductSaleSlip>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetStaffProductSaleSlipQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getStaffProductSaleSlip>>> = ({ signal }) => getStaffProductSaleSlip(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getStaffProductSaleSlip>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetStaffProductSaleSlipQueryResult = NonNullable<Awaited<ReturnType<typeof getStaffProductSaleSlip>>>
+export type GetStaffProductSaleSlipQueryError = ErrorType<unknown>
+
+
+export function useGetStaffProductSaleSlip<TData = Awaited<ReturnType<typeof getStaffProductSaleSlip>>, TError = ErrorType<unknown>>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStaffProductSaleSlip>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getStaffProductSaleSlip>>,
+          TError,
+          Awaited<ReturnType<typeof getStaffProductSaleSlip>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetStaffProductSaleSlip<TData = Awaited<ReturnType<typeof getStaffProductSaleSlip>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStaffProductSaleSlip>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getStaffProductSaleSlip>>,
+          TError,
+          Awaited<ReturnType<typeof getStaffProductSaleSlip>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetStaffProductSaleSlip<TData = Awaited<ReturnType<typeof getStaffProductSaleSlip>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStaffProductSaleSlip>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetStaffProductSaleSlip<TData = Awaited<ReturnType<typeof getStaffProductSaleSlip>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStaffProductSaleSlip>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetStaffProductSaleSlipQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getVoidStaffProductSaleUrl = (id: string,) => {
+
+
+
+
+  return `/api/loyalty/staff/product-sales/${id}/void`
+}
+
+export const voidStaffProductSale = async (id: string,
+    quickSaleVoidInput: QuickSaleVoidInput, options?: Parameters<typeof customFetch>[1]): Promise<QuickSale> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<QuickSale>(getVoidStaffProductSaleUrl(id),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(quickSaleVoidInput)
+  }
+);}
+
+
+
+
+
+export const getVoidStaffProductSaleMutationKey = () => ['voidStaffProductSale'] as const;
+
+export const getVoidStaffProductSaleMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof voidStaffProductSale>>, TError,VoidStaffProductSaleMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof voidStaffProductSale>>, TError,VoidStaffProductSaleMutationVariables, TContext> => {
+
+const mutationKey = getVoidStaffProductSaleMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof voidStaffProductSale>>, VoidStaffProductSaleMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  voidStaffProductSale(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type VoidStaffProductSaleMutationResult = NonNullable<Awaited<ReturnType<typeof voidStaffProductSale>>>
+    export type VoidStaffProductSaleMutationBody = BodyType<QuickSaleVoidInput>
+    export type VoidStaffProductSaleMutationError = ErrorType<unknown>
+    export type VoidStaffProductSaleMutationVariables = {id: string;data: BodyType<QuickSaleVoidInput>}
+
+    export const useVoidStaffProductSale = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof voidStaffProductSale>>, TError,VoidStaffProductSaleMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof voidStaffProductSale>>,
+        TError,
+        VoidStaffProductSaleMutationVariables,
+        TContext
+      > => {
+      return useMutation(getVoidStaffProductSaleMutationOptions(options), queryClient);
+    }
 
 export const getRequestLoyaltyUploadUrlUrl = () => {
 
@@ -6679,6 +7238,203 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       > => {
       return useMutation(getImportOwnerProductsMutationOptions(options), queryClient);
     }
+
+export const getListOwnerProductSalesUrl = (params?: ListOwnerProductSalesParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/loyalty/owner/product-sales?${stringifiedParams}` : `/api/loyalty/owner/product-sales`
+}
+
+export const listOwnerProductSales = async (params?: ListOwnerProductSalesParams, options?: Parameters<typeof customFetch>[1]): Promise<QuickSaleList> => {
+
+  return customFetch<QuickSaleList>(getListOwnerProductSalesUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListOwnerProductSalesQueryKey = (params?: ListOwnerProductSalesParams,) => {
+    return [
+    `/api/loyalty/owner/product-sales`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getListOwnerProductSalesQueryOptions = <TData = Awaited<ReturnType<typeof listOwnerProductSales>>, TError = ErrorType<unknown>>(params?: ListOwnerProductSalesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOwnerProductSales>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListOwnerProductSalesQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listOwnerProductSales>>> = ({ signal }) => listOwnerProductSales(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listOwnerProductSales>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListOwnerProductSalesQueryResult = NonNullable<Awaited<ReturnType<typeof listOwnerProductSales>>>
+export type ListOwnerProductSalesQueryError = ErrorType<unknown>
+
+
+export function useListOwnerProductSales<TData = Awaited<ReturnType<typeof listOwnerProductSales>>, TError = ErrorType<unknown>>(
+ params: undefined |  ListOwnerProductSalesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOwnerProductSales>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listOwnerProductSales>>,
+          TError,
+          Awaited<ReturnType<typeof listOwnerProductSales>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListOwnerProductSales<TData = Awaited<ReturnType<typeof listOwnerProductSales>>, TError = ErrorType<unknown>>(
+ params?: ListOwnerProductSalesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOwnerProductSales>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listOwnerProductSales>>,
+          TError,
+          Awaited<ReturnType<typeof listOwnerProductSales>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListOwnerProductSales<TData = Awaited<ReturnType<typeof listOwnerProductSales>>, TError = ErrorType<unknown>>(
+ params?: ListOwnerProductSalesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOwnerProductSales>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useListOwnerProductSales<TData = Awaited<ReturnType<typeof listOwnerProductSales>>, TError = ErrorType<unknown>>(
+ params?: ListOwnerProductSalesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listOwnerProductSales>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListOwnerProductSalesQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetOwnerProductSaleSlipUrl = (id: string,) => {
+
+
+
+
+  return `/api/loyalty/owner/product-sales/${id}/slip`
+}
+
+export const getOwnerProductSaleSlip = async (id: string, options?: Parameters<typeof customFetch>[1]): Promise<Blob> => {
+
+  return customFetch<Blob>(getGetOwnerProductSaleSlipUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetOwnerProductSaleSlipQueryKey = (id: string,) => {
+    return [
+    `/api/loyalty/owner/product-sales/${id}/slip`
+    ] as const;
+    }
+
+
+export const getGetOwnerProductSaleSlipQueryOptions = <TData = Awaited<ReturnType<typeof getOwnerProductSaleSlip>>, TError = ErrorType<unknown>>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOwnerProductSaleSlip>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetOwnerProductSaleSlipQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getOwnerProductSaleSlip>>> = ({ signal }) => getOwnerProductSaleSlip(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getOwnerProductSaleSlip>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetOwnerProductSaleSlipQueryResult = NonNullable<Awaited<ReturnType<typeof getOwnerProductSaleSlip>>>
+export type GetOwnerProductSaleSlipQueryError = ErrorType<unknown>
+
+
+export function useGetOwnerProductSaleSlip<TData = Awaited<ReturnType<typeof getOwnerProductSaleSlip>>, TError = ErrorType<unknown>>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOwnerProductSaleSlip>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getOwnerProductSaleSlip>>,
+          TError,
+          Awaited<ReturnType<typeof getOwnerProductSaleSlip>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetOwnerProductSaleSlip<TData = Awaited<ReturnType<typeof getOwnerProductSaleSlip>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOwnerProductSaleSlip>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getOwnerProductSaleSlip>>,
+          TError,
+          Awaited<ReturnType<typeof getOwnerProductSaleSlip>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetOwnerProductSaleSlip<TData = Awaited<ReturnType<typeof getOwnerProductSaleSlip>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOwnerProductSaleSlip>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetOwnerProductSaleSlip<TData = Awaited<ReturnType<typeof getOwnerProductSaleSlip>>, TError = ErrorType<unknown>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOwnerProductSaleSlip>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetOwnerProductSaleSlipQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export const getListOwnerPendingUrl = () => {
 

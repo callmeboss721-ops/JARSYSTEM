@@ -12,4 +12,6 @@ export type OwnerProductStockEventSource = typeof OwnerProductStockEventSource[k
 export const OwnerProductStockEventSource = {
   manual: 'manual',
   import: 'import',
+  sale: 'sale',
+  sale_void: 'sale_void',
 } as const;

@@ -830,6 +830,244 @@ export const ListStaffSalesResponseItem = zod.object({
 export const ListStaffSalesResponse = zod.array(ListStaffSalesResponseItem)
 
 
+export const listStaffSaleProductsResponseNameMax = 120;
+
+export const listStaffSaleProductsResponseCategoryMax = 80;
+
+export const listStaffSaleProductsResponsePriceBahtMax = 100000000;
+
+export const listStaffSaleProductsResponseStockQuantityMin = 0;
+export const listStaffSaleProductsResponseStockQuantityMax = 1000000;
+
+export const listStaffSaleProductsResponseStockUnitMax = 24;
+
+
+
+export const ListStaffSaleProductsResponseItem = zod.object({
+  "id": zod.uuid(),
+  "name": zod.string().min(1).max(listStaffSaleProductsResponseNameMax),
+  "category": zod.string().min(1).max(listStaffSaleProductsResponseCategoryMax),
+  "price_baht": zod.int().min(1).max(listStaffSaleProductsResponsePriceBahtMax),
+  "stock_quantity": zod.int().min(listStaffSaleProductsResponseStockQuantityMin).max(listStaffSaleProductsResponseStockQuantityMax).nullable(),
+  "stock_unit": zod.string().min(1).max(listStaffSaleProductsResponseStockUnitMax).nullable(),
+  "has_image": zod.boolean()
+})
+export const ListStaffSaleProductsResponse = zod.array(ListStaffSaleProductsResponseItem).max(500)
+
+
+export const GetStaffSaleProductImageParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const GetStaffSaleProductImageResponse = zod.unknown()
+
+
+export const listStaffProductSalesQueryDateRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+
+
+export const ListStaffProductSalesQueryParams = zod.object({
+  "date": zod.coerce.string().regex(listStaffProductSalesQueryDateRegExp).optional()
+})
+
+export const listStaffProductSalesResponseBusinessDateRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const listStaffProductSalesResponseTotalAmountBahtMin = 0;
+
+export const listStaffProductSalesResponseCompletedCountMin = 0;
+
+export const listStaffProductSalesResponseVoidedCountMin = 0;
+
+export const listStaffProductSalesResponseSalesItemAmountBahtMax = 100000000;
+
+export const listStaffProductSalesResponseSalesItemItemsItemUnitPriceBahtMax = 100000000;
+
+export const listStaffProductSalesResponseSalesItemItemsItemQuantityMax = 999;
+
+export const listStaffProductSalesResponseSalesItemItemsItemLineTotalBahtMax = 100000000;
+
+export const listStaffProductSalesResponseSalesItemItemsItemStockDeductedQuantityMin = 0;
+export const listStaffProductSalesResponseSalesItemItemsItemStockDeductedQuantityMax = 999;
+
+export const listStaffProductSalesResponseSalesItemItemsItemStockShortageQuantityMin = 0;
+export const listStaffProductSalesResponseSalesItemItemsItemStockShortageQuantityMax = 999;
+
+export const listStaffProductSalesResponseSalesItemItemsItemStockReversedQuantityMin = 0;
+export const listStaffProductSalesResponseSalesItemItemsItemStockReversedQuantityMax = 999;
+
+export const listStaffProductSalesResponseSalesItemItemsMax = 30;
+
+export const listStaffProductSalesResponseSalesMax = 100;
+
+
+
+export const ListStaffProductSalesResponse = zod.object({
+  "business_date": zod.string().regex(listStaffProductSalesResponseBusinessDateRegExp),
+  "total_amount_baht": zod.int().min(listStaffProductSalesResponseTotalAmountBahtMin),
+  "completed_count": zod.int().min(listStaffProductSalesResponseCompletedCountMin),
+  "voided_count": zod.int().min(listStaffProductSalesResponseVoidedCountMin),
+  "sales": zod.array(zod.object({
+  "id": zod.uuid(),
+  "request_id": zod.uuid(),
+  "payment_method": zod.enum(['cash', 'transfer', 'other']),
+  "amount_baht": zod.int().min(1).max(listStaffProductSalesResponseSalesItemAmountBahtMax),
+  "status": zod.enum(['completed', 'voided']),
+  "created_at": zod.coerce.date(),
+  "recorded_by": zod.enum(['staff', 'owner']),
+  "has_slip": zod.boolean(),
+  "voided_at": zod.coerce.date().nullable(),
+  "void_reason": zod.string().nullable(),
+  "items": zod.array(zod.object({
+  "id": zod.uuid(),
+  "product_id": zod.uuid(),
+  "name": zod.string(),
+  "category": zod.string(),
+  "unit_price_baht": zod.int().min(1).max(listStaffProductSalesResponseSalesItemItemsItemUnitPriceBahtMax),
+  "quantity": zod.int().min(1).max(listStaffProductSalesResponseSalesItemItemsItemQuantityMax),
+  "line_total_baht": zod.int().min(1).max(listStaffProductSalesResponseSalesItemItemsItemLineTotalBahtMax),
+  "stock_unit": zod.string().nullable(),
+  "stock_tracked": zod.boolean(),
+  "stock_deducted_quantity": zod.int().min(listStaffProductSalesResponseSalesItemItemsItemStockDeductedQuantityMin).max(listStaffProductSalesResponseSalesItemItemsItemStockDeductedQuantityMax),
+  "stock_shortage_quantity": zod.int().min(listStaffProductSalesResponseSalesItemItemsItemStockShortageQuantityMin).max(listStaffProductSalesResponseSalesItemItemsItemStockShortageQuantityMax),
+  "stock_reversed_quantity": zod.int().min(listStaffProductSalesResponseSalesItemItemsItemStockReversedQuantityMin).max(listStaffProductSalesResponseSalesItemItemsItemStockReversedQuantityMax)
+})).max(listStaffProductSalesResponseSalesItemItemsMax)
+})).max(listStaffProductSalesResponseSalesMax)
+})
+
+
+export const createStaffProductSaleBodyItemsItemQuantityMax = 999;
+
+export const createStaffProductSaleBodyItemsMax = 30;
+
+export const createStaffProductSaleBodySlipPathRegExp = new RegExp('^/objects/uploads/[0-9a-fA-F-]{36}$');
+
+
+export const CreateStaffProductSaleBody = zod.object({
+  "request_id": zod.uuid(),
+  "payment_method": zod.enum(['cash', 'transfer', 'other']),
+  "items": zod.array(zod.object({
+  "product_id": zod.uuid(),
+  "quantity": zod.int().min(1).max(createStaffProductSaleBodyItemsItemQuantityMax)
+})).min(1).max(createStaffProductSaleBodyItemsMax),
+  "slip_path": zod.string().regex(createStaffProductSaleBodySlipPathRegExp).nullable()
+})
+
+export const createStaffProductSaleResponseAmountBahtMax = 100000000;
+
+export const createStaffProductSaleResponseItemsItemUnitPriceBahtMax = 100000000;
+
+export const createStaffProductSaleResponseItemsItemQuantityMax = 999;
+
+export const createStaffProductSaleResponseItemsItemLineTotalBahtMax = 100000000;
+
+export const createStaffProductSaleResponseItemsItemStockDeductedQuantityMin = 0;
+export const createStaffProductSaleResponseItemsItemStockDeductedQuantityMax = 999;
+
+export const createStaffProductSaleResponseItemsItemStockShortageQuantityMin = 0;
+export const createStaffProductSaleResponseItemsItemStockShortageQuantityMax = 999;
+
+export const createStaffProductSaleResponseItemsItemStockReversedQuantityMin = 0;
+export const createStaffProductSaleResponseItemsItemStockReversedQuantityMax = 999;
+
+export const createStaffProductSaleResponseItemsMax = 30;
+
+
+
+export const CreateStaffProductSaleResponse = zod.object({
+  "id": zod.uuid(),
+  "request_id": zod.uuid(),
+  "payment_method": zod.enum(['cash', 'transfer', 'other']),
+  "amount_baht": zod.int().min(1).max(createStaffProductSaleResponseAmountBahtMax),
+  "status": zod.enum(['completed', 'voided']),
+  "created_at": zod.coerce.date(),
+  "recorded_by": zod.enum(['staff', 'owner']),
+  "has_slip": zod.boolean(),
+  "voided_at": zod.coerce.date().nullable(),
+  "void_reason": zod.string().nullable(),
+  "items": zod.array(zod.object({
+  "id": zod.uuid(),
+  "product_id": zod.uuid(),
+  "name": zod.string(),
+  "category": zod.string(),
+  "unit_price_baht": zod.int().min(1).max(createStaffProductSaleResponseItemsItemUnitPriceBahtMax),
+  "quantity": zod.int().min(1).max(createStaffProductSaleResponseItemsItemQuantityMax),
+  "line_total_baht": zod.int().min(1).max(createStaffProductSaleResponseItemsItemLineTotalBahtMax),
+  "stock_unit": zod.string().nullable(),
+  "stock_tracked": zod.boolean(),
+  "stock_deducted_quantity": zod.int().min(createStaffProductSaleResponseItemsItemStockDeductedQuantityMin).max(createStaffProductSaleResponseItemsItemStockDeductedQuantityMax),
+  "stock_shortage_quantity": zod.int().min(createStaffProductSaleResponseItemsItemStockShortageQuantityMin).max(createStaffProductSaleResponseItemsItemStockShortageQuantityMax),
+  "stock_reversed_quantity": zod.int().min(createStaffProductSaleResponseItemsItemStockReversedQuantityMin).max(createStaffProductSaleResponseItemsItemStockReversedQuantityMax)
+})).max(createStaffProductSaleResponseItemsMax)
+})
+
+
+export const GetStaffProductSaleSlipParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const GetStaffProductSaleSlipResponse = zod.unknown()
+
+
+export const VoidStaffProductSaleParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const voidStaffProductSaleBodyReasonMin = 3;
+export const voidStaffProductSaleBodyReasonMax = 200;
+
+
+
+export const VoidStaffProductSaleBody = zod.object({
+  "reason": zod.string().min(voidStaffProductSaleBodyReasonMin).max(voidStaffProductSaleBodyReasonMax)
+})
+
+export const voidStaffProductSaleResponseAmountBahtMax = 100000000;
+
+export const voidStaffProductSaleResponseItemsItemUnitPriceBahtMax = 100000000;
+
+export const voidStaffProductSaleResponseItemsItemQuantityMax = 999;
+
+export const voidStaffProductSaleResponseItemsItemLineTotalBahtMax = 100000000;
+
+export const voidStaffProductSaleResponseItemsItemStockDeductedQuantityMin = 0;
+export const voidStaffProductSaleResponseItemsItemStockDeductedQuantityMax = 999;
+
+export const voidStaffProductSaleResponseItemsItemStockShortageQuantityMin = 0;
+export const voidStaffProductSaleResponseItemsItemStockShortageQuantityMax = 999;
+
+export const voidStaffProductSaleResponseItemsItemStockReversedQuantityMin = 0;
+export const voidStaffProductSaleResponseItemsItemStockReversedQuantityMax = 999;
+
+export const voidStaffProductSaleResponseItemsMax = 30;
+
+
+
+export const VoidStaffProductSaleResponse = zod.object({
+  "id": zod.uuid(),
+  "request_id": zod.uuid(),
+  "payment_method": zod.enum(['cash', 'transfer', 'other']),
+  "amount_baht": zod.int().min(1).max(voidStaffProductSaleResponseAmountBahtMax),
+  "status": zod.enum(['completed', 'voided']),
+  "created_at": zod.coerce.date(),
+  "recorded_by": zod.enum(['staff', 'owner']),
+  "has_slip": zod.boolean(),
+  "voided_at": zod.coerce.date().nullable(),
+  "void_reason": zod.string().nullable(),
+  "items": zod.array(zod.object({
+  "id": zod.uuid(),
+  "product_id": zod.uuid(),
+  "name": zod.string(),
+  "category": zod.string(),
+  "unit_price_baht": zod.int().min(1).max(voidStaffProductSaleResponseItemsItemUnitPriceBahtMax),
+  "quantity": zod.int().min(1).max(voidStaffProductSaleResponseItemsItemQuantityMax),
+  "line_total_baht": zod.int().min(1).max(voidStaffProductSaleResponseItemsItemLineTotalBahtMax),
+  "stock_unit": zod.string().nullable(),
+  "stock_tracked": zod.boolean(),
+  "stock_deducted_quantity": zod.int().min(voidStaffProductSaleResponseItemsItemStockDeductedQuantityMin).max(voidStaffProductSaleResponseItemsItemStockDeductedQuantityMax),
+  "stock_shortage_quantity": zod.int().min(voidStaffProductSaleResponseItemsItemStockShortageQuantityMin).max(voidStaffProductSaleResponseItemsItemStockShortageQuantityMax),
+  "stock_reversed_quantity": zod.int().min(voidStaffProductSaleResponseItemsItemStockReversedQuantityMin).max(voidStaffProductSaleResponseItemsItemStockReversedQuantityMax)
+})).max(voidStaffProductSaleResponseItemsMax)
+})
+
+
 export const requestLoyaltyUploadUrlBodySizeMax = 8388608;
 
 
@@ -2150,7 +2388,7 @@ export const ListOwnerProductStockHistoryResponseItem = zod.object({
   "new_quantity": zod.int().min(listOwnerProductStockHistoryResponseNewQuantityMin).max(listOwnerProductStockHistoryResponseNewQuantityMax),
   "stock_unit": zod.string().min(1).max(listOwnerProductStockHistoryResponseStockUnitMax),
   "reason": zod.string().min(1).max(listOwnerProductStockHistoryResponseReasonMax),
-  "source": zod.enum(['manual', 'import']),
+  "source": zod.enum(['manual', 'import', 'sale', 'sale_void']),
   "created_at": zod.string()
 })
 export const ListOwnerProductStockHistoryResponse = zod.array(ListOwnerProductStockHistoryResponseItem)
@@ -2194,6 +2432,84 @@ export const ImportOwnerProductsResponse = zod.object({
   "created_count": zod.int().min(importOwnerProductsResponseCreatedCountMin),
   "skipped_count": zod.int().min(importOwnerProductsResponseSkippedCountMin)
 })
+
+
+export const listOwnerProductSalesQueryDateRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+
+
+export const ListOwnerProductSalesQueryParams = zod.object({
+  "date": zod.coerce.string().regex(listOwnerProductSalesQueryDateRegExp).optional()
+})
+
+export const listOwnerProductSalesResponseBusinessDateRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const listOwnerProductSalesResponseTotalAmountBahtMin = 0;
+
+export const listOwnerProductSalesResponseCompletedCountMin = 0;
+
+export const listOwnerProductSalesResponseVoidedCountMin = 0;
+
+export const listOwnerProductSalesResponseSalesItemAmountBahtMax = 100000000;
+
+export const listOwnerProductSalesResponseSalesItemItemsItemUnitPriceBahtMax = 100000000;
+
+export const listOwnerProductSalesResponseSalesItemItemsItemQuantityMax = 999;
+
+export const listOwnerProductSalesResponseSalesItemItemsItemLineTotalBahtMax = 100000000;
+
+export const listOwnerProductSalesResponseSalesItemItemsItemStockDeductedQuantityMin = 0;
+export const listOwnerProductSalesResponseSalesItemItemsItemStockDeductedQuantityMax = 999;
+
+export const listOwnerProductSalesResponseSalesItemItemsItemStockShortageQuantityMin = 0;
+export const listOwnerProductSalesResponseSalesItemItemsItemStockShortageQuantityMax = 999;
+
+export const listOwnerProductSalesResponseSalesItemItemsItemStockReversedQuantityMin = 0;
+export const listOwnerProductSalesResponseSalesItemItemsItemStockReversedQuantityMax = 999;
+
+export const listOwnerProductSalesResponseSalesItemItemsMax = 30;
+
+export const listOwnerProductSalesResponseSalesMax = 100;
+
+
+
+export const ListOwnerProductSalesResponse = zod.object({
+  "business_date": zod.string().regex(listOwnerProductSalesResponseBusinessDateRegExp),
+  "total_amount_baht": zod.int().min(listOwnerProductSalesResponseTotalAmountBahtMin),
+  "completed_count": zod.int().min(listOwnerProductSalesResponseCompletedCountMin),
+  "voided_count": zod.int().min(listOwnerProductSalesResponseVoidedCountMin),
+  "sales": zod.array(zod.object({
+  "id": zod.uuid(),
+  "request_id": zod.uuid(),
+  "payment_method": zod.enum(['cash', 'transfer', 'other']),
+  "amount_baht": zod.int().min(1).max(listOwnerProductSalesResponseSalesItemAmountBahtMax),
+  "status": zod.enum(['completed', 'voided']),
+  "created_at": zod.coerce.date(),
+  "recorded_by": zod.enum(['staff', 'owner']),
+  "has_slip": zod.boolean(),
+  "voided_at": zod.coerce.date().nullable(),
+  "void_reason": zod.string().nullable(),
+  "items": zod.array(zod.object({
+  "id": zod.uuid(),
+  "product_id": zod.uuid(),
+  "name": zod.string(),
+  "category": zod.string(),
+  "unit_price_baht": zod.int().min(1).max(listOwnerProductSalesResponseSalesItemItemsItemUnitPriceBahtMax),
+  "quantity": zod.int().min(1).max(listOwnerProductSalesResponseSalesItemItemsItemQuantityMax),
+  "line_total_baht": zod.int().min(1).max(listOwnerProductSalesResponseSalesItemItemsItemLineTotalBahtMax),
+  "stock_unit": zod.string().nullable(),
+  "stock_tracked": zod.boolean(),
+  "stock_deducted_quantity": zod.int().min(listOwnerProductSalesResponseSalesItemItemsItemStockDeductedQuantityMin).max(listOwnerProductSalesResponseSalesItemItemsItemStockDeductedQuantityMax),
+  "stock_shortage_quantity": zod.int().min(listOwnerProductSalesResponseSalesItemItemsItemStockShortageQuantityMin).max(listOwnerProductSalesResponseSalesItemItemsItemStockShortageQuantityMax),
+  "stock_reversed_quantity": zod.int().min(listOwnerProductSalesResponseSalesItemItemsItemStockReversedQuantityMin).max(listOwnerProductSalesResponseSalesItemItemsItemStockReversedQuantityMax)
+})).max(listOwnerProductSalesResponseSalesItemItemsMax)
+})).max(listOwnerProductSalesResponseSalesMax)
+})
+
+
+export const GetOwnerProductSaleSlipParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const GetOwnerProductSaleSlipResponse = zod.unknown()
 
 
 export const listOwnerPendingResponseMemberNicknameMin = 2;

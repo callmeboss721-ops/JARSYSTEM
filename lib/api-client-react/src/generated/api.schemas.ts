@@ -487,6 +487,8 @@ export type OwnerProductStockEventSource = typeof OwnerProductStockEventSource[k
 export const OwnerProductStockEventSource = {
   manual: 'manual',
   import: 'import',
+  sale: 'sale',
+  sale_void: 'sale_void',
 } as const;
 
 export interface OwnerProductStockEvent {
@@ -514,6 +516,178 @@ export interface OwnerProductStockEvent {
   reason: string;
   source: OwnerProductStockEventSource;
   created_at: string;
+}
+
+export interface QuickSaleProduct {
+  id: string;
+  /**
+     * @minLength 1
+     * @maxLength 120
+     */
+  name: string;
+  /**
+     * @minLength 1
+     * @maxLength 80
+     */
+  category: string;
+  /**
+     * @minimum 1
+     * @maximum 100000000
+     */
+  price_baht: number;
+  /**
+     * @minimum 0
+     * @maximum 1000000
+     * @nullable
+     */
+  stock_quantity: number | null;
+  /**
+     * @minLength 1
+     * @maxLength 24
+     * @nullable
+     */
+  stock_unit: string | null;
+  has_image: boolean;
+}
+
+export type QuickSaleInputPaymentMethod = typeof QuickSaleInputPaymentMethod[keyof typeof QuickSaleInputPaymentMethod];
+
+
+export const QuickSaleInputPaymentMethod = {
+  cash: 'cash',
+  transfer: 'transfer',
+  other: 'other',
+} as const;
+
+export interface QuickSaleItemInput {
+  product_id: string;
+  /**
+     * @minimum 1
+     * @maximum 999
+     */
+  quantity: number;
+}
+
+export interface QuickSaleInput {
+  request_id: string;
+  payment_method: QuickSaleInputPaymentMethod;
+  /**
+     * @minItems 1
+     * @maxItems 30
+     */
+  items: QuickSaleItemInput[];
+  /**
+     * @nullable
+     * @pattern ^/objects/uploads/[0-9a-fA-F-]{36}$
+     */
+  slip_path: string | null;
+}
+
+export interface QuickSaleItem {
+  id: string;
+  product_id: string;
+  name: string;
+  category: string;
+  /**
+     * @minimum 1
+     * @maximum 100000000
+     */
+  unit_price_baht: number;
+  /**
+     * @minimum 1
+     * @maximum 999
+     */
+  quantity: number;
+  /**
+     * @minimum 1
+     * @maximum 100000000
+     */
+  line_total_baht: number;
+  /** @nullable */
+  stock_unit: string | null;
+  stock_tracked: boolean;
+  /**
+     * @minimum 0
+     * @maximum 999
+     */
+  stock_deducted_quantity: number;
+  /**
+     * @minimum 0
+     * @maximum 999
+     */
+  stock_shortage_quantity: number;
+  /**
+     * @minimum 0
+     * @maximum 999
+     */
+  stock_reversed_quantity: number;
+}
+
+export type QuickSalePaymentMethod = typeof QuickSalePaymentMethod[keyof typeof QuickSalePaymentMethod];
+
+
+export const QuickSalePaymentMethod = {
+  cash: 'cash',
+  transfer: 'transfer',
+  other: 'other',
+} as const;
+
+export type QuickSaleStatus = typeof QuickSaleStatus[keyof typeof QuickSaleStatus];
+
+
+export const QuickSaleStatus = {
+  completed: 'completed',
+  voided: 'voided',
+} as const;
+
+export type QuickSaleRecordedBy = typeof QuickSaleRecordedBy[keyof typeof QuickSaleRecordedBy];
+
+
+export const QuickSaleRecordedBy = {
+  staff: 'staff',
+  owner: 'owner',
+} as const;
+
+export interface QuickSale {
+  id: string;
+  request_id: string;
+  payment_method: QuickSalePaymentMethod;
+  /**
+     * @minimum 1
+     * @maximum 100000000
+     */
+  amount_baht: number;
+  status: QuickSaleStatus;
+  created_at: string;
+  recorded_by: QuickSaleRecordedBy;
+  has_slip: boolean;
+  /** @nullable */
+  voided_at: string | null;
+  /** @nullable */
+  void_reason: string | null;
+  /** @maxItems 30 */
+  items: QuickSaleItem[];
+}
+
+export interface QuickSaleList {
+  /** @pattern ^\d{4}-\d{2}-\d{2}$ */
+  business_date: string;
+  /** @minimum 0 */
+  total_amount_baht: number;
+  /** @minimum 0 */
+  completed_count: number;
+  /** @minimum 0 */
+  voided_count: number;
+  /** @maxItems 100 */
+  sales: QuickSale[];
+}
+
+export interface QuickSaleVoidInput {
+  /**
+     * @minLength 3
+     * @maxLength 200
+     */
+  reason: string;
 }
 
 export interface ImportOwnerProductRow {
@@ -1004,6 +1178,13 @@ export type ListStaffSalesParams = {
 code: string;
 };
 
+export type ListStaffProductSalesParams = {
+/**
+ * @pattern ^\d{4}-\d{2}-\d{2}$
+ */
+date?: string;
+};
+
 export type ListOwnerMemberHistoryParams = {
 /**
  * @minLength 1
@@ -1025,5 +1206,12 @@ export type ListOwnerMembersParams = {
  * @maxLength 64
  */
 q?: string;
+};
+
+export type ListOwnerProductSalesParams = {
+/**
+ * @pattern ^\d{4}-\d{2}-\d{2}$
+ */
+date?: string;
 };
 

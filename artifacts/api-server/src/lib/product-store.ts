@@ -33,7 +33,7 @@ export type OwnerProductStockEvent = {
   new_quantity: number;
   stock_unit: string;
   reason: string;
-  source: "manual" | "import";
+  source: "manual" | "import" | "sale" | "sale_void";
   created_at: string;
 };
 

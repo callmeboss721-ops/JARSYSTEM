@@ -21,4 +21,5 @@ export * from "./loyalty";
 export * from "./cannabis";
 export * from "./banking";
 export * from "./products";
+export * from "./product-sales";
 export * from "./ai-notes";

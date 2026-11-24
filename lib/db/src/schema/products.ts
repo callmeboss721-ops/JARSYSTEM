@@ -40,7 +40,7 @@ export const jaguarProductStockEvents = pgTable("jaguar_product_stock_events", {
   check("jaguar_product_stock_event_new_range", sql`${t.newQuantity} between 0 and 1000000`),
   check("jaguar_product_stock_event_unit_length", sql`char_length(btrim(${t.stockUnit})) between 1 and 24`),
   check("jaguar_product_stock_event_reason_length", sql`char_length(btrim(${t.reason})) between 1 and 160`),
-  check("jaguar_product_stock_event_source", sql`${t.source} in ('manual','import')`),
+  check("jaguar_product_stock_event_source_v2", sql`${t.source} in ('manual','import','sale','sale_void')`),
   index("jaguar_product_stock_event_product_created").on(t.productId, t.createdAt),
 ]);
 

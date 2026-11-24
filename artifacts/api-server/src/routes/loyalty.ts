@@ -29,6 +29,11 @@ import {
   ImportOwnerProductsBody, ImportOwnerProductsResponse,
   UpdateStaffSaleSlipParams, UpdateStaffSaleSlipBody, UpdateStaffSaleSlipResponse,
   ListOwnerMemberHistoryQueryParams, ListOwnerMemberHistoryResponse,
+  ListStaffSaleProductsResponse, GetStaffSaleProductImageParams,
+  ListStaffProductSalesQueryParams, ListStaffProductSalesResponse,
+  CreateStaffProductSaleBody, CreateStaffProductSaleResponse,
+  GetStaffProductSaleSlipParams, VoidStaffProductSaleParams, VoidStaffProductSaleBody, VoidStaffProductSaleResponse,
+  ListOwnerProductSalesQueryParams, ListOwnerProductSalesResponse, GetOwnerProductSaleSlipParams,
 } from "@workspace/api-zod";
 import {
   loyaltyStore, listStaffRewards, createReward, setRewardActive, listStaffMembers,
@@ -46,6 +51,9 @@ import {
   listOwnerProducts, createOwnerProduct, updateOwnerProduct, getOwnerProductImagePath,
   updateOwnerProductStock, listOwnerProductStockHistory, importOwnerProducts,
 } from "../lib/product-store";
+import {
+  listStaffSaleProducts, listQuickSales, createQuickSale, voidQuickSale, getProductSaleSlipPath,
+} from "../lib/product-sales-store";
 import {
   assertPrivateImage, createPrivateUploadUrl, streamPrivateImage,
   MAX_PRODUCT_IMAGE_BYTES, MAX_SALE_SLIP_BYTES,
@@ -275,6 +283,47 @@ router.post("/staff/pin", async (req, res) => {
   clearSession(res, "staff");
   res.json({ ok: true });
 });
+router.get("/staff/products", async (req, res) => {
+  await authLimit(req, "staff-sale-products-read", 120);
+  sendJson(res, ListStaffSaleProductsResponse, await listStaffSaleProducts());
+});
+router.get("/staff/products/:id/image", async (req, res) => {
+  await authLimit(req, "staff-sale-product-image-read", 120);
+  const { id } = parse(GetStaffSaleProductImageParams, req.params);
+  await streamPrivateImage(await getOwnerProductImagePath(id), res);
+});
+router.get("/staff/product-sales", async (req, res) => {
+  await authLimit(req, "staff-product-sales-read", 120);
+  const { date } = parse(ListStaffProductSalesQueryParams, req.query);
+  sendJson(res, ListStaffProductSalesResponse, await listQuickSales(date));
+});
+router.post("/staff/product-sales", async (req, res) => {
+  await authLimit(req, "staff-product-sale-create", 60);
+  const data = parse(CreateStaffProductSaleBody, req.body);
+  if (data.slip_path) await assertPrivateImage(data.slip_path, MAX_SALE_SLIP_BYTES);
+  const sale = await createQuickSale(data);
+  req.log.info(
+    { operation: "product_sale_saved", saleId: sale.id, requestId: sale.request_id, itemCount: sale.items.length },
+    "Product sale saved",
+  );
+  sendJson(res, CreateStaffProductSaleResponse, sale);
+});
+router.get("/staff/product-sales/:id/slip", async (req, res) => {
+  await authLimit(req, "staff-product-sale-slip-read", 60);
+  const { id } = parse(GetStaffProductSaleSlipParams, req.params);
+  await streamPrivateImage(await getProductSaleSlipPath(id), res);
+});
+router.post("/staff/product-sales/:id/void", async (req, res) => {
+  await authLimit(req, "staff-product-sale-void", 30);
+  const { id } = parse(VoidStaffProductSaleParams, req.params);
+  const { reason } = parse(VoidStaffProductSaleBody, req.body);
+  const sale = await voidQuickSale(id, reason);
+  req.log.info(
+    { operation: "product_sale_void_requested", saleId: sale.id, status: sale.status },
+    "Product sale void processed",
+  );
+  sendJson(res, VoidStaffProductSaleResponse, sale);
+});
 router.get("/staff/member", async (req, res) => {
   const data = parse(FindMemberQueryParams, req.query);
   if (Boolean(data.code) === Boolean(data.qr_token)) throw new LoyaltyError(400, "ระบุรหัสสมาชิกหรือ QR อย่างใดอย่างหนึ่ง");
@@ -428,6 +477,16 @@ router.get("/owner/sales/:id/slip", async (req, res) => {
   await authLimit(req, "owner-sale-slip-read", 60);
   const { id } = parse(CorrectStaffSaleParams, req.params);
   await streamPrivateImage(await getStaffSaleSlipPath(id), res);
+});
+router.get("/owner/product-sales", async (req, res) => {
+  await authLimit(req, "owner-product-sales-read", 120);
+  const { date } = parse(ListOwnerProductSalesQueryParams, req.query);
+  sendJson(res, ListOwnerProductSalesResponse, await listQuickSales(date));
+});
+router.get("/owner/product-sales/:id/slip", async (req, res) => {
+  await authLimit(req, "owner-product-sale-slip-read", 60);
+  const { id } = parse(GetOwnerProductSaleSlipParams, req.params);
+  await streamPrivateImage(await getProductSaleSlipPath(id), res);
 });
 router.get("/owner/security", async (_req, res) => res.json({
   staff_default_pin: await usesDefaultPin("staff"),
