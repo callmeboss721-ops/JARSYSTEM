@@ -78,22 +78,8 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
           <section className="jh-hero" aria-labelledby="landing-title">
             <div className="jh-hero__copy">
               <p className="jh-kicker">ร้านประจำย่าน · สมุทรปราการ</p>
-              <h1 id="landing-title">JAGUAR SPK<br /><span>ร้านใกล้บ้านของคุณ</span></h1>
-              <p className="jh-hero__intro">แวะเลือกสินค้าที่ร้าน หรือเริ่มใช้บัตรสมาชิกดิจิทัลสะสมแต้มได้ง่าย ๆ บนมือถือ</p>
-              <dl className="jh-hero__facts" aria-label="ข้อมูลร้านที่ยืนยัน">
-                <div>
-                  <dt>เวลาเปิดบริการ</dt>
-                  <dd>เปิด 24 ชั่วโมง</dd>
-                </div>
-                <div>
-                  <dt>สิทธิสมาชิก</dt>
-                  <dd>10 แต้ม ฟรี 1 รายการ</dd>
-                </div>
-                <div>
-                  <dt>โทรสอบถาม</dt>
-                  <dd><a href="tel:0996125914">0996125914</a></dd>
-                </div>
-              </dl>
+              <h1 id="landing-title" className="sr-only">JAGUAR SPK</h1>
+              <p className="jh-hero__intro">แวะเลือกสินค้าที่ร้าน หรือเริ่มใช้บัตรสมาชิกได้ง่าย ๆ บนมือถือ</p>
               <div className="jh-hero__actions">
                 <BrandArtworkButton href="/login?mode=register" src="/ui/artwork/signup-card.webp" label="สมัครบัตรสมาชิก" testId="link-open-wallet" />
                 <BrandArtworkButton href="/login" src="/ui/artwork/sign-in.webp" label="เข้าสู่ระบบสมาชิก" testId="link-member-login" />
