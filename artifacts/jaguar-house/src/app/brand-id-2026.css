@@ -377,3 +377,145 @@ html[data-brand-theme="2026"] .brand-page-mascot {
     transition: none;
   }
 }
+
+/* Brand ID 2026 — Storefront chiaroscuro surfaces, club differentiation & paint efficiency */
+html[data-brand-theme="2026"] {
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+}
+
+html[data-brand-theme="2026"] .jh-header {
+  border-bottom-color: hsl(var(--brand-id-2026-border) / .85);
+  background: linear-gradient(
+    180deg,
+    hsl(var(--brand-id-2026-background) / .94),
+    hsl(var(--brand-id-2026-background) / .84)
+  );
+  box-shadow: 0 12px 32px -24px hsl(var(--brand-id-2026-background));
+}
+
+html[data-brand-theme="2026"] .jh-hero__visual {
+  border-color: hsl(var(--brand-id-2026-gold) / .32);
+  background:
+    radial-gradient(ellipse at 50% 24%, hsl(var(--brand-id-2026-gold) / .1), transparent 56%),
+    radial-gradient(ellipse at 50% 82%, hsl(var(--brand-id-2026-jaguar-green) / .18), transparent 58%),
+    linear-gradient(155deg, hsl(var(--brand-id-2026-surface)), hsl(var(--brand-id-2026-background)));
+  box-shadow:
+    inset 0 1px 0 hsl(var(--brand-id-2026-text) / .08),
+    0 28px 64px -38px hsl(var(--brand-id-2026-background));
+}
+
+html[data-brand-theme="2026"] .jh-clubs {
+  border-color: hsl(var(--brand-id-2026-border) / .9);
+  background: linear-gradient(
+    135deg,
+    hsl(var(--brand-id-2026-surface) / .92),
+    hsl(var(--brand-id-2026-background) / .94)
+  );
+  box-shadow: inset 0 1px 0 hsl(var(--brand-id-2026-text) / .05);
+}
+
+html[data-brand-theme="2026"] .jh-club[data-club="kratom"] {
+  border-color: hsl(var(--brand-id-2026-gold) / .26);
+  background: linear-gradient(
+    120deg,
+    hsl(var(--brand-id-2026-gold) / .09),
+    hsl(var(--brand-id-2026-surface) / .55) 68%
+  );
+}
+
+html[data-brand-theme="2026"] .jh-club[data-club="kratom"] > span:last-child {
+  color: hsl(var(--brand-id-2026-gold));
+}
+
+html[data-brand-theme="2026"] .jh-club[data-club="cannabis"] {
+  border-color: hsl(var(--brand-id-2026-jaguar-green) / .38);
+  background: linear-gradient(
+    120deg,
+    hsl(var(--brand-id-2026-jaguar-green) / .12),
+    hsl(var(--brand-id-2026-surface) / .55) 68%
+  );
+}
+
+html[data-brand-theme="2026"] .jh-club[data-club="cannabis"] > span:last-child {
+  color: hsl(var(--brand-id-2026-neon));
+}
+
+html[data-brand-theme="2026"] .jh-section,
+html[data-brand-theme="2026"] .jh-about,
+html[data-brand-theme="2026"] .jh-contact {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 420px;
+}
+
+html[data-brand-theme="2026"] .jh-product {
+  border-color: hsl(var(--brand-id-2026-border) / .88);
+  background: linear-gradient(
+    160deg,
+    hsl(var(--brand-id-2026-surface) / .95),
+    hsl(var(--brand-id-2026-background) / .98)
+  );
+  transition: transform .22s cubic-bezier(.22, 1, .36, 1), border-color .22s ease;
+}
+
+html[data-brand-theme="2026"] .jh-product__image img {
+  transition: transform .32s cubic-bezier(.22, 1, .36, 1);
+}
+
+html[data-brand-theme="2026"] .jh-benefits article {
+  border-color: hsl(var(--brand-id-2026-border) / .85);
+  background: linear-gradient(
+    150deg,
+    hsl(var(--brand-id-2026-surface) / .76),
+    hsl(var(--brand-id-2026-background) / .72)
+  );
+  box-shadow: inset 0 1px 0 hsl(var(--brand-id-2026-text) / .04);
+  transition: transform .2s cubic-bezier(.22, 1, .36, 1), border-color .2s ease;
+}
+
+@media (hover: hover) {
+  html[data-brand-theme="2026"] .jh-club[data-club="kratom"]:hover {
+    border-color: hsl(var(--brand-id-2026-gold) / .62);
+    background: linear-gradient(
+      120deg,
+      hsl(var(--brand-id-2026-gold) / .15),
+      hsl(var(--brand-id-2026-surface) / .72) 72%
+    );
+  }
+
+  html[data-brand-theme="2026"] .jh-club[data-club="cannabis"]:hover {
+    border-color: hsl(var(--brand-id-2026-neon) / .56);
+    background: linear-gradient(
+      120deg,
+      hsl(var(--brand-id-2026-jaguar-green) / .2),
+      hsl(var(--brand-id-2026-surface) / .72) 72%
+    );
+  }
+
+  html[data-brand-theme="2026"] .jh-product:hover {
+    border-color: hsl(var(--brand-id-2026-gold) / .46);
+    transform: translateY(-3px);
+  }
+
+  html[data-brand-theme="2026"] .jh-product:hover .jh-product__image img {
+    transform: scale(1.03);
+  }
+
+  html[data-brand-theme="2026"] .jh-benefits article:hover {
+    border-color: hsl(var(--brand-id-2026-gold) / .42);
+    transform: translateY(-2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-brand-theme="2026"] {
+    scroll-behavior: auto;
+  }
+
+  html[data-brand-theme="2026"] .jh-product,
+  html[data-brand-theme="2026"] .jh-product__image img,
+  html[data-brand-theme="2026"] .jh-benefits article {
+    transition: none;
+    transform: none;
+  }
+}

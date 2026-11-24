@@ -58,7 +58,7 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
         <header className="jh-header">
           <div className="jh-header__inner">
             <Link href="/" className="jh-brand" aria-label="JAGUAR SPK หน้าแรก">
-              <Image src="/ui/jaguar-spk-emblem.png" alt="โลโก้ JAGUAR SPK" width={1254} height={1162} priority sizes="52px" />
+              <Image src="/brand/jaguar-spk-emblem-crisp.webp" alt="โลโก้ JAGUAR SPK" width={512} height={512} priority sizes="52px" />
               <span><strong>JAGUAR SPK</strong><small>97/56 ซอยบุญศิริ 6 · สมุทรปราการ</small></span>
             </Link>
             <nav className="jh-nav" aria-label="เมนูหลัก">
@@ -102,12 +102,12 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
           </section>
 
           <section className="jh-clubs" aria-label="บัตรสมาชิก Jaguar">
-            <Link href="/card" className="jh-club">
+            <Link href="/card" className="jh-club" data-club="kratom">
               <Image src="/brand/icon-card-kratom-2026.webp" alt="" width={32} height={32} sizes="32px" />
               <span><strong>บัตรสมาชิกกระท่อม</strong><small>เปิดดูบัตรของคุณ</small></span>
               <span aria-hidden="true">↗</span>
             </Link>
-            <Link href="/card/cannabis" className="jh-club">
+            <Link href="/card/cannabis" className="jh-club" data-club="cannabis">
               <Image src="/brand/icon-card-cannabis-2026.webp" alt="" width={32} height={32} sizes="32px" />
               <span><strong>บัตรสมาชิกกัญชา</strong><small>เปิดดูบัตรของคุณ</small></span>
               <span aria-hidden="true">↗</span>
@@ -191,7 +191,7 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
 
           <section className="jh-about" id="about" aria-labelledby="jh-about-title">
             <div className="jh-about__brand">
-              <Image src="/ui/jaguar-spk-emblem.png" alt="" width={1254} height={1162} loading="lazy" sizes="(max-width: 600px) 88px, 112px" />
+              <Image src="/brand/jaguar-spk-emblem-crisp.webp" alt="" width={512} height={512} loading="lazy" sizes="(max-width: 600px) 88px, 112px" />
             </div>
             <div>
               <p className="jh-kicker">ร้านชุมชน · สมุทรปราการ</p>

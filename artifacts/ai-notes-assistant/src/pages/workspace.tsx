@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
-import { useClerk, useUser } from "@clerk/react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
+import { useNoteSession, type NoteUser } from "@/lib/note-session";
 import type { AiNoteConversationSummary, AiNoteMessage, AiNoteMode } from "@workspace/api-client-react";
 import {
   ArrowDown,
@@ -68,8 +68,8 @@ function relativeDate(value: string) {
   return new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" }).format(date);
 }
 
-function displayName(user: ReturnType<typeof useUser>["user"]) {
-  return user?.firstName || user?.fullName || user?.primaryEmailAddress?.emailAddress?.split("@")[0] || "Your space";
+function displayName(user: NoteUser | null) {
+  return user?.name || "Your space";
 }
 
 function HistoryItem({
@@ -200,8 +200,8 @@ function HistoryContents({
 }
 
 export default function Workspace() {
-  const { user } = useUser();
-  const { signOut } = useClerk();
+  const { user, signOut } = useNoteSession();
+  const [, setLocation] = useLocation();
   const { theme, toggleTheme } = useTheme();
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -485,7 +485,7 @@ export default function Workspace() {
             <div className="user-menu">
               <span className="user-avatar" aria-hidden="true">{displayName(user).slice(0, 1).toUpperCase()}</span>
               <span className="user-name">{displayName(user)}</span>
-              <Button type="button" variant="ghost" size="sm" className="sign-out-button" onClick={() => void signOut({ redirectUrl: import.meta.env.BASE_URL.replace(/\/$/, "") || "/" })} data-testid="button-sign-out">Sign out</Button>
+              <Button type="button" variant="ghost" size="sm" className="sign-out-button" onClick={() => { void signOut().then(() => setLocation("/")); }} data-testid="button-sign-out">Sign out</Button>
             </div>
           </div>
         </header>
