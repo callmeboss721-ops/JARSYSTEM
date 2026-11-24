@@ -109,7 +109,7 @@ export default function CardPage() {
           <div role="status" className="gold-alert">
             <span className="flex items-center gap-3">
               <Image
-                src="/brand/member-status-free.webp"
+                src="/ui/artwork/free-badge.webp"
                 alt=""
                 aria-hidden="true"
                 width={64}

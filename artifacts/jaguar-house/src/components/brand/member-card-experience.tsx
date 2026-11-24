@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { MemberCardFaces as DesignSystemMemberCardFaces, MemberStatusPanel as DesignSystemMemberStatusPanel, type MemberClub } from "@workspace/jaguar-spk-design-system/components/ui/membership-cards";
 import { BrandArtworkButton, BrandButton } from "./brand-button";
 
@@ -61,7 +62,7 @@ export function MemberStatusPanel({
     action = (
       <BrandArtworkButton
         href="/redeem"
-        src="/ui/artwork/redeem-button.webp"
+        src="/ui/artwork/redeem-action.webp"
         label="แลกรางวัล"
         testId="member-redeem-cta"
       />
@@ -84,7 +85,20 @@ export function MemberStatusPanel({
       />
     );
   } else {
-    action = <BrandButton asset="btn-frame" label={`อีก ${remaining} แต้ม`} disabled testId="member-redeem-cta" />;
+    action = (
+      <div role="status" className="flex min-h-12 flex-wrap items-center justify-between gap-2 rounded-xl border border-[var(--line)] px-3 py-1">
+        <Image
+          src="/ui/artwork/collecting-status.webp"
+          alt=""
+          aria-hidden="true"
+          width={300}
+          height={110}
+          sizes="(max-width: 420px) 140px, 180px"
+          className="h-9 w-auto max-w-[48%] object-contain"
+        />
+        <span className="text-xs text-[var(--muted)]">อีก {remaining} แต้มเพื่อแลกรับฟรี</span>
+      </div>
+    );
   }
 
   return (

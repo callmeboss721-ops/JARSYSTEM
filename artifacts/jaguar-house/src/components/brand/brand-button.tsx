@@ -45,6 +45,7 @@ type BrandArtworkButtonProps = {
   href?: string;
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
+  onClick?: () => void;
   className?: string;
   testId?: string;
 };
@@ -55,6 +56,7 @@ export function BrandArtworkButton({
   href,
   type = "button",
   disabled,
+  onClick,
   className,
   testId,
 }: BrandArtworkButtonProps) {
@@ -84,6 +86,7 @@ export function BrandArtworkButton({
       variant="ghost"
       aria-label={label}
       disabled={disabled}
+      onClick={onClick}
       className={`brand-artwork-button ${className ?? ""}`}
       data-testid={testId}
     >

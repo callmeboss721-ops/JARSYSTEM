@@ -2,9 +2,11 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Volume2, VolumeX } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { JaguarMark } from "@/components/brand/jaguar-mark";
+import { BrandArtworkButton } from "@/components/brand/brand-button";
 import { BrandIcon, type BrandIconName } from "@/components/brand/brand-icon";
 import { EmptyState, ErrorState, LoadingSpinner, LoadingState } from "@/components/brand/ui";
 import { Skeleton } from "@workspace/jaguar-spk-design-system/components/ui/skeleton";
@@ -601,9 +603,13 @@ export default function StaffPage() {
             {scanning && <><video ref={video} className="staff-scan-video w-full rounded-xl aspect-video mt-3" aria-label="ภาพจากกล้องสำหรับสแกน QR" /><button type="button" className="btn btn-ghost w-full mt-2" onClick={() => { controls.current?.stop(); setScanning(false); }}>ปิดกล้อง</button></>}
             {scanError && <p role="alert" className="field-error">{scanError}</p>}
             {quickMatches.length > 0 && <div className="staff-quick-matches mt-3"><p className="text-sm font-semibold">พบสมาชิกหลายรายการ · เลือกบัญชีที่ตรงกัน</p><ul>{quickMatches.map((result) => <li key={result.id}><button type="button" onClick={() => chooseQuickMember(result)}><span><strong>{result.nickname || result.display_name || "สมาชิก"}</strong><small>{result.member_code}{result.phone_masked ? ` · ${result.phone_masked}` : ""}</small></span><span className="font-mono">{result.balance} แต้ม</span></button></li>)}</ul></div>}
+            {!hasCounterMember && !scanning && quickMatches.length === 0 && <div className="mt-3 flex items-center gap-3 rounded-xl border border-[var(--line)] bg-[var(--panel)] px-3 py-2 text-sm text-[var(--muted)]">
+              <Image src="/ui/artwork/staff-idle-mascot.webp" alt="" aria-hidden="true" width={64} height={72} sizes="64px" className="h-14 w-12 shrink-0 object-contain" />
+              <span>สแกน QR หรือค้นหาสมาชิกเพื่อเริ่มรายการ</span>
+            </div>}
           </section>
           {counterActionComplete && <section className="staff-success-card" role="status" aria-live="polite">
-            <BrandIcon name="success" size={24} tone="emerald" />
+            <Image src="/ui/artwork/staff-success-mascot.webp" alt="" aria-hidden="true" width={80} height={80} sizes="80px" className="h-16 w-16 object-contain" />
             <p>{msg || "รายการสำเร็จ"}</p>
             <button type="button" className="staff-next-scan btn btn-neon" onClick={scanNextMember}>สแกนคนถัดไปทันที</button>
           </section>}
@@ -631,9 +637,22 @@ export default function StaffPage() {
                 <p className="staff-member-balance font-display">{member.balance}<span>แต้มคงเหลือ</span></p>
               </div>
               {redeemId === null
-                ? <button type="button" className="btn btn-gold w-full mt-3 flex items-center justify-center gap-2" disabled={busy || member.balance < STAMPS} onClick={() => { setRedeemId(crypto.randomUUID()); setCounterActionComplete(false); setMsg(""); }}>
-                    <BrandIcon name="crown" size={18} tone="inherit" />{member.balance >= STAMPS ? "แลกสิทธิ์ฟรี · ใช้ 10 แต้ม" : `แลกฟรีเมื่อครบ 10 แต้ม · อีก ${STAMPS - member.balance} แต้ม`}
-                  </button>
+                ? member.balance >= STAMPS
+                  ? <div className="mt-3 flex items-center gap-2">
+                      <Image src="/ui/artwork/reward-badge.webp" alt="" aria-hidden="true" width={56} height={56} sizes="56px" className="h-12 w-12 shrink-0 object-contain" />
+                      <BrandArtworkButton
+                        src="/ui/artwork/redeem-action.webp"
+                        label="แลกรางวัล ใช้ 10 แต้ม"
+                        onClick={() => { setRedeemId(crypto.randomUUID()); setCounterActionComplete(false); setMsg(""); }}
+                        disabled={busy}
+                        className="!h-14 !w-auto !max-w-none min-w-0 flex-1"
+                        testId="staff-redeem-cta"
+                      />
+                    </div>
+                  : <div role="status" className="mt-3 flex min-h-12 flex-wrap items-center justify-between gap-2 rounded-xl border border-[var(--line)] px-3 py-2">
+                      <Image src="/ui/artwork/collecting-status.webp" alt="" aria-hidden="true" width={300} height={110} sizes="(max-width: 420px) 140px, 180px" className="h-9 w-auto max-w-[48%] object-contain" />
+                      <span className="text-sm text-[var(--muted)]">อีก {STAMPS - member.balance} แต้มจึงแลกรางวัลได้</span>
+                    </div>
                 : <div role="group" aria-labelledby="redeem-q" className="gold-alert mt-3 space-y-3">
                   <p id="redeem-q">ยืนยันแลกรางวัลให้ {member.member_code}? ระบบจะหัก 10 แต้ม</p>
                   <div className="grid grid-cols-2 gap-2"><button type="button" className="btn btn-ghost" disabled={busy} onClick={() => setRedeemId(null)}>ยกเลิก</button><button type="button" className="btn btn-gold" disabled={busy || member.balance < STAMPS} onClick={() => void redeem()} autoFocus>{busy ? "กำลังบันทึก…" : "ยืนยันแลก"}</button></div>
@@ -779,7 +798,22 @@ export default function StaffPage() {
                 <div className="flex items-start justify-between gap-3"><div className="min-w-0"><p className="text-sm font-semibold break-words">{cannabisCard.display_name || "สมาชิก"}</p><p className="font-mono text-sm text-[var(--gold-2)]">{cannabisCard.member_code}</p></div><div className="text-right"><strong className="font-display text-3xl text-[var(--emerald-2)]">{cannabisCard.balance}</strong><p className="text-xs text-[var(--muted)]">แต้มแยกจากบัตรกระท่อม</p></div></div>
                 <div className="flex justify-between text-xs mt-4 text-[var(--muted)]"><span>ซื้อสะสม {cannabisCard.lifetime_earned} กรัม</span><span>ใช้แลก {cannabisCard.lifetime_redeemed} แต้ม</span></div>
                 {cannabisRedeemId === null
-                  ? <button type="button" className="btn btn-gold w-full mt-4 flex items-center justify-center gap-2" disabled={cannabisCard.balance < 10 || redeemCannabis.isPending || addCannabisStamps.isPending} onClick={() => { setCannabisRedeemId(crypto.randomUUID()); setCounterActionComplete(false); setErr(""); setMsg(""); }}><BrandIcon name="crown" size={18} tone="inherit" />{cannabisCard.balance >= 10 ? "แลกสิทธิ์ฟรี · ใช้ 10 แต้ม" : `แลกฟรีเมื่อครบ 10 แต้ม · อีก ${10 - cannabisCard.balance} แต้ม`}</button>
+                  ? cannabisCard.balance >= 10
+                    ? <div className="mt-4 flex items-center gap-2">
+                        <Image src="/ui/artwork/reward-badge.webp" alt="" aria-hidden="true" width={56} height={56} sizes="56px" className="h-12 w-12 shrink-0 object-contain" />
+                        <BrandArtworkButton
+                          src="/ui/artwork/redeem-action.webp"
+                          label="แลกรางวัล ใช้ 10 แต้ม"
+                          onClick={() => { setCannabisRedeemId(crypto.randomUUID()); setCounterActionComplete(false); setErr(""); setMsg(""); }}
+                          disabled={redeemCannabis.isPending || addCannabisStamps.isPending}
+                          className="!h-14 !w-auto !max-w-none min-w-0 flex-1"
+                          testId="staff-cannabis-redeem-cta"
+                        />
+                      </div>
+                    : <div role="status" className="mt-4 flex min-h-12 flex-wrap items-center justify-between gap-2 rounded-xl border border-[var(--line)] px-3 py-2">
+                        <Image src="/ui/artwork/collecting-status.webp" alt="" aria-hidden="true" width={300} height={110} sizes="(max-width: 420px) 140px, 180px" className="h-9 w-auto max-w-[48%] object-contain" />
+                        <span className="text-sm text-[var(--muted)]">อีก {10 - cannabisCard.balance} แต้มจึงแลกรางวัลได้</span>
+                      </div>
                   : <div role="group" aria-labelledby="cannabis-redeem-q" className="gold-alert mt-4 space-y-3"><p id="cannabis-redeem-q">ยืนยันแลกรางวัลให้ {cannabisCard.member_code}? ระบบจะหัก 10 แต้ม</p><div className="grid grid-cols-2 gap-2"><button type="button" className="btn btn-ghost" disabled={redeemCannabis.isPending} onClick={() => setCannabisRedeemId(null)}>ยกเลิก</button><button type="button" className="btn btn-gold" disabled={redeemCannabis.isPending || cannabisCard.balance < 10} onClick={() => void confirmCannabisRedeem()}>{redeemCannabis.isPending ? "กำลังบันทึก…" : "ยืนยันแลก"}</button></div></div>}
                 <form onSubmit={recordCannabis} className="space-y-3 mt-4" noValidate>
                     <fieldset className="staff-cannabis-presets"><legend>ยอดซื้อจริง · 100 กรัมต่อ 1 แต้ม</legend><div>{[{ points: 1, grams: 100 }, { points: 2, grams: 200 }, { points: 3, grams: 300 }, { points: 5, grams: 500 }].map(({ points, grams: amount }) => <button key={points} type="button" className="pt-btn" aria-label={`เพิ่ม ${points} แต้มจากการซื้อ ${amount} กรัม`} aria-pressed={grams === String(amount)} onClick={() => { setGrams(String(amount)); setGramsError(""); }}>+{points} แต้ม · {amount} กรัม</button>)}</div></fieldset>

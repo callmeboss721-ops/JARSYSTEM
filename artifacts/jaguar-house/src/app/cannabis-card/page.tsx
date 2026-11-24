@@ -88,7 +88,7 @@ export default function CannabisCardPage() {
         {celebrate && (
           <div role="status" className="cannabis-ready cannabis-ready--celebrate flex items-center gap-3">
             <Image
-              src="/brand/member-status-free.webp"
+              src="/ui/artwork/free-badge.webp"
               alt=""
               aria-hidden="true"
               width={64}
