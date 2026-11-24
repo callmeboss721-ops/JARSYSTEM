@@ -1,137 +1,190 @@
 /* ============================================================
-   JAGUAR SPK Delivery — Shared Premium Theme (app.css)
-   Built on design-system/tokens.css (Design System v3, owner approved)
+   JAGUAR SPK Delivery — Brand ID 2026 Theme (app.css)
+   Aligned with JAGUAR SPK Brand ID 2026 palette & accessibility
    Load AFTER each page's inline <style> so these rules win.
-   Reusable: link this file from any JAGUAR SPK delivery page.
    ============================================================ */
 @import url("../design-system/tokens.css");
 
-/* ---- remap legacy delivery vars to design tokens ---- */
 :root{
-  --bg:#050505;
-  --card:#0D140F;
-  --green:#00FF9D;
-  --green-dark:#00FF9D;
-  --text:#F9F6E7;
-  --text2:rgba(249,246,231,.70);
-  --line:rgba(249,246,231,.10);
-  --danger:#FF5A5A;
-  --warn:#FFC24B;
-  --gold:#D4AF37;
+  /* Brand ID 2026 tokens */
+  --bg:#08120A;
+  --card:#0D1F10;
+  --surface:#0D1F10;
+  --surface-2:#102514;
+  --surface-3:#15311B;
+  --border-2026:#1C3A22;
+  --green:#00A651;
+  --green-dark:#00A651;
+  --neon:#A6FF00;
+  --neon-soft:rgba(166,255,0,.11);
+  --neon-line:rgba(166,255,0,.38);
+  --gold:#FFC400;
+  --gold-2:#FFC400;
+  --gold-soft:rgba(255,196,0,.12);
+  --gold-line:rgba(255,196,0,.34);
+  --text:#FFFFFF;
+  --text2:#A7C4AD;
+  --text-2:#A7C4AD;
+  --text-3:rgba(167,196,173,.72);
+  --line:#1C3A22;
+  --danger:#FF6B6B;
+  --warn:#FFC400;
 }
 
 /* ---- base ---- */
 body{
   background:
-    radial-gradient(1100px 480px at 50% -12%, rgba(0,255,157,.07), transparent 60%),
-    radial-gradient(900px 420px at 100% 110%, rgba(212,175,55,.05), transparent 55%),
+    radial-gradient(960px 460px at 50% -14%, rgba(0,166,81,.16), transparent 62%),
+    radial-gradient(780px 380px at 96% 108%, rgba(255,196,0,.09), transparent 56%),
     var(--bg);
   color:var(--text);
+  font-family:"IBM Plex Sans Thai","Bai Jamjuree",system-ui,sans-serif;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+
+h1,h2,h3,header b{
+  font-family:"Bai Jamjuree","IBM Plex Sans Thai",system-ui,sans-serif;
+  letter-spacing:-0.01em;
+}
+
+:focus-visible{
+  outline:2px solid var(--neon);
+  outline-offset:2px;
 }
 
 /* ---- header ---- */
 header{
-  background:rgba(13,20,15,.92);
-  -webkit-backdrop-filter:blur(10px);
-  backdrop-filter:blur(10px);
-  border-bottom:1px solid var(--gold-line);
+  background:rgba(8,18,10,.92);
+  -webkit-backdrop-filter:blur(14px);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border-2026);
+  box-shadow:0 12px 32px -24px #000;
   color:var(--text);
 }
 header small{ color:var(--text-2); }
-header a{ color:var(--text-2); }
+header a{ color:var(--text-2); min-height:44px; display:inline-flex; align-items:center; }
+header a:hover{ color:var(--text); }
 
 /* ---- cards ---- */
 .card{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:var(--r-lg);
-  box-shadow:0 8px 24px rgba(0,0,0,.35);
+  background:linear-gradient(155deg, rgba(13,31,16,.96), rgba(8,18,10,.98));
+  border:1px solid var(--border-2026);
+  border-radius:18px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 18px 40px -28px rgba(0,0,0,.78);
 }
-.item{ background:var(--surface-2); border:1px solid var(--line); border-radius:var(--r-md); }
-.item .thumb{ color:#050505; font-weight:800; }
-.item:active{ transform:scale(.98); }
-.stat{ background:var(--surface-2); border:1px solid var(--line); border-radius:var(--r-md); }
-.stat b{ color:var(--gold-2); }
+.item{
+  background:linear-gradient(150deg, var(--surface-2), var(--surface));
+  border:1px solid var(--border-2026);
+  border-radius:14px;
+}
+.item:hover{ border-color:var(--gold-line); }
+.item .thumb{ color:var(--bg); font-weight:800; }
+.item:active{ transform:scale(.985); }
+.stat{
+  background:linear-gradient(150deg, var(--surface-2), var(--surface));
+  border:1px solid var(--border-2026);
+  border-radius:14px;
+}
+.stat b{ color:var(--gold); font-variant-numeric:tabular-nums; }
 .stat.gold b{ color:var(--neon); }
 
 /* ---- chips ---- */
-.chip{ background:var(--surface-2); border:1px solid var(--line); color:var(--text-2); }
-.chip.on{ background:var(--neon-soft); color:var(--neon); border-color:var(--neon-line); }
-
-/* ---- buttons (gold CTA per design system) ---- */
-.btn{
-  background:linear-gradient(135deg,#F4D47C,#E5C04A);
-  color:#050505;
-  border-radius:var(--r-md);
-  box-shadow:0 4px 18px rgba(212,175,55,.25);
+.chip{
+  min-height:40px;
+  display:inline-flex;
+  align-items:center;
+  background:var(--surface-2);
+  border:1px solid var(--border-2026);
+  color:var(--text-2);
+  border-radius:999px;
 }
+.chip:hover{ border-color:var(--gold-line); color:var(--text); }
+.chip.on{
+  background:var(--neon-soft);
+  color:var(--neon);
+  border-color:var(--neon-line);
+  font-weight:600;
+}
+
+/* ---- buttons (Brand ID 2026 Crown Gold CTA + 48px touch targets) ---- */
+.btn{
+  min-height:48px;
+  background:linear-gradient(180deg, #FFD23F, var(--gold));
+  color:var(--bg);
+  font-weight:700;
+  border-radius:14px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35), 0 10px 24px -14px rgba(255,196,0,.55);
+}
+.btn:hover:not(:disabled){ filter:brightness(1.06); }
 .btn:disabled{ background:var(--surface-3); color:var(--text-3); box-shadow:none; cursor:not-allowed; }
-.btn.sec{ background:transparent; color:var(--neon); border:1px solid var(--neon-line); box-shadow:none; }
-.btn.gray{ background:var(--surface-2); color:var(--text-2); border:1px solid var(--line); box-shadow:none; }
-.btn.warn{ background:var(--danger); color:#fff; box-shadow:none; }
-.qty button{ background:var(--surface-2); border:1px solid var(--line); color:var(--text); }
-.qty button:active{ background:var(--neon); color:#050505; }
+.btn.sec{ background:rgba(0,166,81,.12); color:var(--neon); border:1px solid var(--neon-line); box-shadow:none; }
+.btn.gray{ background:var(--surface-2); color:var(--text-2); border:1px solid var(--border-2026); box-shadow:none; }
+.btn.warn{ background:var(--danger); color:#FFFFFF; box-shadow:none; }
+.qty button{ min-width:36px; min-height:36px; background:var(--surface-2); border:1px solid var(--border-2026); color:var(--text); border-radius:10px; }
+.qty button:active{ background:var(--neon); color:var(--bg); }
 
 /* ---- forms ---- */
-input,textarea{ background:var(--surface-2); border:1px solid var(--line); color:var(--text); }
+input,textarea{
+  min-height:46px;
+  background:var(--bg);
+  border:1px solid var(--border-2026);
+  color:var(--text);
+  border-radius:12px;
+}
 input::placeholder,textarea::placeholder{ color:var(--text-3); }
-input:focus,textarea:focus{ outline:2px solid var(--neon); border-color:var(--neon); }
-.pay-opt{ background:var(--surface-2); border:1px solid var(--line); }
+input:focus,textarea:focus{ outline:none; border-color:var(--neon); box-shadow:0 0 0 3px rgba(166,255,0,.15); }
+.pay-opt{ background:var(--surface-2); border:1px solid var(--border-2026); border-radius:14px; }
 .pay-opt.on{ background:var(--neon-soft); border-color:var(--neon-line); }
 .err{ color:var(--danger); font-size:13px; margin-top:6px; display:none; }
 
 /* ---- bottom bar / sheet / toast ---- */
 #cart-bar{
-  background:rgba(13,20,15,.95);
-  -webkit-backdrop-filter:blur(10px);
-  backdrop-filter:blur(10px);
+  background:rgba(8,18,10,.96);
+  -webkit-backdrop-filter:blur(14px);
+  backdrop-filter:blur(14px);
   border-top:1px solid var(--gold-line);
 }
-#cart-bar .sum b{ color:var(--gold-2); }
-.sheet{ background:rgba(5,5,5,.70); }
-.sheet .inner{ background:var(--surface); border-top:1px solid var(--line); border-radius:var(--r-lg) var(--r-lg) 0 0; }
-#toast{ background:var(--surface-3); color:var(--text); border:1px solid var(--line); }
+#cart-bar .sum b{ color:var(--gold); font-variant-numeric:tabular-nums; }
+.sheet{ background:rgba(8,18,10,.78); }
+.sheet .inner{ background:var(--surface); border-top:1px solid var(--border-2026); border-radius:20px 20px 0 0; }
+#toast{ background:var(--surface-3); color:var(--text); border:1px solid var(--gold-line); border-radius:999px; }
 
 /* ---- text accents ---- */
 .muted{ color:var(--text-2); }
-.price{ color:var(--gold-2); }
-.code{ color:var(--gold-2); }
-#cust-bar a{ color:var(--neon); }
-.pin-ok{ color:var(--neon); }
-#rider-line{ color:var(--neon); }
-a.map{ color:var(--neon); }
-.sec-title{ color:var(--text-3); }
-.total-row.big{ border-top:1px solid var(--line); }
+.price,.code{ color:var(--gold); font-family:"JetBrains Mono",monospace; font-variant-numeric:tabular-nums; }
+#cust-bar a,.pin-ok,#rider-line,a.map{ color:var(--neon); }
+.sec-title{ color:var(--text-2); letter-spacing:.08em; text-transform:uppercase; }
+.total-row.big{ border-top:1px solid var(--border-2026); }
 
 /* ---- order steps / route ---- */
 .step{ color:var(--text-2); }
 .step.on{ color:var(--text); }
 .step.on .dot{ background:var(--neon); border-color:var(--neon); }
-#route-card{ background:var(--neon-soft); border:1px solid var(--neon-line); }
-.route-step b{ background:var(--neon); color:#050505; }
+#route-card{ background:var(--neon-soft); border:1px solid var(--neon-line); border-radius:16px; }
+.route-step b{ background:var(--neon); color:var(--bg); }
 .route-step .dist{ color:var(--neon); }
 
-/* ---- badges (dark translucent) ---- */
-.badge{ background:rgba(249,246,231,.08); color:var(--text-2); }
-.badge.new{ background:rgba(255,194,75,.15); color:var(--warn); }
-.badge.confirmed{ background:rgba(0,255,157,.12); color:var(--neon); }
-.badge.pickup{ background:rgba(118,87,255,.20); color:#B9A6FF; }
-.badge.delivering{ background:rgba(0,240,255,.12); color:#00F0FF; }
-.badge.done{ background:rgba(0,255,157,.18); color:var(--neon); }
-.badge.cancelled{ background:rgba(255,90,90,.15); color:var(--danger); }
+/* ---- badges (Brand ID 2026 semantic colors, no purple-on-dark) ---- */
+.badge{ background:rgba(255,255,255,.08); color:var(--text-2); border:1px solid transparent; }
+.badge.new{ background:rgba(255,196,0,.14); color:var(--gold); border-color:rgba(255,196,0,.32); }
+.badge.confirmed{ background:rgba(0,166,81,.18); color:var(--neon); border-color:rgba(166,255,0,.3); }
+.badge.pickup{ background:rgba(255,196,0,.2); color:#FFE074; border-color:rgba(255,196,0,.42); }
+.badge.delivering{ background:rgba(0,166,81,.26); color:#D8FF99; border-color:rgba(166,255,0,.45); }
+.badge.done{ background:rgba(166,255,0,.18); color:var(--neon); border-color:rgba(166,255,0,.42); }
+.badge.cancelled{ background:rgba(255,107,107,.16); color:var(--danger); border-color:rgba(255,107,107,.35); }
 
 /* ---- table ---- */
-table{ background:var(--card); }
-th{ background:var(--gold-soft); color:var(--gold-2); }
-td{ border-top:1px solid var(--line); }
+table{ background:var(--card); border-radius:14px; overflow:hidden; }
+th{ background:var(--gold-soft); color:var(--gold); }
+td{ border-top:1px solid var(--border-2026); }
 
 /* ---- misc ---- */
-#map{ border:1px solid var(--line); }
-.tl{ color:var(--text-2); }
-.loc-note{ color:var(--text-2); }
+#map{ border:1px solid var(--border-2026); border-radius:14px; }
+.tl,.loc-note{ color:var(--text-2); }
 
 /* ---- motion ---- */
-.btn,.chip,.item{ transition:transform .15s var(--ease), box-shadow .15s var(--ease), background .15s var(--ease); }
+.btn,.chip,.item{ transition:transform .16s ease, border-color .16s ease, filter .16s ease, background .16s ease; }
 @media (prefers-reduced-motion:reduce){
   .btn,.chip,.item{ transition:none; }
 }

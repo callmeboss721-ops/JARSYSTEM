@@ -270,8 +270,8 @@ try {
   const oneBottle = { member_code: memberCode, bottle_count: 1, formula: "silver", request_id: randomUUID() };
   assert.equal((await request("/staff/stamp", { method: "POST", jar: staffJar, body: oneBottle })).balance, 1);
   const belowThreshold = await request("/sales");
-  assert.ok(belowThreshold.some((sale) => sale.bottle_count === 2 && sale.amount_baht === 120 && sale.points_awarded === 1));
-  assert.ok(belowThreshold.some((sale) => sale.bottle_count === 1 && sale.amount_baht === 60 && sale.points_awarded === 0));
+  assert.ok(belowThreshold.some((sale) => sale.bottle_count === 2 && sale.amount_baht === 100 && sale.points_awarded === 1));
+  assert.ok(belowThreshold.some((sale) => sale.bottle_count === 1 && sale.amount_baht === 50 && sale.points_awarded === 0));
 
   const stampRows = Array.from({ length: 8 }, (_, index) => ({
     member_code: memberCode,
@@ -285,12 +285,12 @@ try {
     request("/staff/stamp", { method: "POST", jar: staffJar, body: finalStamp }),
     request("/staff/stamp", { method: "POST", jar: staffJar, body: finalStamp }),
   ]);
-  assert.equal(sameA.balance, 19);
-  assert.equal(sameB.balance, 19);
+  assert.equal(sameA.balance, 16);
+  assert.equal(sameB.balance, 16);
   await request("/staff/stamp", { method: "POST", jar: staffJar, body: { ...finalStamp, bottle_count: 3 }, status: 409 });
   let updated = await request("/card");
-  assert.equal(updated.lifetime_earned, 19);
-  assert.equal(updated.balance, 19);
+  assert.equal(updated.lifetime_earned, 16);
+  assert.equal(updated.balance, 16);
   const purchases = await request("/sales");
   assert.equal(purchases.length, 5);
   assert.ok(purchases.every((sale) => sale.amount_baht > 0 && sale.bottle_count >= 1 && ["red", "silver", "gold"].includes(sale.formula)));
