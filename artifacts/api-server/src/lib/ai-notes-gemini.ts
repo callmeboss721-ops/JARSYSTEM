@@ -9,14 +9,16 @@ export class GeminiApiError extends Error {
   constructor(
     message: string,
     readonly status?: number,
+    readonly retryAfter?: string,
   ) {
     super(message);
     this.name = "GeminiApiError";
   }
 }
 
-const GEMINI_STREAM_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse";
+const GEMINI_INTERACTIONS_URL =
+  "https://generativelanguage.googleapis.com/v1beta/interactions?alt=sse";
+const GEMINI_MODEL = "gemini-3.8-flash";
 
 const MODE_INSTRUCTIONS: Record<AiNoteMode, string> = {
   chat: "Answer the user's question clearly and helpfully.",
@@ -46,38 +48,27 @@ export async function openGeminiStream(input: {
     throw new GeminiApiError("Gemini is not configured");
   }
 
-  const contents = [
-    ...input.history.map((message) => ({
-      role: message.role === "assistant" ? "model" : "user",
-      parts: [{ text: message.content }],
-    })),
-    {
-      role: "user",
-      parts: [{ text: input.prompt }],
-    },
-  ];
+  const transcript = JSON.stringify([
+    ...input.history,
+    { role: "user", content: input.prompt },
+  ]);
 
   let response: Response;
   try {
-    response = await fetch(GEMINI_STREAM_URL, {
+    response = await fetch(GEMINI_INTERACTIONS_URL, {
       method: "POST",
       headers: {
         "content-type": "application/json",
         "x-goog-api-key": apiKey,
+        "Api-Revision": "2026-05-20",
       },
       body: JSON.stringify({
-        systemInstruction: {
-          parts: [
-            {
-              text: `${SYSTEM_INSTRUCTION} ${MODE_INSTRUCTIONS[input.mode]}`,
-            },
-          ],
-        },
-        contents,
-        generationConfig: {
-          maxOutputTokens: 2048,
-          temperature: 0.5,
-        },
+        model: GEMINI_MODEL,
+        system_instruction: `${SYSTEM_INSTRUCTION} ${MODE_INSTRUCTIONS[input.mode]}`,
+        input: `Conversation transcript (JSON):\n${transcript}`,
+        generation_config: { max_output_tokens: 2048 },
+        stream: true,
+        store: false,
       }),
       signal: input.signal,
     });
@@ -86,7 +77,14 @@ export async function openGeminiStream(input: {
   }
 
   if (!response.ok) {
-    throw new GeminiApiError("Gemini returned an unsuccessful response", response.status);
+    const upstreamRetryAfter = response.headers.get("retry-after")?.trim();
+    throw new GeminiApiError(
+      "Gemini returned an unsuccessful response",
+      response.status,
+      upstreamRetryAfter && /^\d{1,6}$/.test(upstreamRetryAfter)
+        ? upstreamRetryAfter
+        : undefined,
+    );
   }
   if (!response.body) {
     throw new GeminiApiError("Gemini did not return a response stream");
@@ -105,6 +103,7 @@ export async function* readGeminiTextDeltas(
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
+  let completed = false;
 
   try {
     while (true) {
@@ -117,6 +116,11 @@ export async function* readGeminiTextDeltas(
       while (boundary >= 0) {
         const frame = buffer.slice(0, boundary);
         buffer = buffer.slice(boundary + 2);
+        const eventName = frame
+          .split(/\r?\n/)
+          .find((line) => line.startsWith("event:"))
+          ?.slice(6)
+          .trim();
         const data = frame
           .split(/\r?\n/)
           .filter((line) => line.startsWith("data:"))
@@ -124,20 +128,30 @@ export async function* readGeminiTextDeltas(
           .join("\n");
 
         if (data && data !== "[DONE]") {
-          const delta = extractText(data);
-          if (delta) yield delta;
+          const event = parseInteractionEvent(data, eventName);
+          completed ||= event.completed;
+          if (event.text) yield event.text;
         }
         boundary = buffer.indexOf("\n\n");
       }
 
-      if (done) break;
+      if (done) {
+        if (!completed) {
+          throw new GeminiApiError("Gemini stream ended before completion");
+        }
+        break;
+      }
     }
   } finally {
+    await reader.cancel().catch(() => undefined);
     reader.releaseLock();
   }
 }
 
-function extractText(payload: string): string {
+function parseInteractionEvent(
+  payload: string,
+  eventName?: string,
+): { text: string; completed: boolean } {
   let parsed: unknown;
   try {
     parsed = JSON.parse(payload);
@@ -145,19 +159,30 @@ function extractText(payload: string): string {
     throw new GeminiApiError("Gemini returned an invalid event");
   }
 
-  if (!parsed || typeof parsed !== "object") return "";
-  const candidates = (parsed as { candidates?: unknown }).candidates;
-  if (!Array.isArray(candidates) || !candidates[0]) return "";
-  const content = (candidates[0] as { content?: unknown }).content;
-  if (!content || typeof content !== "object") return "";
-  const parts = (content as { parts?: unknown }).parts;
-  if (!Array.isArray(parts)) return "";
+  if (!parsed || typeof parsed !== "object") {
+    return { text: "", completed: false };
+  }
 
-  return parts
-    .map((part) => {
-      if (!part || typeof part !== "object") return "";
-      const text = (part as { text?: unknown }).text;
-      return typeof text === "string" ? text : "";
-    })
-    .join("");
+  const event = parsed as {
+    event_type?: unknown;
+    delta?: unknown;
+  };
+  const type = typeof event.event_type === "string" ? event.event_type : eventName;
+
+  if (type === "error" || type === "interaction.failed") {
+    throw new GeminiApiError("Gemini interaction failed");
+  }
+  if (type === "interaction.completed") {
+    return { text: "", completed: true };
+  }
+  if (type !== "step.delta" || !event.delta || typeof event.delta !== "object") {
+    return { text: "", completed: false };
+  }
+
+  const delta = event.delta as { type?: unknown; text?: unknown };
+  return {
+    text:
+      delta.type === "text" && typeof delta.text === "string" ? delta.text : "",
+    completed: false,
+  };
 }

@@ -443,9 +443,23 @@ router.post(
       await markMessageStatus(assistantMessage.id, "error");
       if (error instanceof GeminiApiError) {
         req.log.warn({ status: error.status }, "Gemini request could not start");
-        res
-          .status(error.status ? 502 : 503)
-          .json({ error: "The AI assistant could not start a response." });
+        const status =
+          error.status === 429
+            ? 429
+            : error.status === 503
+              ? 503
+              : error.status
+                ? 502
+                : 503;
+        if (error.retryAfter) {
+          res.setHeader("Retry-After", error.retryAfter);
+        }
+        res.status(status).json({
+          error:
+            status === 429 || status === 503
+              ? "The AI assistant is temporarily busy. Please try again shortly."
+              : "The AI assistant could not start a response.",
+        });
         return;
       }
       req.log.error({ err: error }, "Gemini request could not start");
