@@ -190,23 +190,25 @@ ${brandId2026Vars}
   --border: var(--brand-id-2026-border);
   --card: var(--brand-id-2026-surface);
   --card-foreground: var(--brand-id-2026-text);
-  --popover: var(--brand-id-2026-surface);
+  --popover: var(--brand-id-2026-surface-raised);
   --popover-foreground: var(--brand-id-2026-text);
   --primary: var(--brand-id-2026-neon);
   --primary-foreground: var(--brand-id-2026-background);
   --secondary: var(--brand-id-2026-gold);
   --secondary-foreground: var(--brand-id-2026-background);
-  --muted: var(--brand-id-2026-surface);
+  --muted: var(--brand-id-2026-surface-raised);
   --muted-foreground: var(--brand-id-2026-muted);
-  --accent: var(--brand-id-2026-gold);
+  --accent: var(--brand-id-2026-gold-soft);
   --accent-foreground: var(--brand-id-2026-background);
-  --input: var(--brand-id-2026-border);
+  --destructive: var(--brand-id-2026-danger);
+  --destructive-foreground: var(--brand-id-2026-text);
+  --input: var(--brand-id-2026-border-strong);
   --ring: var(--brand-id-2026-neon);
   --chart-1: var(--brand-id-2026-gold);
   --chart-2: var(--brand-id-2026-neon);
   --chart-3: var(--brand-id-2026-jaguar-green);
   --chart-4: var(--brand-id-2026-muted);
-  --chart-5: var(--brand-id-2026-gold);
+  --chart-5: var(--brand-id-2026-danger);
   --sidebar: var(--brand-id-2026-surface);
   --sidebar-foreground: var(--brand-id-2026-text);
   --sidebar-border: var(--brand-id-2026-border);
@@ -218,10 +220,11 @@ ${brandId2026Vars}
   --primary-border: hsl(var(--primary));
   --secondary-border: hsl(var(--secondary));
   --accent-border: hsl(var(--accent));
+  --destructive-border: hsl(var(--destructive));
   --sidebar-primary-border: hsl(var(--sidebar-primary));
   --sidebar-accent-border: hsl(var(--sidebar-accent));
-  --card-border: hsl(var(--card));
-  --popover-border: hsl(var(--popover));
+  --card-border: hsl(var(--border));
+  --popover-border: hsl(var(--brand-id-2026-border-strong));
 }
 `;
 

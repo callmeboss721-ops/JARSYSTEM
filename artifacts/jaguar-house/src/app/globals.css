@@ -6519,17 +6519,17 @@ kbd {
 html[data-brand-theme="2026"] {
   --bg: hsl(var(--brand-id-2026-background));
   --panel: hsl(var(--brand-id-2026-surface));
-  --panel-2: hsl(var(--brand-id-2026-surface));
+  --panel-2: hsl(var(--brand-id-2026-surface-raised));
   --line: hsl(var(--brand-id-2026-border) / .72);
-  --line-2: hsl(var(--brand-id-2026-border));
-  --control-line: hsl(var(--brand-id-2026-border));
+  --line-2: hsl(var(--brand-id-2026-border-strong));
+  --control-line: hsl(var(--brand-id-2026-border-strong));
   --text: hsl(var(--brand-id-2026-text));
   --muted: hsl(var(--brand-id-2026-muted));
   --silver: hsl(var(--brand-id-2026-text) / .82);
   --neon: hsl(var(--brand-id-2026-neon));
   --neon-dim: hsl(var(--brand-id-2026-neon) / .12);
   --gold: hsl(var(--brand-id-2026-gold));
-  --gold-2: hsl(var(--brand-id-2026-gold));
+  --gold-2: hsl(var(--brand-id-2026-gold-soft));
   --emerald: hsl(var(--brand-id-2026-jaguar-green));
   --emerald-2: hsl(var(--brand-id-2026-jaguar-green));
   --lime: hsl(var(--brand-id-2026-neon));

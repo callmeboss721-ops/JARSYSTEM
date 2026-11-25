@@ -1122,10 +1122,14 @@ body {
 :root {
   --brand-id-2026-background: 132 38.5% 5.1%;
   --brand-id-2026-surface: 130 40.9% 8.6%;
+  --brand-id-2026-surface-raised: 133 38.7% 12.2%;
   --brand-id-2026-border: 132 34.9% 16.9%;
+  --brand-id-2026-border-strong: 133 31.8% 25.3%;
   --brand-id-2026-neon: 81 100% 50%;
   --brand-id-2026-jaguar-green: 149 100% 32.5%;
   --brand-id-2026-gold: 46 100% 50%;
+  --brand-id-2026-gold-soft: 46 100% 70%;
+  --brand-id-2026-danger: 4 84.7% 61.6%;
   --brand-id-2026-text: 0 0% 100%;
   --brand-id-2026-muted: 132 19.7% 71.2%;
 }
@@ -1136,23 +1140,25 @@ body {
   --border: var(--brand-id-2026-border);
   --card: var(--brand-id-2026-surface);
   --card-foreground: var(--brand-id-2026-text);
-  --popover: var(--brand-id-2026-surface);
+  --popover: var(--brand-id-2026-surface-raised);
   --popover-foreground: var(--brand-id-2026-text);
   --primary: var(--brand-id-2026-neon);
   --primary-foreground: var(--brand-id-2026-background);
   --secondary: var(--brand-id-2026-gold);
   --secondary-foreground: var(--brand-id-2026-background);
-  --muted: var(--brand-id-2026-surface);
+  --muted: var(--brand-id-2026-surface-raised);
   --muted-foreground: var(--brand-id-2026-muted);
-  --accent: var(--brand-id-2026-gold);
+  --accent: var(--brand-id-2026-gold-soft);
   --accent-foreground: var(--brand-id-2026-background);
-  --input: var(--brand-id-2026-border);
+  --destructive: var(--brand-id-2026-danger);
+  --destructive-foreground: var(--brand-id-2026-text);
+  --input: var(--brand-id-2026-border-strong);
   --ring: var(--brand-id-2026-neon);
   --chart-1: var(--brand-id-2026-gold);
   --chart-2: var(--brand-id-2026-neon);
   --chart-3: var(--brand-id-2026-jaguar-green);
   --chart-4: var(--brand-id-2026-muted);
-  --chart-5: var(--brand-id-2026-gold);
+  --chart-5: var(--brand-id-2026-danger);
   --sidebar: var(--brand-id-2026-surface);
   --sidebar-foreground: var(--brand-id-2026-text);
   --sidebar-border: var(--brand-id-2026-border);
@@ -1164,8 +1170,9 @@ body {
   --primary-border: hsl(var(--primary));
   --secondary-border: hsl(var(--secondary));
   --accent-border: hsl(var(--accent));
+  --destructive-border: hsl(var(--destructive));
   --sidebar-primary-border: hsl(var(--sidebar-primary));
   --sidebar-accent-border: hsl(var(--sidebar-accent));
-  --card-border: hsl(var(--card));
-  --popover-border: hsl(var(--popover));
+  --card-border: hsl(var(--border));
+  --popover-border: hsl(var(--brand-id-2026-border-strong));
 }

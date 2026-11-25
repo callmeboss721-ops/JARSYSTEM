@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import Image from "next/image";
 import { api } from "./loyalty-api";
-import { BrandIcon } from "./brand-icon";
+import { BrandIcon, type BrandIconName } from "./brand-icon";
 import { SamutPrakanArt } from "./samut-prakan-art";
 import { LoginForm, RegisterForm } from "./auth-forms";
 import { BrandArtworkButton, BrandButton, BrandDeliveryLink } from "./brand-button";
@@ -26,11 +26,36 @@ const PRODUCT_FILTERS: { value: ProductFilter; label: string }[] = [
   { value: "red", label: "ฝาแดง" },
 ];
 
+const LANDING_TABS: { id: string; href: string; label: string; icon: BrandIconName }[] = [
+  { id: "top", href: "#top", label: "หน้าแรก", icon: "crown" },
+  { id: "products", href: "#products", label: "สินค้า", icon: "products" },
+  { id: "card", href: "/card", label: "บัตรสมาชิก", icon: "qr" },
+  { id: "contact", href: "#contact", label: "ติดต่อ", icon: "phone" },
+];
+const LANDING_SECTION_IDS = ["top", "products", "membership", "about", "contact"] as const;
+
 export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
   const [tab, setTab] = useState<"login" | "register">(initialTab ?? "login");
   const [productFilter, setProductFilter] = useState<ProductFilter>("all");
   const [mapPopupOpen, setMapPopupOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>("top");
   const mapTriggerRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (initialTab !== undefined || typeof IntersectionObserver === "undefined") return;
+    const tabFor: Record<string, string> = { top: "top", products: "products", membership: "products", about: "contact", contact: "contact" };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible) setActiveSection(tabFor[visible.target.id] ?? "top");
+      },
+      { rootMargin: "-35% 0px -50% 0px", threshold: [0, 0.25, 0.5] },
+    );
+    LANDING_SECTION_IDS.forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) observer.observe(element);
+    });
+    return () => observer.disconnect();
+  }, [initialTab]);
   useEffect(() => {
     const closeMapPopup = () => setMapPopupOpen(false);
     window.addEventListener("jaguar:close-map-popup", closeMapPopup);
@@ -75,11 +100,36 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
           </div>
         </header>
         <div className="jh-shell">
-          <section className="jh-hero" aria-labelledby="landing-title">
+          <section className="jh-hero" id="top" aria-labelledby="landing-title">
             <div className="jh-hero__copy">
-              <p className="jh-kicker">ร้านประจำย่าน · สมุทรปราการ</p>
+              <p className="jh-kicker">ร้านประจำย่าน · สมุทรปราการ · เปิด 24 ชม.</p>
               <h1 id="landing-title" className="sr-only">JAGUAR SPK</h1>
-              <p className="jh-hero__intro">แวะเลือกสินค้าที่ร้าน หรือเริ่มใช้บัตรสมาชิกได้ง่าย ๆ บนมือถือ</p>
+              <p className="jh-hero__intro">เปิดบัตรสมาชิกเพื่อดูแต้มและ QR ส่วนตัว หรือสมัครใหม่ได้ในไม่กี่วินาที</p>
+              <div className="jh-clubs jh-clubs--hero" role="group" aria-label="บัตรสมาชิก Jaguar">
+                <Link href="/card" className="jh-club" data-club="kratom" data-testid="link-hero-kratom-card">
+                  <span className="jh-club__badge-icon">
+                    <Image src="/brand/icon-card-kratom-2026.webp" alt="" width={36} height={36} sizes="36px" />
+                  </span>
+                  <span>
+                    <em className="jh-club__eyebrow">KRATOM PASS · CROWN GOLD</em>
+                    <strong>บัตรสมาชิกกระท่อม</strong>
+                    <small>ดูแต้มสะสมและ QR ส่วนตัว</small>
+                  </span>
+                  <span className="jh-club__arrow" aria-hidden="true">↗</span>
+                </Link>
+                <Link href="/card/cannabis" className="jh-club" data-club="cannabis" data-testid="link-hero-cannabis-card">
+                  <span className="jh-club__badge-icon">
+                    <Image src="/brand/icon-card-cannabis-2026.webp" alt="" width={36} height={36} sizes="36px" />
+                  </span>
+                  <span>
+                    <em className="jh-club__eyebrow">CANNABIS PASS · JAGUAR GREEN</em>
+                    <strong>บัตรสมาชิกกัญชา</strong>
+                    <small>บัตรแยกเฉพาะหมวด · ตรวจแต้มของคุณ</small>
+                  </span>
+                  <span className="jh-club__arrow" aria-hidden="true">↗</span>
+                </Link>
+              </div>
+              <p className="jh-hero__promo"><span>PROMO</span>สะสม 10 แต้ม รับฟรี 1 รายการ</p>
               <div className="jh-hero__actions">
                 <BrandArtworkButton href="/login?mode=register" src="/ui/artwork/signup-card.webp" label="สมัครบัตรสมาชิก" testId="link-open-wallet" />
                 <BrandArtworkButton href="/login" src="/ui/artwork/sign-in.webp" label="เข้าสู่ระบบสมาชิก" testId="link-member-login" />
@@ -95,35 +145,10 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
                 width={720}
                 height={720}
                 priority
-                sizes="(max-width: 720px) 78vw, 440px"
+                sizes="(max-width: 720px) 60vw, 440px"
               />
               <span className="jh-hero__image-label">JAGUAR SPK · Official Mascot</span>
             </div>
-          </section>
-
-          <section className="jh-clubs" aria-label="บัตรสมาชิก Jaguar">
-            <Link href="/card" className="jh-club" data-club="kratom">
-              <span className="jh-club__badge-icon">
-                <Image src="/brand/icon-card-kratom-2026.webp" alt="" width={36} height={36} sizes="36px" />
-              </span>
-              <span>
-                <em className="jh-club__eyebrow">KRATOM PASS · CROWN GOLD</em>
-                <strong>บัตรสมาชิกกระท่อม</strong>
-                <small>เปิดดูยอดแต้มและ QR ส่วนตัวของคุณ</small>
-              </span>
-              <span className="jh-club__arrow" aria-hidden="true">↗</span>
-            </Link>
-            <Link href="/card/cannabis" className="jh-club" data-club="cannabis">
-              <span className="jh-club__badge-icon">
-                <Image src="/brand/icon-card-cannabis-2026.webp" alt="" width={36} height={36} sizes="36px" />
-              </span>
-              <span>
-                <em className="jh-club__eyebrow">CANNABIS PASS · JAGUAR GREEN</em>
-                <strong>บัตรสมาชิกกัญชา</strong>
-                <small>บัตรแยกเฉพาะหมวด · ตรวจสอบแต้มของคุณ</small>
-              </span>
-              <span className="jh-club__arrow" aria-hidden="true">↗</span>
-            </Link>
           </section>
           <section className="jh-section" id="products" aria-labelledby="landing-products-title">
             <div className="jh-section__header-row">
@@ -299,6 +324,40 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
             <span>แผนที่ร้าน</span>
           </button>
         </div>
+        <nav className="jh-tabbar" aria-label="เมนูลัด">
+          <div className="jh-tabbar__track">
+            {LANDING_TABS.map((item) =>
+              item.href.startsWith("#") ? (
+                <a
+                  key={item.id}
+                  href={item.href}
+                  className="jh-tabbar__item"
+                  aria-current={activeSection === item.id ? "location" : undefined}
+                  data-testid={`tabbar-${item.id}`}
+                >
+                  <BrandIcon name={item.icon} size={20} tone={activeSection === item.id ? "gold" : "neutral"} />
+                  <span>{item.label}</span>
+                </a>
+              ) : (
+                <Link key={item.id} href={item.href} className="jh-tabbar__item jh-tabbar__item--card" data-testid={`tabbar-${item.id}`}>
+                  <span className="jh-tabbar__card-icon"><BrandIcon name={item.icon} size={22} tone="neutral" /></span>
+                  <span>{item.label}</span>
+                </Link>
+              ),
+            )}
+            <button
+              type="button"
+              className="jh-tabbar__item"
+              aria-expanded={mapPopupOpen}
+              aria-controls="landing-map-popup"
+              data-testid="tabbar-map"
+              onClick={() => setMapPopupOpen((open) => !open)}
+            >
+              <BrandIcon name="location" size={20} tone={mapPopupOpen ? "gold" : "neutral"} />
+              <span>แผนที่</span>
+            </button>
+          </div>
+        </nav>
       </>
     );
   }
