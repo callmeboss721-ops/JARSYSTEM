@@ -8,6 +8,7 @@
     "build": "node ./build.mjs",
     "test:owner-reports": "node --experimental-strip-types --test src/lib/owner-report-queries.test.ts",
     "test:loyalty-redemptions": "tsx --test src/lib/loyalty-redemption-idempotency.test.ts",
+    "test:member-auth": "tsx --test src/routes/loyalty-member-auth.test.ts",
     "test:product-sales": "node --experimental-strip-types --test src/lib/product-sales-store.test.ts",
     "start": "node --enable-source-maps ./dist/index.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit"
