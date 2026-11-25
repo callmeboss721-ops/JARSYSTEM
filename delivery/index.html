@@ -553,12 +553,12 @@ $('btn-order').onclick = async function(){
     items: items, items_total: cartTotal(), delivery_fee: fee, total: cartTotal() + fee,
     payment_method: method, payment_status: 'waiting_confirm', order_status: 'new', sent_to_telegram: false
   };
-  var res = await sb.from('dt_orders').insert(row).select().single();
+  var res = await sb.from('dt_orders').insert(row);
   btn.disabled = false;
   if (res.error) { err.textContent = 'สั่งซื้อไม่สำเร็จ: ' + res.error.message; err.style.display = 'block'; return; }
   cart = {}; localStorage.setItem('spk_cart', '{}');
   renderCartBar(); renderMenu(); closeSheet('sh-cart');
-  lastOrderCode = res.data.order_code;
+  lastOrderCode = code;
   localStorage.setItem('spk_last_order', lastOrderCode);
   $('track-input').value = lastOrderCode;
   showActiveBanner(lastOrderCode);
@@ -634,9 +634,13 @@ async function pollTrack(code){
   if (pollTimer) clearInterval(pollTimer);
   async function tick(){
     if (!$('sh-track').classList.contains('open')) { clearInterval(pollTimer); return; }
-    var r = await sb.from('dt_orders').select('*').eq('order_code', code).maybeSingle();
-    if (!r.data) { $('track-note').textContent = 'ไม่พบรหัสออเดอร์นี้ในระบบ'; return; }
-    var o = r.data;
+    var rpc = await sb.rpc('track_dt_order', { p_order_code: code });
+    var o = (!rpc.error) ? rpc.data : null;
+    if (rpc.error && (rpc.error.code === 'PGRST202' || rpc.error.code === '42883')) {
+      var r = await sb.from('dt_orders').select('*').eq('order_code', code).maybeSingle();
+      o = r.data || null;
+    }
+    if (!o) { $('track-note').textContent = 'ไม่พบรหัสออเดอร์นี้ในระบบ'; return; }
     trackedOrder = o;
     renderSteps(o.order_status);
     var shareText = buildOrderShareText(o);

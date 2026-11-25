@@ -51,23 +51,36 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ status: 'nothing_to_send', sent: 0 }), { headers: cors });
     }
 
-    if (!hasTelegram && !hasLine) {
+    const composioWebhookUrl = Deno.env.get('COMPOSIO_WEBHOOK_URL');
+    const composioApiKey = Deno.env.get('COMPOSIO_API_KEY');
+    const hasComposio = Boolean(composioWebhookUrl);
+
+    if (!hasTelegram && !hasLine && !hasComposio) {
       return new Response(JSON.stringify({
         status: 'skipped_no_notification_config',
         pending: orders.length,
-        hint: 'ตั้งค่า LINE_CHANNEL_ACCESS_TOKEN + LINE_TARGET_ID หรือ TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID ใน Supabase Secrets'
+        hint: 'ตั้งค่า COMPOSIO_WEBHOOK_URL หรือ TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID หรือ LINE_CHANNEL_ACCESS_TOKEN + LINE_TARGET_ID ใน Supabase Secrets'
       }), { headers: cors });
     }
+
+    const PAY_LABEL: Record<string, string> = {
+      cod: 'เก็บเงินปลายทาง (COD)',
+      transfer: 'โอนเงิน/พร้อมเพย์',
+      bank: 'โอนเข้าบัญชี',
+      promptpay: 'PromptPay QR',
+    };
 
     let sent = 0;
     const failed: Array<{ code: string; channel: string; detail: string }> = [];
 
     for (const o of orders) {
-      const items = (o.items || []).map((it: { name: string; qty: number; price: number }) =>
-        `• ${it.name} × ${it.qty} = ${Number(it.price * it.qty).toFixed(0)} บาท`
-      ).join('\n');
+      const items = (o.items || []).map((it: unknown) => {
+        if (typeof it === 'string') return `• ${it}`;
+        const obj = it as { name?: string; qty?: number; price?: number };
+        return `• ${clean(obj.name)} × ${Number(obj.qty ?? 1)} = ${Number((obj.price ?? 0) * (obj.qty ?? 1)).toFixed(0)} บาท`;
+      }).join('\n');
       const mapLink = o.lat && o.lng ? `https://www.google.com/maps?q=${o.lat},${o.lng}` : 'ไม่มีพิกัด';
-      const pay = o.payment_method === 'bank' ? 'โอนเข้าบัญชี' : 'PromptPay QR';
+      const pay = PAY_LABEL[o.payment_method] || clean(o.payment_method);
       const text =
         `🛵 ออเดอร์ใหม่ ${clean(o.order_code)}\n` +
         `👤 ${clean(o.customer_name)} (${clean(o.customer_phone)})\n` +
@@ -79,6 +92,39 @@ Deno.serve(async (req) => {
         `สถานะ: ${STATUS_TH[o.order_status] || o.order_status}`;
 
       let deliveredAny = false;
+
+      if (hasComposio && composioWebhookUrl) {
+        const compHeaders: Record<string, string> = { 'Content-Type': 'application/json' };
+        if (composioApiKey) compHeaders['x-api-key'] = composioApiKey;
+        const compRes = await fetch(composioWebhookUrl, {
+          method: 'POST',
+          headers: compHeaders,
+          body: JSON.stringify({
+            event: 'dt_orders.insert',
+            text,
+            order: {
+              id: o.id,
+              order_code: o.order_code,
+              customer_name: o.customer_name,
+              customer_phone: o.customer_phone,
+              address: o.address,
+              lat: o.lat,
+              lng: o.lng,
+              map_url: o.lat && o.lng ? `https://www.google.com/maps?q=${o.lat},${o.lng}` : null,
+              items: o.items,
+              items_total: o.items_total,
+              delivery_fee: o.delivery_fee,
+              total: o.total,
+              payment_method: o.payment_method,
+              payment_label: pay,
+              order_status: o.order_status,
+              created_at: o.created_at,
+            },
+          }),
+        });
+        if (compRes.ok) deliveredAny = true;
+        else failed.push({ code: o.order_code, channel: 'composio', detail: (await compRes.text()).slice(0, 200) });
+      }
 
       if (hasLine) {
         const lineRes = await fetch('https://api.line.me/v2/bot/message/push', {
