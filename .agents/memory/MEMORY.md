@@ -1,6 +1,6 @@
 - [Framework intent](jaguar-product-decisions.md) — Next.js 15 was explicitly selected over the React+Vite artifact option.
 - [YOUNGBOSS brand intent](youngboss-brand-intent.md) — Premium customer/staff UI; original supplied logo imagery takes precedence over an invented minimalist seal.
-- [Artwork claim approvals](artwork-claim-approvals.md) — Customer-facing image text is approved only as the exact wording recorded in the knowledge base; approval does not establish extra service or product details.
+- [Artwork claim approvals](artwork-claim-approvals.md) — use only exact approved image wording; it does not confirm other product or service details.
 - [Supabase connection boundaries](supabase-connection-boundaries.md) — Connector host configuration is independent of Supabase environment variables; verify each separately.
 - [Drizzle check diffs](drizzle-check-constraint-diffs.md) — A successful schema push may retain an old CHECK expression under an unchanged constraint name; verify the live definition.
 - [JAGUAR points policy](jaguar-points-policy.md) — Kratom earns per cumulative ฿100; cannabis per cumulative 100 g, with separate carry-over balances.
@@ -9,5 +9,6 @@
 - [Member login policy](member-login-rules.md) — any one of phone, member code, or nickname grants access; no OTP was explicitly chosen.
 - [Vite Radix dependency warmup](vite-radix-warmup.md) — new lazy-loaded Radix modules can trigger transient hook errors while Vite optimizes them; verify after optimization settles.
 - [Loyalty test isolation](loyalty-test-isolation.md) — repeat integration runs through the shared preview proxy can collide with persistent IP-based rate limits; isolate test IPs.
-- [JAGUAR release guardrails](jaguar-release-guardrails.md) — do not restore Clerk; use the shared React catalog and self-hosted brand fonts; preserve store data, routes, QR payloads, and point rules.
+- [JAGUAR release guardrails](jaguar-release-guardrails.md) — keep Clerk out, use shared catalog/fonts/tokens, and preserve data, routes, QR payloads, and point rules.
 - [Quick-sale stock policy](jaguar-quick-sales-policy.md) — non-loyalty sales may be recorded beyond available stock; clamp tracked inventory at zero and warn staff.
+- [JAGUAR SPK website design direction](jaguar-spk-website-design.md) — use the BLACK EMERALD & GOLD proposal as a site-wide brief, while approved tokens and current flows remain authoritative.
