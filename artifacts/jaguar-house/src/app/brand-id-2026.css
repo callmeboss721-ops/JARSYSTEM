@@ -338,19 +338,6 @@ html[data-brand-theme="2026"] .jaguar-mark-composition__mascot {
   object-fit: contain;
 }
 
-html[data-brand-theme="2026"] .brand-page-mascot {
-  position: absolute;
-  z-index: 11;
-  top: 12%;
-  right: 10%;
-  width: clamp(56px, 12vw, 72px);
-  height: auto;
-  border: 1px solid hsl(var(--brand-id-2026-border));
-  border-radius: 50%;
-  background: hsl(var(--brand-id-2026-background));
-  box-shadow: 0 8px 22px hsl(var(--brand-id-2026-background) / .55);
-}
-
 @media (max-width: 720px) {
   html[data-brand-theme="2026"] .jh-hero__image-label {
     top: 14px;
@@ -927,6 +914,12 @@ html[data-brand-theme="2026"] .jh-clubs--hero .jh-club__eyebrow {
 }
 html[data-brand-theme="2026"] .jh-tabbar {
   display: none;
+}
+
+@media (min-width: 721px) and (max-width: 900px) {
+  html[data-brand-theme="2026"] .jh-clubs--hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 @media (max-width: 720px) {

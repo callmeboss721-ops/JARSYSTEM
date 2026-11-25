@@ -140,14 +140,14 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
             </div>
             <div className="jh-hero__visual">
               <Image
-                src="/brand/mascot-kratom-host.webp"
-                alt="มาสคอต JAGUAR SPK ถือขวดเครื่องดื่ม"
-                width={720}
-                height={720}
+                src="/brand/jaguar-spk-campaign-banner.webp"
+                alt="ภาพแคมเปญ JAGUAR SPK พร้อมมาสคอต"
+                width={1200}
+                height={675}
                 priority
                 sizes="(max-width: 720px) 60vw, 440px"
               />
-              <span className="jh-hero__image-label">JAGUAR SPK · Official Mascot</span>
+              <span className="jh-hero__image-label">JAGUAR SPK · Brand Campaign</span>
             </div>
           </section>
           <section className="jh-section" id="products" aria-labelledby="landing-products-title">

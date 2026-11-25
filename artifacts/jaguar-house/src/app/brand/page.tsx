@@ -148,22 +148,13 @@ export default function BrandPage() {
                 className="absolute inset-4 rounded-[var(--radius)] border border-border/70"
               />
               <Image
-                src="/brand/jaguar-spk-brand-id-2026-emblem.png"
-                alt="ตราสัญลักษณ์ JAGUAR SPK"
-                width={512}
-                height={512}
+                src="/brand/jaguar-spk-mascot-wordmark.webp"
+                alt="โลโก้ JAGUAR SPK พร้อมมาสคอต"
+                width={1100}
+                height={367}
                 className="relative z-10 h-auto w-full max-w-80 object-contain drop-shadow-xl"
                 priority
-                sizes="(max-width: 640px) 72vw, (max-width: 1024px) 420px, 480px"
-              />
-              <Image
-                src="/brand/jaguar-spk-mascot-face.webp"
-                alt=""
-                aria-hidden="true"
-                width={112}
-                height={112}
-                className="brand-page-mascot"
-                sizes="72px"
+                sizes="(max-width: 640px) 72vw, (max-width: 1024px) 320px, 320px"
               />
               <figcaption className="relative z-10 mt-6 text-center font-mono text-xs uppercase tracking-widest text-muted-foreground">
                 97/56 ซอยบุญศิริ 6 · สมุทรปราการ
@@ -212,11 +203,11 @@ export default function BrandPage() {
                     <h3 className="mt-4 font-display text-xl font-semibold">บัตรสมาชิกดิจิทัล</h3>
                   </div>
                   <Image
-                    src="/brand/mascot-digital-guide.webp"
+                    src="/brand/jaguar-spk-digital-guide.webp"
                     alt=""
                     aria-hidden="true"
-                    width={128}
-                    height={128}
+                    width={640}
+                    height={585}
                     className="h-20 w-20 shrink-0 rounded-[var(--radius)] border border-border/70 object-contain sm:h-24 sm:w-24"
                     sizes="96px"
                   />
