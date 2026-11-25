@@ -107,7 +107,7 @@ function km(a, b){
   return 2 * R * Math.asin(Math.sqrt(s));
 }
 
-var failedAttempts = 0, lockUntil = 0;
+var failedAttempts = 0, lockUntil = 0, activeRiderPin = '';
 
 async function verifyPin(pin){
   var rpc = await sb.rpc('verify_dt_pin', { p_role: 'rider', p_pin: pin });
@@ -142,6 +142,7 @@ $('btn-login').onclick = async function(){
     return;
   }
   failedAttempts = 0;
+  activeRiderPin = pin;
   $('pin').value = '';
   sessionStorage.setItem('dt_rider_session', '1');
   $('login-view').style.display = 'none';
@@ -154,6 +155,7 @@ $('btn-login').onclick = async function(){
   timer = setInterval(refresh, 15000);
 };
 $('btn-logout').onclick = function(){
+  activeRiderPin = '';
   sessionStorage.removeItem('dt_rider_session');
   sessionStorage.removeItem('rider_pin');
   if (watchId !== null && navigator.geolocation) navigator.geolocation.clearWatch(watchId);
@@ -162,12 +164,25 @@ $('btn-logout').onclick = function(){
 $('pin').addEventListener('keydown', function(e){ if (e.key === 'Enter') $('btn-login').click(); });
 
 async function loadSettings(){
-  var r = await sb.from('dt_settings').select('key,value').not('key', 'in', '("rider_pin","admin_pin")');
+  var r = await sb.from('dt_settings').select('key,value').not('key', 'in', '("rider_pin","admin_pin","composio_webhook_url")');
   if (!r.error) (r.data || []).forEach(function(row){ SETTINGS[row.key] = row.value; });
 }
 
 async function refresh(){
   var since = today() + 'T00:00:00';
+  var rpc = activeRiderPin
+    ? await sb.rpc('list_dt_orders_for_staff', { p_role: 'rider', p_pin: activeRiderPin, p_since: since, p_limit: 100 })
+    : { error: { code: 'PGRST202' } };
+  if (!rpc.error) {
+    ORDERS = (rpc.data || []).filter(function(o){ return ['new', 'confirmed', 'pickup', 'delivering', 'done'].indexOf(o.order_status) >= 0; });
+    renderRoute();
+    render();
+    return;
+  }
+  if (rpc.error.code !== 'PGRST202' && rpc.error.code !== '42883') {
+    toast('โหลดออเดอร์ไม่สำเร็จ: ' + rpc.error.message);
+    return;
+  }
   var r = await sb.from('dt_orders').select('*').gte('created_at', since)
     .in('order_status', ['new', 'confirmed', 'pickup', 'delivering', 'done'])
     .order('created_at', { ascending: false }).limit(100);
@@ -249,8 +264,16 @@ function render(){
 }
 
 function fmtTime(t){ return t ? new Date(t).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) : ''; }
+function payLabel(m){
+  if (m === 'cod') return 'เก็บเงินปลายทาง (COD)';
+  if (m === 'transfer') return 'โอนเงิน/พร้อมเพย์';
+  if (m === 'bank') return 'โอนเข้าบัญชี';
+  return 'PromptPay';
+}
 function orderCard(o){
-  var items = (o.items || []).map(function(it){ return esc(it.name) + ' × ' + it.qty; }).join(', ');
+  var items = (o.items || []).map(function(it){
+    return typeof it === 'string' ? esc(it) : (esc(it.name) + ' × ' + it.qty);
+  }).join(', ');
   var map = (o.lat && o.lng) ? ' <a class="map" target="_blank" rel="noopener" href="https://www.google.com/maps?q=' + o.lat + ',' + o.lng + '">เปิดแผนที่</a>' : '';
   var acts = '';
   if (NEXT[o.order_status]) {
@@ -276,8 +299,8 @@ function orderCard(o){
     '<h3>' + esc(o.customer_name) + ' · ' + esc(o.customer_phone) + '</h3>' +
     '<p class="muted">' + esc(o.address) + map + '</p>' +
     '<p class="items">' + items + '</p>' +
-    '<div class="row"><span class="muted">' + esc(o.payment_method === 'bank' ? 'โอนเข้าบัญชี' : 'PromptPay') + '</span><b>' + baht(o.total) + '</b></div>' +
-    (o.order_status === 'new' ? '<p class="muted">ยังไม่ยืนยันการชำระเงิน — ตรวจสลิปก่อนรับออเดอร์</p>' : '') +
+    '<div class="row"><span class="muted">' + esc(payLabel(o.payment_method)) + '</span><b>' + baht(o.total) + '</b></div>' +
+    (o.order_status === 'new' ? '<p class="muted">' + (o.payment_method === 'cod' ? 'เก็บเงินปลายทาง — โทรยืนยันก่อนออกส่ง' : 'ยังไม่ยืนยันการชำระเงิน — ตรวจสลิปก่อนรับออเดอร์') + '</p>' : '') +
     tl +
     (acts ? '<div class="acts">' + acts + '</div>' : '') +
     '</div>';
@@ -285,16 +308,29 @@ function orderCard(o){
 
 async function doAction(act, code, btn){
   btn.disabled = true;
-  var patch = {};
-  var nowIso = new Date().toISOString();
-  if (act === 'confirm_paid') { patch = { order_status: 'confirmed', payment_status: 'confirmed', confirmed_at: nowIso }; }
-  else if (act === 'pickup') { patch = { order_status: 'pickup', payment_status: 'confirmed', pickup_at: nowIso }; }
-  else if (act === 'delivering') { patch = { order_status: 'delivering', delivering_at: nowIso }; activeOrderCode = code; }
-  else if (act === 'done') { patch = { order_status: 'done', done_at: nowIso }; if (activeOrderCode === code) activeOrderCode = null; }
-  else if (act === 'cancelled') { patch = { order_status: 'cancelled', cancelled_at: nowIso }; }
-  var r = await sb.from('dt_orders').update(patch).eq('order_code', code).select().single();
-  btn.disabled = false;
-  if (r.error) { toast('อัปเดตไม่สำเร็จ: ' + r.error.message); return; }
+  if (act === 'delivering') activeOrderCode = code;
+  if (act === 'done' && activeOrderCode === code) activeOrderCode = null;
+
+  var rpc = activeRiderPin
+    ? await sb.rpc('update_dt_order_status_for_staff', { p_role: 'rider', p_pin: activeRiderPin, p_order_code: code, p_action: act })
+    : { error: { code: 'PGRST202' } };
+
+  if (rpc.error && (rpc.error.code === 'PGRST202' || rpc.error.code === '42883')) {
+    var patch = {};
+    var nowIso = new Date().toISOString();
+    if (act === 'confirm_paid') { patch = { order_status: 'confirmed', payment_status: 'confirmed', confirmed_at: nowIso }; }
+    else if (act === 'pickup') { patch = { order_status: 'pickup', payment_status: 'confirmed', pickup_at: nowIso }; }
+    else if (act === 'delivering') { patch = { order_status: 'delivering', delivering_at: nowIso }; }
+    else if (act === 'done') { patch = { order_status: 'done', done_at: nowIso }; }
+    else if (act === 'cancelled') { patch = { order_status: 'cancelled', cancelled_at: nowIso }; }
+    var r = await sb.from('dt_orders').update(patch).eq('order_code', code).select().single();
+    btn.disabled = false;
+    if (r.error) { toast('อัปเดตไม่สำเร็จ: ' + r.error.message); return; }
+  } else {
+    btn.disabled = false;
+    if (rpc.error) { toast('อัปเดตไม่สำเร็จ: ' + rpc.error.message); return; }
+  }
+
   if (activeOrderCode === code) {
     await sb.from('dt_rider_location').upsert({ rider_id: riderId, active_order_code: activeOrderCode, updated_at: new Date().toISOString(), lat: lastSentPos ? lastSentPos.lat : 0, lng: lastSentPos ? lastSentPos.lng : 0 }, { onConflict: 'rider_id' });
   }

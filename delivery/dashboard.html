@@ -108,7 +108,7 @@ function baht(n){ return Number(n).toFixed(2) + ' บาท'; }
 function fmt(t){ return t ? new Date(t).toLocaleString('th-TH', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—'; }
 function todayStart(){ var d = new Date(); d.setHours(0, 0, 0, 0); return d.toISOString(); }
 
-var failedAttempts = 0, lockUntil = 0;
+var failedAttempts = 0, lockUntil = 0, activeAdminPin = '';
 
 async function verifyPin(pin){
   var rpc = await sb.rpc('verify_dt_pin', { p_role: 'admin', p_pin: pin });
@@ -142,6 +142,7 @@ $('btn-login').onclick = async function(){
     return;
   }
   failedAttempts = 0;
+  activeAdminPin = pin;
   $('pin').value = '';
   sessionStorage.setItem('dt_admin_session', '1');
   $('login-view').style.display = 'none';
@@ -152,7 +153,7 @@ $('btn-login').onclick = async function(){
   await refresh();
   timer = setInterval(refresh, 30000);
 };
-$('btn-logout').onclick = function(){ sessionStorage.removeItem('dt_admin_session'); sessionStorage.removeItem('admin_pin'); location.reload(); };
+$('btn-logout').onclick = function(){ activeAdminPin = ''; sessionStorage.removeItem('dt_admin_session'); sessionStorage.removeItem('admin_pin'); location.reload(); };
 $('pin').addEventListener('keydown', function(e){ if (e.key === 'Enter') $('btn-login').click(); });
 
 function renderChips(){
@@ -171,6 +172,18 @@ function renderChips(){
 }
 
 async function refresh(){
+  var rpc = activeAdminPin
+    ? await sb.rpc('list_dt_orders_for_staff', { p_role: 'admin', p_pin: activeAdminPin, p_since: null, p_limit: 500 })
+    : { error: { code: 'PGRST202' } };
+  if (!rpc.error) {
+    ALL = rpc.data || [];
+    renderStats(); renderTable();
+    return;
+  }
+  if (rpc.error.code !== 'PGRST202' && rpc.error.code !== '42883') {
+    toast('โหลดไม่สำเร็จ: ' + rpc.error.message);
+    return;
+  }
   var r = await sb.from('dt_orders').select('*').order('created_at', { ascending: false }).limit(500);
   if (r.error) { toast('โหลดไม่สำเร็จ: ' + r.error.message); return; }
   ALL = r.data || [];
@@ -204,6 +217,12 @@ function renderStats(){
     '<div class="stat"><span>สถานะระบบ</span><b style="font-size:15px;margin-top:6px">เชื่อมต่อ Supabase ปกติ</b></div>';
 }
 
+function payLabel(m){
+  if (m === 'cod') return 'เก็บเงินปลายทาง';
+  if (m === 'transfer') return 'โอนเงิน/พร้อมเพย์';
+  if (m === 'bank') return 'โอนบัญชี';
+  return 'PromptPay';
+}
 function renderTable(){
   var list = filtered();
   var itemsSum = list.reduce(function(s, o){ return s + Number(o.items_total); }, 0);
@@ -215,7 +234,9 @@ function renderTable(){
   $('sum-items').textContent = baht(itemsSum);
   $('sum-fee').textContent = baht(feeSum);
   $('rows').innerHTML = list.map(function(o){
-    var items = (o.items || []).map(function(it){ return it.name + ' × ' + it.qty; }).join(', ');
+    var items = (o.items || []).map(function(it){
+      return typeof it === 'string' ? it : (it.name + ' × ' + it.qty);
+    }).join(', ');
     var tl =
       'สั่ง ' + fmt(o.created_at) +
       ' · ชำระ ' + fmt(o.confirmed_at) +
@@ -226,7 +247,7 @@ function renderTable(){
       '<td class="code">' + esc(o.order_code) + '</td>' +
       '<td>' + esc(o.customer_name) + '<br /><span class="muted">' + esc(o.customer_phone) + '</span></td>' +
       '<td>' + esc(items) + '</td>' +
-      '<td>' + baht(o.total) + '<br /><span class="muted">' + esc(o.payment_method === 'bank' ? 'โอนบัญชี' : 'PromptPay') + '</span></td>' +
+      '<td>' + baht(o.total) + '<br /><span class="muted">' + esc(payLabel(o.payment_method)) + '</span></td>' +
       '<td><span class="badge ' + esc(o.order_status) + '">' + esc(STATUS_TH[o.order_status] || o.order_status) + '</span></td>' +
       '<td><span class="tl">' + esc(tl) + '</span></td>' +
       '</tr>';
