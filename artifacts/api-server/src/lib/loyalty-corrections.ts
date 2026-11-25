@@ -419,7 +419,7 @@ export async function listRecentStaffRedemptions() {
   return (await pool.query(
     `select d.id,d.member_id,m.member_code,m.nickname as member_nickname,
        nullif(right(regexp_replace(coalesce(m.phone_e164,''),'[^0-9]','','g'),4),'') as phone_last4,
-       d.reward_id,r.name as reward_name,d.points_spent,d.status,d.created_at::text as created_at,
+       d.reward_id,r.name as reward_name,d.points_spent,d.status,d.rejection_reason,d.created_at::text as created_at,
        exists(select 1 from jaguar_transaction_corrections c
          where c.entity_type='redemption' and c.entity_id=d.id) as corrected
      from jaguar_redemptions d
@@ -525,7 +525,7 @@ export async function correctStaffRedemption(
     const result = (await client.query(
       `select d.id,d.member_id,m.member_code,m.nickname as member_nickname,
          nullif(right(regexp_replace(coalesce(m.phone_e164,''),'[^0-9]','','g'),4),'') as phone_last4,
-         d.reward_id,r.name as reward_name,d.points_spent,d.status,d.created_at::text as created_at,
+         d.reward_id,r.name as reward_name,d.points_spent,d.status,d.rejection_reason,d.created_at::text as created_at,
          true as corrected
        from jaguar_redemptions d
        join jaguar_members m on m.id=d.member_id

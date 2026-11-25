@@ -92,6 +92,7 @@ import type {
   StaffPinInput,
   StaffPointCreditInput,
   StaffRedemptionCorrectionInput,
+  StaffRedemptionRejectionInput,
   StaffSale,
   StaffSaleCorrectionInput,
   StaffSaleCorrectionResult,
@@ -5081,6 +5082,89 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
         TContext
       > => {
       return useMutation(getConfirmRedemptionMutationOptions(options), queryClient);
+    }
+
+export const getRejectStaffRedemptionUrl = (id: string,) => {
+
+
+
+
+  return `/api/loyalty/staff/redemptions/${id}/reject`
+}
+
+export const rejectStaffRedemption = async (id: string,
+    staffRedemptionRejectionInput: StaffRedemptionRejectionInput, options?: Parameters<typeof customFetch>[1]): Promise<Redemption> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<Redemption>(getRejectStaffRedemptionUrl(id),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(staffRedemptionRejectionInput)
+  }
+);}
+
+
+
+
+
+export const getRejectStaffRedemptionMutationKey = () => ['rejectStaffRedemption'] as const;
+
+export const getRejectStaffRedemptionMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof rejectStaffRedemption>>, TError,RejectStaffRedemptionMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof rejectStaffRedemption>>, TError,RejectStaffRedemptionMutationVariables, TContext> => {
+
+const mutationKey = getRejectStaffRedemptionMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof rejectStaffRedemption>>, RejectStaffRedemptionMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  rejectStaffRedemption(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RejectStaffRedemptionMutationResult = NonNullable<Awaited<ReturnType<typeof rejectStaffRedemption>>>
+    export type RejectStaffRedemptionMutationBody = BodyType<StaffRedemptionRejectionInput>
+    export type RejectStaffRedemptionMutationError = ErrorType<unknown>
+    export type RejectStaffRedemptionMutationVariables = {id: string;data: BodyType<StaffRedemptionRejectionInput>}
+
+    export const useRejectStaffRedemption = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof rejectStaffRedemption>>, TError,RejectStaffRedemptionMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof rejectStaffRedemption>>,
+        TError,
+        RejectStaffRedemptionMutationVariables,
+        TContext
+      > => {
+      return useMutation(getRejectStaffRedemptionMutationOptions(options), queryClient);
     }
 
 export const getLoginOwnerUrl = () => {

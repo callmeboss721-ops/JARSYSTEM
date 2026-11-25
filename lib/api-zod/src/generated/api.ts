@@ -414,6 +414,8 @@ export const listMemberRedemptionsResponseMemberNicknameMin = 2;
 export const listMemberRedemptionsResponseMemberNicknameMax = 20;
 
 export const listMemberRedemptionsResponsePhoneLast4RegExp = new RegExp('^[0-9]{4}$');
+export const listMemberRedemptionsResponseRejectionReasonMax = 200;
+
 
 
 export const ListMemberRedemptionsResponseItem = zod.object({
@@ -426,6 +428,7 @@ export const ListMemberRedemptionsResponseItem = zod.object({
   "reward_name": zod.string(),
   "points_spent": zod.int(),
   "status": zod.string(),
+  "rejection_reason": zod.string().max(listMemberRedemptionsResponseRejectionReasonMax).nullable(),
   "created_at": zod.string(),
   "corrected": zod.boolean().optional()
 })
@@ -441,6 +444,8 @@ export const requestRedemptionResponseMemberNicknameMin = 2;
 export const requestRedemptionResponseMemberNicknameMax = 20;
 
 export const requestRedemptionResponsePhoneLast4RegExp = new RegExp('^[0-9]{4}$');
+export const requestRedemptionResponseRejectionReasonMax = 200;
+
 
 
 export const RequestRedemptionResponse = zod.object({
@@ -453,6 +458,7 @@ export const RequestRedemptionResponse = zod.object({
   "reward_name": zod.string(),
   "points_spent": zod.int(),
   "status": zod.string(),
+  "rejection_reason": zod.string().max(requestRedemptionResponseRejectionReasonMax).nullable(),
   "created_at": zod.string(),
   "corrected": zod.boolean().optional()
 })
@@ -1577,6 +1583,8 @@ export const listPendingRedemptionsResponseMemberNicknameMin = 2;
 export const listPendingRedemptionsResponseMemberNicknameMax = 20;
 
 export const listPendingRedemptionsResponsePhoneLast4RegExp = new RegExp('^[0-9]{4}$');
+export const listPendingRedemptionsResponseRejectionReasonMax = 200;
+
 
 
 export const ListPendingRedemptionsResponseItem = zod.object({
@@ -1589,6 +1597,7 @@ export const ListPendingRedemptionsResponseItem = zod.object({
   "reward_name": zod.string(),
   "points_spent": zod.int(),
   "status": zod.string(),
+  "rejection_reason": zod.string().max(listPendingRedemptionsResponseRejectionReasonMax).nullable(),
   "created_at": zod.string(),
   "corrected": zod.boolean().optional()
 })
@@ -1599,6 +1608,8 @@ export const listRecentStaffRedemptionsResponseMemberNicknameMin = 2;
 export const listRecentStaffRedemptionsResponseMemberNicknameMax = 20;
 
 export const listRecentStaffRedemptionsResponsePhoneLast4RegExp = new RegExp('^[0-9]{4}$');
+export const listRecentStaffRedemptionsResponseRejectionReasonMax = 200;
+
 
 
 export const ListRecentStaffRedemptionsResponseItem = zod.object({
@@ -1611,6 +1622,7 @@ export const ListRecentStaffRedemptionsResponseItem = zod.object({
   "reward_name": zod.string(),
   "points_spent": zod.int(),
   "status": zod.string(),
+  "rejection_reason": zod.string().max(listRecentStaffRedemptionsResponseRejectionReasonMax).nullable(),
   "created_at": zod.string(),
   "corrected": zod.boolean().optional()
 })
@@ -1635,6 +1647,8 @@ export const correctStaffRedemptionResponseMemberNicknameMin = 2;
 export const correctStaffRedemptionResponseMemberNicknameMax = 20;
 
 export const correctStaffRedemptionResponsePhoneLast4RegExp = new RegExp('^[0-9]{4}$');
+export const correctStaffRedemptionResponseRejectionReasonMax = 200;
+
 
 
 export const CorrectStaffRedemptionResponse = zod.object({
@@ -1647,6 +1661,7 @@ export const CorrectStaffRedemptionResponse = zod.object({
   "reward_name": zod.string(),
   "points_spent": zod.int(),
   "status": zod.string(),
+  "rejection_reason": zod.string().max(correctStaffRedemptionResponseRejectionReasonMax).nullable(),
   "created_at": zod.string(),
   "corrected": zod.boolean().optional()
 })
@@ -1660,6 +1675,8 @@ export const confirmRedemptionResponseMemberNicknameMin = 2;
 export const confirmRedemptionResponseMemberNicknameMax = 20;
 
 export const confirmRedemptionResponsePhoneLast4RegExp = new RegExp('^[0-9]{4}$');
+export const confirmRedemptionResponseRejectionReasonMax = 200;
+
 
 
 export const ConfirmRedemptionResponse = zod.object({
@@ -1672,6 +1689,44 @@ export const ConfirmRedemptionResponse = zod.object({
   "reward_name": zod.string(),
   "points_spent": zod.int(),
   "status": zod.string(),
+  "rejection_reason": zod.string().max(confirmRedemptionResponseRejectionReasonMax).nullable(),
+  "created_at": zod.string(),
+  "corrected": zod.boolean().optional()
+})
+
+
+export const RejectStaffRedemptionParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const rejectStaffRedemptionBodyReasonMin = 3;
+export const rejectStaffRedemptionBodyReasonMax = 200;
+
+
+
+export const RejectStaffRedemptionBody = zod.object({
+  "reason": zod.string().min(rejectStaffRedemptionBodyReasonMin).max(rejectStaffRedemptionBodyReasonMax)
+})
+
+export const rejectStaffRedemptionResponseMemberNicknameMin = 2;
+export const rejectStaffRedemptionResponseMemberNicknameMax = 20;
+
+export const rejectStaffRedemptionResponsePhoneLast4RegExp = new RegExp('^[0-9]{4}$');
+export const rejectStaffRedemptionResponseRejectionReasonMax = 200;
+
+
+
+export const RejectStaffRedemptionResponse = zod.object({
+  "id": zod.string(),
+  "member_id": zod.string(),
+  "member_code": zod.string(),
+  "member_nickname": zod.string().min(rejectStaffRedemptionResponseMemberNicknameMin).max(rejectStaffRedemptionResponseMemberNicknameMax).nullable(),
+  "phone_last4": zod.string().regex(rejectStaffRedemptionResponsePhoneLast4RegExp).nullable(),
+  "reward_id": zod.string(),
+  "reward_name": zod.string(),
+  "points_spent": zod.int(),
+  "status": zod.string(),
+  "rejection_reason": zod.string().max(rejectStaffRedemptionResponseRejectionReasonMax).nullable(),
   "created_at": zod.string(),
   "corrected": zod.boolean().optional()
 })
@@ -1764,7 +1819,7 @@ export const GetOwnerAuditLogResponseItem = zod.object({
   "member_label": zod.string().max(getOwnerAuditLogResponseMemberLabelMax),
   "description": zod.string().max(getOwnerAuditLogResponseDescriptionMax),
   "points_delta": zod.int(),
-  "status": zod.enum(['completed', 'redeemed', 'pending', 'confirmed', 'corrected']),
+  "status": zod.enum(['completed', 'redeemed', 'pending', 'confirmed', 'rejected', 'corrected']),
   "created_at": zod.string()
 })
 export const GetOwnerAuditLogResponse = zod.array(GetOwnerAuditLogResponseItem).max(25)
@@ -1797,7 +1852,7 @@ export const ListOwnerMemberHistoryResponseItem = zod.object({
   "member_label": zod.string().max(listOwnerMemberHistoryResponseMemberLabelMax),
   "description": zod.string().max(listOwnerMemberHistoryResponseDescriptionMax),
   "points_delta": zod.int(),
-  "status": zod.enum(['completed', 'redeemed', 'pending', 'confirmed', 'corrected']),
+  "status": zod.enum(['completed', 'redeemed', 'pending', 'confirmed', 'rejected', 'corrected']),
   "created_at": zod.string()
 })
 export const ListOwnerMemberHistoryResponse = zod.array(ListOwnerMemberHistoryResponseItem).max(200)
@@ -2517,6 +2572,8 @@ export const listOwnerPendingResponseMemberNicknameMin = 2;
 export const listOwnerPendingResponseMemberNicknameMax = 20;
 
 export const listOwnerPendingResponsePhoneLast4RegExp = new RegExp('^[0-9]{4}$');
+export const listOwnerPendingResponseRejectionReasonMax = 200;
+
 
 
 export const ListOwnerPendingResponseItem = zod.object({
@@ -2529,6 +2586,7 @@ export const ListOwnerPendingResponseItem = zod.object({
   "reward_name": zod.string(),
   "points_spent": zod.int(),
   "status": zod.string(),
+  "rejection_reason": zod.string().max(listOwnerPendingResponseRejectionReasonMax).nullable(),
   "created_at": zod.string(),
   "corrected": zod.boolean().optional()
 })
@@ -2543,6 +2601,8 @@ export const confirmOwnerRedemptionResponseMemberNicknameMin = 2;
 export const confirmOwnerRedemptionResponseMemberNicknameMax = 20;
 
 export const confirmOwnerRedemptionResponsePhoneLast4RegExp = new RegExp('^[0-9]{4}$');
+export const confirmOwnerRedemptionResponseRejectionReasonMax = 200;
+
 
 
 export const ConfirmOwnerRedemptionResponse = zod.object({
@@ -2555,6 +2615,7 @@ export const ConfirmOwnerRedemptionResponse = zod.object({
   "reward_name": zod.string(),
   "points_spent": zod.int(),
   "status": zod.string(),
+  "rejection_reason": zod.string().max(confirmOwnerRedemptionResponseRejectionReasonMax).nullable(),
   "created_at": zod.string(),
   "corrected": zod.boolean().optional()
 })

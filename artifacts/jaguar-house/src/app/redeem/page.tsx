@@ -91,10 +91,10 @@ export default function RedeemPage() {
           </button>
         </li>)}</ul>}
       </section>
-       <section id="pending-redemptions" className="panel p-5 scroll-mt-24">
-         <h2 className="font-display text-lg font-semibold mb-3 flex items-center gap-2"><RankEmblem name="cosmic-world" size={22} />คำขอรอยืนยัน <span className="ml-auto font-mono text-sm">{pendingRequests.length}</span></h2>
-         {history.isLoading ? <LoadingState label="กำลังโหลดคำขอ" compact /> : history.isError ? <ErrorState message={errorText(history.error)} onRetry={() => void history.refetch()} retrying={history.isFetching} /> : !pendingRequests.length ? <EmptyState title="ไม่มีคำขอที่รออยู่" body="คำขอแลกรางวัลของคุณจะแสดงที่นี่" />
-        : <ul className="space-y-2 list-none p-0 m-0">{pendingRequests.map(r => <li key={r.id} className="rounded-xl border border-[var(--line-2)] p-3"><p className="font-semibold">{r.reward_name}</p><p className="text-xs text-[var(--muted)]">{r.points_spent} แต้ม · {new Date(r.created_at).toLocaleString("th-TH")}</p></li>)}</ul>}
+        <section id="pending-redemptions" className="panel p-5 scroll-mt-24">
+          <h2 className="font-display text-lg font-semibold mb-3 flex items-center gap-2"><RankEmblem name="cosmic-world" size={22} />ประวัติคำขอแลกรางวัล <span className="ml-auto font-mono text-sm">{pendingRequests.length} รออยู่</span></h2>
+          {history.isLoading ? <LoadingState label="กำลังโหลดคำขอ" compact /> : history.isError ? <ErrorState message={errorText(history.error)} onRetry={() => void history.refetch()} retrying={history.isFetching} /> : !history.data?.length ? <EmptyState title="ยังไม่มีประวัติคำขอ" body="คำขอแลกรางวัลของคุณจะแสดงที่นี่" />
+         : <ul className="space-y-2 list-none p-0 m-0">{history.data.map(r => <li key={r.id} className="rounded-xl border border-[var(--line-2)] p-3"><div className="flex flex-wrap items-start justify-between gap-2"><p className="font-semibold">{r.reward_name}</p><span className="text-xs text-[var(--muted)]">{r.status === "pending" ? "รอยืนยัน" : r.status === "rejected" ? "ปฏิเสธแล้ว" : "ยืนยันแล้ว"}</span></div><p className="text-xs text-[var(--muted)]">{r.points_spent} แต้ม · {new Date(r.created_at).toLocaleString("th-TH")}</p>{r.status === "rejected" && r.rejection_reason && <p className="text-sm text-[var(--muted)] mt-1">เหตุผล: {r.rejection_reason}</p>}</li>)}</ul>}
       </section>
     </div>
     <Modal open={!!picked} onClose={() => !pending && setPicked(null)} labelledBy="redeem-confirm">

@@ -44,7 +44,7 @@ async function makeFixture(client: FixtureClient) {
     )`,
     `create temporary table jaguar_redemptions (
       id uuid, member_id uuid, reward_id uuid, points_spent integer,
-      status text, created_at timestamptz
+      status text, rejection_reason text, created_at timestamptz
     )`,
     `create temporary table jaguar_cannabis_transactions (
       id uuid, member_id uuid, delta integer, grams_purchased integer,
@@ -86,11 +86,12 @@ async function makeFixture(client: FixtureClient) {
       ('30000000-0000-4000-8000-000000000005','${demo}',3,300,'demo purchase',${todayThaiMorning});
     insert into jaguar_rewards values ('40000000-0000-4000-8000-000000000001','Free item');
     insert into jaguar_redemptions values
-      ('50000000-0000-4000-8000-000000000001','${regularA}','40000000-0000-4000-8000-000000000001',10,'confirmed',${todayThaiMorning}),
-      ('50000000-0000-4000-8000-000000000002','${regularA}','40000000-0000-4000-8000-000000000001',20,'confirmed',${todayThaiMorning}),
-      ('50000000-0000-4000-8000-000000000003','${regularA}','40000000-0000-4000-8000-000000000001',10,'pending',${todayThaiMorning}),
-      ('50000000-0000-4000-8000-000000000004','${regularB}','40000000-0000-4000-8000-000000000001',10,'confirmed',${oldDate}),
-      ('50000000-0000-4000-8000-000000000005','${demo}','40000000-0000-4000-8000-000000000001',10,'confirmed',${todayThaiMorning});
+      ('50000000-0000-4000-8000-000000000001','${regularA}','40000000-0000-4000-8000-000000000001',10,'confirmed',null,${todayThaiMorning}),
+      ('50000000-0000-4000-8000-000000000002','${regularA}','40000000-0000-4000-8000-000000000001',20,'confirmed',null,${todayThaiMorning}),
+      ('50000000-0000-4000-8000-000000000003','${regularA}','40000000-0000-4000-8000-000000000001',10,'pending',null,${todayThaiMorning}),
+      ('50000000-0000-4000-8000-000000000004','${regularB}','40000000-0000-4000-8000-000000000001',10,'confirmed',null,${oldDate}),
+      ('50000000-0000-4000-8000-000000000005','${demo}','40000000-0000-4000-8000-000000000001',10,'confirmed',null,${todayThaiMorning}),
+      ('50000000-0000-4000-8000-000000000006','${regularB}','40000000-0000-4000-8000-000000000001',10,'rejected','Wrong reward selection',${todayThaiMorning});
     insert into jaguar_transaction_corrections values
       ('60000000-0000-4000-8000-000000000001','${regularA}','corrected sale',${todayThaiMorning}),
       ('60000000-0000-4000-8000-000000000002','${demo}','demo correction',${todayThaiMorning});
@@ -127,6 +128,10 @@ test("owner totals and audit use actual ledgers, Bangkok dates, and exclude demo
     assert.ok(
       regularEvents.some((event) => event.event_type === "redemption" && event.description.includes("แลกรางวัล")),
       "cannabis free redemption should be classified as a redemption",
+    );
+    assert.ok(
+      regularEvents.some((event) => event.status === "rejected" && Number(event.points_delta) === 0 && event.description.includes("Wrong reward selection")),
+      "rejected requests should remain visible without appearing as a points deduction",
     );
     assert.ok(audit.every((event) => event.member_code !== "DEMO-A"), "demo member events must be excluded");
 

@@ -84,8 +84,10 @@ const ownerActivitySql = `with activity as (
   union all
   select d.id,'redemption'::text,m.member_code,m.id,m.display_name,
     coalesce(nullif(m.nickname,''),m.display_name,m.member_code),
-    (r.name || ' · แลก ' || d.points_spent || ' แต้ม')::text,
-    (-d.points_spent)::integer,d.status::text,d.created_at
+    (case when d.status='rejected'
+       then 'ปฏิเสธคำขอ ' || r.name || ' · ' || coalesce(d.rejection_reason,'')
+       else r.name || ' · แลก ' || d.points_spent || ' แต้ม' end)::text,
+    (case when d.status='confirmed' then -d.points_spent else 0 end)::integer,d.status::text,d.created_at
   from jaguar_redemptions d join jaguar_members m on m.id=d.member_id
     join jaguar_rewards r on r.id=d.reward_id where not m.is_demo
   union all

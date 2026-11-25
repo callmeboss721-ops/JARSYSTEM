@@ -51,10 +51,12 @@ export const loyaltyRedemptions = pgTable("jaguar_redemptions", {
   requestId: uuid("request_id").unique(),
   pointsSpent: integer("points_spent").notNull(),
   status: text("status").notNull().default("pending"),
+  rejectionReason: text("rejection_reason"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
   check("jaguar_redemption_cost", sql`${t.pointsSpent} >= 10`),
-  check("jaguar_redemption_status", sql`${t.status} in ('pending','confirmed')`),
+  check("jaguar_redemption_status", sql`${t.status} in ('pending','confirmed','rejected')`),
+  check("jaguar_rejection_reason", sql`${t.status} <> 'rejected' or length(btrim(${t.rejectionReason})) >= 3`),
   uniqueIndex("jaguar_one_pending_per_member").on(t.memberId).where(sql`${t.status} = 'pending'`),
   index("jaguar_redemption_created").on(t.createdAt),
 ]);

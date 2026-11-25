@@ -14,5 +14,6 @@ export const OwnerAuditEntryStatus = {
   redeemed: 'redeemed',
   pending: 'pending',
   confirmed: 'confirmed',
+  rejected: 'rejected',
   corrected: 'corrected',
 } as const;

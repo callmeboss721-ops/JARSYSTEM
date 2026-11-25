@@ -21,7 +21,7 @@ type Args = {
   p_code?: string; p_phone?: string | null; p_name?: string; p_nickname?: string;
   p_method?: "phone" | "member_code" | "nickname"; p_identifier?: string;
   p_member?: string | null; p_reward?: string; p_points?: number; p_request?: string;
-  p_redemption?: string; p_pending_only?: boolean; p_amount?: number; p_bottle_count?: number;
+  p_redemption?: string; p_pending_only?: boolean; p_reason?: string; p_amount?: number; p_bottle_count?: number;
   p_grams?: number; p_formula?: string; p_qr_token?: string; p_enabled?: boolean; p_staff?: boolean;
   p_slip_path?: string | null;
 };
@@ -43,7 +43,7 @@ const fail = (status: number, message: string): never => { throw new LoyaltyErro
 const demoAccessEnabled = false;
 const redemptionSelect = `select d.id,d.member_id,m.member_code,d.reward_id,r.name as reward_name,
   m.nickname as member_nickname,nullif(right(regexp_replace(coalesce(m.phone_e164,''),'[^0-9]','','g'),4),'') as phone_last4,
-  d.points_spent,d.status,d.created_at from jaguar_redemptions d
+  d.points_spent,d.status,d.rejection_reason,d.created_at from jaguar_redemptions d
   join jaguar_members m on m.id=d.member_id join jaguar_rewards r on r.id=d.reward_id`;
 
 export function normalizeNickname(value: string): string {
@@ -448,6 +448,25 @@ export async function loyaltyStore<T>(operation: string, args: Args = {}): Promi
           await client.query("insert into jaguar_point_transactions(member_id,delta,reason) values($1,$2,'reward_redemption')",
           [target.member_id, -redemption.points_spent]);
         }
+        result = (await client.query(`${redemptionSelect} where d.id=$1`, [args.p_redemption])).rows[0];
+        break;
+      }
+      case "jaguar_reject_redemption": {
+        const reason = args.p_reason?.normalize("NFC").trim() ?? "";
+        const reasonLength = Array.from(reason).length;
+        if (reasonLength < 3 || reasonLength > 200 || /[\u0000-\u001f\u007f]/.test(reason)) {
+          fail(400, "ระบุเหตุผลการปฏิเสธ 3–200 ตัวอักษร");
+        }
+        const redemption = (await client.query(
+          "select id,status from jaguar_redemptions where id=$1 for update",
+          [args.p_redemption],
+        )).rows[0];
+        if (!redemption) fail(404, "ไม่พบรายการแลกรางวัล");
+        if (redemption.status !== "pending") fail(409, "ปฏิเสธได้เฉพาะคำขอที่รอยืนยัน");
+        await client.query(
+          "update jaguar_redemptions set status='rejected',rejection_reason=$2 where id=$1",
+          [args.p_redemption, reason],
+        );
         result = (await client.query(`${redemptionSelect} where d.id=$1`, [args.p_redemption])).rows[0];
         break;
       }

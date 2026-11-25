@@ -77,6 +77,7 @@ export default function StaffPage() {
   } | null>(null);
   const [editingCannabis, setEditingCannabis] = useState<{ id: string; grams: string; reason: string } | null>(null);
   const [editingRedemption, setEditingRedemption] = useState<{ id: string; reward_id: string; reason: string } | null>(null);
+  const [rejectingRedemption, setRejectingRedemption] = useState<{ id: string; reason: string } | null>(null);
   const [shiftTotals, setShiftTotals] = useState({ bills: 0, bottles: 0, baht: 0 });
   const video = useRef<HTMLVideoElement>(null);
   const controls = useRef<{ stop: () => void } | null>(null);
@@ -516,6 +517,27 @@ export default function StaffPage() {
       ]);
     } catch (e) { setErr(errorText(e)); }
   };
+  const rejectRedemption = async (event: FormEvent) => {
+    event.preventDefault();
+    const reason = rejectingRedemption?.reason.trim() ?? "";
+    if (!rejectingRedemption || reason.length < 3 || reason.length > 200) {
+      setErr("ระบุเหตุผลการปฏิเสธ 3–200 ตัวอักษร");
+      return;
+    }
+    setBusy(true); setErr(""); setMsg("");
+    try {
+      await api<RedemptionData>(
+        `${STAFF}/redemptions/${encodeURIComponent(rejectingRedemption.id)}/reject`,
+        json("POST", { reason }),
+      );
+      setRejectingRedemption(null);
+      announceSuccess("ปฏิเสธคำขอแล้ว · ไม่มีการหักแต้ม");
+      await Promise.all([
+        queue.refetch(),
+        recentRedemptions.refetch(),
+      ]);
+    } catch (e) { setErr(errorText(e)); } finally { setBusy(false); }
+  };
   const create = async (e: FormEvent) => {
     e.preventDefault();
     if (!codePattern.test(code)) { setErr("รหัสสมาชิกต้องมี 6–8 ตัว"); return; }
@@ -760,7 +782,16 @@ export default function StaffPage() {
           <section className="panel p-5 sm:p-6">
             <h2 className="font-display text-xl font-semibold">รายการแลกรอส่งมอบ</h2>
             {queue.isLoading ? <div className="mt-4"><StaffRowsSkeleton label="กำลังโหลดรายการแลกรางวัล" rows={2} /></div> : queue.isError ? <ErrorState message={errorText(queue.error)} onRetry={() => void queue.refetch()} retrying={queue.isFetching} /> : !queue.data?.length ? <div className="mt-4"><EmptyState title="ไม่มีรายการรอยืนยัน" /></div>
-            : <ul className="list-none p-0 mt-4 space-y-3">{queue.data.map((r) => <li key={r.id} className="rounded-xl border border-[var(--line-2)] p-4"><p className="font-semibold">{r.reward_name}</p><p className="text-sm text-[var(--muted)]">{r.member_nickname || r.member_code} · {r.phone_last4 ? `ลงท้าย ${r.phone_last4} · ` : ""}{r.points_spent} แต้ม</p><button className="btn btn-gold w-full mt-3" disabled={busy} onClick={async () => { setBusy(true); try { await api(`${STAFF}/redemptions/${encodeURIComponent(r.id)}/confirm`, json("POST", {})); announceSuccess("ยืนยันการส่งมอบรางวัลแล้ว"); await queue.refetch(); } catch (e) { setErr(errorText(e)); } finally { setBusy(false); } }}>ยืนยันส่งมอบ</button></li>)}</ul>}
+            : <ul className="list-none p-0 mt-4 space-y-3">{queue.data.map((r) => <li key={r.id} className="rounded-xl border border-[var(--line-2)] p-4"><p className="font-semibold">{r.reward_name}</p><p className="text-sm text-[var(--muted)]">{r.member_nickname || r.member_code} · {r.phone_last4 ? `ลงท้าย ${r.phone_last4} · ` : ""}{r.points_spent} แต้ม</p>
+              <div className="grid grid-cols-2 gap-2 mt-3">
+                <button className="btn btn-gold" disabled={busy} onClick={async () => { setBusy(true); try { await api(`${STAFF}/redemptions/${encodeURIComponent(r.id)}/confirm`, json("POST", {})); announceSuccess("ยืนยันการส่งมอบรางวัลแล้ว"); await Promise.all([queue.refetch(), recentRedemptions.refetch()]); } catch (e) { setErr(errorText(e)); } finally { setBusy(false); } }}>ยืนยันส่งมอบ</button>
+                <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => { setRejectingRedemption({ id: r.id, reason: "" }); setErr(""); }}>ปฏิเสธคำขอ</button>
+              </div>
+              {rejectingRedemption?.id === r.id && <form className="staff-correction-form mt-3" onSubmit={rejectRedemption}>
+                <div className="field"><label htmlFor={`redemption-rejection-${r.id}`}>เหตุผลการปฏิเสธ</label><input id={`redemption-rejection-${r.id}`} className="input" maxLength={200} value={rejectingRedemption.reason} onChange={(e) => setRejectingRedemption({ ...rejectingRedemption, reason: e.target.value })} required /></div>
+                <div className="grid grid-cols-2 gap-2"><button type="button" className="btn btn-ghost" disabled={busy} onClick={() => setRejectingRedemption(null)}>ยกเลิก</button><button className="btn btn-danger" disabled={busy || rejectingRedemption.reason.trim().length < 3}>{busy ? "กำลังบันทึก…" : "ยืนยันปฏิเสธ"}</button></div>
+              </form>}
+            </li>)}</ul>}
             <section className="staff-correction-list mt-6" aria-label="รายการแลกรางวัลวันนี้">
               <div className="flex items-center justify-between gap-2"><h3>รายการแลกรางวัลวันนี้</h3><span>{recentRedemptions.data?.length ?? 0}</span></div>
               {recentRedemptions.isLoading ? <div className="mt-3"><StaffRowsSkeleton label="กำลังโหลดรายการแลกล่าสุด" rows={2} /></div>
@@ -769,10 +800,10 @@ export default function StaffPage() {
                     : <ul className="staff-correction-list__items">{recentRedemptions.data.map((redemption) => (
                       <li key={redemption.id}>
                         <div className="staff-correction-list__summary">
-                          <div><strong>{redemption.reward_name}</strong><p>{redemption.member_nickname || redemption.member_code} · {redemption.phone_last4 ? `ลงท้าย ${redemption.phone_last4} · ` : ""}{redemption.points_spent} แต้ม · {redemption.status === "pending" ? "รอยืนยัน" : "ยืนยันแล้ว"}</p></div>
+                          <div><strong>{redemption.reward_name}</strong><p>{redemption.member_nickname || redemption.member_code} · {redemption.phone_last4 ? `ลงท้าย ${redemption.phone_last4} · ` : ""}{redemption.points_spent} แต้ม · {redemption.status === "pending" ? "รอยืนยัน" : redemption.status === "rejected" ? "ปฏิเสธแล้ว" : "ยืนยันแล้ว"}</p>{redemption.status === "rejected" && redemption.rejection_reason && <p className="text-sm text-[var(--muted)] mt-1">เหตุผล: {redemption.rejection_reason}</p>}</div>
                           <div className="staff-correction-list__actions">
                             {redemption.corrected && <span className="staff-correction-list__badge">แก้แล้ว</span>}
-                            <button type="button" className="btn btn-ghost !min-h-11 !px-3 text-sm" onClick={() => setEditingRedemption({ id: redemption.id, reward_id: redemption.reward_id, reason: "" })}>แก้ไข</button>
+                            {redemption.status !== "rejected" && <button type="button" className="btn btn-ghost !min-h-11 !px-3 text-sm" onClick={() => setEditingRedemption({ id: redemption.id, reward_id: redemption.reward_id, reason: "" })}>แก้ไข</button>}
                           </div>
                         </div>
                         {editingRedemption?.id === redemption.id && <form className="staff-correction-form" onSubmit={saveRedemptionCorrection}>

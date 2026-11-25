@@ -99,6 +99,7 @@ export * from './staffBanking';
 export * from './staffPinInput';
 export * from './staffPointCreditInput';
 export * from './staffRedemptionCorrectionInput';
+export * from './staffRedemptionRejectionInput';
 export * from './staffSale';
 export * from './staffSaleCorrectionInput';
 export * from './staffSaleCorrectionResult';

@@ -25,6 +25,11 @@ export interface Redemption {
   reward_name: string;
   points_spent: number;
   status: string;
+  /**
+     * @maxLength 200
+     * @nullable
+     */
+  rejection_reason: string | null;
   created_at: string;
   corrected?: boolean;
 }

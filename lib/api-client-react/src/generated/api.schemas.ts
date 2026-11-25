@@ -251,6 +251,7 @@ export interface Reward {
 
 export interface RedemptionInput {
   reward_id: string;
+  request_id?: string;
 }
 
 export interface Redemption {
@@ -272,8 +273,21 @@ export interface Redemption {
   reward_name: string;
   points_spent: number;
   status: string;
+  /**
+     * @maxLength 200
+     * @nullable
+     */
+  rejection_reason: string | null;
   created_at: string;
   corrected?: boolean;
+}
+
+export interface StaffRedemptionRejectionInput {
+  /**
+     * @minLength 3
+     * @maxLength 200
+     */
+  reason: string;
 }
 
 export interface MemberAccountInput {
@@ -975,6 +989,7 @@ export const OwnerAuditEntryStatus = {
   redeemed: 'redeemed',
   pending: 'pending',
   confirmed: 'confirmed',
+  rejected: 'rejected',
   corrected: 'corrected',
 } as const;
 

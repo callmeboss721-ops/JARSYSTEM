@@ -812,6 +812,25 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Redemption" }
+  /loyalty/staff/redemptions/{id}/reject:
+    post:
+      operationId: rejectStaffRedemption
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/StaffRedemptionRejectionInput" }
+      responses:
+        "200":
+          description: Rejected pending request with reason without spending points
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Redemption" }
   /loyalty/owner/login:
     post:
       operationId: loginOwner
@@ -1388,9 +1407,10 @@ components:
       required: [reward_id]
       properties:
         reward_id: { type: string, format: uuid }
+        request_id: { type: string, format: uuid }
     Redemption:
       type: object
-      required: [id, member_id, member_code, member_nickname, phone_last4, reward_id, reward_name, points_spent, status, created_at]
+      required: [id, member_id, member_code, member_nickname, phone_last4, reward_id, reward_name, points_spent, status, rejection_reason, created_at]
       properties:
         id: { type: string }
         member_id: { type: string }
@@ -1401,8 +1421,14 @@ components:
         reward_name: { type: string }
         points_spent: { type: integer }
         status: { type: string }
+        rejection_reason: { type: ["string", "null"], maxLength: 200 }
         created_at: { type: string }
         corrected: { type: boolean }
+    StaffRedemptionRejectionInput:
+      type: object
+      required: [reason]
+      properties:
+        reason: { type: string, minLength: 3, maxLength: 200 }
     MemberAccountInput:
       type: object
       required: [name, member_code, phone, nickname]
@@ -1797,7 +1823,7 @@ components:
         member_label: { type: string, maxLength: 120 }
         description: { type: string, maxLength: 240 }
         points_delta: { type: integer }
-        status: { type: string, enum: [completed, redeemed, pending, confirmed, corrected] }
+        status: { type: string, enum: [completed, redeemed, pending, confirmed, rejected, corrected] }
         created_at: { type: string }
     BankAccount:
       type: object

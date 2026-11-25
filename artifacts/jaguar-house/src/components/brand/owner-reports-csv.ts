@@ -19,6 +19,7 @@ const STATUS_LABELS: Record<OwnerAuditEntry["status"], string> = {
   redeemed: "แลกแล้ว",
   pending: "รอยืนยัน",
   confirmed: "ยืนยันแล้ว",
+  rejected: "ปฏิเสธแล้ว",
   corrected: "แก้ไขแล้ว",
 };
 

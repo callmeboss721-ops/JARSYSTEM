@@ -12,6 +12,7 @@ import {
   ListMemberRedemptionsResponse, RequestRedemptionResponse, GetMemberQrResponse,
   ListStaffMembersResponse, RedeemAtCounterResponse, ListStaffRewardsResponse,
   ListPendingRedemptionsResponse, ConfirmRedemptionResponse, GetOwnerSummaryResponse, GetOwnerAuditLogResponse,
+  RejectStaffRedemptionParams, RejectStaffRedemptionBody, RejectStaffRedemptionResponse,
   ListOwnerMembersResponse, ListOwnerRewardsResponse, CreateOwnerRewardResponse, UpdateOwnerRewardResponse,
   ListOwnerPendingResponse, ConfirmOwnerRedemptionResponse,
   GetStaffBankingResponse, RecordStaffBankTransferBody, RecordStaffBankTransferResponse,
@@ -461,6 +462,14 @@ router.post("/staff/redemptions/:id/confirm", async (req, res) => {
   await authLimit(req, "staff-redemption-confirm", 60);
   const { id } = parse(ConfirmRedemptionParams, req.params);
   sendJson(res, ConfirmRedemptionResponse, await loyaltyStore("jaguar_confirm_redemption", { p_redemption: id }));
+});
+router.post("/staff/redemptions/:id/reject", async (req, res) => {
+  await authLimit(req, "staff-redemption-reject", 60);
+  const { id } = parse(RejectStaffRedemptionParams, req.params);
+  const { reason } = parse(RejectStaffRedemptionBody, req.body);
+  sendJson(res, RejectStaffRedemptionResponse, await loyaltyStore("jaguar_reject_redemption", {
+    p_redemption: id, p_reason: reason,
+  }));
 });
 router.get("/staff/rewards", async (req, res) => {
   await authLimit(req, "staff-rewards-read", 60);
