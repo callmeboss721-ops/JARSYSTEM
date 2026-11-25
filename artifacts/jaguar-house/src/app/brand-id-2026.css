@@ -1257,3 +1257,83 @@ html[data-brand-theme="2026"] .owner-report-highlights [data-tone="primary"] {
     transition: none;
   }
 }
+
+/* Staff surfaces: clear access hierarchy and a quicker counter scan path. */
+html[data-brand-theme="2026"] .staff-auth-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  color: hsl(var(--brand-id-2026-gold-soft));
+}
+
+html[data-brand-theme="2026"] .staff-auth-form {
+  position: relative;
+  overflow: hidden;
+  border-color: hsl(var(--brand-id-2026-border-strong) / .82);
+  background: linear-gradient(
+    145deg,
+    hsl(var(--brand-id-2026-surface-raised) / .76),
+    hsl(var(--brand-id-2026-surface) / .96)
+  );
+  box-shadow:
+    inset 0 1px 0 hsl(var(--brand-id-2026-text) / .05),
+    0 22px 56px -40px hsl(var(--brand-id-2026-neon) / .3);
+}
+
+html[data-brand-theme="2026"] .staff-auth-form::before {
+  position: absolute;
+  inset: 0 18% auto;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsl(var(--brand-id-2026-neon) / .58),
+    hsl(var(--brand-id-2026-gold) / .3),
+    transparent
+  );
+  content: "";
+  pointer-events: none;
+}
+
+html[data-brand-theme="2026"] .staff-owner-entry {
+  border-radius: var(--radius);
+  transition: color .18s ease, background-color .18s ease;
+}
+
+html[data-brand-theme="2026"] .staff-owner-entry:hover {
+  background: hsl(var(--brand-id-2026-surface) / .72);
+  color: hsl(var(--brand-id-2026-gold-soft));
+}
+
+html[data-brand-theme="2026"] .staff-counter-layout {
+  display: grid;
+  align-items: start;
+  gap: calc(var(--spacing) * 3);
+}
+
+html[data-brand-theme="2026"] .staff-counter-sidebar {
+  display: grid;
+  align-content: start;
+  gap: calc(var(--spacing) * 3);
+  min-width: 0;
+}
+
+html[data-brand-theme="2026"] .staff-counter-sidebar .staff-workflow {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+html[data-brand-theme="2026"] .staff-counter-sidebar .staff-workflow__step {
+  min-height: 48px;
+}
+
+@media (min-width: 960px) {
+  html[data-brand-theme="2026"] .staff-counter-layout {
+    grid-template-columns: minmax(0, 1.4fr) minmax(17rem, .8fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-brand-theme="2026"] .staff-owner-entry {
+    transition: none;
+  }
+}

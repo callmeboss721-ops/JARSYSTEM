@@ -582,19 +582,19 @@ export default function StaffPage() {
       </div>
     </header>
     <main className="mx-auto max-w-6xl px-4 sm:px-6 py-7">
-      {!auth ? <section className="max-w-sm mx-auto pt-4">
-        <div className="text-center mb-6"><p className="eyebrow">Staff access</p><h1 className="font-display text-3xl font-semibold mt-2">เข้าสู่ระบบพนักงาน</h1><p className="text-sm text-[var(--muted)] mt-2">ใช้ PIN ที่เจ้าของร้านกำหนด</p></div>
+      {!auth ? <section className="staff-auth-section max-w-sm mx-auto pt-4">
+        <div className="staff-auth-intro text-center mb-6"><p className="eyebrow staff-auth-eyebrow"><BrandIcon name="staffAccess" size={16} tone="gold" />Staff access</p><h1 className="font-display text-3xl font-semibold mt-2">เข้าสู่ระบบพนักงาน</h1><p className="text-sm text-[var(--muted)] mt-2">ใช้ PIN ที่เจ้าของร้านกำหนด</p></div>
         {msg && <p role="status" className="mb-4 rounded-xl border border-[var(--line)] bg-[var(--panel)] p-3 text-sm text-[var(--emerald-2)]">{msg}</p>}
-        <form className="panel p-5 sm:p-6 space-y-4" onSubmit={login}>
+        <form className="panel staff-auth-form p-5 sm:p-6 space-y-4" onSubmit={login}>
           <div className="field"><label htmlFor="staff-pin">PIN พนักงาน</label><input id="staff-pin" type="password" inputMode="numeric" autoComplete="one-time-code" maxLength={12} className="input text-center !text-2xl !tracking-[.5em]" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 12))} aria-invalid={!!err} aria-describedby={err ? "staff-pin-err" : undefined} /></div>
           <PinPad value={pin} onChange={setPin} label="แป้นตัวเลข PIN พนักงาน" />
           {err && <p id="staff-pin-err" role="alert" className="field-error">{err}</p>}
           <button className="btn btn-neon w-full" disabled={busy}>{busy && <LoadingSpinner className="loading-spinner--button" />}{busy ? "กำลังตรวจสอบ…" : "เข้าสู่พื้นที่ทำงาน"}</button>
         </form>
-        <Link href="/owner" className="flex justify-center items-center min-h-11 text-sm text-[var(--muted)] mt-4">เข้าสู่ระบบเจ้าของร้าน</Link>
+        <Link href="/owner" className="staff-owner-entry flex justify-center items-center min-h-11 text-sm text-[var(--muted)] mt-4">เข้าสู่ระบบเจ้าของร้าน</Link>
       </section>
-      : <div className="space-y-5">
-        <div className="flex flex-wrap justify-between items-end gap-3"><div><p className="eyebrow">Counter operations</p><h1 className="font-display text-3xl font-semibold">เคาน์เตอร์ร้าน</h1></div>{security.data?.default_pin && <p className="text-xs text-[var(--gold-2)]">กำลังใช้ PIN เริ่มต้น · เปลี่ยนได้ในตั้งค่า PIN</p>}</div>
+      : <div className="staff-workspace-content space-y-5">
+        <div className="staff-workspace-heading flex flex-wrap justify-between items-end gap-3"><div><p className="eyebrow">Counter operations</p><h1 className="font-display text-3xl font-semibold">เคาน์เตอร์ร้าน</h1></div>{security.data?.default_pin && <p className="text-xs text-[var(--gold-2)]">กำลังใช้ PIN เริ่มต้น · เปลี่ยนได้ในตั้งค่า PIN</p>}</div>
         {msg && !counterActionComplete && <p role="status" className="rounded-xl border border-[var(--line)] bg-[var(--panel)] p-3 text-sm text-[var(--emerald-2)]">{msg}</p>}
         {err && <p role="alert" className="field-error">{err}</p>}
         <nav className="staff-main-nav pill-switch grid grid-cols-3 p-1 gap-1 !rounded-[22px]" aria-label="เมนูหลักพนักงาน">
@@ -606,13 +606,14 @@ export default function StaffPage() {
           {TABS.filter(([id]) => id !== "counter").map(([id, label, icon]) => <button key={id} type="button" className="tab !px-2 !rounded-[14px] flex items-center justify-center gap-2" aria-pressed={tab === id} onClick={() => selectTab(id)}><BrandIcon name={icon} size={18} tone={tab === id ? "gold" : "neutral"} />{label}</button>)}
         </nav>}
 
-        {tab === "counter" && <div className="space-y-4">
+        {tab === "counter" && <div className="staff-counter-view space-y-4">
           <div className="pill-switch staff-product-switch grid grid-cols-2 p-1 gap-1 max-w-md" aria-label="เลือกประเภทบัตร">
             <button type="button" className="tab" data-kind="kratom" aria-pressed={counterMode === "kratom"} onClick={() => { setCounterMode("kratom"); setCounterActionComplete(false); setErr(""); setMsg(""); }}>กระท่อม · ขวด</button>
             <button type="button" className="tab" data-kind="cannabis" aria-pressed={counterMode === "cannabis"} data-testid="staff-mode-cannabis" onClick={() => { setCounterMode("cannabis"); setCounterActionComplete(false); setErr(""); setMsg(""); setCannabisRedeemId(null); }}>กัญชา · กรัม</button>
           </div>
           {counterMode === "cannabis" && security.data?.cannabis_points_enabled !== true && <p className="counter-feature-disabled p-3 text-sm" role="status" data-testid="staff-cannabis-disabled">ปิดการสะสมแต้มกัญชาอยู่ · ยังแลกรางวัลได้ แต่บันทึกยอดซื้อถูกปิดไว้จนกว่าเจ้าของร้านจะเปิดใช้</p>}
-          <section className="staff-quick-counter panel p-4 sm:p-5" aria-label="ค้นหาสมาชิกที่เคาน์เตอร์">
+          <div className="staff-counter-layout">
+            <section className="staff-quick-counter panel p-4 sm:p-5" aria-label="ค้นหาสมาชิกที่เคาน์เตอร์">
             <div className="staff-quick-counter__heading"><div><p className="eyebrow">Counter scan</p><h2 className="font-display text-xl font-semibold">สแกนหรือค้นหาสมาชิก</h2></div><span className="staff-quick-counter__hint">รหัส · เบอร์เต็ม · 4 หลักท้าย</span></div>
             <div className="staff-quick-actions">
               <form onSubmit={(event) => void quickFind(event)} className="staff-quick-counter__form">
@@ -630,9 +631,10 @@ export default function StaffPage() {
               <Image src="/ui/artwork/staff-idle-mascot.webp" alt="" aria-hidden="true" width={64} height={72} sizes="64px" className="h-14 w-12 shrink-0 object-contain" />
               <span>สแกน QR หรือค้นหาสมาชิกเพื่อเริ่มรายการ</span>
             </div>}
-          </section>
-          <StaffWorkflow step={workflowStep} />
-          {counterActionComplete && <section className="staff-success-card" role="status" aria-live="polite">
+            </section>
+            <aside className="staff-counter-sidebar" aria-label="สถานะและรายการในกะ">
+              <StaffWorkflow step={workflowStep} />
+              {counterActionComplete && <section className="staff-success-card" role="status" aria-live="polite">
             <Image src="/ui/artwork/staff-success-mascot.webp" alt="" aria-hidden="true" width={80} height={80} sizes="80px" className="h-16 w-16 object-contain" />
             <p>{msg || "รายการสำเร็จ"}</p>
             <button type="button" className="staff-next-scan btn btn-neon" onClick={scanNextMember}>สแกนคนถัดไปทันที</button>
@@ -650,7 +652,9 @@ export default function StaffPage() {
               </div>
             </section>
           )}
-          {recentActivity.length > 0 && <section className="staff-session-activity panel p-4" aria-label="กิจกรรมเคาน์เตอร์ในเซสชันนี้"><div className="flex justify-between gap-2"><h2 className="font-display text-base font-semibold">กิจกรรมล่าสุดในเซสชัน</h2><span>{recentActivity.length}/5</span></div><ol>{recentActivity.map((activity, index) => <li key={`${activity}-${index}`}>{activity}</li>)}</ol></section>}
+              {recentActivity.length > 0 && <section className="staff-session-activity panel p-4" aria-label="กิจกรรมเคาน์เตอร์ในเซสชันนี้"><div className="flex justify-between gap-2"><h2 className="font-display text-base font-semibold">กิจกรรมล่าสุดในเซสชัน</h2><span>{recentActivity.length}/5</span></div><ol>{recentActivity.map((activity, index) => <li key={`${activity}-${index}`}>{activity}</li>)}</ol></section>}
+            </aside>
+          </div>
           {counterMode === "kratom" && <div className="grid gap-5 lg:grid-cols-2 items-start">
           <section className="panel p-5 sm:p-6">
             <p className="eyebrow">Sale record</p><h2 className="font-display text-xl font-semibold mb-4">บันทึกยอดขาย / แลกรางวัล</h2>
