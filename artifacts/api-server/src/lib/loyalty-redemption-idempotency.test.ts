@@ -102,6 +102,41 @@ if (!databaseUrl) {
     }
   });
 
+  test("replaying an accepted request still works after its reward is paused", async () => {
+    const fixture = await createFixture();
+    try {
+      const requestId = randomUUID();
+      const first = await loyaltyStore<Record<string, unknown>>("jaguar_request_redemption", {
+        p_member: fixture.memberId, p_reward: fixture.rewardId, p_request: requestId,
+      });
+
+      await pool.query("update jaguar_rewards set is_active=false where id=$1", [fixture.rewardId]);
+
+      const replay = await loyaltyStore<Record<string, unknown>>("jaguar_request_redemption", {
+        p_member: fixture.memberId, p_reward: fixture.rewardId, p_request: requestId,
+      });
+      const routeReplay = await loyaltyStore<Record<string, unknown>>("jaguar_find_redemption_request", {
+        p_member: fixture.memberId, p_reward: fixture.rewardId, p_request: requestId,
+      });
+
+      assert.equal(replay.id, first.id);
+      assert.equal(routeReplay.id, first.id);
+      assert.equal(replay.status, "pending");
+
+      const totals = (await pool.query(
+        `select b.balance,b.lifetime_redeemed,
+          (select count(*)::integer from jaguar_redemptions where member_id=$1) as redemptions
+         from jaguar_point_balances b where b.member_id=$1`,
+        [fixture.memberId],
+      )).rows[0];
+      assert.equal(totals.balance, 20);
+      assert.equal(totals.lifetime_redeemed, 0);
+      assert.equal(totals.redemptions, 1);
+    } finally {
+      await removeFixture(fixture);
+    }
+  });
+
   test("concurrent repeated requests and confirmations never create a second spend", async () => {
     const fixture = await createFixture();
     try {
