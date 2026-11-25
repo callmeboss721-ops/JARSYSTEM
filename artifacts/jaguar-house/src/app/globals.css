@@ -8591,7 +8591,7 @@ html[data-brand-theme="2026"] .member-dashboard-status__qr-trigger > small {
   font: 700 6px/1 var(--font-sans);
 }
 
-html[data-brand-theme="2026"] .delivery-call-link {
+html[data-brand-theme="2026"] .delivery-contact-link {
   display: inline-flex;
   width: 100%;
   max-width: 320px;
@@ -8605,14 +8605,14 @@ html[data-brand-theme="2026"] .delivery-call-link {
   box-shadow: none;
 }
 
-html[data-brand-theme="2026"] .delivery-call-link img {
+html[data-brand-theme="2026"] .delivery-contact-link img {
   display: block;
   width: 100%;
   height: auto;
   object-fit: contain;
 }
 
-html[data-brand-theme="2026"] .delivery-call-link:hover {
+html[data-brand-theme="2026"] .delivery-contact-link:hover {
   opacity: .9;
 }
 

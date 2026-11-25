@@ -100,10 +100,15 @@ export function BrandDeliveryLink({ className }: { className?: string }) {
     <Button
       asChild
       variant="ghost"
-      className={`delivery-call-link ${className ?? ""}`}
-      aria-label="โทร 0996125914 เพื่อสอบถามและยืนยันพื้นที่กับเงื่อนไขจัดส่ง"
+      className={`delivery-contact-link ${className ?? ""}`}
+      aria-label="เปิดแชตร้าน JAGUAR SPK ผ่าน LINE เพื่อสอบถามและยืนยันพื้นที่กับเงื่อนไขจัดส่ง"
     >
-      <a href="tel:0996125914">
+      <a
+        href="https://line.me/R/ti/p/@880beqva"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-testid="link-delivery-contact"
+      >
         <Image
           src="/ui/artwork/delivery-button.webp"
           alt="สั่งด่วนส่งฟรี"
