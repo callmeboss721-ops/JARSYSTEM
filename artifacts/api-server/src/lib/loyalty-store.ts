@@ -233,6 +233,26 @@ export async function loyaltyStore<T>(operation: string, args: Args = {}): Promi
           order by d.created_at desc,d.id limit 100`,
         [args.p_member ?? null, args.p_pending_only ?? false, demoAccessEnabled])).rows;
         break;
+      case "jaguar_find_redemption_request": {
+        await card(client, args.p_member!);
+        if (!args.p_request) {
+          result = null;
+          break;
+        }
+        const prior = (await client.query(
+          "select id,member_id,reward_id from jaguar_redemptions where request_id=$1",
+          [args.p_request],
+        )).rows[0];
+        if (!prior) {
+          result = null;
+          break;
+        }
+        if (prior.member_id !== args.p_member || prior.reward_id !== args.p_reward) {
+          fail(409, "รหัสคำขอซ้ำกับรายการอื่น กรุณาเริ่มคำขอใหม่");
+        }
+        result = (await client.query(`${redemptionSelect} where d.id=$1`, [prior.id])).rows[0];
+        break;
+      }
       case "jaguar_add_points": {
         if (!Number.isInteger(args.p_points) || args.p_points! < 1 || args.p_points! > 20 || !args.p_request) {
           fail(400, "จำนวนแต้มต้องอยู่ระหว่าง 1–20");
@@ -378,15 +398,40 @@ export async function loyaltyStore<T>(operation: string, args: Args = {}): Promi
       }
       case "jaguar_request_redemption": {
         const member = await card(client, args.p_member!, true);
+        if (args.p_request) {
+          const prior = (await client.query(
+            "select id,member_id,reward_id from jaguar_redemptions where request_id=$1",
+            [args.p_request],
+          )).rows[0];
+          if (prior) {
+            if (prior.member_id !== args.p_member || prior.reward_id !== args.p_reward) {
+              fail(409, "รหัสคำขอซ้ำกับรายการอื่น กรุณาเริ่มคำขอใหม่");
+            }
+            result = (await client.query(`${redemptionSelect} where d.id=$1`, [prior.id])).rows[0];
+            break;
+          }
+        }
         const reward = (await client.query("select points_cost from jaguar_rewards where id=$1 and is_active=true and (not is_demo or $2) for share", [args.p_reward, demoAccessEnabled])).rows[0];
         if (!reward) fail(409, "รางวัลนี้ไม่พร้อมให้แลกแล้ว");
         if ((await client.query("select id from jaguar_redemptions where member_id=$1 and status='pending'", [args.p_member])).rowCount) {
           fail(409, "คุณมีรายการรอรับรางวัลอยู่แล้ว กรุณาติดต่อพนักงาน");
         }
         if (member.balance < reward.points_cost) fail(409, "แต้มที่ใช้ได้ไม่เพียงพอ");
-        const created = (await client.query(`insert into jaguar_redemptions(member_id,reward_id,points_spent)
-          values($1,$2,$3) returning id`, [args.p_member, args.p_reward, reward.points_cost])).rows[0];
-        result = (await client.query(`${redemptionSelect} where d.id=$1`, [created.id])).rows[0];
+        const created = (await client.query(`insert into jaguar_redemptions(member_id,reward_id,points_spent,request_id)
+          values($1,$2,$3,$4) on conflict(request_id) do nothing returning id`,
+        [args.p_member, args.p_reward, reward.points_cost, args.p_request ?? null])).rows[0];
+        if (created) {
+          result = (await client.query(`${redemptionSelect} where d.id=$1`, [created.id])).rows[0];
+          break;
+        }
+        const prior = (await client.query(
+          "select id,member_id,reward_id from jaguar_redemptions where request_id=$1",
+          [args.p_request],
+        )).rows[0];
+        if (!prior || prior.member_id !== args.p_member || prior.reward_id !== args.p_reward) {
+          fail(409, "รหัสคำขอซ้ำกับรายการอื่น กรุณาเริ่มคำขอใหม่");
+        }
+        result = (await client.query(`${redemptionSelect} where d.id=$1`, [prior.id])).rows[0];
         break;
       }
       case "jaguar_confirm_redemption": {

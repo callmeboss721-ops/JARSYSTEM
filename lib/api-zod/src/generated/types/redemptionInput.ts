@@ -8,4 +8,5 @@
 
 export interface RedemptionInput {
   reward_id: string;
+  request_id?: string;
 }

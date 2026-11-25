@@ -251,9 +251,20 @@ router.get("/redemptions", async (req, res) => {
 });
 router.post("/redemptions", async (req, res) => {
   const { sub } = readSession(req, "member");
-  await rateLimit(`redeem:${sub}`, 5, 60_000);
   const data = parse(RequestRedemptionBody, req.body);
-  sendJson(res, RequestRedemptionResponse, await loyaltyStore("jaguar_request_redemption", { p_member: sub, p_reward: data.reward_id }), 201);
+  if (data.request_id) {
+    const prior = await loyaltyStore<unknown | null>("jaguar_find_redemption_request", {
+      p_member: sub, p_reward: data.reward_id, p_request: data.request_id,
+    });
+    if (prior) {
+      sendJson(res, RequestRedemptionResponse, prior);
+      return;
+    }
+  }
+  await rateLimit(`redeem:${sub}`, 5, 60_000);
+  sendJson(res, RequestRedemptionResponse, await loyaltyStore("jaguar_request_redemption", {
+    p_member: sub, p_reward: data.reward_id, p_request: data.request_id,
+  }), 201);
 });
 
 router.post("/uploads/request-url", async (req, res) => {

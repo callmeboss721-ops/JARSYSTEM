@@ -433,7 +433,8 @@ export const ListMemberRedemptionsResponse = zod.array(ListMemberRedemptionsResp
 
 
 export const RequestRedemptionBody = zod.object({
-  "reward_id": zod.uuid()
+  "reward_id": zod.uuid(),
+  "request_id": zod.uuid().optional()
 })
 
 export const requestRedemptionResponseMemberNicknameMin = 2;

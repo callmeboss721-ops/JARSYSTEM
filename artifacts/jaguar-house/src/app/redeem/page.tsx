@@ -41,12 +41,18 @@ export default function RedeemPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [pending, setPending] = useState(false);
+  const [requestId, setRequestId] = useState<string | null>(null);
   const request = async () => {
     if (!picked) return;
     setPending(true); setError("");
+    const requestIdForAttempt = requestId ?? crypto.randomUUID();
+    setRequestId(requestIdForAttempt);
     try {
-      const result = await api<RedemptionData>("/api/loyalty/redemptions", json("POST", { reward_id: picked.id }));
+      const result = await api<RedemptionData>("/api/loyalty/redemptions", json("POST", {
+        reward_id: picked.id, request_id: requestIdForAttempt,
+      }));
       setSuccess(result.reward_name || picked.name); setPicked(null);
+      setRequestId(null);
       await Promise.all([
         qc.invalidateQueries({ queryKey: ["/api/loyalty/redeem-page"] }),
         qc.invalidateQueries({ queryKey: ["/api/loyalty/card"] }),
@@ -80,7 +86,7 @@ export default function RedeemPage() {
          : <ul className="grid sm:grid-cols-2 gap-3 list-none p-0 m-0">{activeRewards.map(r => <li key={r.id} className="redeem-reward panel p-5 flex flex-col gap-3">
           <div className="flex justify-between gap-2"><h3 className="font-display text-lg font-semibold">{r.name}</h3><span className="text-sm text-[var(--gold-2)] whitespace-nowrap">{r.points_cost} แต้ม</span></div>
           {r.description && <p className="text-sm text-[var(--muted)]">{r.description}</p>}
-           <button className="btn btn-redeem mt-auto" disabled={card.balance < r.points_cost || card.balance < 10} onClick={() => { setPicked(r); setError(""); }}>
+           <button className="btn btn-redeem mt-auto" disabled={card.balance < r.points_cost || card.balance < 10} onClick={() => { setPicked(r); setRequestId(crypto.randomUUID()); setError(""); }}>
              {card.balance >= r.points_cost && card.balance >= 10 ? "ขอแลกรางวัลนี้" : `ต้องมี ${Math.max(r.points_cost,10)} แต้ม`}
           </button>
         </li>)}</ul>}
@@ -92,7 +98,7 @@ export default function RedeemPage() {
       </section>
     </div>
     <Modal open={!!picked} onClose={() => !pending && setPicked(null)} labelledBy="redeem-confirm">
-       {picked && <div className="space-y-5"><p className="eyebrow">Request reward</p><h2 id="redeem-confirm" className="font-display text-2xl font-semibold">ขอแลก “{picked.name}”?</h2><p className="text-sm text-[var(--muted)]">แต้มจะถูกหักเมื่อพนักงานยืนยันการรับของเท่านั้น</p><p className="font-mono text-[var(--gold-2)]">{picked.points_cost} แต้ม · คงเหลือหลังยืนยัน {card.balance - picked.points_cost}</p>{error && <p role="alert" className="field-error">{error}</p>}<div className="flex gap-3"><button className="btn btn-ghost flex-1" onClick={() => setPicked(null)} disabled={pending}>กลับ</button><button className="btn btn-redeem flex-1" onClick={request} disabled={pending}>{pending ? "กำลังส่ง..." : "ยืนยันคำขอ"}</button></div></div>}
+       {picked && <div className="space-y-5"><p className="eyebrow">Request reward</p><h2 id="redeem-confirm" className="font-display text-2xl font-semibold">ขอแลก “{picked.name}”?</h2><p className="text-sm text-[var(--muted)]">แต้มจะถูกหักเมื่อพนักงานยืนยันการรับของเท่านั้น</p><p className="font-mono text-[var(--gold-2)]">{picked.points_cost} แต้ม · คงเหลือหลังยืนยัน {card.balance - picked.points_cost}</p>{error && <p role="alert" className="field-error">{error}</p>}<div className="flex gap-3"><button className="btn btn-ghost flex-1" onClick={() => { setPicked(null); setRequestId(null); }} disabled={pending}>กลับ</button><button className="btn btn-redeem flex-1" onClick={request} disabled={pending}>{pending ? "กำลังส่ง..." : "ยืนยันคำขอ"}</button></div></div>}
     </Modal>
   </MemberShell>;
 }
