@@ -997,6 +997,36 @@ html[data-brand-theme="2026"] .jh-tabbar {
   }
 }
 
+@media (max-width: 380px) {
+  html[data-brand-theme="2026"] .jh-header__inner {
+    gap: 4px;
+  }
+
+  html[data-brand-theme="2026"] .jh-brand {
+    gap: 5px;
+  }
+
+  html[data-brand-theme="2026"] .jh-brand img {
+    width: 36px;
+    height: 36px;
+  }
+
+  html[data-brand-theme="2026"] .jh-access {
+    gap: 0;
+  }
+
+  html[data-brand-theme="2026"] .jh-access a {
+    gap: 3px;
+    padding-inline: 4px;
+    font-size: 9px;
+  }
+
+  html[data-brand-theme="2026"] .jh-access .brand-icon {
+    width: 13px;
+    height: 13px;
+  }
+}
+
 html[data-brand-theme="2026"] .jh-tabbar__track {
   border: 1px solid hsl(var(--brand-id-2026-border-strong));
   background: hsl(var(--brand-id-2026-surface-raised) / .94);
