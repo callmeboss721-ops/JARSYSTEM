@@ -69,12 +69,12 @@ export default function OwnerPage(){
      {view==="reports"&&(summary.isLoading?<LoadingState label="กำลังโหลดภาพรวมร้าน" />:summary.isError?<ErrorState message={errorText(summary.error)} onRetry={()=>void summary.refetch()} retrying={summary.isFetching}/>:summary.data&&<div className="space-y-6">
         <section aria-label="ตัวเลขภาพรวม" className="owner-report-highlights grid grid-cols-2 lg:grid-cols-3 gap-3">
           {[
+            ["ยอดขายวันนี้",summary.data.today_sales,"บาท","hero"],
             ["แต้มที่ออกวันนี้",summary.data.today_points_issued,"แต้ม","primary"],
+            ["จำนวนครั้งเข้าร้านวันนี้",summary.data.today_visits,"ครั้ง","primary"],
             ["แลกฟรีหน้าร้านวันนี้",summary.data.today_redemptions,"ครั้ง","gold"],
             ["สมาชิกมีรายการซื้อกระท่อมจริง",summary.data.kratom_members,"คน","gold"],
             ["สมาชิกมีรายการซื้อกัญชาจริง",summary.data.cannabis_members,"คน","green"],
-            ["ยอดขายวันนี้",summary.data.today_sales,"บาท","default"],
-            ["จำนวนครั้งเข้าร้านวันนี้",summary.data.today_visits,"ครั้ง","default"],
             ["ยอดขายรวม",summary.data.total_sales,"บาท","default"],
             ["จำนวนครั้งเข้าร้านรวม",summary.data.total_visits,"ครั้ง","default"],
             ["แลกรางวัลรวม",summary.data.redemptions,"ครั้ง","default"],

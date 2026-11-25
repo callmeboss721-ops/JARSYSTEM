@@ -590,7 +590,6 @@ export default function StaffPage() {
             <button type="button" className="tab" data-kind="cannabis" aria-pressed={counterMode === "cannabis"} data-testid="staff-mode-cannabis" onClick={() => { setCounterMode("cannabis"); setCounterActionComplete(false); setErr(""); setMsg(""); setCannabisRedeemId(null); }}>กัญชา · กรัม</button>
           </div>
           {counterMode === "cannabis" && security.data?.cannabis_points_enabled !== true && <p className="counter-feature-disabled p-3 text-sm" role="status" data-testid="staff-cannabis-disabled">ปิดการสะสมแต้มกัญชาอยู่ · ยังแลกรางวัลได้ แต่บันทึกยอดซื้อถูกปิดไว้จนกว่าเจ้าของร้านจะเปิดใช้</p>}
-          <StaffWorkflow step={workflowStep} />
           <section className="staff-quick-counter panel p-4 sm:p-5" aria-label="ค้นหาสมาชิกที่เคาน์เตอร์">
             <div className="staff-quick-counter__heading"><div><p className="eyebrow">Counter scan</p><h2 className="font-display text-xl font-semibold">สแกนหรือค้นหาสมาชิก</h2></div><span className="staff-quick-counter__hint">รหัส · เบอร์เต็ม · 4 หลักท้าย</span></div>
             <div className="staff-quick-actions">
@@ -610,6 +609,7 @@ export default function StaffPage() {
               <span>สแกน QR หรือค้นหาสมาชิกเพื่อเริ่มรายการ</span>
             </div>}
           </section>
+          <StaffWorkflow step={workflowStep} />
           {counterActionComplete && <section className="staff-success-card" role="status" aria-live="polite">
             <Image src="/ui/artwork/staff-success-mascot.webp" alt="" aria-hidden="true" width={80} height={80} sizes="80px" className="h-16 w-16 object-contain" />
             <p>{msg || "รายการสำเร็จ"}</p>

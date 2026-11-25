@@ -75,10 +75,14 @@ export const tokens = {
     "brandId2026": {
       "background": "#08120A",
       "surface": "#0D1F10",
+      "surfaceRaised": "#132B18",
       "border": "#1C3A22",
+      "borderStrong": "#2C5535",
       "neon": "#A6FF00",
       "jaguarGreen": "#00A651",
       "gold": "#FFC400",
+      "goldSoft": "#FFDB66",
+      "danger": "#F0564A",
       "text": "#FFFFFF",
       "muted": "#A7C4AD"
     }
