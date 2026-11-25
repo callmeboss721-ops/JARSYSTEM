@@ -64,7 +64,7 @@ create policy "dt_settings_public_read_non_secret"
   on public.dt_settings
   for select
   to anon, authenticated
-  using (key not in ('rider_pin', 'admin_pin'));
+  using (key not in ('rider_pin', 'admin_pin', 'composio_webhook_url'));
 
 -- ============================================================================
 -- ส่วนที่ 2: RPC สำหรับอ่าน/อัปเดต dt_orders โดยไม่ต้องเปิด public SELECT ทั้งตาราง
