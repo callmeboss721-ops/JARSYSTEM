@@ -10,6 +10,7 @@
     "test:loyalty-redemptions": "tsx --test src/lib/loyalty-redemption-idempotency.test.ts",
     "test:member-auth": "tsx --test src/routes/loyalty-member-auth.test.ts",
     "test:product-sales": "node --experimental-strip-types --test src/lib/product-sales-store.test.ts",
+    "test:product-sales-integration": "tsx --test src/routes/product-sales.test.ts",
     "start": "node --enable-source-maps ./dist/index.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
