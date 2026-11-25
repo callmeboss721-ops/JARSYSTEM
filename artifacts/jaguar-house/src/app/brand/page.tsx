@@ -53,7 +53,7 @@ const pathways = [
 
 export default function BrandPage() {
   return (
-    <main className="min-h-[100dvh] overflow-hidden bg-background text-foreground">
+    <main className="brand-story-ambient min-h-[100dvh] overflow-hidden bg-background text-foreground">
       <header className="border-b border-border/70">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
           <Link

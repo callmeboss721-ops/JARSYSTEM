@@ -84,3 +84,31 @@ mtime_ms = 1795513372095
 storage_uri = "gcs://replit-rams-assets-pike/rams/assets/repl:d667af9b-bd96-4ef0-bde1-934a6de89f2f/e1296bf9-9cf6-4fc8-99bc-270d9880a801/845143b2-e70d-43b8-9a7b-8739012e4b09"
 storage_version_token = "1795514575744285"
 content_type = "image/jpeg"
+
+[[outputs]]
+id = "ISHOre80uWscF621al1yG"
+uri = "file://artifacts/jaguar-house/public/brand/jaguar-public-ambient.webp"
+type = "image"
+title = "JAGUAR SPK — Public Background"
+description = "Optimized emerald-and-gold ambient background used across storefront, sign-in, member, and brand pages."
+logical_id = "ae545915-2112-4906-93ef-040651d0570a"
+content_hash = "sha256:03459742e676395d22970c37c76f3e442406836cbcea42da38a5668fbd7a3480"
+size = 13242
+mtime_ms = 1795622241040
+storage_uri = "gcs://replit-rams-assets-pike/rams/assets/repl:d667af9b-bd96-4ef0-bde1-934a6de89f2f/ae545915-2112-4906-93ef-040651d0570a/3bbda161-abd3-4227-ad8c-3d9a42f84929"
+storage_version_token = "1795622790437064"
+content_type = "image/webp"
+
+[[outputs]]
+id = "XdlWAE_xScckQsRo-E6OG"
+uri = "file://artifacts/jaguar-house/public/brand/jaguar-operations-ambient.webp"
+type = "image"
+title = "JAGUAR SPK — Operations Background"
+description = "Optimized low-contrast contour background used on staff and owner access surfaces."
+logical_id = "b593e8fa-12b7-423d-8229-3911c86f7124"
+content_hash = "sha256:4ee3a79e9edd02c341760d54af90f0b8463949fa0160b1f2269dbb50f4d7cac8"
+size = 12128
+mtime_ms = 1795622241366
+storage_uri = "gcs://replit-rams-assets-pike/rams/assets/repl:d667af9b-bd96-4ef0-bde1-934a6de89f2f/b593e8fa-12b7-423d-8229-3911c86f7124/cbf56329-13af-4302-bd7d-fd414e073446"
+storage_version_token = "1795622791796069"
+content_type = "image/webp"

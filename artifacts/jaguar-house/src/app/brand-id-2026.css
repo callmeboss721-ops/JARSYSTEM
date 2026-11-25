@@ -316,6 +316,45 @@ html[data-brand-theme="2026"] .owner-audit-list > li {
   border-color: hsl(var(--brand-id-2026-border) / .72);
 }
 
+/* Ambient page textures stay on the scrolling canvas, behind readable surfaces. */
+html[data-brand-theme="2026"] .customer-art-root {
+  background-color: hsl(var(--brand-id-2026-background));
+  background-image:
+    radial-gradient(ellipse at 78% 9%, hsl(var(--brand-id-2026-gold) / .09), transparent 38%),
+    radial-gradient(ellipse at 8% 42%, hsl(var(--brand-id-2026-jaguar-green) / .08), transparent 42%),
+    linear-gradient(hsl(var(--brand-id-2026-background) / .28), hsl(var(--brand-id-2026-background) / .28)),
+    url("/brand/jaguar-public-ambient.webp");
+  background-position: center, center, center, center;
+  background-size: auto, auto, auto, cover;
+  background-repeat: no-repeat;
+  background-attachment: scroll, scroll, scroll, fixed;
+}
+
+html[data-brand-theme="2026"] .brand-story-ambient {
+  background-color: hsl(var(--brand-id-2026-background));
+  background-image:
+    radial-gradient(ellipse at 78% 9%, hsl(var(--brand-id-2026-gold) / .08), transparent 38%),
+    linear-gradient(hsl(var(--brand-id-2026-background) / .26), hsl(var(--brand-id-2026-background) / .26)),
+    url("/brand/jaguar-public-ambient.webp");
+  background-position: center, center, center;
+  background-size: auto, auto, cover;
+  background-repeat: no-repeat;
+  background-attachment: scroll, scroll, fixed;
+}
+
+html[data-brand-theme="2026"] .staff-workspace,
+html[data-brand-theme="2026"] .owner-workspace {
+  background-color: hsl(var(--brand-id-2026-background));
+  background-image:
+    radial-gradient(ellipse at 100% 0%, hsl(var(--brand-id-2026-gold) / .06), transparent 38%),
+    linear-gradient(hsl(var(--brand-id-2026-background) / .24), hsl(var(--brand-id-2026-background) / .24)),
+    url("/brand/jaguar-operations-ambient.webp");
+  background-position: center, center, center;
+  background-size: auto, auto, cover;
+  background-repeat: no-repeat;
+  background-attachment: scroll, scroll, fixed;
+}
+
 html[data-brand-theme="2026"] .jaguar-mark-composition {
   position: relative;
   display: inline-flex;
@@ -919,6 +958,15 @@ html[data-brand-theme="2026"] .jh-tabbar {
 @media (min-width: 721px) and (max-width: 900px) {
   html[data-brand-theme="2026"] .jh-clubs--hero {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  html[data-brand-theme="2026"] .customer-art-root,
+  html[data-brand-theme="2026"] .brand-story-ambient,
+  html[data-brand-theme="2026"] .staff-workspace,
+  html[data-brand-theme="2026"] .owner-workspace {
+    background-attachment: scroll;
   }
 }
 
