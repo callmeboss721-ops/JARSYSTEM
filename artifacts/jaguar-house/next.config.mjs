@@ -1,4 +1,27 @@
 /** @type {import('next').NextConfig} */
+const apiOriginValue = process.env.JAGUAR_API_ORIGIN;
+let apiOrigin = null;
+
+if (apiOriginValue) {
+  let parsedApiOrigin;
+  try {
+    parsedApiOrigin = new URL(apiOriginValue);
+  } catch {
+    throw new Error("JAGUAR_API_ORIGIN must be a valid HTTPS origin");
+  }
+  if (
+    parsedApiOrigin.protocol !== "https:" ||
+    parsedApiOrigin.username ||
+    parsedApiOrigin.password ||
+    parsedApiOrigin.pathname !== "/" ||
+    parsedApiOrigin.search ||
+    parsedApiOrigin.hash
+  ) {
+    throw new Error("JAGUAR_API_ORIGIN must be an HTTPS origin without a path");
+  }
+  apiOrigin = parsedApiOrigin.origin;
+}
+
 const nextConfig = {
   distDir: process.env.NODE_ENV === "development" ? ".next-dev" : ".next",
   poweredByHeader: false,
@@ -19,6 +42,13 @@ const nextConfig = {
   experimental: {
     cpus: 2,
     optimizePackageImports: ["lucide-react", "@workspace/jaguar-spk-design-system"],
+  },
+  async rewrites() {
+    if (!apiOrigin) return [];
+    return [{
+      source: "/api/:path*",
+      destination: `${apiOrigin}/api/:path*`,
+    }];
   },
   async headers() {
     return [
