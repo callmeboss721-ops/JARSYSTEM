@@ -3,10 +3,10 @@ name: JAGUAR SPK website design direction
 description: User-selected site-wide visual brief and its boundaries against the approved Brand ID system.
 ---
 
-Treat the user's **BLACK EMERALD & GOLD EDITION / Premium Neon × Urban Streetwear** proposal as the design brief for future JAGUAR SPK website work: preserve the established mascot and storefront identity, reduce poster-like clutter, prioritize mobile clarity, and keep the public, member, staff, and owner surfaces visually consistent.
+Use the user's latest **Clean Executive Dark** direction as the site-wide brief: matte obsidian `#090D0B`, surfaces `#101713` / `#16201B`, text `#F5F7F5`, muted `#9AA8A0`, and Thai body line-height 1.65. Keep gold `#E8BE42` to primary CTAs, Kratom highlights and reward totals; emerald `#22C572` to Cannabis accents, active states and success; neon `#A6FF00` to focus and tiny indicators. QR quiet zones stay pure white.
 
-The proposed hex palette and Kanit/Prompt/Montserrat font suggestions are references, not app-local implementation values. Use the existing JAGUAR SPK design-system tokens and approved self-hosted fonts unless the user separately approves a design-system update. Preserve routes, authentication, QR behavior, points, inventory, and business logic during visual changes. The proposed admin capabilities and six phases are ideas only; do not present them as implemented or approved tasks. Verify store facts and product claims against the knowledge base.
+Preserve official JAGUAR SPK logos and mascots as supplied, using `object-contain` and never cropping or redrawing them. Use the existing JAGUAR SPK design-system tokens and approved fonts. Remove busy backgrounds, ambient overlays and glossy bevels. Preserve routes, authentication/session behavior, QR payloads, points, inventory, and business logic during visual changes. The proposed admin capabilities and six phases are ideas only; do not present them as implemented or approved tasks. Verify store facts and product claims against the knowledge base.
 
-**Why:** the user selected this proposal to serve as the website design brief, while the project already has approved Brand ID 2026 tokens and operational flows that must remain consistent.
+**Why:** the user explicitly replaced the earlier neon-heavy direction with Clean Executive Dark and gave exact accent roles and preservation rules.
 
 **How to apply:** read this brief and `docs/frontend/jaguar-loyalty-design-guidelines.md` before broad website styling; use `artifacts/jaguar-spk-design-system/tokens.json` as the visual source of truth.

@@ -61,15 +61,18 @@ export function BrandArtworkButton({
   testId,
 }: BrandArtworkButtonProps) {
   const artwork = (
-    <Image
-      src={src}
-      alt=""
-      aria-hidden="true"
-      width={550}
-      height={190}
-      className="brand-artwork-button__image"
-      sizes="(max-width: 560px) 260px, 320px"
-    />
+    <>
+      <Image
+        src={src}
+        alt=""
+        aria-hidden="true"
+        width={550}
+        height={190}
+        className="brand-artwork-button__image"
+        sizes="(max-width: 560px) 260px, 320px"
+      />
+      <span className="brand-artwork-button__label" aria-hidden="true">{label}</span>
+    </>
   );
 
   if (href) {
@@ -111,12 +114,14 @@ export function BrandDeliveryLink({ className }: { className?: string }) {
       >
         <Image
           src="/ui/artwork/delivery-button.webp"
-          alt="สั่งด่วนส่งฟรี"
+          alt=""
+          aria-hidden="true"
           loading="lazy"
           width={1056}
           height={436}
           sizes="(max-width: 640px) 100vw, 320px"
         />
+        <span className="delivery-contact-link__label" aria-hidden="true">ติดต่อร้านผ่าน LINE</span>
       </a>
     </Button>
   );
