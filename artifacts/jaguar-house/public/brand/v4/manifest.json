@@ -1,0 +1,199 @@
+{
+  "brand": "JAGUAR SPK",
+  "version": "4.0.0-brand-id-2026",
+  "palette": {
+    "background": "#08120A",
+    "surface": "#0D1F10",
+    "surfaceRaised": "#132B18",
+    "neon": "#A6FF00",
+    "jaguarGreen": "#00A651",
+    "gold": "#FFC400",
+    "goldSoft": "#FFDB66",
+    "text": "#FFFFFF"
+  },
+  "icons": [
+    {
+      "id": "crown-vip",
+      "label_th": "มงกุฎ VIP",
+      "category": "Loyalty",
+      "svg_duotone": "svg/duotone/crown-vip.svg",
+      "svg_mono": "svg/mono/crown-vip.svg",
+      "png_512": "png/512/crown-vip.png",
+      "png_128": "png/128/crown-vip.png"
+    },
+    {
+      "id": "kratom-bottle",
+      "label_th": "ขวดสูตร JG01",
+      "category": "Product",
+      "svg_duotone": "svg/duotone/kratom-bottle.svg",
+      "svg_mono": "svg/mono/kratom-bottle.svg",
+      "png_512": "png/512/kratom-bottle.png",
+      "png_128": "png/128/kratom-bottle.png"
+    },
+    {
+      "id": "kratom-leaf",
+      "label_th": "ใบกระท่อม",
+      "category": "Product",
+      "svg_duotone": "svg/duotone/kratom-leaf.svg",
+      "svg_mono": "svg/mono/kratom-leaf.svg",
+      "png_512": "png/512/kratom-leaf.png",
+      "png_128": "png/128/kratom-leaf.png"
+    },
+    {
+      "id": "cannabis-pass",
+      "label_th": "บัตรกัญชา",
+      "category": "Product",
+      "svg_duotone": "svg/duotone/cannabis-pass.svg",
+      "svg_mono": "svg/mono/cannabis-pass.svg",
+      "png_512": "png/512/cannabis-pass.png",
+      "png_128": "png/128/cannabis-pass.png"
+    },
+    {
+      "id": "qr-scan",
+      "label_th": "สแกน QR",
+      "category": "Counter",
+      "svg_duotone": "svg/duotone/qr-scan.svg",
+      "svg_mono": "svg/mono/qr-scan.svg",
+      "png_512": "png/512/qr-scan.png",
+      "png_128": "png/128/qr-scan.png"
+    },
+    {
+      "id": "stamp-coin",
+      "label_th": "เหรียญสะสมแต้ม",
+      "category": "Loyalty",
+      "svg_duotone": "svg/duotone/stamp-coin.svg",
+      "svg_mono": "svg/mono/stamp-coin.svg",
+      "png_512": "png/512/stamp-coin.png",
+      "png_128": "png/128/stamp-coin.png"
+    },
+    {
+      "id": "reward-gift",
+      "label_th": "ของรางวัลฟรี",
+      "category": "Loyalty",
+      "svg_duotone": "svg/duotone/reward-gift.svg",
+      "svg_mono": "svg/mono/reward-gift.svg",
+      "png_512": "png/512/reward-gift.png",
+      "png_128": "png/128/reward-gift.png"
+    },
+    {
+      "id": "pos-counter",
+      "label_th": "เคาน์เตอร์ขาย",
+      "category": "Counter",
+      "svg_duotone": "svg/duotone/pos-counter.svg",
+      "svg_mono": "svg/mono/pos-counter.svg",
+      "png_512": "png/512/pos-counter.png",
+      "png_128": "png/128/pos-counter.png"
+    },
+    {
+      "id": "bank-transfer",
+      "label_th": "บัญชี / โอนเงิน",
+      "category": "Counter",
+      "svg_duotone": "svg/duotone/bank-transfer.svg",
+      "svg_mono": "svg/mono/bank-transfer.svg",
+      "png_512": "png/512/bank-transfer.png",
+      "png_128": "png/128/bank-transfer.png"
+    },
+    {
+      "id": "delivery-24h",
+      "label_th": "เปิด 24 ชม.",
+      "category": "Store",
+      "svg_duotone": "svg/duotone/delivery-24h.svg",
+      "svg_mono": "svg/mono/delivery-24h.svg",
+      "png_512": "png/512/delivery-24h.png",
+      "png_128": "png/128/delivery-24h.png"
+    },
+    {
+      "id": "map-pin-spk",
+      "label_th": "แผนที่ร้าน",
+      "category": "Store",
+      "svg_duotone": "svg/duotone/map-pin-spk.svg",
+      "svg_mono": "svg/mono/map-pin-spk.svg",
+      "png_512": "png/512/map-pin-spk.png",
+      "png_128": "png/128/map-pin-spk.png"
+    },
+    {
+      "id": "shield-pin",
+      "label_th": "ล็อก PIN ปลอดภัย",
+      "category": "Security",
+      "svg_duotone": "svg/duotone/shield-pin.svg",
+      "svg_mono": "svg/mono/shield-pin.svg",
+      "png_512": "png/512/shield-pin.png",
+      "png_128": "png/128/shield-pin.png"
+    },
+    {
+      "id": "member-card",
+      "label_th": "บัตรสมาชิกดิจิทัล",
+      "category": "Loyalty",
+      "svg_duotone": "svg/duotone/member-card.svg",
+      "svg_mono": "svg/mono/member-card.svg",
+      "png_512": "png/512/member-card.png",
+      "png_128": "png/128/member-card.png"
+    },
+    {
+      "id": "line-chat",
+      "label_th": "แชต LINE OA",
+      "category": "Store",
+      "svg_duotone": "svg/duotone/line-chat.svg",
+      "svg_mono": "svg/mono/line-chat.svg",
+      "png_512": "png/512/line-chat.png",
+      "png_128": "png/128/line-chat.png"
+    },
+    {
+      "id": "spark-bonus",
+      "label_th": "โบนัสแต้มด่วน",
+      "category": "Counter",
+      "svg_duotone": "svg/duotone/spark-bonus.svg",
+      "svg_mono": "svg/mono/spark-bonus.svg",
+      "png_512": "png/512/spark-bonus.png",
+      "png_128": "png/128/spark-bonus.png"
+    },
+    {
+      "id": "rank-shield",
+      "label_th": "ตราแรงก์สมาชิก",
+      "category": "Loyalty",
+      "svg_duotone": "svg/duotone/rank-shield.svg",
+      "svg_mono": "svg/mono/rank-shield.svg",
+      "png_512": "png/512/rank-shield.png",
+      "png_128": "png/128/rank-shield.png"
+    }
+  ],
+  "sprite": "svg/jaguar-spk-icons-sprite.svg",
+  "webm_motion": [
+    {
+      "id": "01-stamp-pulse",
+      "label_th": "ตราประทับแต้ม 10 ช่อง (Stamp Pulse)",
+      "file": "webm/01-stamp-pulse.webm",
+      "codec": "VP9 (yuva420p alpha)",
+      "resolution": "360x360",
+      "fps": 30,
+      "duration_sec": 2.0
+    },
+    {
+      "id": "02-qr-scanner-sweep",
+      "label_th": "สแกน QR เคาน์เตอร์ (Neon Laser Sweep)",
+      "file": "webm/02-qr-scanner-sweep.webm",
+      "codec": "VP9 (yuva420p alpha)",
+      "resolution": "360x360",
+      "fps": 30,
+      "duration_sec": 2.0
+    },
+    {
+      "id": "03-vip-crown-shimmer",
+      "label_th": "มงกุฎ Black VIP (Orbit Shimmer)",
+      "file": "webm/03-vip-crown-shimmer.webm",
+      "codec": "VP9 (yuva420p alpha)",
+      "resolution": "360x360",
+      "fps": 30,
+      "duration_sec": 2.0
+    },
+    {
+      "id": "04-open-24h-beacon",
+      "label_th": "ร้านเปิด 24 ชม. (Live Beacon)",
+      "file": "webm/04-open-24h-beacon.webm",
+      "codec": "VP9 (yuva420p alpha)",
+      "resolution": "360x360",
+      "fps": 30,
+      "duration_sec": 2.0
+    }
+  ]
+}

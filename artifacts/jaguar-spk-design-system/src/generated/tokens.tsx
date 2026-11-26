@@ -73,18 +73,19 @@ export const tokens = {
       "sidebarRing": "#00FF9D"
     },
     "brandId2026": {
-      "background": "#08120A",
-      "surface": "#0D1F10",
-      "surfaceRaised": "#132B18",
-      "border": "#1C3A22",
-      "borderStrong": "#2C5535",
+      "background": "#090D0B",
+      "surface": "#101713",
+      "surfaceRaised": "#16201B",
+      "border": "#232A26",
+      "borderStrong": "#29322D",
       "neon": "#A6FF00",
-      "jaguarGreen": "#00A651",
-      "gold": "#FFC400",
-      "goldSoft": "#FFDB66",
+      "jaguarGreen": "#22C572",
+      "gold": "#E8BE42",
+      "goldSoft": "#9AA8A0",
       "danger": "#F0564A",
-      "text": "#FFFFFF",
-      "muted": "#A7C4AD"
+      "text": "#F5F7F5",
+      "muted": "#9AA8A0",
+      "qrQuietZone": "#FFFFFF"
     }
   },
   "fontFamily": {

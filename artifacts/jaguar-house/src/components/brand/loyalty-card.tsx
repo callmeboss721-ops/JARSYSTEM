@@ -53,8 +53,8 @@ export function LoyaltyProgress({ balance, kind = "kratom" }: { balance: number;
   return <DesignSystemLoyaltyProgress balance={balance} kind={kind} buttonAssetBase="/ui/" action={action} />;
 }
 
-export function CollectingTrack({ balance, kind = "kratom", titleId }: { balance: number; kind?: MemberClub; titleId?: string }) {
-  return <DesignSystemCollectingTrack balance={balance} kind={kind} titleId={titleId} variant="coins" />;
+export function CollectingTrack({ balance, kind = "kratom", titleId, celebrationKey = 0 }: { balance: number; kind?: MemberClub; titleId?: string; celebrationKey?: number }) {
+  return <DesignSystemCollectingTrack balance={balance} kind={kind} titleId={titleId} variant="v3" assetBase="/brand/v4" celebrationKey={celebrationKey} />;
 }
 
 export function LoyaltyCardArtwork({ variant }: { variant: MemberClub }) {

@@ -6,6 +6,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { api } from "./loyalty-api";
 import { BrandIcon, type BrandIconName } from "./brand-icon";
+import { BrandV4Icon } from "@workspace/jaguar-spk-design-system/components/ui/brand-v4-icon";
+import { MotionBadge } from "@workspace/jaguar-spk-design-system/components/ui/motion-badge";
 import { SamutPrakanArt } from "./samut-prakan-art";
 import { LoginForm, RegisterForm } from "./auth-forms";
 import { BrandArtworkButton, BrandButton, BrandDeliveryLink } from "./brand-button";
@@ -102,13 +104,13 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
         <div className="jh-shell">
           <section className="jh-hero" id="top" aria-labelledby="landing-title">
             <div className="jh-hero__copy">
-              <p className="jh-kicker">ร้านประจำย่าน · สมุทรปราการ · เปิด 24 ชม.</p>
+              <p className="jh-kicker jh-kicker--with-motion"><MotionBadge name="open-24h-beacon" size={26} assetBase="/brand/v4" />ร้านประจำย่าน · สมุทรปราการ · เปิด 24 ชม.</p>
               <h1 id="landing-title" className="sr-only">JAGUAR SPK</h1>
               <p className="jh-hero__intro">เปิดบัตรสมาชิกเพื่อดูแต้มและ QR ส่วนตัว หรือสมัครใหม่ได้ในไม่กี่วินาที</p>
               <div className="jh-clubs jh-clubs--hero" role="group" aria-label="บัตรสมาชิก Jaguar">
                 <Link href="/card" className="jh-club" data-club="kratom" data-testid="link-hero-kratom-card">
                   <span className="jh-club__badge-icon">
-                    <Image src="/brand/icon-card-kratom-2026.webp" alt="" width={36} height={36} sizes="36px" />
+                    <BrandV4Icon name="kratom-bottle" size={36} assetBase="/brand/v4" />
                   </span>
                   <span>
                     <em className="jh-club__eyebrow">KRATOM PASS · CROWN GOLD</em>
@@ -119,7 +121,7 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
                 </Link>
                 <Link href="/card/cannabis" className="jh-club" data-club="cannabis" data-testid="link-hero-cannabis-card">
                   <span className="jh-club__badge-icon">
-                    <Image src="/brand/icon-card-cannabis-2026.webp" alt="" width={36} height={36} sizes="36px" />
+                    <BrandV4Icon name="cannabis-pass" size={36} assetBase="/brand/v4" />
                   </span>
                   <span>
                     <em className="jh-club__eyebrow">CANNABIS PASS · JAGUAR GREEN</em>
@@ -135,7 +137,7 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
                 <BrandArtworkButton href="/login" src="/ui/artwork/sign-in.webp" label="เข้าสู่ระบบสมาชิก" testId="link-member-login" />
               </div>
               <a className="jh-hero__location" href={GOOGLE_MAPS_URL} target="_blank" rel="noopener noreferrer">
-                <BrandIcon name="location" size={17} tone="emerald" />97/56 ซอยบุญศิริ 6 · เปิดแผนที่ร้าน
+                <BrandV4Icon name="map-pin-spk" size={20} assetBase="/brand/v4" />97/56 ซอยบุญศิริ 6 · เปิดแผนที่ร้าน
               </a>
             </div>
             <div className="jh-hero__visual">
@@ -240,7 +242,7 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
               <h2 id="jh-about-title">แวะมาพบกันที่ร้าน</h2>
               <p>JAGUAR SPK อยู่ที่ 97/56 ซอยบุญศิริ 6 เปิด 24 ชั่วโมง พร้อมบัตรสมาชิกดิจิทัลสำหรับลูกค้า</p>
               <a href={GOOGLE_MAPS_URL} target="_blank" rel="noopener noreferrer" className="jh-text-link">
-                <BrandIcon name="location" size={17} tone="emerald" />ดูตำแหน่งและข้อมูลร้านบน Google Maps
+                <BrandV4Icon name="map-pin-spk" size={20} assetBase="/brand/v4" />ดูตำแหน่งและข้อมูลร้านบน Google Maps
               </a>
             </div>
             <figure className="jh-shop-map">
@@ -257,7 +259,7 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
 
           <section className="jh-contact" id="contact" aria-labelledby="jh-contact-title">
             <div>
-              <p className="jh-kicker">ติดต่อร้าน</p>
+              <p className="jh-kicker jh-kicker--with-motion"><MotionBadge name="open-24h-beacon" size={24} assetBase="/brand/v4" />ติดต่อร้าน · เปิด 24 ชม.</p>
               <h2 id="jh-contact-title">มีคำถามเรื่องสินค้า หรือสมาชิก?</h2>
               <p>เปิด 24 ชั่วโมง · พื้นที่จัดส่งและเงื่อนไขต้องโทรยืนยันกับร้านก่อนสั่ง</p>
               <p>

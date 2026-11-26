@@ -46,6 +46,8 @@ independently; the package does not claim an upstream component dependency.
 | 21 | Mobile tab bar | `components/mobile-tab-bar.md` | Selectable five-item responsive tab/navigation preview | React local state, Lucide icons | V3 | implemented |
 | 22 | Collecting track demo | `components/membership-cards.md` | Interactive ten-slot track for two club accents | Existing `CollectingTrack`, local demo state | V3 | implemented |
 | 23 | Interactive rank shield preview | `components/rank-emblems.md` | Selectable ten-rank shield frames in existing name order | Existing rank artwork, `RankShield` | V3 | implemented |
+| 24 | Brand ID 2026 v4 icons | `components/brand-v4-icons.md` | Sixteen approved marks with duotone, mono, and PNG variants | Supplied v4 SVG/PNG pack | v4 | implemented |
+| 25 | Motion badge | `components/motion-badge.md` | Four muted looping WebM marks with static and reduced-motion fallback | Supplied v4 WebM/PNG pack | v4 | implemented |
 
 ## Build order
 

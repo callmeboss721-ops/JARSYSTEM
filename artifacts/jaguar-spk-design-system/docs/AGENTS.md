@@ -29,6 +29,8 @@ on it and import its theme and components directly.
   `./components/*`. The shared membership status panel also provides an
   accessible enlarged QR dialog. Code-import systems prune unused scaffold
   families and add only source-backed components approved in the catalog.
+- `src/components/ui/brand-v4-icon.tsx` and `motion-badge.tsx` — the supplied
+  JAGUAR SPK v4 SVG/PNG catalog and reduced-motion-aware alpha WebM primitive.
 - `src/components/ui/icon-catalog.tsx`, `action-controls.tsx`, and
   `mobile-tab-bar.tsx` — reusable v3 icon, action showcase, and mobile tab
   primitives. The collecting track and rank shield compose existing membership
@@ -71,8 +73,10 @@ not add `.ts` files here.
 - The Brand ID 2026 scope uses the DTCG tokens in `tokens.json` and the generated
   `[data-brand-theme="2026"]` semantic mapping. `docs/references/brand-id-2026-source.md`
   records provenance and approved application scope.
-- Keep customer cards and shared panels dark, with thin gold/green boundaries
-  and measured glow. Avoid using glow as a substitute for contrast or status text.
+- Keep customer cards and shared panels dark with thin neutral boundaries and
+  flat, quiet surfaces. Reserve gold and emerald for their documented roles;
+  keep neon for keyboard focus and small indicators. Avoid ambient glow and
+  heavy shadows.
 - Use Bai Jamjuree for display, IBM Plex Sans Thai for Thai body text, and
   JetBrains Mono for codes and numerals. Thai text has comfortable line height
   and can wrap naturally.
@@ -82,6 +86,8 @@ not add `.ts` files here.
 - Success and pending states include explicit text. Keep keyboard focus visible,
   dialogs bounded and labelled, and short motion respectful of reduced-motion
   preferences.
+- Use supplied v4 icons without cropping or redrawing. MotionBadge must use its
+  static PNG fallback when motion is reduced or WebM playback is unavailable.
 - Product routes, authentication, API calls, balances, reward rules, and
   staff/owner workflows stay in the application; this package owns reusable
   visual primitives and components only.

@@ -1,9 +1,11 @@
 import { QRCodeSVG } from "qrcode.react";
-import { useId, useRef, type ReactNode } from "react";
+import { useEffect, useId, useRef, type ReactNode } from "react";
 import { X } from "lucide-react";
 import { tokens } from "../../generated/tokens";
 import { BrandButton } from "./brand-button";
 import { BrandIcon } from "./brand-icon";
+import { BrandV4Icon } from "./brand-v4-icon";
+import { MotionBadge } from "./motion-badge";
 
 export type MemberClub = "kratom" | "cannabis";
 export const STAMPS = 10;
@@ -85,7 +87,7 @@ export function SharedMemberCard({
                   <span role="alert">QR ไม่พร้อม</span>
                   <button type="button" onClick={qr.retry} disabled={qr.retrying}>{qr.retrying ? "รอ…" : "ลองใหม่"}</button>
                 </div>
-                : <QRCodeSVG value={qr.value} size={66} level="M" includeMargin bgColor={tokens.color.brandId2026.text} className="member-pass-card__qr-code" aria-label={`QR สมาชิก ${memberCode}`} />}
+                : <QRCodeSVG value={qr.value} size={66} level="M" includeMargin bgColor={tokens.color.brandId2026.qrQuietZone} className="member-pass-card__qr-code" aria-label={`QR สมาชิก ${memberCode}`} />}
             <small>สแกนที่ร้าน</small>
           </div>
         </div>
@@ -108,11 +110,15 @@ export function CollectingTrack({
   kind = "kratom",
   titleId,
   variant = "coins",
+  assetBase = "/jaguar-spk-design-system/brand/v4",
+  celebrationKey = 0,
 }: {
   balance: number;
   kind?: MemberClub;
   titleId?: string;
   variant?: "coins" | "v3";
+  assetBase?: string;
+  celebrationKey?: number;
 }) {
   const filled = Math.min(Math.max(balance, 0), STAMPS);
   const ready = filled >= STAMPS;
@@ -121,7 +127,11 @@ export function CollectingTrack({
   return (
     <div className={`collecting-track collecting-track--${kind}${variant === "v3" ? " ds-v3-track" : ""}`}>
       <div className="collecting-track__heading">
-        <p>{variant === "v3" ? "JAGUAR SPK COLLECTING TRACK" : `${clubLabel} · แต้มสะสม`}</p>
+        <p>
+          <BrandV4Icon name={kind === "cannabis" ? "cannabis-pass" : "stamp-coin"} size={18} assetBase={assetBase} />
+          {variant === "v3" ? "JAGUAR SPK COLLECTING TRACK" : `${clubLabel} · แต้มสะสม`}
+          {celebrationKey > 0 && <MotionBadge key={`stamp-${celebrationKey}`} name="stamp-pulse" size={22} assetBase={assetBase} />}
+        </p>
         <h2 id={titleId}>{variant === "v3" ? "POINTS: " : ""}{filled}<span>/{STAMPS}{variant === "v3" ? "" : " แต้ม"}</span></h2>
       </div>
       <div className="collecting-track__visual" role="group" aria-label={`${clubLabel} สะสมแล้ว ${filled} จาก ${STAMPS} แต้ม${ready ? " · พร้อมแลกรางวัล" : ` · เหลืออีก ${remaining} แต้ม`}`}>
@@ -273,6 +283,8 @@ export function MemberStatusPanel({
   memberCodeTestId,
   qrTestId,
   buttonAssetBase = DEFAULT_BUTTON_ASSET_BASE,
+  openQrRequest,
+  brandV4AssetBase = "/jaguar-spk-design-system/brand/v4",
 }: {
   kind: MemberClub;
   memberCode: string;
@@ -285,6 +297,8 @@ export function MemberStatusPanel({
   memberCodeTestId?: string;
   qrTestId?: string;
   buttonAssetBase?: string;
+  openQrRequest?: number;
+  brandV4AssetBase?: string;
 }) {
   const club = CLUBS[kind];
   const filled = Math.min(Math.max(balance, 0), STAMPS);
@@ -292,11 +306,15 @@ export function MemberStatusPanel({
   const ready = balance >= STAMPS;
   const qrDialog = useRef<HTMLDialogElement>(null);
   const qrTitleId = useId();
+  useEffect(() => {
+    const dialog = qrDialog.current;
+    if (openQrRequest && dialog && !dialog.open) dialog.showModal();
+  }, [openQrRequest]);
   return (
     <section className="ds-glass member-dashboard-status" aria-label="สถานะสมาชิก" data-kind={kind} data-testid={dataTestId}>
       <div className="member-dashboard-status__main">
         <header>
-          <div><span className="member-dashboard-status__eyebrow">MEMBERS CLUB</span><h2>สวัสดี <strong data-testid={memberCodeTestId}>@{memberCode}</strong></h2></div>
+          <div><span className="member-dashboard-status__eyebrow"><BrandV4Icon name="member-card" size={18} assetBase={brandV4AssetBase} />MEMBERS CLUB</span><h2>สวัสดี <strong data-testid={memberCodeTestId}>@{memberCode}</strong></h2></div>
           <span className="member-dashboard-status__chip" data-ready={ready}>{ready ? "พร้อมแลก" : "กำลังสะสม"}</span>
         </header>
         <div className="member-dashboard-status__points"><span>แต้มสะสม</span><strong>{filled}<small>/10</small></strong><span className="member-dashboard-status__remaining">
@@ -312,57 +330,65 @@ export function MemberStatusPanel({
           ? <BrandButton asset="btn-crown" assetBase={buttonAssetBase} label="แลกของแถม" />
           : <BrandButton asset={ready ? "btn-leaf-cannabis" : "btn-frame"} assetBase={buttonAssetBase} label={ready ? "แสดง QR" : `อีก ${remaining} แต้ม`} disabled={!ready} />}
       </div>
-      <div className="member-dashboard-status__qr" aria-label="QR ส่วนตัวสำหรับพนักงานสแกน" data-testid={qrTestId}>
+      <div id="member-qr-target" className="member-dashboard-status__qr" aria-label="QR ส่วนตัวสำหรับพนักงานสแกน" data-testid={qrTestId}>
         {qr.loading ? <span className="member-dashboard-status__qr-loading" aria-label="กำลังโหลด QR" />
           : qr.error || !qr.value ? <div className="member-dashboard-status__qr-error"><span role="alert">QR ไม่พร้อม</span><button type="button" onClick={qr.retry} disabled={qr.retrying}>{qr.retrying ? "รอ…" : "ลองใหม่"}</button></div>
             : (
               <button
                 type="button"
                 className="member-dashboard-status__qr-trigger"
+                data-qr-trigger={kind}
                 aria-haspopup="dialog"
                 aria-label={`เปิด QR สมาชิก ${memberCode} แบบเต็มจอ`}
                 onClick={() => qrDialog.current?.showModal()}
               >
-                <QRCodeSVG value={qr.value} size={82} level="M" includeMargin bgColor={tokens.color.brandId2026.text} className="member-dashboard-status__qr-code" aria-label={`QR สมาชิก ${memberCode}`} />
+                <QRCodeSVG value={qr.value} size={82} level="M" includeMargin bgColor={tokens.color.brandId2026.qrQuietZone} className="member-dashboard-status__qr-code" aria-label={`QR สมาชิก ${memberCode}`} />
                 <small>แตะเพื่อขยาย QR</small>
               </button>
             )}
-        {!qr.loading && !qr.error && qr.value && (
-          <>
-            <dialog ref={qrDialog} className="member-qr-dialog" aria-labelledby={qrTitleId}>
-              <div className="member-qr-dialog__surface">
-                <header className="member-qr-dialog__header">
-                  <div>
-                    <p id={qrTitleId}>QR สมาชิก</p>
-                    <span>@{memberCode}</span>
-                  </div>
-                  <button
-                    type="button"
-                    className="member-qr-dialog__close"
-                    aria-label="ปิด QR"
-                    onClick={() => qrDialog.current?.close()}
-                  >
-                    <X size={19} aria-hidden="true" />
-                  </button>
-                </header>
-                <QRCodeSVG
-                  value={qr.value}
-                  size={320}
-                  level="H"
-                  includeMargin
-                  bgColor={tokens.color.brandId2026.text}
-                  className="member-qr-dialog__code"
-                  aria-label={`QR สมาชิก ${memberCode} สำหรับให้พนักงานสแกน`}
-                />
-                <p className="member-qr-dialog__identity">
-                  <strong>{memberCode}</strong>
-                  {memberPhone && <span>{memberPhone}</span>}
-                  <small>แสดง QR นี้ให้พนักงานสแกน</small>
-                </p>
+        <dialog ref={qrDialog} className="member-qr-dialog" aria-labelledby={qrTitleId}>
+          <div className="member-qr-dialog__surface">
+            <header className="member-qr-dialog__header">
+              <div>
+                <p id={qrTitleId}>QR สมาชิก</p>
+                <span>@{memberCode}</span>
               </div>
-            </dialog>
-          </>
-        )}
+              <button
+                type="button"
+                className="member-qr-dialog__close"
+                aria-label="ปิด QR"
+                onClick={() => qrDialog.current?.close()}
+              >
+                <X size={19} aria-hidden="true" />
+              </button>
+            </header>
+            {qr.loading ? (
+              <p className="member-qr-dialog__message" role="status">กำลังโหลด QR สมาชิก…</p>
+            ) : qr.error || !qr.value ? (
+              <div className="member-qr-dialog__message" role="alert">
+                <span>QR ยังไม่พร้อมใช้งาน</span>
+                <button type="button" onClick={qr.retry} disabled={qr.retrying}>
+                  {qr.retrying ? "กำลังลองใหม่…" : "ลองโหลด QR อีกครั้ง"}
+                </button>
+              </div>
+            ) : (
+              <QRCodeSVG
+                value={qr.value}
+                size={320}
+                level="H"
+                includeMargin
+                bgColor={tokens.color.brandId2026.qrQuietZone}
+                className="member-qr-dialog__code"
+                aria-label={`QR สมาชิก ${memberCode} สำหรับให้พนักงานสแกน`}
+              />
+            )}
+            <p className="member-qr-dialog__identity">
+              <strong>{memberCode}</strong>
+              {memberPhone && <span>{memberPhone}</span>}
+              <small>แสดง QR นี้ให้พนักงานสแกน</small>
+            </p>
+          </div>
+        </dialog>
       </div>
     </section>
   );

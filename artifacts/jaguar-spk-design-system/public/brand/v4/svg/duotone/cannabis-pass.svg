@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE57F"/>
+      <stop offset="55%" stop-color="#FFC400"/>
+      <stop offset="100%" stop-color="#C98A00"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#A6FF00"/>
+      <stop offset="55%" stop-color="#00A651"/>
+      <stop offset="100%" stop-color="#0B5E2E"/>
+    </linearGradient>
+  </defs>
+<path d="M12 3.2L14.2 9.2L20.4 7.8L16.4 13L21 16.8L14.6 16.8L12 21L9.4 16.8L3 16.8L7.6 13L3.6 7.8L9.8 9.2Z" fill="url(#greenGrad)" stroke="#A6FF00" stroke-width="1.35" stroke-linejoin="round"/>
+          <circle cx="12" cy="13" r="2.2" fill="#08120A" stroke="#FFDB66" stroke-width="1.2"/>
+</svg>

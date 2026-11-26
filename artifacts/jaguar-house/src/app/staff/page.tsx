@@ -19,6 +19,9 @@ import { STAFF, api, bundlePrice, cleanCode, clearScope, codePattern, errorText,
 import { getGetCannabisMemberCardQueryKey, getGetStaffCannabisCardQueryKey, getGetStaffSecurityQueryKey, useGetStaffSecurity, useGetStaffCannabisCard, useAddCannabisStamps, useRedeemCannabisAtCounter, useCreditStaffPoints } from "@workspace/api-client-react";
 import { Input } from "@workspace/jaguar-spk-design-system/components/ui/input";
 import { Label } from "@workspace/jaguar-spk-design-system/components/ui/label";
+import { Textarea } from "@workspace/jaguar-spk-design-system/components/ui/textarea";
+import { BrandV4Icon } from "@workspace/jaguar-spk-design-system/components/ui/brand-v4-icon";
+import { MotionBadge } from "@workspace/jaguar-spk-design-system/components/ui/motion-badge";
 import { uploadPrivateImage } from "@/components/brand/private-upload";
 import {
   getListRecentStaffRedemptionsQueryKey,
@@ -582,25 +585,33 @@ export default function StaffPage() {
       </div>
     </header>
     <main className="mx-auto max-w-6xl px-4 sm:px-6 py-7">
-      {!auth ? <section className="staff-auth-section max-w-sm mx-auto pt-4">
-        <div className="staff-auth-intro text-center mb-6"><p className="eyebrow staff-auth-eyebrow"><BrandIcon name="staffAccess" size={16} tone="gold" />Staff access</p><h1 className="font-display text-3xl font-semibold mt-2">เข้าสู่ระบบพนักงาน</h1><p className="text-sm text-[var(--muted)] mt-2">ใช้ PIN ที่เจ้าของร้านกำหนด</p></div>
-        {msg && <p role="status" className="mb-4 rounded-xl border border-[var(--line)] bg-[var(--panel)] p-3 text-sm text-[var(--emerald-2)]">{msg}</p>}
-        <form className="panel staff-auth-form p-5 sm:p-6 space-y-4" onSubmit={login}>
-          <div className="field"><label htmlFor="staff-pin">PIN พนักงาน</label><input id="staff-pin" type="password" inputMode="numeric" autoComplete="one-time-code" maxLength={12} className="input text-center !text-2xl !tracking-[.5em]" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 12))} aria-invalid={!!err} aria-describedby={err ? "staff-pin-err" : undefined} /></div>
-          <PinPad value={pin} onChange={setPin} label="แป้นตัวเลข PIN พนักงาน" />
-          {err && <p id="staff-pin-err" role="alert" className="field-error">{err}</p>}
-          <button className="btn btn-neon w-full" disabled={busy}>{busy && <LoadingSpinner className="loading-spinner--button" />}{busy ? "กำลังตรวจสอบ…" : "เข้าสู่พื้นที่ทำงาน"}</button>
-        </form>
-        <Link href="/owner" className="staff-owner-entry flex justify-center items-center min-h-11 text-sm text-[var(--muted)] mt-4">เข้าสู่ระบบเจ้าของร้าน</Link>
+      {!auth ? <section className="staff-auth-section staff-auth-grid">
+        <div className="staff-auth-grid__main">
+          <div className="staff-auth-intro text-center mb-6"><p className="eyebrow staff-auth-eyebrow"><BrandIcon name="staffAccess" size={16} tone="gold" />Staff access</p><h1 className="font-display text-3xl font-semibold mt-2">เข้าสู่ระบบพนักงาน</h1><p className="text-sm text-[var(--muted)] mt-2">ใช้ PIN ที่เจ้าของร้านกำหนด</p></div>
+          {msg && <p role="status" className="mb-4 rounded-xl border border-[var(--line)] bg-[var(--panel)] p-3 text-sm text-[var(--emerald-2)]">{msg}</p>}
+          <form className="panel staff-auth-form p-5 sm:p-6 space-y-4" onSubmit={login}>
+            <div className="field"><Label htmlFor="staff-pin">PIN พนักงาน</Label><Input id="staff-pin" type="password" inputMode="numeric" autoComplete="one-time-code" maxLength={12} className="input !min-h-12 text-center !text-2xl !tracking-[.5em]" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 12))} aria-invalid={!!err} aria-describedby={err ? "staff-pin-err" : undefined} /></div>
+            <PinPad value={pin} onChange={setPin} label="แป้นตัวเลข PIN พนักงาน" />
+            {err && <p id="staff-pin-err" role="alert" className="field-error">{err}</p>}
+            <button className="btn btn-neon w-full min-h-12" disabled={busy}>{busy && <LoadingSpinner className="loading-spinner--button" />}{busy ? "กำลังตรวจสอบ…" : "เข้าสู่พื้นที่ทำงาน"}</button>
+          </form>
+          <Link href="/owner" className="staff-owner-entry flex justify-center items-center min-h-11 text-sm text-[var(--muted)] mt-4">เข้าสู่ระบบเจ้าของร้าน</Link>
+        </div>
+        <aside className="staff-auth-grid__aside panel">
+          <BrandV4Icon name="pos-counter" size={68} assetBase="/brand/v4" />
+          <p className="eyebrow">JAGUAR SPK · COUNTER</p>
+          <h2 className="font-display text-2xl font-semibold">พื้นที่ทำงานพนักงาน</h2>
+          <p className="text-sm text-[var(--muted)]">ค้นหาบัตรสมาชิก บันทึกยอดซื้อ และจัดการรายการหน้าร้าน</p>
+        </aside>
       </section>
       : <div className="staff-workspace-content space-y-5">
         <div className="staff-workspace-heading flex flex-wrap justify-between items-end gap-3"><div><p className="eyebrow">Counter operations</p><h1 className="font-display text-3xl font-semibold">เคาน์เตอร์ร้าน</h1></div>{security.data?.default_pin && <p className="text-xs text-[var(--gold-2)]">กำลังใช้ PIN เริ่มต้น · เปลี่ยนได้ในตั้งค่า PIN</p>}</div>
         {msg && !counterActionComplete && <p role="status" className="rounded-xl border border-[var(--line)] bg-[var(--panel)] p-3 text-sm text-[var(--emerald-2)]">{msg}</p>}
         {err && <p role="alert" className="field-error">{err}</p>}
         <nav className="staff-main-nav pill-switch grid grid-cols-3 p-1 gap-1 !rounded-[22px]" aria-label="เมนูหลักพนักงาน">
-          <button type="button" className="tab !px-2 !rounded-[18px] flex items-center justify-center gap-2" aria-pressed={tab === "counter"} onClick={() => selectTab("counter")}><BrandIcon name="lightning" size={19} tone={tab === "counter" ? "gold" : "neutral"} />หน้าเคาน์เตอร์</button>
-          <button type="button" className="tab !px-2 !rounded-[18px] flex items-center justify-center gap-2" aria-pressed={tab === "product-sales"} data-testid="staff-tab-product-sales" onClick={() => selectTab("product-sales")}><BrandIcon name="products" size={19} tone={tab === "product-sales" ? "gold" : "neutral"} />ขายสินค้า</button>
-          <button type="button" className="tab !px-2 !rounded-[18px] flex items-center justify-center gap-2" aria-expanded={showMoreTabs} aria-controls="staff-secondary-tabs" aria-pressed={showMoreTabs || (tab !== "counter" && tab !== "product-sales")} onClick={() => setShowMoreTabs((value) => !value)}><BrandIcon name="members" size={18} tone={showMoreTabs || (tab !== "counter" && tab !== "product-sales") ? "gold" : "neutral"} />{TABS.find(([id]) => id === tab && id !== "counter")?.[1] || "เมนูอื่น"}</button>
+          <button type="button" className="tab !px-2 !rounded-[18px] flex items-center justify-center gap-2" aria-pressed={tab === "counter"} onClick={() => selectTab("counter")}><BrandV4Icon name="pos-counter" size={20} assetBase="/brand/v4" />หน้าเคาน์เตอร์</button>
+          <button type="button" className="tab !px-2 !rounded-[18px] flex items-center justify-center gap-2" aria-pressed={tab === "product-sales"} data-testid="staff-tab-product-sales" onClick={() => selectTab("product-sales")}><BrandV4Icon name="kratom-bottle" size={20} assetBase="/brand/v4" />ขายสินค้า</button>
+          <button type="button" className="tab !px-2 !rounded-[18px] flex items-center justify-center gap-2" aria-expanded={showMoreTabs} aria-controls="staff-secondary-tabs" aria-pressed={showMoreTabs || (tab !== "counter" && tab !== "product-sales")} onClick={() => setShowMoreTabs((value) => !value)}><BrandV4Icon name="member-card" size={20} assetBase="/brand/v4" />{TABS.find(([id]) => id === tab && id !== "counter")?.[1] || "เมนูอื่น"}</button>
         </nav>
         {showMoreTabs && <nav id="staff-secondary-tabs" className="pill-switch grid grid-cols-2 min-[480px]:grid-cols-3 p-1 gap-1 !rounded-[18px]" aria-label="เครื่องมือพนักงานอื่น">
           {TABS.filter(([id]) => id !== "counter").map(([id, label, icon]) => <button key={id} type="button" className="tab !px-2 !rounded-[14px] flex items-center justify-center gap-2" aria-pressed={tab === id} onClick={() => selectTab(id)}><BrandIcon name={icon} size={18} tone={tab === id ? "gold" : "neutral"} />{label}</button>)}
@@ -614,14 +625,14 @@ export default function StaffPage() {
           {counterMode === "cannabis" && security.data?.cannabis_points_enabled !== true && <p className="counter-feature-disabled p-3 text-sm" role="status" data-testid="staff-cannabis-disabled">ปิดการสะสมแต้มกัญชาอยู่ · ยังแลกรางวัลได้ แต่บันทึกยอดซื้อถูกปิดไว้จนกว่าเจ้าของร้านจะเปิดใช้</p>}
           <div className="staff-counter-layout">
             <section className="staff-quick-counter panel p-4 sm:p-5" aria-label="ค้นหาสมาชิกที่เคาน์เตอร์">
-            <div className="staff-quick-counter__heading"><div><p className="eyebrow">Counter scan</p><h2 className="font-display text-xl font-semibold">สแกนหรือค้นหาสมาชิก</h2></div><span className="staff-quick-counter__hint">รหัส · เบอร์เต็ม · 4 หลักท้าย</span></div>
+            <div className="staff-quick-counter__heading"><div><p className="eyebrow flex items-center gap-2"><MotionBadge name="qr-scanner-sweep" size={22} assetBase="/brand/v4" />Counter scan</p><h2 className="font-display text-xl font-semibold">สแกนหรือค้นหาสมาชิก</h2></div><span className="staff-quick-counter__hint">รหัส · เบอร์เต็ม · 4 หลักท้าย</span></div>
             <div className="staff-quick-actions">
               <form onSubmit={(event) => void quickFind(event)} className="staff-quick-counter__form">
-                <div className="field"><label htmlFor="counter-quick-search">รหัสสมาชิก เบอร์โทร หรือเลขท้าย 4 หลัก</label><input id="counter-quick-search" className="input" value={quickLookup} onChange={(event) => setQuickLookup(event.target.value)} autoComplete="off" inputMode="search" placeholder="รหัสสมาชิก / เบอร์โทร / 4 หลักท้าย" /></div>
+                <div className="field"><Label htmlFor="counter-quick-search">รหัสสมาชิก เบอร์โทร หรือเลขท้าย 4 หลัก</Label><Input id="counter-quick-search" className="input !min-h-12" value={quickLookup} onChange={(event) => setQuickLookup(event.target.value)} autoComplete="off" inputMode="search" placeholder="รหัสสมาชิก / เบอร์โทร / 4 หลักท้าย" /></div>
                 <button className="btn btn-neon" disabled={!quickLookup.trim() || quickSearchBusy}>{quickSearchBusy ? "กำลังค้นหา…" : "ค้นหา"}</button>
               </form>
               <button type="button" className="staff-scan-button btn btn-neon" onClick={startCamera} aria-pressed={scanning}>
-                <BrandIcon name="qr" size={20} tone="inherit" />{scanning ? "ปิดกล้องสแกน QR" : "เปิดกล้องสแกน QR"}
+                <MotionBadge name="qr-scanner-sweep" size={22} active={scanning} assetBase="/brand/v4" />{scanning ? "ปิดกล้องสแกน QR" : "เปิดกล้องสแกน QR"}
               </button>
             </div>
             {scanning && <><video ref={video} className="staff-scan-video w-full rounded-xl aspect-video mt-3" aria-label="ภาพจากกล้องสำหรับสแกน QR" /><button type="button" className="btn btn-ghost w-full mt-2" onClick={() => { controls.current?.stop(); setScanning(false); }}>ปิดกล้อง</button></>}
@@ -659,7 +670,7 @@ export default function StaffPage() {
           <section className="panel p-5 sm:p-6">
             <p className="eyebrow">Sale record</p><h2 className="font-display text-xl font-semibold mb-4">บันทึกยอดขาย / แลกรางวัล</h2>
             {member && <div className="mt-5">
-              <div className={`staff-selected-member rounded-xl border p-4 flex flex-wrap gap-3 justify-between ${member.balance >= STAMPS ? "is-eligible" : ""}`}>
+              <div className={`staff-selected-member staff-counter-active-member rounded-xl border p-4 flex flex-wrap gap-3 justify-between ${member.balance >= STAMPS ? "is-eligible" : ""}`} data-testid="staff-active-member-summary">
                 <div className="min-w-0"><p className="break-words">{member.display_name}</p><p className="font-mono text-[var(--gold-2)]">{member.member_code}</p>
                   <div className="flex flex-wrap gap-2 mt-1">{member.balance >= STAMPS && <span className="ready-badge">แลกได้</span>}</div></div>
                 <p className="staff-member-balance font-display">{member.balance}<span>แต้มคงเหลือ</span></p>
@@ -688,7 +699,7 @@ export default function StaffPage() {
               <form onSubmit={(event) => void creditPoints(event)} className="staff-points-credit mt-4">
                 <div><p className="font-semibold">เพิ่มแต้มโบนัสกระท่อม</p><p className="text-xs text-[var(--muted)]">1–20 แต้ม · แยกจากยอดซื้อและตรวจย้อนหลังได้</p></div>
                 <div><p className="text-xs text-[var(--muted)] mb-2">แตะเพื่อเพิ่มทันที</p><div className="staff-point-presets" aria-label="เพิ่มแต้มด่วน">{[1, 2, 3, 5].map((points) => <button key={points} type="button" className="pt-btn" aria-label={`เพิ่ม ${points} แต้มทันที`} disabled={busy || creditStaffPoints.isPending} onClick={() => void addKratomPoints(points)}>{`+${points}`}</button>)}</div></div>
-                <div className="field"><label htmlFor="quick-points">แต้มกำหนดเอง (1–20)</label><input id="quick-points" className="input" inputMode="numeric" maxLength={2} value={quickPoints} onChange={(event) => { setQuickPoints(event.target.value.replace(/\D/g, "").slice(0, 2)); setQuickPointsError(""); }} /></div>
+                <div className="field"><Label htmlFor="quick-points">แต้มกำหนดเอง (1–20)</Label><Input id="quick-points" className="input !min-h-12" inputMode="numeric" maxLength={2} value={quickPoints} onChange={(event) => { setQuickPoints(event.target.value.replace(/\D/g, "").slice(0, 2)); setQuickPointsError(""); }} /></div>
                 {quickPointsError && <p className="field-error" role="alert">{quickPointsError}</p>}
                 <button className="btn btn-neon w-full" disabled={busy || !quickPoints || creditStaffPoints.isPending}>{creditStaffPoints.isPending ? "กำลังเพิ่มแต้ม…" : "เพิ่มแต้มตามจำนวน"}</button>
               </form>
@@ -715,8 +726,8 @@ export default function StaffPage() {
                   </div>
                 </div>
                 <div className="field">
-                  <label htmlFor="bottle-count">จำนวนขวดในบิล</label>
-                  <input id="bottle-count" className="input" type="text" inputMode="numeric" autoComplete="off" maxLength={12} required value={bottleCount}
+                  <Label htmlFor="bottle-count">จำนวนขวดในบิล</Label>
+                  <Input id="bottle-count" className="input !min-h-12" type="text" inputMode="numeric" autoComplete="off" maxLength={12} required value={bottleCount}
                     onChange={(e) => { const value = e.target.value; setBottleCount(value); setBottleCountErr(value && !isBottleCount(value) ? "กรอกจำนวนขวดเป็นจำนวนเต็ม 1–999" : ""); }}
                     aria-invalid={!!bottleCountErr} aria-describedby={bottleCountErr ? "bottle-count-error" : "bottle-count-rule"} />
                   {bottleCountErr ? <p id="bottle-count-error" role="alert" className="field-error">{bottleCountErr}</p> : <p id="bottle-count-rule" className="text-xs text-[var(--muted)]">บันทึกยอดขายตามบิล (฿50 / ขวด) · แต้มและยอดเศษสะสมคำนวณโดยระบบร้าน</p>}
@@ -760,8 +771,8 @@ export default function StaffPage() {
                           </div>
                           {editingSale?.id === sale.id && <form className="staff-correction-form" onSubmit={saveSaleCorrection}>
                             <div className="staff-correction-form__fields">
-                              <div className="field"><label htmlFor={`sale-count-${sale.id}`}>จำนวนขวด</label><input id={`sale-count-${sale.id}`} className="input" inputMode="numeric" value={editingSale.bottle_count} onChange={(e) => setEditingSale({ ...editingSale, bottle_count: e.target.value.replace(/\D/g, "").slice(0, 3) })} /></div>
-                              <div className="field"><label htmlFor={`sale-formula-${sale.id}`}>สูตร</label><select id={`sale-formula-${sale.id}`} className="input" value={editingSale.formula} onChange={(e) => setEditingSale({ ...editingSale, formula: e.target.value as Formula })}><option value="red">แดง · Original</option><option value="silver">ฟ้า · Refresh</option><option value="gold">ทอง · Premium</option></select></div>
+                              <div className="field"><Label htmlFor={`sale-count-${sale.id}`}>จำนวนขวด</Label><Input id={`sale-count-${sale.id}`} className="input !min-h-12" inputMode="numeric" value={editingSale.bottle_count} onChange={(e) => setEditingSale({ ...editingSale, bottle_count: e.target.value.replace(/\D/g, "").slice(0, 3) })} /></div>
+                              <div className="field"><Label htmlFor={`sale-formula-${sale.id}`}>สูตร</Label><select id={`sale-formula-${sale.id}`} className="input !min-h-12" value={editingSale.formula} onChange={(e) => setEditingSale({ ...editingSale, formula: e.target.value as Formula })}><option value="red">แดง · Original</option><option value="silver">ฟ้า · Refresh</option><option value="gold">ทอง · Premium</option></select></div>
                             </div>
                             <div>
                               <Label htmlFor={`sale-slip-${sale.id}`}>ภาพสลิป (ไม่บังคับ)</Label>
@@ -775,7 +786,7 @@ export default function StaffPage() {
                               {editingSale.slipFile && <p className="mt-2 text-sm text-[var(--muted)] break-all">{editingSale.slipFile.name}</p>}
                               {editingSale.removeSlip && <p role="status" className="mt-2 text-sm text-[var(--muted)]">สลิปจะถูกนำออกเมื่อบันทึก</p>}
                             </div>
-                            <div className="field"><label htmlFor={`sale-reason-${sale.id}`}>เหตุผล (จำเป็นเมื่อแก้จำนวนหรือสูตร)</label><input id={`sale-reason-${sale.id}`} className="input" maxLength={200} value={editingSale.reason} onChange={(e) => setEditingSale({ ...editingSale, reason: e.target.value })} /></div>
+                            <div className="field"><Label htmlFor={`sale-reason-${sale.id}`}>เหตุผล (จำเป็นเมื่อแก้จำนวนหรือสูตร)</Label><Textarea id={`sale-reason-${sale.id}`} className="input !min-h-12" rows={2} maxLength={200} value={editingSale.reason} onChange={(e) => setEditingSale({ ...editingSale, reason: e.target.value })} /></div>
                             <div className="grid grid-cols-2 gap-2"><button type="button" className="btn btn-ghost" onClick={() => setEditingSale(null)}>ยกเลิก</button><button className="btn btn-neon" disabled={correctSale.isPending || busy}>{correctSale.isPending ? "กำลังแก้ไข…" : "บันทึกรายการ"}</button></div>
                           </form>}
                         </li>
@@ -792,7 +803,7 @@ export default function StaffPage() {
                 <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => { setRejectingRedemption({ id: r.id, reason: "" }); setErr(""); }}>ปฏิเสธคำขอ</button>
               </div>
               {rejectingRedemption?.id === r.id && <form className="staff-correction-form mt-3" onSubmit={rejectRedemption}>
-                <div className="field"><label htmlFor={`redemption-rejection-${r.id}`}>เหตุผลการปฏิเสธ</label><input id={`redemption-rejection-${r.id}`} className="input" maxLength={200} value={rejectingRedemption.reason} onChange={(e) => setRejectingRedemption({ ...rejectingRedemption, reason: e.target.value })} required /></div>
+                <div className="field"><Label htmlFor={`redemption-rejection-${r.id}`}>เหตุผลการปฏิเสธ</Label><Textarea id={`redemption-rejection-${r.id}`} className="input !min-h-12" rows={2} maxLength={200} value={rejectingRedemption.reason} onChange={(e) => setRejectingRedemption({ ...rejectingRedemption, reason: e.target.value })} required /></div>
                 <div className="grid grid-cols-2 gap-2"><button type="button" className="btn btn-ghost" disabled={busy} onClick={() => setRejectingRedemption(null)}>ยกเลิก</button><button className="btn btn-danger" disabled={busy || rejectingRedemption.reason.trim().length < 3}>{busy ? "กำลังบันทึก…" : "ยืนยันปฏิเสธ"}</button></div>
               </form>}
             </li>)}</ul>}
@@ -813,11 +824,11 @@ export default function StaffPage() {
                         {editingRedemption?.id === redemption.id && <form className="staff-correction-form" onSubmit={saveRedemptionCorrection}>
                           {staffRewards.isLoading && <LoadingState label="กำลังโหลดรางวัล" compact />}
                           {staffRewards.isError && <ErrorState message={errorText(staffRewards.error)} onRetry={() => void staffRewards.refetch()} retrying={staffRewards.isFetching} />}
-                          <div className="field"><label htmlFor={`redemption-reward-${redemption.id}`}>รางวัลที่ถูกต้อง</label><select id={`redemption-reward-${redemption.id}`} className="input" value={editingRedemption.reward_id} onChange={(e) => setEditingRedemption({ ...editingRedemption, reward_id: e.target.value })}>
+                          <div className="field"><Label htmlFor={`redemption-reward-${redemption.id}`}>รางวัลที่ถูกต้อง</Label><select id={`redemption-reward-${redemption.id}`} className="input !min-h-12" value={editingRedemption.reward_id} onChange={(e) => setEditingRedemption({ ...editingRedemption, reward_id: e.target.value })}>
                             {!staffRewards.data?.some((reward) => reward.id === editingRedemption.reward_id) && <option value={editingRedemption.reward_id}>{redemption.reward_name} · ปิดใช้งาน</option>}
                             {staffRewards.data?.map((reward) => <option key={reward.id} value={reward.id}>{reward.name} · {reward.points_cost} แต้ม</option>)}
                           </select></div>
-                          <div className="field"><label htmlFor={`redemption-reason-${redemption.id}`}>เหตุผลการแก้ไข</label><input id={`redemption-reason-${redemption.id}`} className="input" maxLength={200} value={editingRedemption.reason} onChange={(e) => setEditingRedemption({ ...editingRedemption, reason: e.target.value })} required /></div>
+                          <div className="field"><Label htmlFor={`redemption-reason-${redemption.id}`}>เหตุผลการแก้ไข</Label><Textarea id={`redemption-reason-${redemption.id}`} className="input !min-h-12" rows={2} maxLength={200} value={editingRedemption.reason} onChange={(e) => setEditingRedemption({ ...editingRedemption, reason: e.target.value })} required /></div>
                           <div className="grid grid-cols-2 gap-2"><button type="button" className="btn btn-ghost" onClick={() => setEditingRedemption(null)}>ยกเลิก</button><button className="btn btn-neon" disabled={correctRedemption.isPending || staffRewards.isLoading || staffRewards.isError || !staffRewards.data?.length}>{correctRedemption.isPending ? "กำลังแก้ไข…" : "บันทึกรายการ"}</button></div>
                         </form>}
                       </li>
@@ -831,7 +842,7 @@ export default function StaffPage() {
                {cannabisCardQuery.isLoading && cannabisLookup && <div className="mt-4"><StaffRowsSkeleton label="กำลังค้นหาบัตรกัญชา" rows={2} /></div>}
               {cannabisCardQuery.isError && cannabisLookup && <div className="mt-4"><ErrorState message={errorText(cannabisCardQuery.error)} onRetry={() => void cannabisCardQuery.refetch()} retrying={cannabisCardQuery.isFetching} /></div>}
               {!cannabisLookup && <div className="mt-4"><EmptyState title="ค้นหาบัตรกัญชา" body="กรอกรหัสสมาชิกหรือสแกน QR เพื่อเริ่มรายการ" /></div>}
-              {cannabisCard && <div className="cannabis-staff-card mt-5">
+               {cannabisCard && <div className="cannabis-staff-card staff-counter-active-member mt-5" data-testid="staff-active-member-summary">
                 <div className="flex items-start justify-between gap-3"><div className="min-w-0"><p className="text-sm font-semibold break-words">{cannabisCard.display_name || "สมาชิก"}</p><p className="font-mono text-sm text-[var(--gold-2)]">{cannabisCard.member_code}</p></div><div className="text-right"><strong className="font-display text-3xl text-[var(--emerald-2)]">{cannabisCard.balance}</strong><p className="text-xs text-[var(--muted)]">แต้มแยกจากบัตรกระท่อม</p></div></div>
                 <div className="flex justify-between text-xs mt-4 text-[var(--muted)]"><span>ซื้อสะสม {cannabisCard.lifetime_earned} กรัม</span><span>ใช้แลก {cannabisCard.lifetime_redeemed} แต้ม</span></div>
                 {cannabisRedeemId === null
@@ -854,7 +865,7 @@ export default function StaffPage() {
                   : <div role="group" aria-labelledby="cannabis-redeem-q" className="gold-alert mt-4 space-y-3"><p id="cannabis-redeem-q">ยืนยันแลกรางวัลให้ {cannabisCard.member_code}? ระบบจะหัก 10 แต้ม</p><div className="grid grid-cols-2 gap-2"><button type="button" className="btn btn-ghost" disabled={redeemCannabis.isPending} onClick={() => setCannabisRedeemId(null)}>ยกเลิก</button><button type="button" className="btn btn-gold" disabled={redeemCannabis.isPending || cannabisCard.balance < 10} onClick={() => void confirmCannabisRedeem()}>{redeemCannabis.isPending ? "กำลังบันทึก…" : "ยืนยันแลก"}</button></div></div>}
                 <form onSubmit={recordCannabis} className="space-y-3 mt-4" noValidate>
                     <fieldset className="staff-cannabis-presets"><legend>ยอดซื้อจริง · 100 กรัมต่อ 1 แต้ม</legend><div>{[{ points: 1, grams: 100 }, { points: 2, grams: 200 }, { points: 3, grams: 300 }, { points: 5, grams: 500 }].map(({ points, grams: amount }) => <button key={points} type="button" className="pt-btn" aria-label={`เพิ่ม ${points} แต้มจากการซื้อ ${amount} กรัม`} aria-pressed={grams === String(amount)} onClick={() => { setGrams(String(amount)); setGramsError(""); }}>+{points} แต้ม · {amount} กรัม</button>)}</div></fieldset>
-                   <div className="field"><label htmlFor="cannabis-grams">จำนวนกรัมที่ซื้อ</label><input id="cannabis-grams" className="input" type="text" inputMode="numeric" autoComplete="off" maxLength={3} value={grams} onChange={(e) => { setGrams(e.target.value); setGramsError(e.target.value && (!/^\d+$/.test(e.target.value) || Number(e.target.value) < 1 || Number(e.target.value) > 999) ? "กรอกจำนวนกรัมเป็นจำนวนเต็ม 1–999" : ""); }} aria-invalid={!!gramsError} aria-describedby={gramsError ? "cannabis-grams-error" : "cannabis-grams-rule"} /></div>
+                   <div className="field"><Label htmlFor="cannabis-grams">จำนวนกรัมที่ซื้อ</Label><Input id="cannabis-grams" className="input !min-h-12" type="text" inputMode="numeric" autoComplete="off" maxLength={3} value={grams} onChange={(e) => { setGrams(e.target.value); setGramsError(e.target.value && (!/^\d+$/.test(e.target.value) || Number(e.target.value) < 1 || Number(e.target.value) > 999) ? "กรอกจำนวนกรัมเป็นจำนวนเต็ม 1–999" : ""); }} aria-invalid={!!gramsError} aria-describedby={gramsError ? "cannabis-grams-error" : "cannabis-grams-rule"} /></div>
                    {gramsError ? <p id="cannabis-grams-error" role="alert" className="field-error">{gramsError}</p> : <p id="cannabis-grams-rule" className="text-xs text-[var(--muted)]">แต้มสะสมทุก 100 กรัมตามยอดรวม · เศษกรัมทบต่อโดยระบบ</p>}
                    <button className="btn btn-neon w-full" data-testid="staff-record-cannabis-purchase" disabled={security.data?.cannabis_points_enabled !== true || addCannabisStamps.isPending || redeemCannabis.isPending}>{addCannabisStamps.isPending ? "กำลังบันทึก…" : "บันทึกยอดซื้อ"}</button>
                 </form>
@@ -869,8 +880,8 @@ export default function StaffPage() {
                     <div className="staff-correction-list__actions">{tx.corrected && <span className="staff-correction-list__badge">แก้แล้ว</span>}{tx.editable && <button type="button" className="btn btn-ghost !min-h-11 !px-3 text-sm" onClick={() => setEditingCannabis({ id: tx.id, grams: String(tx.grams_purchased), reason: "" })}>แก้ไข</button>}</div>
                   </div>
                   {editingCannabis?.id === tx.id && <form className="staff-correction-form" onSubmit={saveCannabisCorrection}>
-                    <div className="field"><label htmlFor={`cannabis-edit-grams-${tx.id}`}>จำนวนกรัมที่ถูกต้อง</label><input id={`cannabis-edit-grams-${tx.id}`} className="input" inputMode="numeric" maxLength={3} value={editingCannabis.grams} onChange={(e) => setEditingCannabis({ ...editingCannabis, grams: e.target.value.replace(/\D/g, "").slice(0, 3) })} /></div>
-                    <div className="field"><label htmlFor={`cannabis-edit-reason-${tx.id}`}>เหตุผลการแก้ไข</label><input id={`cannabis-edit-reason-${tx.id}`} className="input" maxLength={200} value={editingCannabis.reason} onChange={(e) => setEditingCannabis({ ...editingCannabis, reason: e.target.value })} required /></div>
+                    <div className="field"><Label htmlFor={`cannabis-edit-grams-${tx.id}`}>จำนวนกรัมที่ถูกต้อง</Label><Input id={`cannabis-edit-grams-${tx.id}`} className="input !min-h-12" inputMode="numeric" maxLength={3} value={editingCannabis.grams} onChange={(e) => setEditingCannabis({ ...editingCannabis, grams: e.target.value.replace(/\D/g, "").slice(0, 3) })} /></div>
+                    <div className="field"><Label htmlFor={`cannabis-edit-reason-${tx.id}`}>เหตุผลการแก้ไข</Label><Textarea id={`cannabis-edit-reason-${tx.id}`} className="input !min-h-12" rows={2} maxLength={200} value={editingCannabis.reason} onChange={(e) => setEditingCannabis({ ...editingCannabis, reason: e.target.value })} required /></div>
                     <div className="grid grid-cols-2 gap-2"><button type="button" className="btn btn-ghost" onClick={() => setEditingCannabis(null)}>ยกเลิก</button><button className="btn btn-neon" disabled={correctCannabis.isPending}>{correctCannabis.isPending ? "กำลังแก้ไข…" : "บันทึกรายการ"}</button></div>
                   </form>}
                 </li>)}</ul>}
@@ -883,7 +894,7 @@ export default function StaffPage() {
         {tab === "members" && <section className="panel p-5 sm:p-6">
           <h2 className="font-display text-xl font-semibold mb-4">สมาชิกทั้งหมด</h2>
           <form className="flex gap-2 items-end" onSubmit={(e) => { e.preventDefault(); setQuery(search.trim()); }}>
-            <div className="field flex-1"><label htmlFor="member-search">กรองด้วยชื่อหรือรหัส</label><input id="member-search" className="input" value={search} onChange={(e) => setSearch(e.target.value)} /></div>
+            <div className="field flex-1"><Label htmlFor="member-search">กรองด้วยชื่อหรือรหัส</Label><Input id="member-search" className="input !min-h-12" value={search} onChange={(e) => setSearch(e.target.value)} /></div>
             <button className="btn btn-ghost">ค้นหา</button>
           </form>
           {members.isLoading ? <div className="mt-4"><StaffRowsSkeleton label="กำลังโหลดรายชื่อสมาชิก" rows={5} /></div>
@@ -914,7 +925,7 @@ export default function StaffPage() {
 }
 
 function Field({ id, label, value, set, type = "text", inputMode }: { id: string; label: string; value: string; set: (v: string) => void; type?: "text" | "password"; inputMode?: "numeric" | "tel" }) {
-  return <div className="field"><label htmlFor={id}>{label}</label><input id={id} className="input" type={type} inputMode={inputMode} value={value} onChange={(e) => set(e.target.value)} required maxLength={type === "password" ? 12 : 120} autoComplete="off" /></div>;
+  return <div className="field"><Label htmlFor={id}>{label}</Label><Input id={id} className="input !min-h-12" type={type} inputMode={inputMode} value={value} onChange={(e) => set(e.target.value)} required maxLength={type === "password" ? 12 : 120} autoComplete="off" /></div>;
 }
 
 function StaffWorkflow({ step }: { step: number }) {

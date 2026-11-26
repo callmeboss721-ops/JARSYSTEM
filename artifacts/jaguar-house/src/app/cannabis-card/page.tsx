@@ -1,15 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { useGetCannabisMemberCard, getGetCannabisMemberCardQueryKey, type CannabisCard } from "@workspace/api-client-react";
 import { MemberShell } from "@/components/brand/member-shell";
 import { MemberCardCarousel } from "@/components/brand/member-card-carousel";
+import { CollectingTrack } from "@/components/brand/loyalty-card";
 import { MemberCardFaces, MemberStatusPanel } from "@/components/brand/member-card-experience";
-import { MemberRankLabel, RankEmblem } from "@/components/brand/rank-emblem";
+import { MemberRankLabel, RankShield } from "@/components/brand/rank-emblem";
 import { ErrorState, SignedOutState, EmptyState, LoadingState } from "@/components/brand/ui";
 import { api, errorText } from "@/components/brand/loyalty-api";
+import { MotionBadge } from "@workspace/jaguar-spk-design-system/components/ui/motion-badge";
 
 const CARD_KEY = getGetCannabisMemberCardQueryKey();
 const CONFETTI_COLORS = [
@@ -87,15 +88,7 @@ export default function CannabisCardPage() {
         {confettiKey > 0 && <CannabisConfetti key={confettiKey} />}
         {celebrate && (
           <div role="status" className="cannabis-ready cannabis-ready--celebrate flex items-center gap-3">
-            <Image
-              src="/ui/artwork/free-badge.webp"
-              alt=""
-              aria-hidden="true"
-              width={64}
-              height={64}
-              sizes="64px"
-              className="h-12 w-12 shrink-0 object-contain"
-            />
+            <MotionBadge key={`cannabis-stamp-${popKey}`} name="stamp-pulse" size={48} assetBase="/brand/v4" />
             <span>ครบ 10 · แลกรางวัลฟรี 1 รายการที่เคาน์เตอร์</span>
           </div>
         )}
@@ -122,10 +115,11 @@ export default function CannabisCardPage() {
             retrying: qr.isFetching,
           }}
         />
+        <CollectingTrack balance={card.balance} kind="cannabis" celebrationKey={popKey} titleId="cannabis-collecting-title" />
         <div className="cannabis-stats">
-          <article><RankEmblem name="organic-premium" size={22} className="cannabis-stats__emblem" /><span>สะสมรวม</span><strong>{card.lifetime_earned}</strong><small>แต้ม</small></article>
-          <article><RankEmblem name="ultimate-legend" size={22} className="cannabis-stats__emblem" /><span>แลกแล้ว</span><strong>{card.lifetime_redeemed}</strong><small>แต้ม</small></article>
-          <article><RankEmblem name="diamond-member" size={22} className="cannabis-stats__emblem" /><span>เศษกรัมทบต่อ</span><strong>{card.grams_remainder}</strong><small>จาก 100 g</small></article>
+          <article><RankShield name="organic-premium" size={28} className="cannabis-stats__emblem" /><span>สะสมรวม</span><strong>{card.lifetime_earned}</strong><small>แต้ม</small></article>
+          <article><RankShield name="ultimate-legend" size={28} className="cannabis-stats__emblem" /><span>แลกแล้ว</span><strong>{card.lifetime_redeemed}</strong><small>แต้ม</small></article>
+          <article><RankShield name="diamond-member" size={28} className="cannabis-stats__emblem" /><span>เศษกรัมทบต่อ</span><strong>{card.grams_remainder}</strong><small>จาก 100 g</small></article>
         </div>
         <section className="cannabis-history panel" aria-labelledby="cannabis-history-title">
           <div className="flex items-end justify-between gap-3"><h2 id="cannabis-history-title">รายการล่าสุด</h2></div>

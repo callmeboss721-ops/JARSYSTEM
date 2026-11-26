@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { MemberShell } from "@/components/brand/member-shell";
-import { RankEmblem } from "@/components/brand/rank-emblem";
+import { RankShield } from "@/components/brand/rank-emblem";
 import { EmptyState, ErrorState, LoadingState, Modal, SignedOutState } from "@/components/brand/ui";
 import { api, errorText, json, type MemberCardData, type RewardData, type RedemptionData } from "@/components/brand/loyalty-api";
+import { BrandV4Icon } from "@workspace/jaguar-spk-design-system/components/ui/brand-v4-icon";
 
 export default function RedeemPage() {
   const qc = useQueryClient();
@@ -68,7 +68,7 @@ export default function RedeemPage() {
   const pendingRequests = (history.data ?? []).filter(r => r.status.toLowerCase() === "pending");
   return <MemberShell signedIn>
     <header className="flex flex-wrap items-end justify-between gap-4 mb-7 rise">
-        <div className="redeem-heading-lockup"><Image src="/brand/icon-reward-2026.webp" alt="" aria-hidden="true" width={48} height={48} sizes="48px" className="h-12 w-12 shrink-0 object-contain" /><div><p className="eyebrow">Rewards</p><h1 className="font-display text-3xl sm:text-4xl font-semibold mt-1">แลกรางวัล</h1></div></div>
+        <div className="redeem-heading-lockup"><BrandV4Icon name="reward-gift" size={48} assetBase="/brand/v4" /><div><p className="eyebrow">Rewards</p><h1 className="font-display text-3xl sm:text-4xl font-semibold mt-1">แลกรางวัล</h1></div></div>
        <div className="panel px-5 py-3 text-right"><p className="text-xs text-[var(--muted)]">แต้มคงเหลือ</p><p className="font-display text-3xl font-bold text-[var(--gold-2)]">{card.balance}</p></div>
     </header>
      {success && <div role="status" className="redeem-success panel mb-5 p-5 sm:p-6">
@@ -92,9 +92,21 @@ export default function RedeemPage() {
         </li>)}</ul>}
       </section>
         <section id="pending-redemptions" className="panel p-5 scroll-mt-24">
-          <h2 className="font-display text-lg font-semibold mb-3 flex items-center gap-2"><RankEmblem name="cosmic-world" size={22} />ประวัติคำขอแลกรางวัล <span className="ml-auto font-mono text-sm">{pendingRequests.length} รออยู่</span></h2>
+          <h2 className="font-display text-lg font-semibold mb-3 flex items-center gap-2"><RankShield name="royal-king" size={28} />ประวัติคำขอแลกรางวัล <span className="ml-auto font-mono text-sm">{pendingRequests.length} รออยู่</span></h2>
           {history.isLoading ? <LoadingState label="กำลังโหลดคำขอ" compact /> : history.isError ? <ErrorState message={errorText(history.error)} onRetry={() => void history.refetch()} retrying={history.isFetching} /> : !history.data?.length ? <EmptyState title="ยังไม่มีประวัติคำขอ" body="คำขอแลกรางวัลของคุณจะแสดงที่นี่" />
-         : <ul className="space-y-2 list-none p-0 m-0">{history.data.map(r => <li key={r.id} className="rounded-xl border border-[var(--line-2)] p-3"><div className="flex flex-wrap items-start justify-between gap-2"><p className="font-semibold">{r.reward_name}</p><span className="text-xs text-[var(--muted)]">{r.status === "pending" ? "รอยืนยัน" : r.status === "rejected" ? "ปฏิเสธแล้ว" : "ยืนยันแล้ว"}</span></div><p className="text-xs text-[var(--muted)]">{r.points_spent} แต้ม · {new Date(r.created_at).toLocaleString("th-TH")}</p>{r.status === "rejected" && r.rejection_reason && <p className="text-sm text-[var(--muted)] mt-1">เหตุผล: {r.rejection_reason}</p>}</li>)}</ul>}
+         : <ul className="space-y-2 list-none p-0 m-0">{history.data.map(r => {
+           const status = r.status.toLowerCase();
+           const statusLabel = status === "pending" ? "รอยืนยัน" : status === "rejected" ? "ปฏิเสธแล้ว" : "ยืนยันแล้ว";
+           const rank = status === "pending" ? "royal-king" : status === "rejected" ? "inferno-power" : "leopard-vip";
+           return <li key={r.id} className="redeem-history-item rounded-xl border border-[var(--line-2)] p-3">
+             <div className="flex flex-wrap items-start justify-between gap-2">
+               <p className="font-semibold">{r.reward_name}</p>
+               <span className="redeem-status-pill" data-status={status} role="status"><RankShield name={rank} size={20} />{statusLabel}</span>
+             </div>
+             <p className="text-xs text-[var(--muted)]">{r.points_spent} แต้ม · {new Date(r.created_at).toLocaleString("th-TH")}</p>
+             {status === "rejected" && r.rejection_reason && <p className="text-sm text-[var(--muted)] mt-1">เหตุผล: {r.rejection_reason}</p>}
+           </li>;
+         })}</ul>}
       </section>
     </div>
     <Modal open={!!picked} onClose={() => !pending && setPicked(null)} labelledBy="redeem-confirm">

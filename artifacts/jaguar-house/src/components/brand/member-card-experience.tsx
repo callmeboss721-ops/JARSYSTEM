@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import { MemberCardFaces as DesignSystemMemberCardFaces, MemberStatusPanel as DesignSystemMemberStatusPanel, type MemberClub } from "@workspace/jaguar-spk-design-system/components/ui/membership-cards";
 import { BrandArtworkButton, BrandButton } from "./brand-button";
 
@@ -56,6 +57,7 @@ export function MemberStatusPanel({
 }) {
   const ready = balance >= 10;
   const remaining = Math.max(10 - Math.min(Math.max(balance, 0), 10), 0);
+  const [openQrRequest, setOpenQrRequest] = useState(0);
 
   let action;
   if (ready && kind === "kratom") {
@@ -72,15 +74,7 @@ export function MemberStatusPanel({
       <BrandButton
         asset="btn-leaf-cannabis"
         label="แสดง QR"
-        onClick={() => {
-          const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-          requestAnimationFrame(() => {
-            document.getElementById("member-qr-target")?.scrollIntoView({
-              behavior: reducedMotion ? "auto" : "smooth",
-              block: "center",
-            });
-          });
-        }}
+        onClick={() => setOpenQrRequest((request) => request + 1)}
         testId="member-redeem-cta"
       />
     );
@@ -109,6 +103,8 @@ export function MemberStatusPanel({
       balance={balance}
       qr={qr}
       action={action}
+      openQrRequest={openQrRequest}
+      brandV4AssetBase="/brand/v4"
       extraPoints={balance}
       buttonAssetBase="/ui/"
       memberCodeTestId={kind === "kratom" ? "text-member-code" : "cannabis-member-code"}

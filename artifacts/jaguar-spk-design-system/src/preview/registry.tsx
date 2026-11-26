@@ -7,6 +7,7 @@ function lazyPage(load: () => Promise<ComponentType>) {
 
 const BrandButtonDemo = lazyPage(() => import("./demos/brand-button").then(({ BrandButtonDemo }) => BrandButtonDemo));
 const BrandIconDemo = lazyPage(() => import("./demos/brand-icon").then(({ BrandIconDemo }) => BrandIconDemo));
+const BrandV4IconsDemo = lazyPage(() => import("./demos/brand-v4-icons").then(({ BrandV4IconsDemo }) => BrandV4IconsDemo));
 const ActionControlsDemo = lazyPage(() => import("./demos/action-controls").then(({ ActionControlsDemo }) => ActionControlsDemo));
 const CollectingTrackDemo = lazyPage(() => import("./demos/collecting-track").then(({ CollectingTrackDemo }) => CollectingTrackDemo));
 const DialogSheetDemo = lazyPage(() => import("./demos/dialog-sheet").then(({ DialogSheetDemo }) => DialogSheetDemo));
@@ -14,6 +15,7 @@ const FeedbackStatesDemo = lazyPage(() => import("./demos/feedback-states").then
 const FormControlsDemo = lazyPage(() => import("./demos/form-controls").then(({ FormControlsDemo }) => FormControlsDemo));
 const JaguarMarkDemo = lazyPage(() => import("./demos/jaguar-mark").then(({ JaguarMarkDemo }) => JaguarMarkDemo));
 const MemberCardCarouselDemo = lazyPage(() => import("./demos/member-card-carousel").then(({ MemberCardCarouselDemo }) => MemberCardCarouselDemo));
+const MotionBadgeDemo = lazyPage(() => import("./demos/motion-badge").then(({ MotionBadgeDemo }) => MotionBadgeDemo));
 const MobileTabBarDemo = lazyPage(() => import("./demos/mobile-tab-bar").then(({ MobileTabBarDemo }) => MobileTabBarDemo));
 const MembershipCardsDemo = lazyPage(() => import("./demos/membership-cards").then(({ MembershipCardsDemo }) => MembershipCardsDemo));
 const PinPadDemo = lazyPage(() => import("./demos/pin-pad").then(({ PinPadDemo }) => PinPadDemo));
@@ -38,7 +40,7 @@ export type NavGroup = { name: string; entries: PreviewEntry[] };
 
 export const DESIGN_SYSTEM = {
   title: "JAGUAR SPK Design System",
-  description: "ระบบภาพและคอมโพเนนต์ภาษาไทยเป็นหลักสำหรับ JAGUAR SPK DRINK · v3 tokens และ interaction showcases",
+  description: "ระบบภาพและคอมโพเนนต์ภาษาไทยเป็นหลักสำหรับ JAGUAR SPK · Brand ID 2026 และ v4 asset showcases",
 } as const;
 
 export const OVERVIEW_ENTRY: PreviewEntry = {
@@ -93,12 +95,19 @@ export const NAV_GROUPS: NavGroup[] = [
     name: "คอมโพเนนต์",
     entries: [
       { id: "brand-icons", name: "Icon catalog v3", description: "ค้นหา เลือกขนาด และคัดลอก SVG พร้อม signature icons", Page: BrandIconDemo },
+      { id: "brand-v4-icons", name: "Brand icons v4", description: "ไอคอน 16 แบบใน SVG duotone, mono และ PNG", Page: BrandV4IconsDemo },
       { id: "collecting-track", name: "แถบสะสม 10 ช่อง", description: "ตัวอย่างแต้มสองคลับพร้อมสถานะพร้อมแลก", Page: CollectingTrackDemo },
       { id: "membership-cards", name: "บัตรและแต้ม", description: "บัตรสองคลับ แสตมป์ และ QR ที่เปิดแบบเต็มจอได้จากปุ่ม QR", Page: MembershipCardsDemo },
       { id: "member-card-carousel", name: "สลับบัตรสมาชิก", description: "แท็บสองคลับ ปัด และคีย์บอร์ด", Page: MemberCardCarouselDemo },
       { id: "mobile-tab-bar", name: "Mobile tab bar", description: "ตัวอย่างเมนูมือถือและปุ่มสแกนที่สลับหน้าจอได้", Page: MobileTabBarDemo },
       { id: "pin-pad", name: "แป้น PIN", description: "กรอก ลบ และล้าง PIN แบบควบคุมค่า", Page: PinPadDemo },
       { id: "feedback-states", name: "สถานะและหน้าต่าง", description: "โหลด ว่าง ผิดพลาด ออกจากระบบ และ modal", Page: FeedbackStatesDemo },
+    ],
+  },
+  {
+    name: "โมชั่น",
+    entries: [
+      { id: "motion-badge", name: "Motion badges v4", description: "แอนิเมชัน WebM พร้อมภาพสำรองและรองรับลด motion", Page: MotionBadgeDemo },
     ],
   },
   {

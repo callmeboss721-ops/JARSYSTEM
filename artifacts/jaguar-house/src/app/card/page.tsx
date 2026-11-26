@@ -7,11 +7,15 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getGetMemberCardQueryKey, getListMemberActivityQueryKey, useGetMemberCard, useUpdateMemberNickname, useListMemberActivity } from "@workspace/api-client-react";
 import { MemberShell } from "@/components/brand/member-shell";
 import { MemberCardCarousel } from "@/components/brand/member-card-carousel";
-import { STAMPS } from "@/components/brand/loyalty-card";
+import { CollectingTrack, STAMPS } from "@/components/brand/loyalty-card";
 import { MemberCardFaces, MemberStatusPanel } from "@/components/brand/member-card-experience";
-import { MemberRankLabel, RankEmblem } from "@/components/brand/rank-emblem";
+import { MemberRankLabel, RankShield } from "@/components/brand/rank-emblem";
 import { EmptyState, ErrorState, LoadingState, SignedOutState } from "@/components/brand/ui";
 import { api, errorText, type Sale, formulaLabels } from "@/components/brand/loyalty-api";
+import { Button } from "@workspace/jaguar-spk-design-system/components/ui/button";
+import { Input } from "@workspace/jaguar-spk-design-system/components/ui/input";
+import { Label } from "@workspace/jaguar-spk-design-system/components/ui/label";
+import { MotionBadge } from "@workspace/jaguar-spk-design-system/components/ui/motion-badge";
 
 export default function CardPage() {
   const qc = useQueryClient();
@@ -108,15 +112,7 @@ export default function CardPage() {
         {(celebrate || card.data.balance >= STAMPS) && (
           <div role="status" className="gold-alert">
             <span className="flex items-center gap-3">
-              <Image
-                src="/ui/artwork/free-badge.webp"
-                alt=""
-                aria-hidden="true"
-                width={64}
-                height={64}
-                sizes="64px"
-                className="h-12 w-12 shrink-0 object-contain"
-              />
+              <MotionBadge key={`kratom-stamp-${pop}`} name="stamp-pulse" size={48} assetBase="/brand/v4" />
               <span>ครบ 10 แต้ม! แลกรางวัลฟรี 1 รายการที่เคาน์เตอร์</span>
             </span>
           </div>
@@ -147,10 +143,11 @@ export default function CardPage() {
             retrying: qr.isFetching,
           }}
         />
+        <CollectingTrack balance={card.data.balance} kind="kratom" celebrationKey={pop} titleId="kratom-collecting-title" />
         <div className="card-bento-grid" aria-label="สรุปแต้มสมาชิก">
-          <div className="panel card-bento-stat card-bento-stat--primary"><RankEmblem name="dragon-emperor" size={22} className="card-bento-stat__emblem" /><p>ตอนนี้</p><strong data-testid="text-balance">{card.data.balance}</strong><small>แต้ม</small></div>
-          <div className="panel card-bento-stat"><RankEmblem name="diamond-member" size={22} className="card-bento-stat__emblem" /><p>สะสมรวม</p><strong>{card.data.lifetime_earned}</strong><small>แต้ม</small></div>
-          <div className="panel card-bento-stat"><RankEmblem name="ultimate-legend" size={22} className="card-bento-stat__emblem" /><p>แลกแล้ว</p><strong>{card.data.lifetime_redeemed}</strong><small>แต้ม</small></div>
+          <div className="panel card-bento-stat card-bento-stat--primary"><RankShield name="dragon-emperor" size={28} className="card-bento-stat__emblem" /><p>ตอนนี้</p><strong data-testid="text-balance">{card.data.balance}</strong><small>แต้ม</small></div>
+          <div className="panel card-bento-stat"><RankShield name="diamond-member" size={28} className="card-bento-stat__emblem" /><p>สะสมรวม</p><strong>{card.data.lifetime_earned}</strong><small>แต้ม</small></div>
+          <div className="panel card-bento-stat"><RankShield name="ultimate-legend" size={28} className="card-bento-stat__emblem" /><p>แลกแล้ว</p><strong>{card.data.lifetime_redeemed}</strong><small>แต้ม</small></div>
         </div>
         <section className="grid gap-3 sm:grid-cols-2" aria-label="ยอดสะสมแยกตามประเภท">
           <article className="panel p-4 border-[var(--line)]">
@@ -171,10 +168,10 @@ export default function CardPage() {
             {!nicknameEditing && <button type="button" className="btn btn-ghost !min-h-10 !px-4 text-sm" data-testid="button-edit-nickname" onClick={() => setNicknameEditing(true)}>แก้ไข</button>}
           </div>
           {nicknameEditing && <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-            <label className="sr-only" htmlFor="member-nickname">ชื่อเล่นสมาชิก</label>
-            <input id="member-nickname" data-testid="input-member-nickname" className="input !min-h-11 flex-1" maxLength={20} value={nickname} onChange={(e) => setNickname(e.target.value)} aria-describedby="nickname-help" />
-            <button type="button" data-testid="button-save-nickname" className="btn btn-neon !min-h-11" onClick={() => void saveNickname()} disabled={updateNickname.isPending}>{updateNickname.isPending ? "กำลังบันทึก…" : "บันทึกชื่อ"}</button>
-            <button type="button" className="btn btn-ghost !min-h-11" onClick={() => { setNickname(card.data?.nickname ?? ""); setNicknameEditing(false); }}>ยกเลิก</button>
+            <Label className="sr-only" htmlFor="member-nickname">ชื่อเล่นสมาชิก</Label>
+            <Input id="member-nickname" data-testid="input-member-nickname" className="input !min-h-12 flex-1" maxLength={20} value={nickname} onChange={(e) => setNickname(e.target.value)} aria-describedby="nickname-help" />
+            <Button type="button" data-testid="button-save-nickname" variant="default" className="min-h-12" onClick={() => void saveNickname()} disabled={updateNickname.isPending}>{updateNickname.isPending ? "กำลังบันทึก…" : "บันทึกชื่อ"}</Button>
+            <Button type="button" variant="outline" className="min-h-12" onClick={() => { setNickname(card.data?.nickname ?? ""); setNicknameEditing(false); }}>ยกเลิก</Button>
           </div>}
           <p id="nickname-help" className="mt-2 text-xs text-[var(--muted)]">2–20 ตัวอักษร · แก้ไขได้ทุกเมื่อ</p>
           {nicknameMessage && <p role="status" className={`mt-2 text-sm ${nicknameMessage.includes("แล้ว") ? "text-[var(--green)]" : "field-error"}`}>{nicknameMessage}</p>}

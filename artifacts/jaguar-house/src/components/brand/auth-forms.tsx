@@ -8,6 +8,8 @@ import { BrandIcon } from "./brand-icon";
 import { BrandArtworkButton, BrandButton } from "./brand-button";
 import { cleanCode, codePattern, errorText, phonePattern } from "./loyalty-api";
 import { clearMemberCache } from "./api-utils";
+import { Input } from "@workspace/jaguar-spk-design-system/components/ui/input";
+import { Label } from "@workspace/jaguar-spk-design-system/components/ui/label";
 
 export function LoginForm() {
   const router = useRouter();
@@ -57,8 +59,8 @@ export function LoginForm() {
             </button>
           )}
         </div>
-        <label className="auth-field-label" htmlFor="login-identifier">{method === "phone" ? "เบอร์มือถือ" : method === "member_code" ? "รหัสสมาชิก" : "ชื่อเล่น"}</label>
-        <input id="login-identifier" data-testid="login-identifier" className={`input ${method === "member_code" ? "uppercase" : ""}`} value={identifier} type={method === "phone" ? "tel" : "text"} inputMode={method === "phone" ? "tel" : "text"} autoComplete={method === "phone" ? "tel" : "off"} autoCapitalize={method === "member_code" ? "characters" : "off"} autoCorrect="off" spellCheck={false} maxLength={method === "member_code" ? 8 : 64} placeholder={method === "phone" ? "08x xxx xxxx" : method === "member_code" ? "รหัสสมาชิก" : "ชื่อที่ใช้สมัคร"} onChange={(e) => { setIdentifier(method === "member_code" ? cleanCode(e.target.value) : e.target.value); setErr(null); setServerErr(null); }} aria-invalid={!!err} aria-describedby={err ? "login-identifier-err" : undefined} />
+        <Label className="auth-field-label" htmlFor="login-identifier">{method === "phone" ? "เบอร์มือถือ" : method === "member_code" ? "รหัสสมาชิก" : "ชื่อเล่น"}</Label>
+        <Input id="login-identifier" data-testid="login-identifier" className={`input !min-h-12 ${method === "member_code" ? "uppercase" : ""}`} value={identifier} type={method === "phone" ? "tel" : "text"} inputMode={method === "phone" ? "tel" : "text"} autoComplete={method === "phone" ? "tel" : "off"} autoCapitalize={method === "member_code" ? "characters" : "off"} autoCorrect="off" spellCheck={false} maxLength={method === "member_code" ? 8 : 64} placeholder={method === "phone" ? "08x xxx xxxx" : method === "member_code" ? "รหัสสมาชิก" : "ชื่อที่ใช้สมัคร"} onChange={(e) => { setIdentifier(method === "member_code" ? cleanCode(e.target.value) : e.target.value); setErr(null); setServerErr(null); }} aria-invalid={!!err} aria-describedby={err ? "login-identifier-err" : undefined} />
         {err && <p id="login-identifier-err" className="field-error" role="alert">{err}</p>}
       </div>
       <BrandArtworkButton
@@ -103,18 +105,18 @@ export function RegisterForm() {
   return (
     <form onSubmit={submit} noValidate className="auth-form space-y-4">
       <div className="field">
-        <label className="auth-field-label" htmlFor="reg-phone">เบอร์มือถือ</label>
-        <input id="reg-phone" className="input" type="tel" inputMode="tel" autoComplete="tel" autoCapitalize="off" autoCorrect="off" placeholder="08x xxx xxxx" value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={16} aria-invalid={!!errs.phone} aria-describedby={errs.phone ? "reg-phone-err" : undefined} />
+        <Label className="auth-field-label" htmlFor="reg-phone">เบอร์มือถือ</Label>
+        <Input id="reg-phone" className="input !min-h-12" type="tel" inputMode="tel" autoComplete="tel" autoCapitalize="off" autoCorrect="off" placeholder="08x xxx xxxx" value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={16} aria-invalid={!!errs.phone} aria-describedby={errs.phone ? "reg-phone-err" : undefined} />
         {errs.phone && <p id="reg-phone-err" className="field-error" role="alert">{errs.phone}</p>}
       </div>
       <div className="field">
-        <label className="auth-field-label" htmlFor="reg-nickname">ชื่อเล่น</label>
-        <input id="reg-nickname" data-testid="register-nickname" className="input" autoComplete="nickname" maxLength={20} placeholder="ชื่อที่เพื่อนเรียก" value={nickname} onChange={(e) => setNickname(e.target.value)} aria-invalid={!!errs.nickname} aria-describedby={errs.nickname ? "reg-nickname-err" : undefined} />
+        <Label className="auth-field-label" htmlFor="reg-nickname">ชื่อเล่น</Label>
+        <Input id="reg-nickname" data-testid="register-nickname" className="input !min-h-12" autoComplete="nickname" maxLength={20} placeholder="ชื่อที่เพื่อนเรียก" value={nickname} onChange={(e) => setNickname(e.target.value)} aria-invalid={!!errs.nickname} aria-describedby={errs.nickname ? "reg-nickname-err" : undefined} />
         {errs.nickname && <p id="reg-nickname-err" className="field-error" role="alert">{errs.nickname}</p>}
       </div>
       <div className="field">
-        <label className="auth-field-label" htmlFor="reg-code">ตั้งรหัสสมาชิก</label>
-        <input id="reg-code" className="input uppercase" autoComplete="off" autoCapitalize="characters" autoCorrect="off" spellCheck={false} inputMode="text" maxLength={8} placeholder="6–8 ตัวอักษร" value={code} onChange={(e) => setCode(cleanCode(e.target.value))} aria-invalid={!!errs.code} aria-describedby={errs.code ? "reg-code-err" : undefined} />
+        <Label className="auth-field-label" htmlFor="reg-code">ตั้งรหัสสมาชิก</Label>
+        <Input id="reg-code" className="input !min-h-12 uppercase" autoComplete="off" autoCapitalize="characters" autoCorrect="off" spellCheck={false} inputMode="text" maxLength={8} placeholder="6–8 ตัวอักษร" value={code} onChange={(e) => setCode(cleanCode(e.target.value))} aria-invalid={!!errs.code} aria-describedby={errs.code ? "reg-code-err" : undefined} />
         {errs.code && <p id="reg-code-err" className="field-error" role="alert">{errs.code}</p>}
       </div>
       {server && <div className="auth-error-banner" role="alert" aria-live="assertive"><BrandIcon name="error" tone="danger" /><div><strong>ยังสมัครสมาชิกไม่ได้</strong><p>{server}</p></div></div>}
