@@ -6,6 +6,8 @@ import "./brand-id-2026.css";
 import { Providers } from "./providers";
 import { tokens } from "@workspace/jaguar-spk-design-system";
 
+const siteOrigin = process.env.NEXT_PUBLIC_SITE_URL ?? "https://jaguar-krathm-kaychaa.replit.app";
+
 const baiJamjuree = Bai_Jamjuree({
   subsets: ["thai", "latin"],
   weight: ["400", "500", "600", "700"],
@@ -28,7 +30,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://jaguar-krathm-kaychaa.replit.app"),
+  metadataBase: new URL(siteOrigin),
   manifest: "/manifest.webmanifest",
   title: {
     default: "JAGUAR SPK — บัตรสมาชิกดิจิทัล | 97/56 ซอยบุญศิริ 6",
