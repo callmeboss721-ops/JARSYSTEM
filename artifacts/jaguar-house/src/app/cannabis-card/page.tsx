@@ -7,6 +7,7 @@ import { MemberShell } from "@/components/brand/member-shell";
 import { MemberCardCarousel } from "@/components/brand/member-card-carousel";
 import { CollectingTrack } from "@/components/brand/loyalty-card";
 import { MemberCardFaces, MemberStatusPanel } from "@/components/brand/member-card-experience";
+import { MemberQuickActions } from "@/components/brand/member-quick-actions";
 import { MemberRankLabel, RankShield } from "@/components/brand/rank-emblem";
 import { ErrorState, SignedOutState, EmptyState, LoadingState } from "@/components/brand/ui";
 import { api, errorText } from "@/components/brand/loyalty-api";
@@ -81,7 +82,7 @@ export default function CannabisCardPage() {
     {cardQuery.isLoading ? <div className="cannabis-wrap"><LoadingState label="กำลังโหลดบัตรกัญชา" /></div>
       : unauthenticated ? <div className="max-w-md mx-auto"><SignedOutState /></div>
       : cardQuery.isError || !card ? <div className="max-w-md mx-auto"><ErrorState message={errorText(cardQuery.error)} onRetry={() => void cardQuery.refetch()} retrying={cardQuery.isFetching} /></div>
-      : <div className="cannabis-wrap">
+      : <div className="member-card-page cannabis-wrap">
         <header className="cannabis-heading rise">
           <div className="member-heading-top"><div><h1>{card.display_name || "บัตรกัญชา"}</h1><MemberRankLabel earned={card.lifetime_earned} /></div></div>
         </header>
@@ -102,26 +103,31 @@ export default function CannabisCardPage() {
             popKey={popKey}
           />
         </MemberCardCarousel>
-        <MemberStatusPanel
-          kind="cannabis"
-          memberCode={card.member_code}
-          memberPhone={card.phone_masked}
-          balance={card.balance}
-          qr={{
-            value: qr.data?.qr,
-            loading: qr.isLoading,
-            error: qr.isError ? errorText(qr.error) : undefined,
-            retry: () => { void qr.refetch(); },
-            retrying: qr.isFetching,
-          }}
-        />
-        <CollectingTrack balance={card.balance} kind="cannabis" celebrationKey={popKey} titleId="cannabis-collecting-title" />
+        <div id="member-reward" className="member-card-anchor">
+          <MemberStatusPanel
+            kind="cannabis"
+            memberCode={card.member_code}
+            memberPhone={card.phone_masked}
+            balance={card.balance}
+            qr={{
+              value: qr.data?.qr,
+              loading: qr.isLoading,
+              error: qr.isError ? errorText(qr.error) : undefined,
+              retry: () => { void qr.refetch(); },
+              retrying: qr.isFetching,
+            }}
+          />
+        </div>
+        <MemberQuickActions kind="cannabis" />
+        <div id="member-points" className="member-card-anchor">
+          <CollectingTrack balance={card.balance} kind="cannabis" celebrationKey={popKey} titleId="cannabis-collecting-title" />
+        </div>
         <div className="cannabis-stats">
           <article><RankShield name="organic-premium" size={28} className="cannabis-stats__emblem" /><span>สะสมรวม</span><strong>{card.lifetime_earned}</strong><small>แต้ม</small></article>
           <article><RankShield name="ultimate-legend" size={28} className="cannabis-stats__emblem" /><span>แลกแล้ว</span><strong>{card.lifetime_redeemed}</strong><small>แต้ม</small></article>
           <article><RankShield name="diamond-member" size={28} className="cannabis-stats__emblem" /><span>เศษกรัมทบต่อ</span><strong>{card.grams_remainder}</strong><small>จาก 100 g</small></article>
         </div>
-        <section className="cannabis-history panel" aria-labelledby="cannabis-history-title">
+        <section id="member-activity" className="cannabis-history panel" aria-labelledby="cannabis-history-title">
           <div className="flex items-end justify-between gap-3"><h2 id="cannabis-history-title">รายการล่าสุด</h2></div>
           {!card.recent_transactions.length ? <EmptyState title="ยังไม่มีรายการสะสม" />
             : <ul>{card.recent_transactions.map((tx) => <li key={tx.id}>

@@ -2327,3 +2327,350 @@ html[data-brand-theme="2026"] .staff-auth-grid__aside .brand-v4-icon {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Balanced responsive sizing: shared dimensions scale from design-system tokens. */
+html[data-brand-theme="2026"] {
+  --jh-body-size: clamp(15px, calc(14.5px + .1vw), 16px);
+  --jh-layout-gap: calc(var(--spacing) * 6);
+  --jh-panel-padding: calc(var(--spacing) * 5);
+}
+
+html[data-brand-theme="2026"] body {
+  font-size: var(--jh-body-size);
+}
+
+html[data-brand-theme="2026"] .brand-story-ambient :is(a[class~="inline-flex"], button, .brand-button, .brand-artwork-button) {
+  min-height: 44px;
+}
+
+html[data-brand-theme="2026"] .brand-story-ambient footer a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+}
+
+html[data-brand-theme="2026"] .owner-workspace > header a {
+  min-height: 44px;
+}
+
+html[data-brand-theme="2026"] .landing-map-popup__close,
+html[data-brand-theme="2026"] .landing-map-popup > a {
+  min-height: 48px;
+}
+
+html[data-brand-theme="2026"] :is(.jh-shell, .staff-workspace-content) {
+  gap: var(--jh-layout-gap);
+}
+
+html[data-brand-theme="2026"] :is(.jh-section, .jh-about, .jh-contact) {
+  padding-block: clamp(calc(var(--spacing) * 6), 4vw, calc(var(--spacing) * 10));
+  padding-inline: clamp(calc(var(--spacing) * 4), 2vw, calc(var(--spacing) * 6));
+  border-radius: var(--radius);
+}
+
+html[data-brand-theme="2026"] .jh-section__heading {
+  margin-bottom: calc(var(--spacing) * 6);
+}
+
+html[data-brand-theme="2026"] .jh-products {
+  gap: calc(var(--spacing) * 4);
+}
+
+html[data-brand-theme="2026"] .jh-product__caption {
+  gap: calc(var(--spacing) * 1);
+  padding: calc(var(--spacing) * 4);
+}
+
+html[data-brand-theme="2026"] :is(.jh-product__caption > span, .jh-product__price > span, .jh-product__price small) {
+  font-size: 12px;
+}
+
+html[data-brand-theme="2026"] :is(.jh-benefits, .jh-benefits article) {
+  gap: calc(var(--spacing) * 3);
+}
+
+html[data-brand-theme="2026"] .jh-benefits article {
+  padding: calc(var(--spacing) * 4);
+  border-radius: var(--radius);
+}
+
+html[data-brand-theme="2026"] .jh-benefits p {
+  font-size: 12px;
+}
+
+html[data-brand-theme="2026"] .jh-club {
+  min-height: 64px;
+}
+
+html[data-brand-theme="2026"] .jh-club small {
+  font-size: 12px;
+}
+
+html[data-brand-theme="2026"] .jh-footer {
+  font-size: 12px;
+}
+
+html[data-brand-theme="2026"] .jh-hero {
+  min-height: clamp(450px, 38vw, 520px);
+  padding-block: clamp(calc(var(--spacing) * 10), 3.4vw, calc(var(--spacing) * 12));
+}
+
+html[data-brand-theme="2026"] .jh-hero__intro {
+  font-size: 15px;
+}
+
+html[data-brand-theme="2026"] .jh-hero__actions .brand-button {
+  width: 100%;
+  min-height: 48px;
+}
+
+html[data-brand-theme="2026"] :is(.jaguar-auth-panel, .staff-auth-form, .staff-auth-grid__aside) {
+  padding: var(--jh-panel-padding);
+  border-radius: var(--radius);
+}
+
+html[data-brand-theme="2026"] .jaguar-auth-page .auth-form .pill-switch .tab {
+  min-height: 48px;
+}
+
+html[data-brand-theme="2026"] .jaguar-auth-staff a {
+  min-height: 44px;
+}
+
+html[data-brand-theme="2026"] :is(.staff-workspace > main, .owner-workspace > main) {
+  padding-block: var(--jh-layout-gap);
+}
+
+html[data-brand-theme="2026"] .staff-workspace main > div.space-y-5 > :not([hidden]) ~ :not([hidden]),
+html[data-brand-theme="2026"] .owner-workspace main > div.space-y-5 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: calc(var(--spacing) * 5);
+}
+
+html[data-brand-theme="2026"] .staff-workspace main .grid.gap-5,
+html[data-brand-theme="2026"] .owner-workspace main .grid.gap-5 {
+  gap: calc(var(--spacing) * 4);
+}
+
+html[data-brand-theme="2026"] .staff-workspace main .panel,
+html[data-brand-theme="2026"] .owner-workspace main .panel {
+  padding: var(--jh-panel-padding);
+  border-radius: var(--radius);
+}
+
+html[data-brand-theme="2026"] .member-main {
+  padding-top: var(--jh-layout-gap) !important;
+}
+
+html[data-brand-theme="2026"] .member-main .panel,
+html[data-brand-theme="2026"] .member-main .card-bento-stat,
+html[data-brand-theme="2026"] .member-main .cannabis-history {
+  padding: var(--jh-panel-padding);
+}
+
+html[data-brand-theme="2026"] .member-main .card-bento-grid {
+  gap: calc(var(--spacing) * 3);
+}
+
+html[data-brand-theme="2026"] .member-card-page {
+  display: grid;
+  gap: var(--jh-layout-gap);
+}
+
+html[data-brand-theme="2026"] .member-card-page .member-dashboard-status {
+  width: min(100%, 390px);
+  margin: 0 auto;
+  padding: var(--jh-panel-padding);
+  grid-template-columns: minmax(0, 1fr) 104px;
+  gap: calc(var(--spacing) * 3);
+}
+
+html[data-brand-theme="2026"] .member-card-page .member-dashboard-status__main {
+  gap: calc(var(--spacing) * 2);
+}
+
+html[data-brand-theme="2026"] .member-card-page .member-dashboard-status__eyebrow,
+html[data-brand-theme="2026"] .member-card-page .member-dashboard-status__chip {
+  font-size: 9px;
+}
+
+html[data-brand-theme="2026"] .member-card-page .member-dashboard-status__main h2 {
+  font-size: 15px;
+}
+
+html[data-brand-theme="2026"] .member-card-page .member-dashboard-status__main h2 strong {
+  font-size: 12px;
+}
+
+html[data-brand-theme="2026"] .member-card-page .member-dashboard-status__points > span:first-child {
+  font-size: 12px;
+}
+
+html[data-brand-theme="2026"] .member-card-page .member-dashboard-status__points > strong {
+  font-size: 24px;
+}
+
+html[data-brand-theme="2026"] .member-card-page .member-dashboard-status__remaining {
+  font-size: 11px;
+}
+
+html[data-brand-theme="2026"] .member-card-page .member-dashboard-status__cta {
+  min-height: 48px;
+  font-size: 12px;
+}
+
+html[data-brand-theme="2026"] .member-card-page .member-dashboard-status__qr {
+  width: 100%;
+  min-height: 96px;
+  border-radius: var(--radius);
+}
+
+html[data-brand-theme="2026"] .member-card-page .member-dashboard-status__qr > small {
+  font-size: 9px;
+}
+
+html[data-brand-theme="2026"] .member-card-page .club-pass {
+  width: min(100%, 360px);
+  gap: calc(var(--spacing) * 3);
+}
+
+html[data-brand-theme="2026"] .member-card-page :is(.club-pass__front, .club-pass__stamp-face) {
+  width: min(100%, 360px);
+  max-height: 220px;
+  aspect-ratio: 1.65;
+  border-radius: var(--radius);
+}
+
+html[data-brand-theme="2026"] .member-card-page .club-pass__front-identity > span {
+  font-size: 9px;
+}
+
+html[data-brand-theme="2026"] .member-card-page .club-pass__front-identity > small {
+  font-size: 9px;
+}
+
+html[data-brand-theme="2026"] .member-card-page .club-pass__stamp-foot {
+  font-size: 9px;
+}
+
+html[data-brand-theme="2026"] .member-card-anchor,
+html[data-brand-theme="2026"] #member-activity,
+html[data-brand-theme="2026"] #member-qr-target {
+  scroll-margin-top: calc(var(--spacing) * 24);
+}
+
+html[data-brand-theme="2026"] .member-quick-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: calc(var(--spacing) * 2);
+  width: min(100%, 390px);
+  margin-inline: auto;
+}
+
+html[data-brand-theme="2026"] .member-quick-actions a {
+  display: flex;
+  min-width: 0;
+  min-height: 56px;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--spacing) * 2);
+  padding: calc(var(--spacing) * 2);
+  border: 1px solid hsl(var(--brand-id-2026-border));
+  border-radius: var(--radius);
+  background: hsl(var(--brand-id-2026-surface));
+  color: hsl(var(--brand-id-2026-text));
+  font-size: 12px;
+  line-height: 1.35;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color .16s ease, border-color .16s ease, transform .16s ease;
+}
+
+html[data-brand-theme="2026"] .member-quick-actions a:hover {
+  border-color: hsl(var(--brand-id-2026-border-strong));
+  background: hsl(var(--brand-id-2026-surface-raised));
+}
+
+html[data-brand-theme="2026"] .member-quick-actions a:active {
+  transform: translateY(1px);
+}
+
+html[data-brand-theme="2026"] .member-quick-actions a:focus-visible {
+  outline: 2px solid hsl(var(--brand-id-2026-neon));
+  outline-offset: 2px;
+}
+
+html[data-brand-theme="2026"] .member-quick-actions[data-kind="cannabis"] svg {
+  color: hsl(var(--brand-id-2026-jaguar-green));
+}
+
+@media (min-width: 768px) {
+  html[data-brand-theme="2026"] {
+    --jh-layout-gap: calc(var(--spacing) * 8);
+    --jh-panel-padding: calc(var(--spacing) * 6);
+  }
+
+  html[data-brand-theme="2026"] .jh-hero {
+    padding-block: calc(var(--spacing) * 12) calc(var(--spacing) * 10);
+  }
+
+  html[data-brand-theme="2026"] .jh-products {
+    gap: calc(var(--spacing) * 4);
+  }
+}
+
+@media (max-width: 640px) {
+  html[data-brand-theme="2026"] .jh-hero {
+    min-height: 0;
+    padding-block: calc(var(--spacing) * 6);
+  }
+
+  html[data-brand-theme="2026"] .jh-hero__actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: calc(var(--spacing) * 2);
+  }
+
+  html[data-brand-theme="2026"] .jh-products {
+    gap: calc(var(--spacing) * 3);
+  }
+
+  html[data-brand-theme="2026"] .jh-benefits {
+    gap: calc(var(--spacing) * 3);
+  }
+
+  html[data-brand-theme="2026"] .jh-benefits article {
+    padding: calc(var(--spacing) * 3);
+  }
+
+  html[data-brand-theme="2026"] .member-card-page .member-dashboard-status {
+    grid-template-columns: minmax(0, 1fr) 96px;
+  }
+
+  html[data-brand-theme="2026"] .member-card-page :is(.club-pass__front, .club-pass__stamp-face) {
+    width: min(100%, 330px);
+    max-height: 200px;
+    aspect-ratio: 1.65;
+  }
+
+}
+
+html[data-brand-theme="2026"] .cannabis-heading {
+  margin: 0;
+}
+
+@media (max-width: 380px) {
+  html[data-brand-theme="2026"] .jh-hero__actions,
+  html[data-brand-theme="2026"] .member-quick-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  html[data-brand-theme="2026"] .member-quick-actions a {
+    min-height: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-brand-theme="2026"] .member-quick-actions a {
+    transition: none;
+  }
+}

@@ -2,5 +2,8 @@
 type ModuleMap = Record<string, () => Promise<Record<string, unknown>>>;
 export const modules: ModuleMap = {
   "./components/mockups/jaguar-card/Current.tsx": () => import("../components/mockups/jaguar-card/Current.tsx"),
-  "./components/mockups/jaguar-card/Refined.tsx": () => import("../components/mockups/jaguar-card/Refined.tsx")
+  "./components/mockups/jaguar-card/Pathway.tsx": () => import("../components/mockups/jaguar-card/Pathway.tsx"),
+  "./components/mockups/jaguar-card/Refined.tsx": () => import("../components/mockups/jaguar-card/Refined.tsx"),
+  "./components/mockups/jaguar-overview-alt/OverviewGrid.tsx": () => import("../components/mockups/jaguar-overview-alt/OverviewGrid.tsx"),
+  "./components/mockups/jaguar-overview-editorial/OverviewEditorial.tsx": () => import("../components/mockups/jaguar-overview-editorial/OverviewEditorial.tsx")
 };

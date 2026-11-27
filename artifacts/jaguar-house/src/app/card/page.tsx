@@ -9,6 +9,7 @@ import { MemberShell } from "@/components/brand/member-shell";
 import { MemberCardCarousel } from "@/components/brand/member-card-carousel";
 import { CollectingTrack, STAMPS } from "@/components/brand/loyalty-card";
 import { MemberCardFaces, MemberStatusPanel } from "@/components/brand/member-card-experience";
+import { MemberQuickActions } from "@/components/brand/member-quick-actions";
 import { MemberRankLabel, RankShield } from "@/components/brand/rank-emblem";
 import { EmptyState, ErrorState, LoadingState, SignedOutState } from "@/components/brand/ui";
 import { api, errorText, type Sale, formulaLabels } from "@/components/brand/loyalty-api";
@@ -98,7 +99,7 @@ export default function CardPage() {
     {card.isLoading ? <div className="max-w-xl mx-auto"><LoadingState label="กำลังโหลดบัตรสมาชิก" /></div>
     : card.error && (card.error as {status?: number}).status === 401 ? <div className="max-w-md mx-auto"><SignedOutState /></div>
     : card.isError || !card.data ? <div className="max-w-md mx-auto"><ErrorState message={errorText(card.error)} onRetry={() => card.refetch()} retrying={card.isFetching} /></div>
-    : <div className="grid gap-4 lg:grid-cols-[1.1fr_.9fr] items-start">
+    : <div className="member-card-page grid gap-4 lg:grid-cols-[1.1fr_.9fr] items-start">
       <div className="space-y-3">
         <header className="card-member-heading rise">
           <div className="member-heading-top">
@@ -130,20 +131,25 @@ export default function CardPage() {
             />
           </MemberCardCarousel>
         </div>
-        <MemberStatusPanel
-          kind="kratom"
-          memberCode={card.data.member_code}
-          memberPhone={card.data.phone_masked}
-          balance={card.data.balance}
-          qr={{
-            value: qr.data?.qr,
-            loading: qr.isLoading,
-            error: qr.isError ? errorText(qr.error) : undefined,
-            retry: () => { void qr.refetch(); },
-            retrying: qr.isFetching,
-          }}
-        />
-        <CollectingTrack balance={card.data.balance} kind="kratom" celebrationKey={pop} titleId="kratom-collecting-title" />
+        <div id="member-reward" className="member-card-anchor">
+          <MemberStatusPanel
+            kind="kratom"
+            memberCode={card.data.member_code}
+            memberPhone={card.data.phone_masked}
+            balance={card.data.balance}
+            qr={{
+              value: qr.data?.qr,
+              loading: qr.isLoading,
+              error: qr.isError ? errorText(qr.error) : undefined,
+              retry: () => { void qr.refetch(); },
+              retrying: qr.isFetching,
+            }}
+          />
+        </div>
+        <MemberQuickActions kind="kratom" />
+        <div id="member-points" className="member-card-anchor">
+          <CollectingTrack balance={card.data.balance} kind="kratom" celebrationKey={pop} titleId="kratom-collecting-title" />
+        </div>
         <div className="card-bento-grid" aria-label="สรุปแต้มสมาชิก">
           <div className="panel card-bento-stat card-bento-stat--primary"><RankShield name="dragon-emperor" size={28} className="card-bento-stat__emblem" /><p>ตอนนี้</p><strong data-testid="text-balance">{card.data.balance}</strong><small>แต้ม</small></div>
           <div className="panel card-bento-stat"><RankShield name="diamond-member" size={28} className="card-bento-stat__emblem" /><p>สะสมรวม</p><strong>{card.data.lifetime_earned}</strong><small>แต้ม</small></div>
@@ -179,7 +185,7 @@ export default function CardPage() {
         <Link href="/" className="btn btn-ghost w-full sm:w-auto">กลับหน้าแรกร้าน</Link>
       </div>
       <aside className="space-y-5">
-        <section className="panel p-5" aria-labelledby="sales-title">
+        <section id="member-activity" className="panel p-5" aria-labelledby="sales-title">
           <div className="flex items-center justify-between mb-3"><h2 id="sales-title" className="font-display text-lg font-semibold">รายการแต้มล่าสุด</h2></div>
           {sales.isLoading || activity.isLoading ? <div className="space-y-2">{[1,2,3].map(x => <div key={x} className="skeleton h-14" />)}</div>
           : !recentEvents.length ? <EmptyState title="ยังไม่มีรายการแต้ม" />

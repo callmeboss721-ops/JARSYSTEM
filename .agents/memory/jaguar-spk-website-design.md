@@ -10,3 +10,9 @@ Preserve official JAGUAR SPK logos and mascots as supplied, using `object-contai
 **Why:** the user explicitly replaced the earlier neon-heavy direction with Clean Executive Dark and gave exact accent roles and preservation rules.
 
 **How to apply:** read this brief and `docs/frontend/jaguar-loyalty-design-guidelines.md` before broad website styling; use `artifacts/jaguar-spk-design-system/tokens.json` as the visual source of truth.
+
+For member-card pages, use the user's mobile-first wireframe as the sizing reference: a compact card near 330×200px, real QR and points kept clear, then three quick actions for QR, point history, and rewards. Keep each club's existing QR, balance, and reward behavior intact.
+
+**Why:** the user supplied a 390px cannabis-card wireframe as the preferred content hierarchy and proportions.
+
+**How to apply:** share the card dimensions and action hierarchy across `/card` and `/card/cannabis`, while keeping each club's accent and reward destination distinct.
