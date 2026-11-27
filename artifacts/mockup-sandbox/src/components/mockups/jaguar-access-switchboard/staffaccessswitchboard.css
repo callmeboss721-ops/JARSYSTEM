@@ -1,0 +1,594 @@
+.sa-shell {
+  --sa-space: 0.25rem;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--sa-background);
+  color: var(--sa-text);
+  font-family: "IBM Plex Sans Thai", "Bai Jamjuree", sans-serif;
+}
+
+.sa-header,
+.sa-footer {
+  width: min(100% - 4rem, 72rem);
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sa-header {
+  min-height: 5.25rem;
+  border-bottom: 1px solid var(--sa-border);
+}
+
+.sa-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sa-brand > span {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.sa-brand strong {
+  font: 700 1rem/1.1 "Bai Jamjuree", sans-serif;
+  letter-spacing: 0.07em;
+}
+
+.sa-brand strong i {
+  color: var(--sa-gold);
+  font-style: normal;
+}
+
+.sa-brand small,
+.sa-header-status,
+.sa-eyebrow,
+.sa-flow-step small,
+.sa-edition,
+.sa-card-topline,
+.sa-overline,
+.sa-access-tag,
+.sa-task-list i,
+.sa-demo-footnote,
+.sa-footer {
+  font-family: "JetBrains Mono", monospace;
+}
+
+.sa-brand small {
+  color: var(--sa-muted);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+}
+
+.sa-header-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--sa-muted);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+}
+
+.sa-status-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--sa-green);
+}
+
+.sa-layout {
+  width: min(100% - 4rem, 72rem);
+  margin: auto;
+  padding-block: 3.5rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(22rem, 29rem);
+  align-items: center;
+  gap: 6rem;
+}
+
+.sa-intro {
+  max-width: 34rem;
+  padding-block: 1rem;
+}
+
+.sa-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 1.5rem;
+  color: var(--sa-muted);
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+}
+
+.sa-eyebrow span {
+  color: var(--sa-gold);
+}
+
+.sa-eyebrow i {
+  width: 2.5rem;
+  height: 1px;
+  background: var(--sa-border-strong);
+}
+
+.sa-intro h1 {
+  margin: 0;
+  font: 600 clamp(2.6rem, 4.6vw, 4rem)/1.2 "Bai Jamjuree", "IBM Plex Sans Thai", sans-serif;
+  letter-spacing: -0.045em;
+}
+
+.sa-intro h1 em {
+  color: var(--sa-gold);
+  font-style: normal;
+}
+
+.sa-intro-copy {
+  max-width: 27rem;
+  margin: 1.1rem 0 2.5rem;
+  color: var(--sa-muted);
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.sa-flow {
+  display: flex;
+  align-items: center;
+  max-width: 28rem;
+  gap: 1rem;
+}
+
+.sa-flow-step {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--sa-muted);
+}
+
+.sa-flow-step > span {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid var(--sa-border-strong);
+  border-radius: 50%;
+  font: 0.65rem "JetBrains Mono", monospace;
+}
+
+.sa-flow-step.is-current > span {
+  border-color: var(--sa-gold);
+  color: var(--sa-gold);
+}
+
+.sa-flow-step > div {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.sa-flow-step strong {
+  color: var(--sa-text);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.sa-flow-step small {
+  color: var(--sa-muted);
+  font-size: 0.55rem;
+  letter-spacing: 0.04em;
+}
+
+.sa-flow-line {
+  width: 2.5rem;
+  height: 1px;
+  flex: 0 0 auto;
+  background: var(--sa-border-strong);
+}
+
+.sa-safety-note {
+  display: flex;
+  max-width: 29rem;
+  align-items: flex-start;
+  gap: 0.85rem;
+  margin-top: 3.5rem;
+  padding: 1rem 1.1rem;
+  border-left: 2px solid var(--sa-green);
+  background: var(--sa-surface);
+  color: var(--sa-green);
+}
+
+.sa-safety-note > div {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.sa-safety-note strong {
+  color: var(--sa-text);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.sa-safety-note p {
+  margin: 0;
+  color: var(--sa-muted);
+  font-size: 0.7rem;
+  line-height: 1.6;
+}
+
+.sa-edition {
+  margin: 2.75rem 0 0;
+  color: var(--sa-muted);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+}
+
+.sa-edition span {
+  margin-inline: 0.3rem;
+  color: var(--sa-gold);
+}
+
+.sa-access-card {
+  padding: 1.75rem;
+  border: 1px solid var(--sa-border);
+  border-radius: 1rem;
+  background: var(--sa-surface);
+}
+
+.sa-card-topline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--sa-muted);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+}
+
+.sa-card-topline > span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.sa-card-topline svg {
+  color: var(--sa-gold);
+}
+
+.sa-card-heading {
+  margin-top: 1.5rem;
+}
+
+.sa-overline {
+  margin: 0 0 0.4rem;
+  color: var(--sa-gold);
+  font-size: 0.56rem;
+  letter-spacing: 0.12em;
+}
+
+.sa-card-heading h2 {
+  margin: 0;
+  font: 600 1.5rem/1.35 "Bai Jamjuree", "IBM Plex Sans Thai", sans-serif;
+}
+
+.sa-card-heading > p:last-child {
+  margin: 0.35rem 0 0;
+  color: var(--sa-muted);
+  font-size: 0.78rem;
+}
+
+.sa-role-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.sa-role-choice {
+  min-height: 4rem;
+  justify-content: flex-start;
+  gap: 0.65rem;
+  padding-inline: 0.8rem;
+  border: 1px solid var(--sa-border-strong);
+  background: transparent;
+  color: var(--sa-muted);
+  text-align: left;
+}
+
+.sa-role-choice > svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex: 0 0 auto;
+}
+
+.sa-role-choice > span {
+  display: grid;
+  gap: 0.18rem;
+  min-width: 0;
+}
+
+.sa-role-choice strong {
+  color: var(--sa-text);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.sa-role-choice small {
+  color: currentColor;
+  font: 0.52rem "JetBrains Mono", monospace;
+  letter-spacing: 0.03em;
+}
+
+.sa-role-choice.is-active {
+  border-color: var(--sa-green);
+  background: color-mix(in srgb, var(--sa-green) 10%, var(--sa-surface));
+  color: var(--sa-green);
+}
+
+.sa-role-choice.is-active.is-owner {
+  border-color: var(--sa-gold);
+  background: color-mix(in srgb, var(--sa-gold) 10%, var(--sa-surface));
+  color: var(--sa-gold);
+}
+
+.sa-selected-role {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 1.25rem;
+  padding: 0.85rem;
+  border: 1px solid var(--sa-border);
+  border-radius: 0.75rem;
+  background: var(--sa-background);
+}
+
+.sa-role-icon {
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 0.65rem;
+  background: color-mix(in srgb, var(--sa-green) 12%, var(--sa-surface));
+  color: var(--sa-green);
+}
+
+.sa-role-icon.is-owner {
+  background: color-mix(in srgb, var(--sa-gold) 12%, var(--sa-surface));
+  color: var(--sa-gold);
+}
+
+.sa-selected-role > div {
+  display: grid;
+  min-width: 0;
+  gap: 0.15rem;
+}
+
+.sa-selected-role > div strong {
+  font-size: 0.78rem;
+}
+
+.sa-selected-role > div small {
+  overflow: hidden;
+  color: var(--sa-muted);
+  font-size: 0.63rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sa-access-tag {
+  margin-left: auto;
+  color: var(--sa-muted);
+  font-size: 0.5rem;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.sa-task-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.8rem;
+}
+
+.sa-task-list > span {
+  display: inline-flex;
+  min-height: 1.75rem;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--sa-border);
+  border-radius: 999px;
+  color: var(--sa-muted);
+  font-size: 0.6rem;
+}
+
+.sa-task-list i {
+  color: var(--sa-gold);
+  font-size: 0.48rem;
+  font-style: normal;
+}
+
+.sa-pin-form {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.sa-pin-form > label {
+  color: var(--sa-text);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.sa-pin-field {
+  position: relative;
+}
+
+.sa-pin-input {
+  min-height: 3rem;
+  padding-right: 3.25rem;
+  border-color: var(--sa-border-strong);
+  background: var(--sa-background);
+  color: var(--sa-text);
+  font: 1rem "JetBrains Mono", monospace;
+  letter-spacing: 0.3em;
+}
+
+.sa-pin-input::placeholder {
+  color: var(--sa-muted);
+  letter-spacing: 0.2em;
+}
+
+.sa-pin-input:focus-visible {
+  border-color: var(--sa-focus);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--sa-focus) 28%, transparent);
+}
+
+.sa-visibility {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--sa-muted);
+}
+
+.sa-visibility:hover {
+  color: var(--sa-text);
+}
+
+.sa-pin-help {
+  display: flex;
+  justify-content: space-between;
+  color: var(--sa-muted);
+  font-size: 0.65rem;
+}
+
+.sa-feedback {
+  margin: 0.15rem 0 0;
+  color: var(--sa-green);
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+.sa-feedback.is-error {
+  color: var(--sa-gold);
+}
+
+.sa-submit {
+  width: 100%;
+  min-height: 3rem;
+  justify-content: space-between;
+  margin-top: 0.55rem;
+  padding-inline: 1rem;
+  font-weight: 600;
+}
+
+.sa-demo-footnote {
+  margin: 1rem 0 0;
+  color: var(--sa-muted);
+  font-size: 0.5rem;
+  letter-spacing: 0.07em;
+  text-align: center;
+}
+
+.sa-footer {
+  min-height: 3.5rem;
+  border-top: 1px solid var(--sa-border);
+  color: var(--sa-muted);
+  font-size: 0.55rem;
+  letter-spacing: 0.06em;
+}
+
+.sa-footer i {
+  margin-left: 0.4rem;
+  color: var(--sa-text);
+  font-style: normal;
+}
+
+.sa-footer b {
+  margin-inline: 0.3rem;
+  color: var(--sa-gold);
+  font-weight: 400;
+}
+
+@media (max-width: 800px) {
+  .sa-header,
+  .sa-footer,
+  .sa-layout {
+    width: min(100% - 2rem, 36rem);
+  }
+
+  .sa-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+    padding-block: 2.5rem;
+  }
+
+  .sa-intro {
+    padding: 0;
+  }
+
+  .sa-intro h1 {
+    font-size: clamp(2.4rem, 9vw, 3.2rem);
+  }
+
+  .sa-intro-copy {
+    margin-bottom: 1.5rem;
+  }
+
+  .sa-safety-note {
+    margin-top: 1.5rem;
+  }
+
+  .sa-edition {
+    margin-top: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .sa-header,
+  .sa-footer,
+  .sa-layout {
+    width: min(100% - 1.25rem, 36rem);
+  }
+
+  .sa-header-status {
+    gap: 0.4rem;
+    font-size: 0.5rem;
+  }
+
+  .sa-access-card {
+    padding: 1rem;
+  }
+
+  .sa-role-choice {
+    min-height: 3.5rem;
+    gap: 0.45rem;
+    padding-inline: 0.55rem;
+  }
+
+  .sa-role-choice strong {
+    font-size: 0.68rem;
+  }
+
+  .sa-role-choice small {
+    font-size: 0.45rem;
+  }
+
+  .sa-selected-role {
+    gap: 0.5rem;
+    padding: 0.65rem;
+  }
+
+  .sa-access-tag {
+    display: none;
+  }
+
+  .sa-footer {
+    font-size: 0.48rem;
+  }
+}

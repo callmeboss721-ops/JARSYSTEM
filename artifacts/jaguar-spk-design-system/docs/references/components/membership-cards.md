@@ -9,18 +9,19 @@
   (`.collecting-track*`), 4515–4607 (`.member-pass-card*`), 4917–4981 and
   5358–5410 (final pass, stamps and dashboard status). Earlier card CSS is
   superseded by the later final selectors.
-- Source assets: `public/brand/card-kratom-full.jpg`,
-  `card-cannabis-full.jpg`, `jaguar-card-mark.webp`, `mark-jaguar.svg`, and
-  `mark-leaf.svg`.
+- Source assets: `public/brand/card-kratom-2026.webp`,
+  `card-cannabis-2026.webp`, `jaguar-card-mark.webp`, `mark-jaguar.svg`,
+  `mark-leaf.svg`, and the club-specific coins in `public/ui/stamps/`.
 - Public exports: `LoyaltyCard`, `SharedMemberCard`, `LoyaltyProgress`,
   `CollectingTrack`, `LoyaltyCardArtwork`, `MemberCardFaces`, and
   `MemberStatusPanel`.
 - API/data: club kind, member code, balance, QR state/retry callback, and
   progress animation key. Kratom and cannabis remain visually distinct while
   sharing card geometry.
-- Behavior: ten progress positions, readiness at ten points, QR loading/error
-  states, a native accessible QR enlargement dialog, accessible progress, and a
-  next action only when eligible.
+- Behavior: ten progress positions with club-specific filled coins and empty
+  slots, a reduced-motion-aware reward animation at ten points, QR loading/error
+  states, a native accessible 240px QR enlargement dialog on a pure-white
+  quiet zone, accessible progress, and a next action only when eligible.
 - Dependencies: `qrcode.react`, BrandButton, BrandIcon, and retained card art.
 - Direct consumers: `app/card/page.tsx` and
   `app/cannabis-card/page.tsx`; route data and balance logic remain outside

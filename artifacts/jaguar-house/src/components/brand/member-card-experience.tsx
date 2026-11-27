@@ -37,6 +37,7 @@ export function MemberCardFaces({
       balance={balance}
       popKey={popKey}
       assetBase="/brand/"
+      stampAssetBase="/ui/stamps/"
       dataTestId={kind === "kratom" ? "card-member" : "card-cannabis-member"}
     />
   );

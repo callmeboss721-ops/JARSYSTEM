@@ -27,6 +27,29 @@ const PRODUCT_FILTERS: { value: ProductFilter; label: string }[] = [
   { value: "blue", label: "ฝาน้ำเงิน" },
   { value: "red", label: "ฝาแดง" },
 ];
+const MEMBERSHIP_STEPS = [
+  {
+    number: "01",
+    title: "สมัครสมาชิก",
+    description: "สร้างบัตรสมาชิกจากหน้าเว็บในไม่กี่วินาที",
+    image: "/brand/steps/step-01-register.webp",
+    alt: "ตัวอย่างขั้นตอนสมัครบัตรสมาชิก JAGUAR SPK",
+  },
+  {
+    number: "02",
+    title: "แสดงบัตรที่ร้าน",
+    description: "เปิดบัตรบนมือถือให้พนักงานสแกน QR",
+    image: "/brand/steps/step-02-collect.webp",
+    alt: "ตัวอย่างการแสดงบัตรและสะสมแต้มที่ร้าน",
+  },
+  {
+    number: "03",
+    title: "แลกรางวัล",
+    description: "ตรวจสอบแต้มและสอบถามสิทธิ์ที่หน้าร้าน",
+    image: "/brand/steps/step-03-redeem.webp",
+    alt: "ตัวอย่างขั้นตอนแลกรางวัลสมาชิก",
+  },
+] as const;
 
 const LANDING_TABS: { id: string; href: string; label: string; icon: BrandIconName }[] = [
   { id: "top", href: "#top", label: "หน้าแรก", icon: "crown" },
@@ -75,7 +98,7 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
     document.addEventListener("keydown", onEscape);
     return () => document.removeEventListener("keydown", onEscape);
   }, [mapPopupOpen, closeMapPopup]);
-  const session = useQuery<{ authenticated: boolean }>({ queryKey: ["/api/loyalty/session"], queryFn: () => api("/api/loyalty/session"), enabled: initialTab !== undefined, retry: false, refetchOnWindowFocus: false });
+  const session = useQuery<{ authenticated: boolean }>({ queryKey: ["/api/loyalty/session"], queryFn: () => api("/api/loyalty/session"), enabled: true, retry: false, refetchOnWindowFocus: false });
 
   if (initialTab === undefined) {
     return (
@@ -102,6 +125,12 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
           </div>
         </header>
         <div className="jh-shell">
+          {session.isSuccess && session.data?.authenticated && (
+            <Link className="jh-member-shortcut" href="/card" data-testid="link-session-member-card">
+              <span>เปิดบัตรสมาชิกและสแกน QR ของคุณทันที</span>
+              <span aria-hidden="true">→</span>
+            </Link>
+          )}
           <section className="jh-hero" id="top" aria-labelledby="landing-title">
             <div className="jh-hero__copy">
               <p className="jh-kicker jh-kicker--with-motion"><MotionBadge name="open-24h-beacon" size={26} assetBase="/brand/v4" />ร้านประจำย่าน · สมุทรปราการ · เปิด 24 ชม.</p>
@@ -203,23 +232,27 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
               <h2 id="jh-membership-title">สมาชิก ใช้ง่ายทุกครั้งที่แวะ</h2>
               <p>เริ่มต้นจากมือถือ แล้วแสดงบัตรสมาชิกดิจิทัลที่เคาน์เตอร์</p>
             </div>
-            <div className="jh-benefits">
-              <article>
-                <div className="jh-benefit__meta"><BrandIcon name="members" size={19} tone="emerald" /><span className="jh-benefit__number">01</span></div>
-                <h3>สมัครสมาชิก</h3><p>สร้างบัตรสมาชิกจากหน้าเว็บในไม่กี่วินาที</p>
-              </article>
-              <article>
-                <div className="jh-benefit__meta"><BrandIcon name="qr" size={19} tone="emerald" /><span className="jh-benefit__number">02</span></div>
-                <h3>แสดงบัตรที่ร้าน</h3><p>เปิดบัตรบนมือถือให้พนักงานสแกน QR</p>
-              </article>
-              <article>
-                <div className="jh-benefit__meta"><BrandIcon name="points" size={19} tone="emerald" /><span className="jh-benefit__number">03</span></div>
-                <h3>สะสมแต้ม</h3><p>ตรวจสอบแต้มสะสมแบบเรียลไทม์บนบัตร</p>
-              </article>
-              <article>
-                <div className="jh-benefit__meta"><BrandIcon name="phone" size={19} tone="emerald" /><span className="jh-benefit__number">04</span></div>
-                <h3>สอบถามสิทธิ์</h3><p>สอบถามเงื่อนไขกับพนักงานหรือโทรหาร้าน</p>
-              </article>
+            <div className="jh-three-steps">
+              {MEMBERSHIP_STEPS.map((step) => (
+                <article className="jh-step-card" key={step.number}>
+                  <Image
+                    className="jh-step-card__image"
+                    src={step.image}
+                    alt={step.alt}
+                    width={800}
+                    height={600}
+                    loading="lazy"
+                    sizes="(max-width: 680px) 100vw, 33vw"
+                  />
+                  <div className="jh-step-card__copy">
+                    <span className="jh-step-card__number">{step.number}</span>
+                    <div>
+                      <h3>{step.title}</h3>
+                      <p>{step.description}</p>
+                    </div>
+                  </div>
+                </article>
+              ))}
             </div>
             <div className="jh-membership__promo" role="note">
               <span className="jh-membership__promo-tag">PROMO</span>
@@ -262,15 +295,12 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
               <p className="jh-kicker jh-kicker--with-motion"><MotionBadge name="open-24h-beacon" size={24} assetBase="/brand/v4" />ติดต่อร้าน · เปิด 24 ชม.</p>
               <h2 id="jh-contact-title">มีคำถามเรื่องสินค้า หรือสมาชิก?</h2>
               <p>เปิด 24 ชั่วโมง · พื้นที่จัดส่งและเงื่อนไขต้องโทรยืนยันกับร้านก่อนสั่ง</p>
-              <p>
-                โทรศัพท์:{" "}
-                <a href="tel:0996125914" className="jh-text-link">
-                  0996125914
-                </a>
-              </p>
             </div>
             <div className="jh-contact__actions">
               <BrandDeliveryLink />
+              <a href="tel:0996125914" className="jh-contact__action-link jh-contact__call-link">
+                <BrandIcon name="phone" size={18} tone="gold" />โทร 099-612-5914
+              </a>
               <a href={GOOGLE_MAPS_URL} target="_blank" rel="noopener noreferrer" className="jh-map-link">
                 <BrandIcon name="location" size={18} tone="emerald" />แผนที่ร้าน
               </a>
@@ -420,6 +450,16 @@ export function Welcome({ initialTab }: { initialTab?: "login" | "register" }) {
 
           <section className="jaguar-auth-access" aria-labelledby="auth-access-title">
             <div className="jaguar-auth-access__heading">
+              <span className="jaguar-auth-mobile-badge" aria-hidden="true">
+                <Image
+                  src="/brand/mascot-welcome.webp"
+                  alt=""
+                  width={112}
+                  height={112}
+                  loading="lazy"
+                  sizes="84px"
+                />
+              </span>
               <p className="jaguar-auth-kicker">{tab === "login" ? "MEMBER ACCESS" : "JOIN THE CLUB"}</p>
               <h2 id="auth-access-title">{tab === "login" ? "เข้าสู่บัตรสมาชิก" : "สมัครสมาชิก"}</h2>
               <p>{tab === "login" ? "เลือกวิธีเข้าใช้ที่สะดวก" : "กรอกข้อมูลเพื่อเปิดบัตรใหม่"}</p>

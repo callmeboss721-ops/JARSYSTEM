@@ -1,0 +1,70 @@
+{
+  "name": "JAGUAR SPK — บัตรสมาชิกดิจิทัล",
+  "short_name": "JAGUAR SPK",
+  "description": "บัตรสมาชิกดิจิทัล สะสมแต้มและแลกของฟรี JAGUAR SPK ซอยบุญศิริ 6 สมุทรปราการ (เปิด 24 ชม.)",
+  "start_url": "/card",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#08120A",
+  "theme_color": "#08120A",
+  "lang": "th",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "บัตรสมาชิกกระท่อม",
+      "short_name": "บัตรกระท่อม",
+      "url": "/card",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "บัตรสมาชิกกัญชา",
+      "short_name": "บัตรกัญชา",
+      "url": "/card/cannabis",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "แลกของรางวัล",
+      "short_name": "แลกรางวัล",
+      "url": "/redeem",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}

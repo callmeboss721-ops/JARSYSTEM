@@ -21,7 +21,7 @@ type CardQr = {
 const CLUBS: Record<MemberClub, { title: string; image: string; stampIcon: string; alt: string; rule: string; reward: string; tagline: string }> = {
   kratom: {
     title: "JAGUAR KRATOM",
-    image: "card-kratom-full.jpg",
+    image: "card-kratom-2026.webp",
     stampIcon: "mark-jaguar.svg",
     alt: "บัตรสะสมแต้ม JAGUAR KRATOM ลายเสือจากัวร์",
     rule: "ครบ ฿100 สะสม = 1 แต้ม",
@@ -30,7 +30,7 @@ const CLUBS: Record<MemberClub, { title: string; image: string; stampIcon: strin
   },
   cannabis: {
     title: "JAGUAR CANNABIS",
-    image: "card-cannabis-full.jpg",
+    image: "card-cannabis-2026.webp",
     stampIcon: "mark-leaf.svg",
     alt: "บัตรสะสมแต้ม JAGUAR CANNABIS ลายใบกัญชา",
     rule: "ครบ 100 g สะสม = 1 แต้ม",
@@ -41,6 +41,7 @@ const CLUBS: Record<MemberClub, { title: string; image: string; stampIcon: strin
 
 const DEFAULT_ASSET_BASE = "/jaguar-spk-design-system/brand/cards/";
 const DEFAULT_BUTTON_ASSET_BASE = "/jaguar-spk-design-system/brand/buttons/";
+const DEFAULT_STAMP_ASSET_BASE = "/jaguar-spk-design-system/ui/stamps/";
 const asset = (file: string, assetBase: string) => `${assetBase}${file}`;
 
 export function SharedMemberCard({
@@ -111,6 +112,8 @@ export function CollectingTrack({
   titleId,
   variant = "coins",
   assetBase = "/jaguar-spk-design-system/brand/v4",
+  stampAssetBase = DEFAULT_STAMP_ASSET_BASE,
+  rewardAssetBase = DEFAULT_STAMP_ASSET_BASE,
   celebrationKey = 0,
 }: {
   balance: number;
@@ -118,12 +121,16 @@ export function CollectingTrack({
   titleId?: string;
   variant?: "coins" | "v3";
   assetBase?: string;
+  stampAssetBase?: string;
+  rewardAssetBase?: string;
   celebrationKey?: number;
 }) {
   const filled = Math.min(Math.max(balance, 0), STAMPS);
   const ready = filled >= STAMPS;
   const remaining = STAMPS - filled;
   const clubLabel = kind === "cannabis" ? "บัตรกัญชา" : "บัตรกระท่อม";
+  const filledStamp = asset(`stamp-coin-${kind}-256.webp`, stampAssetBase);
+  const emptyStamp = asset("stamp-slot-empty-256.webp", stampAssetBase);
   return (
     <div className={`collecting-track collecting-track--${kind}${variant === "v3" ? " ds-v3-track" : ""}`}>
       <div className="collecting-track__heading">
@@ -144,16 +151,31 @@ export function CollectingTrack({
             const isNext = index === filled && !ready;
             return (
               <li key={index} className="collecting-track__coin" data-filled={isFilled} data-next={isNext}>
-                {variant === "v3" ? null : <BrandIcon name="crown" className="collecting-track__crown" tone="gold" size={14} />}
-                <span className="collecting-track__coin-face">{isFilled ? <BrandIcon name="success" size={16} tone={kind === "cannabis" ? "inherit" : "gold"} /> : String(index + 1).padStart(2, "0")}</span>
+                <img
+                  className="collecting-track__coin-face"
+                  src={isFilled ? filledStamp : emptyStamp}
+                  alt=""
+                  width={36}
+                  height={36}
+                  aria-hidden="true"
+                />
                 <span className="sr-only">{isFilled ? "สะสมแล้ว" : isNext ? "แต้มถัดไป" : "ยังไม่สะสม"} แต้มที่ {index + 1}</span>
               </li>
             );
           })}
         </ol>
       </div>
-      <div className={variant === "v3" ? "ds-v3-track-foot" : undefined}>
+      <div className={`collecting-track__status-row${variant === "v3" ? " ds-v3-track-foot" : ""}`}>
         <span className={ready ? "is-ready" : ""} role="status">{ready ? "พร้อมแลกรางวัล" : `เหลืออีก ${remaining} แต้ม`}</span>
+        {ready && (
+          <MotionBadge
+            name="reward-unlock"
+            size={48}
+            assetBase={rewardAssetBase}
+            fallbackSrc={filledStamp}
+            className="collecting-track__reward-animation"
+          />
+        )}
         <span className="sr-only" role="progressbar" aria-valuemin={0} aria-valuemax={STAMPS} aria-valuenow={filled} aria-label={`ความคืบหน้า ${filled} จาก ${STAMPS} แต้ม`} />
       </div>
     </div>
@@ -164,11 +186,15 @@ export function LoyaltyProgress({
   balance,
   kind = "kratom",
   buttonAssetBase = DEFAULT_BUTTON_ASSET_BASE,
+  stampAssetBase = DEFAULT_STAMP_ASSET_BASE,
+  rewardAssetBase = DEFAULT_STAMP_ASSET_BASE,
   action,
 }: {
   balance: number;
   kind?: MemberClub;
   buttonAssetBase?: string;
+  stampAssetBase?: string;
+  rewardAssetBase?: string;
   action?: ReactNode;
 }) {
   const filled = Math.min(balance, STAMPS);
@@ -176,7 +202,7 @@ export function LoyaltyProgress({
   const remaining = Math.max(STAMPS - filled, 0);
   return (
     <section className="ds-glass member-progress-panel" aria-label="ความคืบหน้าแต้มสมาชิก">
-      <CollectingTrack balance={balance} kind={kind} />
+      <CollectingTrack balance={balance} kind={kind} stampAssetBase={stampAssetBase} rewardAssetBase={rewardAssetBase} />
       <div className="member-progress-actions">
         <p>{ready ? `ครบ 10 · ${CLUBS[kind].reward}` : `${CLUBS[kind].rule} · เหลือ ${remaining} แต้ม`}</p>
         {action !== undefined
@@ -194,6 +220,8 @@ export function LoyaltyCard({
   qr,
   assetBase = DEFAULT_ASSET_BASE,
   buttonAssetBase = DEFAULT_BUTTON_ASSET_BASE,
+  stampAssetBase = DEFAULT_STAMP_ASSET_BASE,
+  rewardAssetBase = DEFAULT_STAMP_ASSET_BASE,
 }: {
   kind?: MemberClub;
   memberCode: string;
@@ -201,11 +229,13 @@ export function LoyaltyCard({
   qr: CardQr;
   assetBase?: string;
   buttonAssetBase?: string;
+  stampAssetBase?: string;
+  rewardAssetBase?: string;
 }) {
   return (
     <div className="membership-card-stack">
       <SharedMemberCard kind={kind} memberCode={memberCode} balance={balance} qr={qr} assetBase={assetBase} />
-      <LoyaltyProgress balance={balance} kind={kind} buttonAssetBase={buttonAssetBase} />
+      <LoyaltyProgress balance={balance} kind={kind} buttonAssetBase={buttonAssetBase} stampAssetBase={stampAssetBase} rewardAssetBase={rewardAssetBase} />
     </div>
   );
 }
@@ -218,6 +248,7 @@ export function MemberCardFaces({
   balance,
   popKey = 0,
   assetBase = DEFAULT_ASSET_BASE,
+  stampAssetBase = DEFAULT_STAMP_ASSET_BASE,
   dataTestId,
 }: {
   kind: MemberClub;
@@ -227,6 +258,7 @@ export function MemberCardFaces({
   balance: number;
   popKey?: number;
   assetBase?: string;
+  stampAssetBase?: string;
   dataTestId?: string;
 }) {
   const club = CLUBS[kind];
@@ -255,9 +287,15 @@ export function MemberCardFaces({
             const isFilled = index < filled;
             return (
               <li key={`${popKey}-${index}`} className="club-pass__stamp" data-filled={isFilled} data-reward={rewardSlot} data-ready={ready} data-pop={popKey > 0 && isFilled} data-testid={`${kind === "kratom" ? "stamp" : "cannabis-stamp"}-${index + 1}`}>
-                {rewardSlot ? <><BrandIcon name="crown" size={24} tone="gold" /><small>10 · รางวัล</small></>
-                  : isFilled ? <img src={asset(club.stampIcon, assetBase)} alt="" width={28} height={28} aria-hidden="true" />
-                    : <span>{String(index + 1).padStart(2, "0")}</span>}
+                <img
+                  className="club-pass__stamp-coin"
+                  src={asset(isFilled ? `stamp-coin-${kind}-256.webp` : "stamp-slot-empty-256.webp", stampAssetBase)}
+                  alt=""
+                  width={44}
+                  height={44}
+                  aria-hidden="true"
+                />
+                {rewardSlot && <small>10 · รางวัล</small>}
                 <span className="sr-only">{rewardSlot ? `ครบ 10 แต้ม ${club.reward}` : isFilled ? "สะสมแล้ว" : "ยังไม่สะสม"}</span>
               </li>
             );
@@ -374,7 +412,7 @@ export function MemberStatusPanel({
             ) : (
               <QRCodeSVG
                 value={qr.value}
-                size={320}
+                size={240}
                 level="H"
                 includeMargin
                 bgColor={tokens.color.brandId2026.qrQuietZone}

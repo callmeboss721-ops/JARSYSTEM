@@ -1,0 +1,133 @@
+.cs-shell {
+  min-height: 100vh;
+  background: var(--cs-background);
+  color: var(--cs-text);
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 13px;
+}
+
+.cs-shell *,
+.cs-shell *::before,
+.cs-shell *::after { box-sizing: border-box; }
+
+.cs-page { width: min(100% - 28px, 560px); margin: 0 auto; }
+.cs-header { min-height: 66px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--cs-border); }
+.cs-brand { display: flex; align-items: center; gap: 9px; }
+.cs-logo-wrap { display: grid; place-items: center; }
+.cs-brand strong { display: block; font: 700 13px "Bai Jamjuree", sans-serif; letter-spacing: .08em; }
+.cs-brand strong i { color: var(--cs-gold); font-style: normal; }
+.cs-brand small { display: block; margin-top: 1px; color: var(--cs-muted); font: 8px "JetBrains Mono", monospace; letter-spacing: .11em; }
+.cs-version { display: inline-flex; align-items: center; gap: 7px; color: var(--cs-muted); font: 8px "JetBrains Mono", monospace; letter-spacing: .06em; }
+.cs-version i { width: 6px; height: 6px; border-radius: 50%; background: var(--cs-green); }
+.cs-intro { padding: 22px 2px 18px; border-bottom: 1px solid var(--cs-border); }
+.cs-eyebrow, .cs-kicker { margin: 0; color: var(--cs-muted); font: 8px "JetBrains Mono", monospace; letter-spacing: .1em; }
+.cs-eyebrow span { color: var(--cs-green); padding: 0 4px; }
+.cs-intro h1 { margin: 8px 0 5px; font: 600 clamp(23px, 7vw, 32px)/1.16 "Bai Jamjuree", "IBM Plex Sans Thai", sans-serif; letter-spacing: -.03em; }
+.cs-intro h1 em { color: var(--cs-gold); font-style: normal; }
+.cs-intro > p:last-child { margin: 0; color: var(--cs-muted); font-size: 11px; line-height: 1.6; }
+
+.cs-sequence { position: relative; display: grid; gap: 10px; padding: 14px 0 16px; }
+.cs-sequence::before { position: absolute; top: 27px; bottom: 44px; left: 14px; width: 1px; background: var(--cs-border); content: ""; }
+.cs-section { position: relative; display: grid; grid-template-columns: 29px minmax(0, 1fr); gap: 8px; align-items: start; }
+.cs-index { position: relative; z-index: 1; display: grid; justify-items: center; padding-top: 14px; }
+.cs-index span { display: grid; place-items: center; width: 28px; height: 28px; border: 1px solid var(--cs-border); border-radius: 50%; background: var(--cs-background); color: var(--cs-green); font: 9px "JetBrains Mono", monospace; }
+.cs-card { min-width: 0; padding: 14px; border: 1px solid var(--cs-border); border-radius: var(--cs-radius); background: var(--cs-surface); }
+.cs-card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.cs-card-head h2 { margin: 4px 0 0; font: 600 16px/1.28 "Bai Jamjuree", "IBM Plex Sans Thai", sans-serif; }
+.cs-gold { flex: 0 0 auto; color: var(--cs-gold); }
+.cs-foundation { background: linear-gradient(135deg, color-mix(in srgb, var(--cs-raised) 80%, var(--cs-background)), var(--cs-surface) 72%); }
+.cs-foundation-content { display: flex; align-items: center; gap: 13px; padding: 15px 1px; }
+.cs-seal { flex: 0 0 78px; width: 78px; height: 78px; display: grid; align-content: center; justify-items: center; gap: 3px; border: 1px solid color-mix(in srgb, var(--cs-gold) 38%, var(--cs-border)); border-radius: 50%; }
+.cs-seal > span { width: 52px; height: 52px; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--cs-gold) 24%, var(--cs-border)); border-radius: 50%; }
+.cs-seal small { color: var(--cs-muted); font: 6px "JetBrains Mono", monospace; letter-spacing: .08em; }
+.cs-brand-copy b { color: var(--cs-green); font: 8px "JetBrains Mono", monospace; letter-spacing: .08em; }
+.cs-brand-copy p { margin: 5px 0 0; color: var(--cs-muted); font-size: 10px; line-height: 1.55; }
+.cs-journey { padding-top: 10px; border-top: 1px solid var(--cs-border); }
+.cs-journey-title { display: flex; justify-content: space-between; color: var(--cs-muted); font: 7px "JetBrains Mono", monospace; letter-spacing: .09em; }
+.cs-journey-title span:last-child { color: var(--cs-gold); }
+.cs-journey-steps { display: flex; align-items: center; gap: 7px; padding-top: 9px; }
+.cs-journey-steps > span { display: flex; align-items: center; gap: 5px; font-size: 9px; white-space: nowrap; }
+.cs-journey-steps > span i { width: 18px; height: 18px; display: grid; place-items: center; border-radius: 50%; background: color-mix(in srgb, var(--cs-green) 13%, transparent); color: var(--cs-green); font: 7px "JetBrains Mono", monospace; font-style: normal; }
+.cs-journey-steps > b { height: 1px; flex: 1; background: var(--cs-border); }
+
+.cs-role-list { display: grid; gap: 7px; padding-top: 13px; }
+.cs-role { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.cs-swatch { width: 35px; height: 30px; flex: 0 0 35px; border-radius: 6px; background: var(--cs-swatch); }
+.cs-role-copy { display: grid; gap: 1px; min-width: 0; flex: 1; }
+.cs-role-copy b { font-size: 10px; font-weight: 600; }
+.cs-role-copy b i { color: var(--cs-muted); font-style: normal; }
+.cs-role-copy small { color: var(--cs-muted); font-size: 8px; }
+.cs-role code { color: var(--cs-muted); font: 8px "JetBrains Mono", monospace; }
+.cs-neutral-list { display: flex; flex-wrap: wrap; gap: 7px 12px; padding-top: 10px; margin-top: 11px; border-top: 1px solid var(--cs-border); }
+.cs-neutral { display: inline-flex; align-items: center; gap: 5px; color: var(--cs-muted); font-size: 8px; }
+.cs-neutral i { width: 9px; height: 9px; border: 1px solid var(--cs-border); border-radius: 2px; background: var(--cs-swatch); }
+
+.cs-type-sample { display: grid; gap: 6px; padding: 12px 0 10px; border-bottom: 1px solid var(--cs-border); }
+.cs-type-sample > span, .cs-code-sample > span { color: var(--cs-muted); font: 7px "JetBrains Mono", monospace; letter-spacing: .09em; }
+.cs-type-sample > span i { margin-left: 5px; opacity: .7; font-style: normal; }
+.cs-type-sample > strong { font: 600 20px/1.2 "Bai Jamjuree", "IBM Plex Sans Thai", sans-serif; }
+.cs-body-sample p { max-width: 290px; margin: 0; color: var(--cs-muted); font-size: 11px; line-height: 1.55; }
+.cs-code-sample { display: grid; gap: 6px; padding-top: 10px; }
+.cs-code-sample code { font: 9px "JetBrains Mono", monospace; }
+.cs-code-sample code i { color: var(--cs-gold); font-style: normal; }
+
+.cs-demo-label, .cs-rank-count { flex: 0 0 auto; padding: 4px 6px; border: 1px solid var(--cs-border); border-radius: 5px; color: var(--cs-muted); font: 7px "JetBrains Mono", monospace; letter-spacing: .04em; }
+.cs-track-label { display: flex; align-items: center; gap: 5px; margin-top: 13px; color: var(--cs-muted); font: 8px "JetBrains Mono", monospace; letter-spacing: .08em; }
+.cs-track-label svg { color: var(--cs-gold); }
+.cs-track-card .collecting-track__heading p { color: var(--cs-muted); font: 8px "JetBrains Mono", monospace; letter-spacing: .08em; }
+.cs-track-card .collecting-track__heading h2 { color: var(--cs-gold); font-size: 18px; }
+.cs-track-card .collecting-track__heading h2 span { font-size: 10px; }
+.cs-track-card .collecting-track__visual { margin-top: 10px; }
+.cs-track-card .collecting-track__connector { top: 14px; right: 4%; left: 4%; height: 1px; }
+.cs-track-card .collecting-track__connector span { background: var(--cs-gold); }
+.cs-track-card .collecting-track__visual ol { grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 3px; }
+.cs-track-card .collecting-track__coin-face { width: 27px; max-width: 100%; border-radius: 7px; font-size: 8px; }
+.cs-track-card .collecting-track__coin[data-filled="true"] .collecting-track__coin-face { border-color: var(--cs-gold); background: var(--cs-gold); color: var(--cs-background); box-shadow: none; }
+.cs-track-card .ds-v3-track-foot { display: flex; justify-content: flex-start; padding-top: 4px; }
+.cs-track-card .ds-v3-track-foot > span:first-child { padding: 0; border: 0; color: var(--cs-muted); font-size: 8px; }
+.cs-track-card .ds-v3-track-foot .is-ready { color: var(--cs-gold); }
+.cs-track-note { margin: 7px 0 0; color: var(--cs-muted); font-size: 8px; }
+
+.cs-ranks { display: flex; justify-content: space-around; gap: 5px; padding-top: 14px; }
+.cs-rank { display: grid; justify-items: center; gap: 5px; min-width: 0; }
+.cs-rank > b { color: var(--cs-muted); font-size: 8px; font-weight: 500; text-align: center; }
+.cs-rank-note { display: flex; align-items: center; gap: 6px; padding-top: 9px; margin: 12px 0 0; border-top: 1px solid var(--cs-border); color: var(--cs-muted); font-size: 8px; }
+.cs-rank-note svg { flex: 0 0 auto; color: var(--cs-green); }
+.cs-pass { margin-top: 13px; padding: 13px; border: 1px solid color-mix(in srgb, var(--cs-gold) 35%, var(--cs-border)); border-radius: 10px; background: linear-gradient(110deg, color-mix(in srgb, var(--cs-gold) 7%, var(--cs-background)), var(--cs-surface) 56%); }
+.cs-pass-top, .cs-pass-bottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.cs-pass-brand { display: flex; align-items: center; gap: 7px; font: 700 9px "Bai Jamjuree", sans-serif; letter-spacing: .1em; }
+.cs-pass-brand small { display: block; margin-top: 1px; color: var(--cs-muted); font: 7px "JetBrains Mono", monospace; letter-spacing: .14em; }
+.cs-club { display: inline-flex; align-items: center; gap: 4px; padding: 4px 7px; border: 1px solid color-mix(in srgb, var(--cs-gold) 32%, transparent); border-radius: 99px; color: var(--cs-gold); font: 7px "JetBrains Mono", monospace; }
+.cs-member-code { display: grid; gap: 3px; margin: 9px 0; }
+.cs-member-code span, .cs-pass-bottom > div:first-child > span { color: var(--cs-muted); font: 7px "JetBrains Mono", monospace; letter-spacing: .08em; }
+.cs-member-code strong { font: 11px "JetBrains Mono", monospace; letter-spacing: .14em; }
+.cs-pass-bottom > div:first-child { display: flex; align-items: baseline; gap: 7px; }
+.cs-pass-bottom > div:first-child strong { color: var(--cs-gold); font: 600 20px "Bai Jamjuree", sans-serif; }
+.cs-pass-bottom > div:first-child strong small { font: 8px "JetBrains Mono", monospace; }
+.cs-qr { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 5px; background: #fff; color: var(--cs-background); }
+.cs-card-caption { margin: 8px 0 0; color: var(--cs-muted); font-size: 8px; text-align: center; }
+.cs-footer { display: flex; justify-content: space-between; gap: 10px; padding: 12px 2px 18px; border-top: 1px solid var(--cs-border); color: var(--cs-muted); font: 7px "JetBrains Mono", monospace; letter-spacing: .05em; }
+.cs-footer > span:first-child { color: var(--cs-text); font-family: "Bai Jamjuree", sans-serif; font-weight: 700; }
+.cs-footer i { color: var(--cs-muted); font-style: normal; font-weight: 400; }
+
+@media (min-width: 760px) {
+  .cs-page { width: min(100% - 48px, 620px); }
+  .cs-intro { padding-top: 30px; padding-bottom: 24px; }
+  .cs-sequence { gap: 12px; padding-top: 18px; }
+  .cs-card { padding: 17px 18px; }
+}
+
+@media (max-width: 360px) {
+  .cs-page { width: min(100% - 20px, 560px); }
+  .cs-section { grid-template-columns: 25px minmax(0, 1fr); gap: 6px; }
+  .cs-index span { width: 25px; height: 25px; font-size: 8px; }
+  .cs-sequence::before { left: 12px; }
+  .cs-card { padding: 12px; }
+  .cs-journey-steps { gap: 4px; }
+  .cs-journey-steps > span { gap: 3px; font-size: 8px; }
+  .cs-role code { font-size: 7px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-shell *, .cs-shell *::before, .cs-shell *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}

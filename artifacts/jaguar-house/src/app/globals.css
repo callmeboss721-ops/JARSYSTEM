@@ -2650,7 +2650,7 @@ input.input, textarea.input, select.input { font-size: 16px; }
 .member-pass-card__status.is-ready {
   justify-content: flex-start;
   padding-left: 27px;
-  background-image: url("/brand/member-status-ready.webp");
+  background-image: url("/brand/member-status-ready-2026.webp");
   color: #f4df9b;
   box-shadow: none;
 }
@@ -4995,7 +4995,7 @@ input.input, textarea.input, select.input { font-size: 16px; }
 .member-pass-card__status.is-ready {
   justify-content: flex-start;
   padding-left: 27px;
-  background-image: url("/brand/member-status-ready.webp");
+  background-image: url("/brand/member-status-ready-2026.webp");
   color: #f4df9b;
   box-shadow: none;
 }

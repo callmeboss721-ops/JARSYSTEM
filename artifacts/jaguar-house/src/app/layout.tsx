@@ -28,24 +28,42 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://jaguar-krathm-kaychaa.replit.app"),
+  manifest: "/manifest.webmanifest",
   title: {
     default: "JAGUAR SPK — บัตรสมาชิกดิจิทัล | 97/56 ซอยบุญศิริ 6",
     template: "%s | JAGUAR SPK",
   },
   description:
     "JAGUAR SPK ที่ 97/56 ซอยบุญศิริ 6 สมุทรปราการ เปิด 24 ชั่วโมง โทร 0996125914 พร้อมบัตรสมาชิกดิจิทัลสะสมแต้มบนมือถือ",
+  icons: {
+    icon: [
+      { url: "/icons/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: "/icons/apple-touch-icon.png",
+  },
   openGraph: {
     title: "JAGUAR SPK — บัตรสมาชิกดิจิทัล",
     description:
       "JAGUAR SPK ที่ 97/56 ซอยบุญศิริ 6 เปิด 24 ชั่วโมง โทร 0996125914 พร้อมบัตรสมาชิกดิจิทัล",
     locale: "th_TH",
     type: "website",
+    images: [
+      {
+        url: "/brand/og-share-2026.jpg",
+        width: 1200,
+        height: 630,
+        alt: "JAGUAR SPK — บัตรสมาชิกดิจิทัล",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "JAGUAR SPK — บัตรสมาชิกดิจิทัล",
     description:
       "JAGUAR SPK ที่ 97/56 ซอยบุญศิริ 6 เปิด 24 ชั่วโมง โทร 0996125914 พร้อมบัตรสมาชิกดิจิทัล",
+    images: ["/brand/og-share-2026.jpg"],
   },
 };
 

@@ -1,0 +1,664 @@
+.ta-shell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--ta-background);
+  color: var(--ta-text);
+  font-family: "IBM Plex Sans Thai", "Bai Jamjuree", sans-serif;
+}
+
+.ta-header,
+.ta-footer {
+  width: min(100% - 4rem, 76rem);
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ta-header {
+  min-height: 5.25rem;
+  border-bottom: 1px solid var(--ta-border);
+}
+
+.ta-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ta-brand > span {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.ta-brand strong {
+  font: 700 1rem/1.1 "Bai Jamjuree", sans-serif;
+  letter-spacing: 0.07em;
+}
+
+.ta-brand strong i {
+  color: var(--ta-gold);
+  font-style: normal;
+}
+
+.ta-brand small,
+.ta-secure,
+.ta-kicker,
+.ta-step-note,
+.ta-group-heading > div:nth-child(2) p,
+.ta-gate-topline,
+.ta-gate-eyebrow,
+.ta-gate-role small,
+.ta-demo-note,
+.ta-bottom-note > span:last-child,
+.ta-footer {
+  font-family: "JetBrains Mono", monospace;
+}
+
+.ta-brand small {
+  color: var(--ta-muted);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+}
+
+.ta-secure {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--ta-muted);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+}
+
+.ta-secure > span {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--ta-green);
+}
+
+.ta-main {
+  width: min(100% - 4rem, 76rem);
+  margin: auto;
+  padding-block: 2.25rem 1.5rem;
+}
+
+.ta-heading {
+  margin-bottom: 1.5rem;
+}
+
+.ta-kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 0.75rem;
+  color: var(--ta-muted);
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+}
+
+.ta-kicker > span {
+  color: var(--ta-gold);
+}
+
+.ta-kicker > i {
+  width: 2.5rem;
+  height: 1px;
+  background: var(--ta-border-strong);
+}
+
+.ta-heading-row {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.ta-heading h1 {
+  margin: 0;
+  font: 600 clamp(2rem, 3vw, 2.8rem)/1.25 "Bai Jamjuree", "IBM Plex Sans Thai", sans-serif;
+  letter-spacing: -0.04em;
+}
+
+.ta-heading-row > div:first-child > p {
+  margin: 0.45rem 0 0;
+  color: var(--ta-muted);
+  font-size: 0.88rem;
+  line-height: 1.7;
+}
+
+.ta-step-note {
+  flex: 0 0 auto;
+  color: var(--ta-muted);
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+}
+
+.ta-step-note span {
+  color: var(--ta-gold);
+}
+
+.ta-step-note b {
+  margin-inline: 0.45rem;
+  color: var(--ta-border-strong);
+  font-weight: 400;
+}
+
+.ta-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(20rem, 0.85fr);
+  align-items: start;
+  gap: 1.5rem;
+}
+
+.ta-routes {
+  min-width: 0;
+  padding: 1.25rem;
+  border: 1px solid var(--ta-border);
+  border-radius: 1rem;
+  background: var(--ta-surface);
+}
+
+.ta-group-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.ta-group-mark {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 0.65rem;
+}
+
+.ta-mark-staff {
+  background: color-mix(in srgb, var(--ta-green) 12%, var(--ta-surface));
+  color: var(--ta-green);
+}
+
+.ta-mark-owner {
+  background: color-mix(in srgb, var(--ta-gold) 12%, var(--ta-surface));
+  color: var(--ta-gold);
+}
+
+.ta-group-heading > div:nth-child(2) {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.ta-group-heading h2 {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.ta-group-heading > div:nth-child(2) p {
+  margin: 0;
+  color: var(--ta-muted);
+  font-size: 0.53rem;
+  letter-spacing: 0.09em;
+}
+
+.ta-group-owner {
+  margin-left: auto;
+  padding: 0.3rem 0.55rem;
+  border: 1px solid var(--ta-border);
+  border-radius: 999px;
+  color: var(--ta-muted);
+  font-size: 0.62rem;
+}
+
+.ta-route-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 0.8rem;
+}
+
+.ta-route {
+  display: flex;
+  min-width: 0;
+  min-height: 10rem;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0.8rem;
+  border: 1px solid var(--ta-border-strong);
+  border-radius: 0.75rem;
+  background: var(--ta-background);
+  color: var(--ta-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
+}
+
+.ta-route:hover {
+  border-color: color-mix(in srgb, var(--ta-green) 65%, var(--ta-border-strong));
+  transform: translateY(-2px);
+}
+
+.ta-route:focus-visible {
+  outline: 2px solid var(--ta-focus);
+  outline-offset: 2px;
+}
+
+.ta-route.is-selected {
+  border-color: var(--ta-green);
+  background: color-mix(in srgb, var(--ta-green) 7%, var(--ta-background));
+}
+
+.ta-route-owner:hover {
+  border-color: color-mix(in srgb, var(--ta-gold) 65%, var(--ta-border-strong));
+}
+
+.ta-route-owner.is-selected {
+  border-color: var(--ta-gold);
+  background: color-mix(in srgb, var(--ta-gold) 7%, var(--ta-background));
+}
+
+.ta-route-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.65rem;
+  color: var(--ta-green);
+}
+
+.ta-route-top > span {
+  color: var(--ta-muted);
+  font: 0.55rem "JetBrains Mono", monospace;
+}
+
+.ta-route-owner .ta-route-top {
+  color: var(--ta-gold);
+}
+
+.ta-route > strong {
+  font-size: 0.79rem;
+  font-weight: 600;
+}
+
+.ta-route > small {
+  margin-top: 0.25rem;
+  color: var(--ta-muted);
+  font-size: 0.62rem;
+  line-height: 1.55;
+}
+
+.ta-route-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+  margin-top: auto;
+  padding-top: 0.7rem;
+  color: var(--ta-green);
+  font-size: 0.63rem;
+  font-weight: 600;
+}
+
+.ta-route-owner .ta-route-action {
+  color: var(--ta-gold);
+}
+
+.ta-owner-heading {
+  margin-top: 1.35rem;
+}
+
+.ta-gate {
+  padding: 1.25rem;
+  border: 1px solid var(--ta-border);
+  border-radius: 1rem;
+  background: var(--ta-surface);
+}
+
+.ta-gate-topline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--ta-muted);
+  font-size: 0.57rem;
+  letter-spacing: 0.08em;
+}
+
+.ta-gate-topline > span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.ta-gate-topline svg {
+  color: var(--ta-gold);
+}
+
+.ta-gate-eyebrow {
+  margin: 1.2rem 0 0.35rem;
+  color: var(--ta-gold);
+  font-size: 0.52rem;
+  letter-spacing: 0.12em;
+}
+
+.ta-gate h2 {
+  margin: 0;
+  font: 600 1.4rem/1.35 "Bai Jamjuree", "IBM Plex Sans Thai", sans-serif;
+}
+
+.ta-gate-description {
+  min-height: 2.4rem;
+  margin: 0.35rem 0 0;
+  color: var(--ta-muted);
+  font-size: 0.72rem;
+  line-height: 1.6;
+}
+
+.ta-gate-role {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 1rem;
+  padding: 0.7rem;
+  border: 1px solid var(--ta-border);
+  border-radius: 0.7rem;
+  background: var(--ta-background);
+}
+
+.ta-role-symbol {
+  display: grid;
+  width: 2.2rem;
+  height: 2.2rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 0.6rem;
+  background: color-mix(in srgb, var(--ta-green) 12%, var(--ta-surface));
+  color: var(--ta-green);
+}
+
+.ta-gate.is-owner .ta-role-symbol {
+  background: color-mix(in srgb, var(--ta-gold) 12%, var(--ta-surface));
+  color: var(--ta-gold);
+}
+
+.ta-gate-role > span:nth-child(2) {
+  display: grid;
+  min-width: 0;
+  gap: 0.2rem;
+}
+
+.ta-gate-role strong {
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.ta-gate-role small {
+  color: var(--ta-muted);
+  font-size: 0.47rem;
+  letter-spacing: 0.04em;
+}
+
+.ta-gate-role > svg:last-child {
+  margin-left: auto;
+  flex: 0 0 auto;
+  color: var(--ta-green);
+}
+
+.ta-gate.is-owner .ta-gate-role > svg:last-child {
+  color: var(--ta-gold);
+}
+
+.ta-pin-form {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 1rem;
+}
+
+.ta-pin-form > label {
+  font-size: 0.73rem;
+  font-weight: 600;
+}
+
+.ta-pin-entry {
+  position: relative;
+}
+
+.ta-pin-input {
+  min-height: 3rem;
+  padding-right: 3.25rem;
+  border-color: var(--ta-border-strong);
+  background: var(--ta-background);
+  color: var(--ta-text);
+  font: 1rem "JetBrains Mono", monospace;
+  letter-spacing: 0.3em;
+}
+
+.ta-pin-input::placeholder {
+  color: var(--ta-muted);
+  letter-spacing: 0.2em;
+}
+
+.ta-pin-input:focus-visible {
+  border-color: var(--ta-focus);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--ta-focus) 28%, transparent);
+}
+
+.ta-toggle-pin {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--ta-muted);
+}
+
+.ta-pin-hint {
+  display: flex;
+  justify-content: space-between;
+  color: var(--ta-muted);
+  font-size: 0.61rem;
+}
+
+.ta-feedback {
+  margin: 0.15rem 0 0;
+  color: var(--ta-green);
+  font-size: 0.65rem;
+  line-height: 1.5;
+}
+
+.ta-feedback.is-error {
+  color: var(--ta-gold);
+}
+
+.ta-submit {
+  width: 100%;
+  min-height: 3rem;
+  justify-content: space-between;
+  margin-top: 0.4rem;
+  padding-inline: 1rem;
+  font-weight: 600;
+}
+
+.ta-safety {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  color: var(--ta-green);
+}
+
+.ta-safety p {
+  margin: 0;
+  color: var(--ta-muted);
+  font-size: 0.62rem;
+  line-height: 1.5;
+}
+
+.ta-demo-note {
+  margin: 0.85rem 0 0;
+  color: var(--ta-muted);
+  font-size: 0.48rem;
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+.ta-bottom-note {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  color: var(--ta-muted);
+  font-size: 0.65rem;
+}
+
+.ta-bottom-note > span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ta-bottom-note svg {
+  color: var(--ta-green);
+}
+
+.ta-bottom-note > span:last-child {
+  color: var(--ta-gold);
+  font-size: 0.54rem;
+  letter-spacing: 0.06em;
+}
+
+.ta-footer {
+  min-height: 3.5rem;
+  border-top: 1px solid var(--ta-border);
+  color: var(--ta-muted);
+  font-size: 0.55rem;
+  letter-spacing: 0.06em;
+}
+
+.ta-footer i {
+  margin-left: 0.4rem;
+  color: var(--ta-text);
+  font-style: normal;
+}
+
+.ta-footer b {
+  margin-inline: 0.3rem;
+  color: var(--ta-gold);
+  font-weight: 400;
+}
+
+@media (max-width: 900px) {
+  .ta-header,
+  .ta-footer,
+  .ta-main {
+    width: min(100% - 2rem, 44rem);
+  }
+
+  .ta-main {
+    padding-block: 1.75rem 1.25rem;
+  }
+
+  .ta-heading-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .ta-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ta-gate {
+    max-width: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .ta-header,
+  .ta-footer,
+  .ta-main {
+    width: min(100% - 1.25rem, 40rem);
+  }
+
+  .ta-header {
+    min-height: 4.5rem;
+  }
+
+  .ta-brand {
+    gap: 0.5rem;
+  }
+
+  .ta-brand > img {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .ta-brand strong {
+    font-size: 0.86rem;
+  }
+
+  .ta-brand small {
+    font-size: 0.48rem;
+  }
+
+  .ta-secure {
+    gap: 0.4rem;
+    font-size: 0.48rem;
+  }
+
+  .ta-main {
+    padding-top: 1.3rem;
+  }
+
+  .ta-heading h1 {
+    font-size: 1.9rem;
+  }
+
+  .ta-heading-row > div:first-child > p {
+    font-size: 0.8rem;
+  }
+
+  .ta-routes,
+  .ta-gate {
+    padding: 0.85rem;
+  }
+
+  .ta-route-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .ta-route {
+    min-height: 9.5rem;
+    padding: 0.65rem;
+  }
+
+  .ta-route > strong {
+    font-size: 0.73rem;
+  }
+
+  .ta-route > small {
+    font-size: 0.59rem;
+  }
+
+  .ta-group-owner {
+    font-size: 0.56rem;
+  }
+
+  .ta-bottom-note {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .ta-footer {
+    font-size: 0.45rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ta-route {
+    transition: none;
+  }
+}

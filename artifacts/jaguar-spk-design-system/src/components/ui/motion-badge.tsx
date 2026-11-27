@@ -7,11 +7,13 @@ export const BRAND_V4_MOTIONS = [
   "qr-scanner-sweep",
   "vip-crown-shimmer",
   "open-24h-beacon",
+  "reward-unlock",
 ] as const;
 
 export type BrandV4MotionName = (typeof BRAND_V4_MOTIONS)[number];
 
 const DEFAULT_ASSET_BASE = "/jaguar-spk-design-system/brand/v4";
+const DEFAULT_STAMP_ASSET_BASE = "/jaguar-spk-design-system/ui/stamps";
 
 const MOTION_ASSETS: Record<BrandV4MotionName, { video: string; fallback: string }> = {
   "stamp-pulse": {
@@ -30,6 +32,10 @@ const MOTION_ASSETS: Record<BrandV4MotionName, { video: string; fallback: string
     video: "webm/04-open-24h-beacon.webm",
     fallback: "png/128/delivery-24h.png",
   },
+  "reward-unlock": {
+    video: "reward-unlock-2026.webm",
+    fallback: "stamp-coin-kratom-256.webp",
+  },
 };
 
 function mediaPath(assetBase: string, path: string) {
@@ -41,7 +47,8 @@ export function MotionBadge({
   alt = "",
   size = 48,
   className = "",
-  assetBase = DEFAULT_ASSET_BASE,
+  assetBase,
+  fallbackSrc,
   active = true,
 }: {
   name: BrandV4MotionName;
@@ -49,13 +56,15 @@ export function MotionBadge({
   size?: number;
   className?: string;
   assetBase?: string;
+  fallbackSrc?: string;
   active?: boolean;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(true);
   const [videoUnavailable, setVideoUnavailable] = useState(false);
   const media = MOTION_ASSETS[name];
-  const fallbackSrc = mediaPath(assetBase, media.fallback);
+  const resolvedAssetBase = assetBase ?? (name === "reward-unlock" ? DEFAULT_STAMP_ASSET_BASE : DEFAULT_ASSET_BASE);
+  const resolvedFallbackSrc = fallbackSrc ?? mediaPath(resolvedAssetBase, media.fallback);
 
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -93,16 +102,16 @@ export function MotionBadge({
           loop
           muted
           playsInline
-          poster={fallbackSrc}
+          poster={resolvedFallbackSrc}
           onError={() => setVideoUnavailable(true)}
           aria-hidden="true"
         >
-          <source src={mediaPath(assetBase, media.video)} type='video/webm; codecs="vp9"' />
+          <source src={mediaPath(resolvedAssetBase, media.video)} type='video/webm; codecs="vp9"' />
         </video>
       ) : (
         <img
           className="motion-badge__media"
-          src={fallbackSrc}
+          src={resolvedFallbackSrc}
           alt=""
           width={size}
           height={size}

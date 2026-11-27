@@ -24,6 +24,8 @@ export function LoyaltyCard({ card, qr }: { card: MemberCardData; qr: CardQr }) 
       qr={qr}
       assetBase="/brand/"
       buttonAssetBase="/ui/"
+      stampAssetBase="/ui/stamps/"
+      rewardAssetBase="/ui/stamps"
     />
   );
 }
@@ -50,11 +52,11 @@ export function LoyaltyProgress({ balance, kind = "kratom" }: { balance: number;
   const action = ready
     ? <BrandArtworkButton href="/redeem" src="/ui/artwork/redeem-button.webp" label="แลกรางวัล" />
     : <BrandButton asset="btn-frame" label={`อีก ${remaining} แต้ม`} disabled />;
-  return <DesignSystemLoyaltyProgress balance={balance} kind={kind} buttonAssetBase="/ui/" action={action} />;
+  return <DesignSystemLoyaltyProgress balance={balance} kind={kind} buttonAssetBase="/ui/" stampAssetBase="/ui/stamps/" rewardAssetBase="/ui/stamps" action={action} />;
 }
 
 export function CollectingTrack({ balance, kind = "kratom", titleId, celebrationKey = 0 }: { balance: number; kind?: MemberClub; titleId?: string; celebrationKey?: number }) {
-  return <DesignSystemCollectingTrack balance={balance} kind={kind} titleId={titleId} variant="v3" assetBase="/brand/v4" celebrationKey={celebrationKey} />;
+  return <DesignSystemCollectingTrack balance={balance} kind={kind} titleId={titleId} variant="v3" assetBase="/brand/v4" stampAssetBase="/ui/stamps/" rewardAssetBase="/ui/stamps" celebrationKey={celebrationKey} />;
 }
 
 export function LoyaltyCardArtwork({ variant }: { variant: MemberClub }) {
